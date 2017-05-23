@@ -6,7 +6,7 @@
 
 #include "ObjParser_OGL3.h"
 
-CMyApp::CMyApp(void) : m_light_dir(0, -1/sqrtf(2), -1/sqrtf(2))
+CMyApp::CMyApp(void)
 {
 	m_textureID = 0;
 	m_mesh = 0;
@@ -58,50 +58,6 @@ bool CMyApp::Init()
 	glEnable(GL_CULL_FACE);		// kapcsoljuk be a hatrafele nezo lapok eldobasat
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 
-	//
-	// geometria letrehozasa
-	//
-	m_vb.AddAttribute(0, 3);
-	m_vb.AddAttribute(1, 3);
-	m_vb.AddAttribute(2, 2);
-
-	m_vb.AddData(0, -10,  0, -10);
-	m_vb.AddData(0,  10,  0, -10);
-	m_vb.AddData(0, -10,  0,  10);
-	m_vb.AddData(0,  10,  0,  10);
-
-	m_vb.AddData(1, 0, 1, 0);
-	m_vb.AddData(1, 0, 1, 0);
-	m_vb.AddData(1, 0, 1, 0);
-	m_vb.AddData(1, 0, 1, 0);
-
-	m_vb.AddData(2, 0, 0);
-	m_vb.AddData(2, 1, 0);
-	m_vb.AddData(2, 0, 1);
-	m_vb.AddData(2, 1, 1);
-
-	m_vb.AddIndex(1, 0, 2);
-	m_vb.AddIndex(1, 2, 3);
-
-	m_vb.InitBuffers();
-
-	// melysegi geometria = egy quad a képernyõ síkjában, minden más elõtt
-	m_depth_vb.AddAttribute(0, 2);	// (x,y) poz
-	m_depth_vb.AddAttribute(1, 2);	// (u,v) = (s,t) textura
-
-	// pozicio attr.:
-	m_depth_vb.AddData(0, -1, -1);	// a
-	m_depth_vb.AddData(0,  1, -1);	// b
-	m_depth_vb.AddData(0,  1,  1);	// c
-	m_depth_vb.AddData(0, -1,  1);	// d
-	// textkoord attr.:
-	m_depth_vb.AddData(1, 0, 0);	// a
-	m_depth_vb.AddData(1, 1, 0);	// b
-	m_depth_vb.AddData(1, 1, 1);	// c
-	m_depth_vb.AddData(1, 0, 1);	// d
-
-	m_depth_vb.InitBuffers();
-
 	// skybox kocka
 	m_vb_skybox.AddAttribute(0, 3);
 
@@ -133,7 +89,11 @@ bool CMyApp::Init()
 	//
 	// shaderek betöltése
 	//
+	simpleShader.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
+	simpleShader.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
+	simpleShader.BindAttribLoc(0, "vs_in_pos");
 
+	simpleShader.LinkProgram ();
 	// skybox shader
 	m_skybox_program.AttachShader(GL_VERTEX_SHADER, "skybox.vert");
 	m_skybox_program.AttachShader(GL_FRAGMENT_SHADER, "skybox.frag");
@@ -144,47 +104,10 @@ bool CMyApp::Init()
 	{
 		return false;
 	}
-
-	// melysegi shader
-	m_depth_program.AttachShader(GL_VERTEX_SHADER, "depth.vert");
-	m_depth_program.AttachShader(GL_FRAGMENT_SHADER, "depth.frag");
-
-	m_depth_program.BindAttribLoc(0, "vs_in_pos");
-	m_depth_program.BindAttribLoc(1, "vs_in_tex");
-
-	if (!m_depth_program.LinkProgram())
-	{
-		return false;
-	}
-
-	// megvilagito shader
-	m_program.AttachShader(GL_VERTEX_SHADER, "myVert.vert");
-	m_program.AttachShader(GL_FRAGMENT_SHADER, "myFrag.frag");
-
-	m_program.BindAttribLoc(0, "vs_in_pos");
-	m_program.BindAttribLoc(1, "vs_in_normal");
-	m_program.BindAttribLoc(2, "vs_in_tex0");
-
-	if ( !m_program.LinkProgram() )
-	{
-		return false;
-	}
-
-	// shadow map keszito shader
-	m_shadowmap_program.AttachShader(GL_VERTEX_SHADER, "shadowmap.vert");
-	m_shadowmap_program.AttachShader(GL_FRAGMENT_SHADER, "shadowmap.frag");
-
-	m_shadowmap_program.BindAttribLoc(0, "vs_in_pos");
-
-	if ( !m_shadowmap_program.LinkProgram() )
-	{
-		return false;
-	}
-
 	//
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
 	//
-	CreateFBO(1024, 1024);
+	//CreateFBO(1024, 1024);
 
 	//
 	// egyéb inicializálás
@@ -239,7 +162,7 @@ bool CMyApp::Init()
 
 void CMyApp::CreateFBO(int w, int h)
 {
-	static bool was_created = false;
+	/*static bool was_created = false;
 	if (was_created)
 	{
 		glDeleteFramebuffers(1, &m_fbo);
@@ -268,7 +191,7 @@ void CMyApp::CreateFBO(int w, int h)
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	was_created = true;
+	was_created = true;*/
 }
 
 void CMyApp::Clean()
@@ -276,16 +199,10 @@ void CMyApp::Clean()
 	glDeleteTextures(1, &m_env_map);
 	glDeleteTextures(1, &m_textureID);
 	glDeleteFramebuffers(1, &m_fbo);
-	glDeleteTextures(1, &m_shadow_texture);
 
-	m_vb.Clean();
-	m_depth_vb.Clean();
-	m_depth_program.Clean();
 	m_env_program.Clean();
 	m_skybox_program.Clean();
 
-	m_program.Clean();
-	m_shadowmap_program.Clean();
 	m_env_program.Clean();
 	m_skybox_program.Clean();
 
@@ -304,186 +221,37 @@ void CMyApp::Update()
 
 	// matrix update
 	float t = SDL_GetTicks()/5000.0f;
-	for (int i=0; i<5; ++i)
-	{
-		m_cowsw[i] = glm::rotate(2 * 3.1415f*(t / 10 + i / 5.0f), glm::vec3(0, 1, 0)) *
-			glm::translate(glm::vec3(5 + i / 2.0f, 5 + sinf(t + i) + (i % 3), 0)) *
-			glm::rotate(2 * 3.1415f*(t + i), glm::vec3(1, 0, 0)) *
-			glm::scale(glm::vec3(0.5f, 0.5f, 0.5f));
-	}
 }
 
-void CMyApp::DrawSceneToShadowMap()
+void CMyApp::Render()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo );
-	glViewport(0, 0, res, res);
-	
-	// töröljük a frampuffert (GL_COLOR_BUFFER_BIT) és a mélységi Z puffert (GL_DEPTH_BUFFER_BIT)
-	glClear( GL_DEPTH_BUFFER_BIT);
-
-	m_shadowmap_program.On();
-
-		m_light_proj = glm::ortho<float>(-10, 10, -10, 10, -10, 10);
-		m_light_view = glm::lookAt<float>( -m_light_dir, glm::vec3(0,0,0), glm::vec3(0,1,0) );
-		m_light_mvp = m_light_proj*m_light_view;
-		
-		// i) rajzoljuk ki a majmot
-		glm::mat4 smvp =  m_light_mvp*glm::translate<float>(glm::vec3(0, 1, 0));
-		m_shadowmap_program.SetUniform( "MVP", smvp );
-
-		m_mesh->draw();
-
-		// ii) rajzoljunk ki 5 tehenet
-		for (int i=0; i<5; ++i)
-		{
-			glm::mat4 mvp = m_light_mvp*m_cowsw[i];
-			m_shadowmap_program.SetUniform("MVP", mvp);
-			m_cow_mesh->draw();
-		}
-
-	m_shadowmap_program.Off();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0 );
-	glViewport(0, 0, m_width, m_height);
-}
-
-void CMyApp::DrawScene(gShaderProgram& program)
-{
-	// töröljük a frampuffert (GL_COLOR_BUFFER_BIT) és a mélységi Z puffert (GL_DEPTH_BUFFER_BIT)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//DrawSkybox();
+	simpleShader.On();
+	{
+		glm::mat4 MVP = m_camera.GetViewProj ();
+		simpleShader.SetUniform ("MVP", MVP);
+		
+		m_vb_skybox.On();
 
-	program.On();
+		m_vb_skybox.DrawIndexed(GL_TRIANGLES, 0, 36, 0);
+
+		m_vb_skybox.Off();
+	}
+	simpleShader.Off ();
+	/*program.On();
 
 	program.SetTexture("textureShadow", 1, m_shadow_texture);
 	program.SetUniform("shadowVP", m_light_mvp);
 
 	glm::mat4 matWorld = glm::mat4(1.0f);
-	glm::mat4 matWorldIT = glm::transpose( glm::inverse( matWorld ) );
+	glm::mat4 matWorldIT = glm::transpose(glm::inverse(matWorld));
 	glm::mat4 mvp = m_camera.GetViewProj() *matWorld;
 
-	program.SetUniform( "world", matWorld );
-	program.SetUniform( "worldIT", matWorldIT );
-	program.SetUniform( "MVP", mvp );
-	program.SetUniform( "eye_pos", m_camera.GetEye() );
-
-	program.SetTexture("textureFile", 0, m_textureID);
-
-	program.SetUniform("step_u", 1.0f / res);
-	program.SetUniform("step_v", 1.0f / res);
-	program.SetUniform("ksr", m_pcf_kernel_size);
-
-	// i) rajzoljuk ki a negyzetet
-	glm::vec4 col_sq(1.0f, 1.0f, 1.0f, 1.0f);
-
-	program.SetUniform( "kd", col_sq );
-	m_vb.On();
-
-	m_vb.DrawIndexed(GL_TRIANGLES, 0, 6, 0);
-
-	m_vb.Off();
-
-	// ii) rajzoljuk ki Suziet
-	glm::vec4 col_s(1.0f, 1.0f, 1.0f, 1.0f);
-	matWorld = glm::translate(glm::vec3(0, 1, 0));
-	matWorldIT = glm::transpose( glm::inverse( matWorld ) );
-	mvp = m_camera.GetViewProj() *matWorld;
-
-	program.SetTexture("textureFile", 0, m_textureID);
-
-	program.SetUniform( "kd", col_s );
-	program.SetUniform( "world", matWorld );
-	program.SetUniform( "worldIT", matWorldIT );
-	program.SetUniform( "MVP", mvp );
-
-
-	m_mesh->draw();
-
-	// tehensereg
-	m_env_program.On();
-
-	m_env_program.SetCubeTexture("texCube", 0, m_env_map);
-	m_env_program.SetTexture("textureShadow", 1, m_shadow_texture);
-	m_env_program.SetUniform("shadowVP", m_light_mvp);
-	m_env_program.SetUniform("eye_pos", m_camera.GetEye());
-	m_env_program.SetUniform("step_u", 1.0f / res);
-	m_env_program.SetUniform("step_v", 1.0f / res);
-	m_env_program.SetUniform("ksr", m_pcf_kernel_size);
-
-	m_env_program.SetUniform("fresnel_term", abs(sinf(SDL_GetTicks() / 1000.0f)));
-
-	// iii) rajzoljunk ki 5 tehenet
-	for (int i=0; i<5; ++i)
-	{
-		matWorldIT = glm::transpose( glm::inverse( m_cowsw[i] ) );
-		mvp = m_camera.GetViewProj() *m_cowsw[i];
-
-		m_env_program.SetUniform( "world", m_cowsw[i] );
-		m_env_program.SetUniform( "worldIT", matWorldIT );
-		m_env_program.SetUniform( "MVP", mvp );
-
-		glm::vec4 col_i( i/5.0f, 1-i/5.0f, i/10.0f, 1);
-		m_env_program.SetUniform( "kd", col_i);
-
-		m_cow_mesh->draw();
-	}
-
-	m_env_program.Off();
-}
-
-void CMyApp::DrawDepth(glm::mat4 &w)
-{
-	m_depth_program.On();
-
-	m_depth_program.SetTexture("texImage", 0, m_shadow_texture);
-	m_depth_program.SetUniform("world", w);
-
-	m_depth_vb.On();
-	m_depth_vb.Draw(GL_TRIANGLE_FAN, 0, 4); 
-	m_depth_vb.Off();
-
-	m_depth_program.Off();
-}
-
-void CMyApp::DrawSkybox()
-{
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-
-	m_skybox_program.On();
-
-	m_skybox_program.SetCubeTexture("cubeTexture", 0, m_env_map);
-	m_skybox_program.SetUniform("MVP", m_camera.GetViewProj()*glm::translate(m_camera.GetEye()));
-
-	m_vb_skybox.On();
-
-	m_vb_skybox.DrawIndexed(GL_TRIANGLES, 0, 36, 0);
-
-	m_vb_skybox.Off();
-
-	m_skybox_program.Off();
-
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-}
-
-void CMyApp::Render()
-{
-	//
-	// 1. rajzoljuk bele az arnyekterkepbe az arnyekvetoket - esetunkben a teheneket es Suzanne-t
-	//
-	DrawSceneToShadowMap();
-
-	//
-	// 2. rajzoljuk ki a szinteret - mindharom tipusu elem (talaj, majom, tehen) ugyanazt a shadert hasznalja
-	//
-
-	// shader beallitasai
-	DrawScene( m_program );
-
-	// 3. melysegi kirajzolasa
-	DrawDepth(glm::translate(glm::vec3(-0.68f, 0.68f, 0.0f)) * glm::scale(glm::vec3(0.3f, 0.3f, 0.3f))); 
+	program.SetUniform("world", matWorld);
+	program.SetUniform("worldIT", matWorldIT);
+	program.SetUniform("MVP", mvp);
+	program.SetUniform("eye_pos", m_camera.GetEye());*/
 }
 
 void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
@@ -492,19 +260,7 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 
 	switch (key.keysym.sym)
 	{
-	case SDLK_1: CreateFBO(256, 256); res = 256; break;
-	case SDLK_2: CreateFBO(512, 512); res = 512; break;
-	case SDLK_3: CreateFBO(1024, 1024); res = 1024; break;
-	case SDLK_4: CreateFBO(2048, 2048); res = 2048; break;
-	case SDLK_5: CreateFBO(4096, 4096); res = 4096; break;
-	case SDLK_i:
-		++m_pcf_kernel_size;
-		break;
-	case SDLK_j:
-		--m_pcf_kernel_size;
-		if (m_pcf_kernel_size < 0)
-			m_pcf_kernel_size = 0;
-		break;
+		;
 	}
 }
 

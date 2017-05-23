@@ -101,14 +101,10 @@
     <ClInclude Include="ObjParser_OGL3.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="depth.frag" />
-    <None Include="depth.vert" />
     <None Include="envmap.frag" />
     <None Include="envmap.vert" />
-    <None Include="myFrag.frag" />
-    <None Include="myVert.vert" />
-    <None Include="shadowmap.frag" />
-    <None Include="shadowmap.vert" />
+    <None Include="simpleShader.frag" />
+    <None Include="simpleShader.vert" />
     <None Include="skybox.frag" />
     <None Include="skybox.vert" />
   </ItemGroup>

@@ -65,24 +65,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="myFrag.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="myVert.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shadowmap.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shadowmap.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="depth.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="depth.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="envmap.vert">
       <Filter>Shaders</Filter>
     </None>
@@ -93,6 +75,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="skybox.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="simpleShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="simpleShader.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
