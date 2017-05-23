@@ -24,6 +24,7 @@ public:
 	//Material * material;
 	//Texture *  texture;
 	Geometry * geometry;
+	std::vector<ShaderLight> shaderLights;
 	glm::vec3 scale, pos, rotAxis;
 	float rotAngle = 0.0f;
 public:
@@ -44,6 +45,8 @@ public:
 		shader->SetUniform("MVP", MVP);
 		shader->SetUniform("M", state.M);
 		///TODO
+		for(auto& light : shaderLights)
+			light.uploadToGPU(*shader);
 
 		geometry->Draw();
 	}

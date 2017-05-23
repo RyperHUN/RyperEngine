@@ -172,6 +172,7 @@ bool CMyApp::Init()
 		return false;
 
 	GameObj sphere = GameObj(&shader_Simple, &geom_Sphere,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
+	sphere.shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
 
 	gameObjs.push_back(sphere);
 	sphere.pos = glm::vec3(2,0,-3);
@@ -259,7 +260,6 @@ void CMyApp::Render()
 		
 		geom_Box.On(); ///TODO
 
-			spotLight.uploadToGPU(shader_Simple, "spotlight");
 			//geom_Box.DrawIndexed(GL_TRIANGLES);
 			//geom_Sphere.Draw ();
 			for(auto& obj : gameObjs)
