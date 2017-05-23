@@ -234,7 +234,7 @@ void CMyApp::Render()
 		
 		m_vb_skybox.On();
 
-		m_vb_skybox.DrawIndexed(GL_TRIANGLES, 0, 36, 0);
+			m_vb_skybox.DrawIndexed(GL_TRIANGLES);
 
 		m_vb_skybox.Off();
 	}

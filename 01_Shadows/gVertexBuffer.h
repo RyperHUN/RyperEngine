@@ -33,6 +33,10 @@ public:
 
 	void Draw(GLenum _mode, GLint _first, GLsizei _count);
 	void DrawIndexed(GLenum _mode, GLint _first, GLsizei _count, const GLvoid* _indices);
+	void DrawIndexed(GLenum _mode)
+	{
+		glDrawElements(_mode, m_indices.size(), GL_UNSIGNED_INT, 0);
+	}
 
 	void InitBuffers();
 
