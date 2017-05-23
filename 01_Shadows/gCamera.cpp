@@ -55,6 +55,10 @@ void gCamera::Update(float _deltaTime)
 	m_eye += (m_goFw*m_fw + m_goRight*m_st)*m_speed*_deltaTime;
 	m_at  += (m_goFw*m_fw + m_goRight*m_st)*m_speed*_deltaTime;
 
+	float deltaY = m_speed * _deltaTime * m_goUp;
+	m_eye.y += deltaY;
+	m_at.y += m_speed * _deltaTime * m_goUp;
+
 	m_viewMatrix = glm::lookAt( m_eye, m_at, m_up);
 	m_matViewProj = m_matProj * m_viewMatrix;
 }
@@ -108,6 +112,12 @@ void gCamera::KeyboardDown(SDL_KeyboardEvent& key)
 	case SDLK_d:
 			m_goRight = 1;
 		break;
+	case SDLK_e:
+			m_goUp = 1.0f;
+		break;
+	case SDLK_q:
+			m_goUp = -1.0f;
+		break;
 	}
 }
 
@@ -131,6 +141,10 @@ void gCamera::KeyboardUp(SDL_KeyboardEvent& key)
 	case SDLK_a:
 	case SDLK_d:
 			m_goRight = 0;
+		break;
+	case SDLK_e:
+	case SDLK_q:
+			m_goUp = 0.0f;
 		break;
 	}
 }
