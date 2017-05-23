@@ -58,7 +58,7 @@ bool CMyApp::Init()
 	glEnable(GL_CULL_FACE);		// kapcsoljuk be a hatrafele nezo lapok eldobasat
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 
-	geom_Sphere = Sphere (10.0f);
+	geom_Sphere = Sphere (1.0f);
 	geom_Sphere.Create (30,30);
 
 	// skybox kocka
@@ -171,6 +171,12 @@ bool CMyApp::Init()
 	if (!m_env_program.LinkProgram())
 		return false;
 
+	GameObj sphere = GameObj(&shader_Simple, &geom_Sphere,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
+
+	gameObjs.push_back(sphere);
+	sphere.pos = glm::vec3(2,0,-3);
+	gameObjs.push_back(sphere);
+
 	return true;
 }
 
@@ -242,6 +248,8 @@ void CMyApp::Update()
 void CMyApp::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	RenderState state;
+	state.camera = &m_camera;
 
 	shader_Simple.On();
 	{
@@ -249,11 +257,13 @@ void CMyApp::Render()
 		shader_Simple.SetUniform ("MVP", MVP);
 		shader_Simple.SetUniform ("M", glm::mat4(1.0f));
 		
-		geom_Box.On();
+		geom_Box.On(); ///TODO
 
 			spotLight.uploadToGPU(shader_Simple);
 			//geom_Box.DrawIndexed(GL_TRIANGLES);
-			geom_Sphere.Draw ();
+			//geom_Sphere.Draw ();
+			for(auto& obj : gameObjs)
+				obj.Draw (state);
 
 		geom_Box.Off();
 	}

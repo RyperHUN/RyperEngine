@@ -16,8 +16,7 @@
 #include "gShaderProgram.h"
 #include "gVertexBuffer.h"
 #include "Mesh_OGL3.h"
-#include "Light.h"
-#include "Geometry.h"
+#include "GameObjects.h"
 
 class CMyApp
 {
@@ -63,8 +62,10 @@ protected:
 	GLuint			textureCube_id; // env map
 
 	int			m_width = 640, m_height = 480;
-
+	
 
 	gShaderProgram shader_Simple;
+
+	std::vector<GameObj> gameObjs;
 };
 
