@@ -235,6 +235,7 @@ void CMyApp::Update()
 {
 	static Uint32 last_time = SDL_GetTicks();
 	float delta_time = (SDL_GetTicks() - last_time)/1000.0f;
+	float t = SDL_GetTicks() / 5000.0f;
 
 	m_camera.Update(delta_time);
 	spotLight.direction = m_camera.forwardVector;
@@ -242,8 +243,9 @@ void CMyApp::Update()
 
 	last_time = SDL_GetTicks();
 
-	// matrix update
-	float t = SDL_GetTicks()/5000.0f;
+	// Update gameObj;
+	for(auto& obj : gameObjs)
+		obj.Animate (t, delta_time);
 }
 
 void CMyApp::Render()
@@ -258,17 +260,12 @@ void CMyApp::Render()
 		shader_Simple.SetUniform ("MVP", MVP);
 		shader_Simple.SetUniform ("M", glm::mat4(1.0f));
 		
-		geom_Box.On(); ///TODO
-
-			//geom_Box.DrawIndexed(GL_TRIANGLES);
-			//geom_Sphere.Draw ();
-			for(auto& obj : gameObjs)
-				obj.Draw (state);
-
-		geom_Box.Off();
+		for(auto& obj : gameObjs)
+			obj.Draw (state);
 	}
 	shader_Simple.Off ();
 
+	//////////////////////////////Environment map drawing!!!
 	shader_EnvMap.On();
 	{
 		geom_Quad.On ();
@@ -280,20 +277,6 @@ void CMyApp::Render()
 		geom_Quad.Off ();
 	}
 	shader_EnvMap.Off();
-
-	/*program.On();
-
-	program.SetTexture("textureShadow", 1, m_shadow_texture);
-	program.SetUniform("shadowVP", m_light_mvp);
-
-	glm::mat4 matWorld = glm::mat4(1.0f);
-	glm::mat4 matWorldIT = glm::transpose(glm::inverse(matWorld));
-	glm::mat4 mvp = m_camera.GetViewProj() *matWorld;
-
-	program.SetUniform("world", matWorld);
-	program.SetUniform("worldIT", matWorldIT);
-	program.SetUniform("MVP", mvp);
-	program.SetUniform("eye_pos", m_camera.GetEye());*/
 }
 
 void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
