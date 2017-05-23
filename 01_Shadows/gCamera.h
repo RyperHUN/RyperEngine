@@ -47,6 +47,10 @@ public:
 	{
 		return m_matViewProj;
 	}
+	glm::mat4 GetRayDirMtx ()
+	{
+		return rayDirMatrix;
+	}
 
 	void Resize(int _w, int _h);
 

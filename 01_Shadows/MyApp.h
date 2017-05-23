@@ -56,7 +56,7 @@ protected:
 	Mesh			*m_mesh;
 	Mesh			*m_cow_mesh;
 
-	GLuint			m_env_map; // env map
+	GLuint			textureCube_id; // env map
 
 	int			m_width = 640, m_height = 480;
 

@@ -162,6 +162,7 @@ GLuint gShaderProgram::loadShader(GLenum _shaderType, const char* _fileName)
 
 	if ( GL_FALSE == result )
 	{
+		std::cout << "Hiba: " << _fileName << std::endl;
 		if (m_verbose)
 		{
 			// hibauzenet elkerese es kiirasa

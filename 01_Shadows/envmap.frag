@@ -2,6 +2,7 @@
 
 // kimenõ érték - a fragment színe
 out vec4 fs_out_col;
+in vec4 viewDir;
 
 uniform samplerCube texCube;
 
@@ -13,5 +14,6 @@ void main()
 	//vec4 refl_col = texture(texCube, refl_dir);
 	//vec4 refr_col = texture(texCube, refr_dir);
 
-	fs_out_col = vec4(0,1,0,1);
+
+	fs_out_col = vec4(viewDir.xyz,1);
 }

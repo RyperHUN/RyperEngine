@@ -136,8 +136,8 @@ bool CMyApp::Init()
 	m_cow_mesh->initBuffers();
 
 	// cube map betöltése
-	glGenTextures(1, &m_env_map);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_env_map);
+	glGenTextures(1, &textureCube_id);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureCube_id);
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -206,7 +206,7 @@ void CMyApp::CreateFBO(int w, int h)
 
 void CMyApp::Clean()
 {
-	glDeleteTextures(1, &m_env_map);
+	glDeleteTextures(1, &textureCube_id);
 	glDeleteTextures(1, &m_textureID);
 	glDeleteFramebuffers(1, &m_fbo);
 
@@ -253,7 +253,9 @@ void CMyApp::Render()
 	shader_EnvMap.On();
 	{
 		geom_Quad.On ();
-
+			
+			shader_EnvMap.SetUniform("rayDirMatrix", m_camera.GetRayDirMtx ());
+			shader_EnvMap.SetCubeTexture ("texCube",0, textureCube_id);
 			geom_Quad.DrawIndexed(GL_TRIANGLES);
 			
 		geom_Quad.Off ();
