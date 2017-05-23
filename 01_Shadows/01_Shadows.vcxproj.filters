@@ -19,6 +19,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{f86e5892-d714-4ab9-821c-cc19fa982d8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\Helpers">
+      <UniqueIdentifier>{4ea6841d-ce53-4df4-a2c3-aec7ee013f35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -62,6 +65,9 @@
     </ClInclude>
     <ClInclude Include="gVertexBuffer.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Utils\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

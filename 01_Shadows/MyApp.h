@@ -16,10 +16,12 @@
 #include "gShaderProgram.h"
 #include "gVertexBuffer.h"
 #include "Mesh_OGL3.h"
+#include "Light.h"
 
 class CMyApp
 {
 public:
+	SpotLight spotLight;
 	CMyApp(void);
 	~CMyApp(void);
 
@@ -47,7 +49,7 @@ protected:
 
 	gCamera			m_camera;
 	// melysegi puffer kirajzolasa
-	gVertexBuffer	geom_SkyBox;
+	gVertexBuffer	geom_Box;
 	gVertexBuffer   geom_Quad;
 
 	gShaderProgram	shader_EnvMap;

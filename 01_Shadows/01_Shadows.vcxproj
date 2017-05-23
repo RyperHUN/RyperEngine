@@ -96,6 +96,7 @@
     <ClInclude Include="GLUtils.hpp" />
     <ClInclude Include="gShaderProgram.h" />
     <ClInclude Include="gVertexBuffer.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh_OGL3.h" />
     <ClInclude Include="MyApp.h" />
     <ClInclude Include="ObjParser_OGL3.h" />

@@ -59,32 +59,32 @@ bool CMyApp::Init()
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 
 	// skybox kocka
-	geom_SkyBox.AddAttribute(0, 3);
+	geom_Box.AddAttribute(0, 3);
 
-	geom_SkyBox.AddData(0, -10, -10, 10);	// 0
-	geom_SkyBox.AddData(0, 10, -10, 10);	// 1
-	geom_SkyBox.AddData(0, -10, 10, 10);	// 2
-	geom_SkyBox.AddData(0, 10, 10, 10);	// 3
+	geom_Box.AddData(0, -10, -10, 10);	// 0
+	geom_Box.AddData(0, 10, -10, 10);	// 1
+	geom_Box.AddData(0, -10, 10, 10);	// 2
+	geom_Box.AddData(0, 10, 10, 10);	// 3
 
-	geom_SkyBox.AddData(0, -10, -10, -10);	// 4
-	geom_SkyBox.AddData(0, 10, -10, -10);	// 5
-	geom_SkyBox.AddData(0, -10, 10, -10);	// 6
-	geom_SkyBox.AddData(0, 10, 10, -10);	// 7
+	geom_Box.AddData(0, -10, -10, -10);	// 4
+	geom_Box.AddData(0, 10, -10, -10);	// 5
+	geom_Box.AddData(0, -10, 10, -10);	// 6
+	geom_Box.AddData(0, 10, 10, -10);	// 7
 
-	geom_SkyBox.AddIndex(1, 0, 2);
-	geom_SkyBox.AddIndex(3, 1, 2);
-	geom_SkyBox.AddIndex(5, 1, 3);
-	geom_SkyBox.AddIndex(7, 5, 3);
-	geom_SkyBox.AddIndex(4, 5, 7);
-	geom_SkyBox.AddIndex(6, 4, 7);
-	geom_SkyBox.AddIndex(0, 4, 6);
-	geom_SkyBox.AddIndex(2, 0, 6);
-	geom_SkyBox.AddIndex(3, 2, 6);
-	geom_SkyBox.AddIndex(7, 3, 6);
-	geom_SkyBox.AddIndex(5, 4, 0);
-	geom_SkyBox.AddIndex(1, 5, 0);
+	geom_Box.AddIndex(1, 0, 2);
+	geom_Box.AddIndex(3, 1, 2);
+	geom_Box.AddIndex(5, 1, 3);
+	geom_Box.AddIndex(7, 5, 3);
+	geom_Box.AddIndex(4, 5, 7);
+	geom_Box.AddIndex(6, 4, 7);
+	geom_Box.AddIndex(0, 4, 6);
+	geom_Box.AddIndex(2, 0, 6);
+	geom_Box.AddIndex(3, 2, 6);
+	geom_Box.AddIndex(7, 3, 6);
+	geom_Box.AddIndex(5, 4, 0);
+	geom_Box.AddIndex(1, 5, 0);
 
-	geom_SkyBox.InitBuffers();
+	geom_Box.InitBuffers();
 //////////////////////////////
 	geom_Quad.AddAttribute(0,3);
 	geom_Quad.AddData(0, glm::vec3(-1.0f,  1.0f, 0.0f));
@@ -233,6 +233,8 @@ void CMyApp::Update()
 	float delta_time = (SDL_GetTicks() - last_time)/1000.0f;
 
 	m_camera.Update(delta_time);
+	spotLight.direction = m_camera.forwardVector;
+	spotLight.position  = m_camera.GetEye ();
 
 	last_time = SDL_GetTicks();
 
@@ -248,19 +250,21 @@ void CMyApp::Render()
 	{
 		glm::mat4 MVP = m_camera.GetViewProj ();
 		shader_Simple.SetUniform ("MVP", MVP);
+		shader_Simple.SetUniform ("M", glm::mat4(1.0f));
 		
-		geom_SkyBox.On();
+		geom_Box.On();
 
-			geom_SkyBox.DrawIndexed(GL_TRIANGLES);
+			spotLight.uploadToGPU(shader_Simple);
+			geom_Box.DrawIndexed(GL_TRIANGLES);
 
-		geom_SkyBox.Off();
+		geom_Box.Off();
 	}
 	shader_Simple.Off ();
 
 	shader_EnvMap.On();
 	{
 		geom_Quad.On ();
-			
+
 			shader_EnvMap.SetUniform("rayDirMatrix", m_camera.GetRayDirMtx ());
 			shader_EnvMap.SetCubeTexture ("texCube",0, textureCube_id);
 			geom_Quad.DrawIndexed(GL_TRIANGLES);

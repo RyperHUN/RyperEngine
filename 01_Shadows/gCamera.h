@@ -58,7 +58,7 @@ public:
 	void KeyboardUp(SDL_KeyboardEvent& key);
 	void MouseMove(SDL_MouseMotionEvent& mouse);
 
-private:
+public:
 	/// <summary>
 	/// Updates the UV.
 	/// </summary>
@@ -116,7 +116,7 @@ private:
 	/// <summary>
 	/// The unit vector pointing towards the viewing direction.
 	/// </summary>
-	glm::vec3	m_fw;
+	glm::vec3	forwardVector;
 	/// <summary>
 	/// The unit vector pointing to the 'right'
 	/// </summary>

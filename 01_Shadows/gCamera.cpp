@@ -32,13 +32,13 @@ void gCamera::SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _up)
 	m_at	= _at;
 	m_up	= _up;
 
-	m_fw  = glm::normalize( m_at - m_eye  );
-	m_st = glm::normalize( glm::cross( m_fw, m_up ) );
+	forwardVector  = glm::normalize( m_at - m_eye  );
+	m_st = glm::normalize( glm::cross( forwardVector, m_up ) );
 
 	m_dist = glm::length( m_at - m_eye );	
 
-	m_u = atan2f( m_fw.z, m_fw.x );
-	m_v = acosf( m_fw.y );
+	m_u = atan2f( forwardVector.z, forwardVector.x );
+	m_v = acosf( forwardVector.y );
 }
 
 void gCamera::SetProj(float _angle, float _aspect, float _zn, float _zf)
@@ -54,8 +54,8 @@ glm::mat4 gCamera::GetViewMatrix()
 
 void gCamera::Update(float _deltaTime)
 {
-	m_eye += (m_goFw*m_fw + m_goRight*m_st)*m_speed*_deltaTime;
-	m_at  += (m_goFw*m_fw + m_goRight*m_st)*m_speed*_deltaTime;
+	m_eye += (m_goFw*forwardVector + m_goRight*m_st)*m_speed*_deltaTime;
+	m_at  += (m_goFw*forwardVector + m_goRight*m_st)*m_speed*_deltaTime;
 
 	float deltaY = m_speed * _deltaTime * m_goUp;
 	m_eye.y += deltaY;
@@ -76,8 +76,8 @@ void gCamera::UpdateUV(float du, float dv)
 										cosf(m_v), 
 										sinf(m_u)*sinf(m_v) );
 
-	m_fw = glm::normalize( m_at - m_eye );
-	m_st = glm::normalize( glm::cross( m_fw, m_up ) );
+	forwardVector = glm::normalize( m_at - m_eye );
+	m_st = glm::normalize( glm::cross( forwardVector, m_up ) );
 }
 
 void gCamera::SetSpeed(float _val)
