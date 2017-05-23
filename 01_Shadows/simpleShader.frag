@@ -1,6 +1,8 @@
 #version 430
 
 in vec3 wFragPos;
+in vec3 frag_normal;
+in vec2 frag_tex;
 
 out vec4 fs_out_col;
 
@@ -30,4 +32,5 @@ void main()
 	   fs_out_col = vec4(0.2,0,0,1);
 
 	//fs_out_col = vec4(spotlight.direction, 1.0);
+	//fs_out_col = vec4(frag_normal, 1.0);
 }
