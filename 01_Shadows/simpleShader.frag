@@ -19,18 +19,19 @@ uniform SpotLight spotlight;
 
 void main()
 {
+	vec3 normal = normalize (frag_normal);
 	vec3 lightDir   = normalize(spotlight.position - wFragPos);
 	float theta     = dot(lightDir, normalize(-spotlight.direction));
-    float epsilon   = spotlight.cutOff - spotlight.outerCutOff;
-	float intensity = clamp((theta - spotlight.outerCutOff) / epsilon, 0.0, 1.0);  ///TODO OuterCutoff
-
-	if(theta > spotlight.cutOff) 
-	{       
-	   fs_out_col = vec4(1,0,0,1) * intensity;// Do lighting calculations
+	
+	vec3 ka = mix(vec3(0.2,0,0), normal, 0.1);
+	vec3 kd = mix(vec3(1.0,0,0), normal, 0.1);
+	if(theta > spotlight.cutOff * 0.95) 
+	{
+		float interp = smoothstep(spotlight.cutOff * 0.95,spotlight.cutOff,theta);
+	   fs_out_col = vec4(mix(ka,kd,interp),1);// Do lighting calculations
 	}
-	else  // else, use ambient light so scene isn't completely dark outside the spotlight.
-	   fs_out_col = vec4(0.2,0,0,1);
+	else
+	   fs_out_col = vec4(ka,1);
 
-	//fs_out_col = vec4(spotlight.direction, 1.0);
-	//fs_out_col = vec4(frag_normal, 1.0);
+	//fs_out_col = vec4(normal, 1.0);
 }

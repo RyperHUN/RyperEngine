@@ -37,13 +37,17 @@ public:
 	}
 	virtual void Draw(RenderState state) {
 		state.M = glm::translate(pos) * glm::rotate(rotAngle, rotAxis) * glm::scale(scale);
-		state.Minv = glm::scale(1.0f / scale) *  glm::rotate(-rotAngle, rotAxis) * glm::translate(-pos);
+		state.Minv = glm::inverse(state.M);
+		//state.Minv = glm::scale(1.0f / scale) *  glm::rotate(-rotAngle, rotAxis) * glm::translate(-pos);
 		//state.material = material; /*state.texture = texture;*/
 		//shader->Bind(state);
+		auto inverseTest = state.M * state.Minv;
 
 		glm::mat4 MVP = state.camera->GetViewProj() * state.M;
 		shader->SetUniform("MVP", MVP);
 		shader->SetUniform("M", state.M);
+		shader->SetUniform("Minv", state.Minv);
+
 		///TODO
 		for(auto& light : shaderLights)
 			light.uploadToGPU(*shader);
