@@ -104,14 +104,12 @@ bool CMyApp::Init()
 	//
 	shader_Simple.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
 	shader_Simple.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
-	shader_Simple.BindAttribLoc(0, "vs_in_pos");
+	
 
 	shader_Simple.LinkProgram ();
 	// skybox shader
 	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
 	shader_EnvMap.AttachShader(GL_FRAGMENT_SHADER, "envmap.frag");
-
-	shader_EnvMap.BindAttribLoc(0, "vs_in_pos");
 
 	if (!shader_EnvMap.LinkProgram())
 	{
@@ -169,10 +167,6 @@ bool CMyApp::Init()
 	// env map shader betoltese
 	m_env_program.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
 	m_env_program.AttachShader(GL_FRAGMENT_SHADER, "envmap.frag");
-
-	m_env_program.BindAttribLoc(0, "vs_in_pos");
-	m_env_program.BindAttribLoc(1, "vs_in_normal");
-	m_env_program.BindAttribLoc(2, "vs_in_tex0");
 
 	if (!m_env_program.LinkProgram())
 		return false;

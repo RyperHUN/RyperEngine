@@ -6,6 +6,9 @@
 
 gShaderProgram::gShaderProgram(void) : m_map_uniform_locations(), m_list_shaders_attached(), m_id_program(0)
 {
+	BindAttribLoc(0, "vs_in_pos");
+	BindAttribLoc(1, "vs_in_normal");
+	BindAttribLoc(2, "vs_in_tex");
 }
 
 

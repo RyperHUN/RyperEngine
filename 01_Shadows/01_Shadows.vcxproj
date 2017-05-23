@@ -92,6 +92,7 @@
     <ClCompile Include="ObjParser_OGL3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameObjects.h" />
     <ClInclude Include="gCamera.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GLUtils.hpp" />
