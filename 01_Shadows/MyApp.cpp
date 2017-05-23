@@ -259,7 +259,7 @@ void CMyApp::Render()
 		
 		geom_Box.On(); ///TODO
 
-			spotLight.uploadToGPU(shader_Simple);
+			spotLight.uploadToGPU(shader_Simple, "spotlight");
 			//geom_Box.DrawIndexed(GL_TRIANGLES);
 			//geom_Sphere.Draw ();
 			for(auto& obj : gameObjs)
