@@ -8,12 +8,7 @@ uniform samplerCube texCube;
 
 void main()
 {
-	//vec3 refl_dir = reflect(-to_eye, normal);
-	//vec3 refr_dir = refract(-to_eye, normal, 1.02);
 
-	//vec4 refl_col = texture(texCube, refl_dir);
-	//vec4 refr_col = texture(texCube, refr_dir);
-
-
-	fs_out_col = vec4(viewDir.xyz,1);
+	//fs_out_col = vec4(normalize(viewDir.xyz),1);
+	fs_out_col = texture(texCube, normalize(viewDir.xyz));
 }
