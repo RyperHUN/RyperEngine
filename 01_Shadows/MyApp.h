@@ -17,6 +17,7 @@
 #include "gVertexBuffer.h"
 #include "Mesh_OGL3.h"
 #include "Light.h"
+#include "Geometry.h"
 
 class CMyApp
 {
@@ -51,6 +52,7 @@ protected:
 	// melysegi puffer kirajzolasa
 	gVertexBuffer	geom_Box;
 	gVertexBuffer   geom_Quad;
+	Sphere          geom_Sphere;
 
 	gShaderProgram	shader_EnvMap;
 	gShaderProgram	m_env_program;

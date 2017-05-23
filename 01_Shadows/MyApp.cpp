@@ -58,6 +58,9 @@ bool CMyApp::Init()
 	glEnable(GL_CULL_FACE);		// kapcsoljuk be a hatrafele nezo lapok eldobasat
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 
+	geom_Sphere = Sphere (10.0f);
+	geom_Sphere.Create (30,30);
+
 	// skybox kocka
 	geom_Box.AddAttribute(0, 3);
 
@@ -255,7 +258,8 @@ void CMyApp::Render()
 		geom_Box.On();
 
 			spotLight.uploadToGPU(shader_Simple);
-			geom_Box.DrawIndexed(GL_TRIANGLES);
+			//geom_Box.DrawIndexed(GL_TRIANGLES);
+			geom_Sphere.Draw ();
 
 		geom_Box.Off();
 	}

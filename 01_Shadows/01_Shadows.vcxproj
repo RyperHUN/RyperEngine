@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gCamera.h" />
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="GLUtils.hpp" />
     <ClInclude Include="gShaderProgram.h" />
     <ClInclude Include="gVertexBuffer.h" />

@@ -12,8 +12,8 @@ struct SpotLight : public Light
 {
 	glm::vec3 position;
 	glm::vec3 direction;
-	float cutOff = 12.5f;
-	float outerCutOff = 0.0f;
+	float cutOff = 20.5f;
+	float outerCutOff = 25.5f;
 
 	//float constant;
 	//float linear;
@@ -26,5 +26,6 @@ struct SpotLight : public Light
 		prog.SetUniform ("spotlight.position",position);
 		prog.SetUniform ("spotlight.direction", glm::normalize(direction));
 		prog.SetUniform ("spotlight.cutOff", glm::cos(glm::radians(cutOff)));
+		prog.SetUniform ("spotlight.outerCutOff", glm::cos(glm::radians(cutOff)));
 	}
 };

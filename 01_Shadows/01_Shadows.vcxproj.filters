@@ -69,6 +69,9 @@
     <ClInclude Include="Light.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">
