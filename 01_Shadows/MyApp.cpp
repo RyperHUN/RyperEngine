@@ -59,48 +59,58 @@ bool CMyApp::Init()
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 
 	// skybox kocka
-	m_vb_skybox.AddAttribute(0, 3);
+	geom_SkyBox.AddAttribute(0, 3);
 
-	m_vb_skybox.AddData(0, -10, -10, 10);	// 0
-	m_vb_skybox.AddData(0, 10, -10, 10);	// 1
-	m_vb_skybox.AddData(0, -10, 10, 10);	// 2
-	m_vb_skybox.AddData(0, 10, 10, 10);	// 3
+	geom_SkyBox.AddData(0, -10, -10, 10);	// 0
+	geom_SkyBox.AddData(0, 10, -10, 10);	// 1
+	geom_SkyBox.AddData(0, -10, 10, 10);	// 2
+	geom_SkyBox.AddData(0, 10, 10, 10);	// 3
 
-	m_vb_skybox.AddData(0, -10, -10, -10);	// 4
-	m_vb_skybox.AddData(0, 10, -10, -10);	// 5
-	m_vb_skybox.AddData(0, -10, 10, -10);	// 6
-	m_vb_skybox.AddData(0, 10, 10, -10);	// 7
+	geom_SkyBox.AddData(0, -10, -10, -10);	// 4
+	geom_SkyBox.AddData(0, 10, -10, -10);	// 5
+	geom_SkyBox.AddData(0, -10, 10, -10);	// 6
+	geom_SkyBox.AddData(0, 10, 10, -10);	// 7
 
-	m_vb_skybox.AddIndex(1, 0, 2);
-	m_vb_skybox.AddIndex(3, 1, 2);
-	m_vb_skybox.AddIndex(5, 1, 3);
-	m_vb_skybox.AddIndex(7, 5, 3);
-	m_vb_skybox.AddIndex(4, 5, 7);
-	m_vb_skybox.AddIndex(6, 4, 7);
-	m_vb_skybox.AddIndex(0, 4, 6);
-	m_vb_skybox.AddIndex(2, 0, 6);
-	m_vb_skybox.AddIndex(3, 2, 6);
-	m_vb_skybox.AddIndex(7, 3, 6);
-	m_vb_skybox.AddIndex(5, 4, 0);
-	m_vb_skybox.AddIndex(1, 5, 0);
+	geom_SkyBox.AddIndex(1, 0, 2);
+	geom_SkyBox.AddIndex(3, 1, 2);
+	geom_SkyBox.AddIndex(5, 1, 3);
+	geom_SkyBox.AddIndex(7, 5, 3);
+	geom_SkyBox.AddIndex(4, 5, 7);
+	geom_SkyBox.AddIndex(6, 4, 7);
+	geom_SkyBox.AddIndex(0, 4, 6);
+	geom_SkyBox.AddIndex(2, 0, 6);
+	geom_SkyBox.AddIndex(3, 2, 6);
+	geom_SkyBox.AddIndex(7, 3, 6);
+	geom_SkyBox.AddIndex(5, 4, 0);
+	geom_SkyBox.AddIndex(1, 5, 0);
 
-	m_vb_skybox.InitBuffers();
+	geom_SkyBox.InitBuffers();
+//////////////////////////////
+	geom_Quad.AddAttribute(0,3);
+	geom_Quad.AddData(0, glm::vec3(-1.0f,  1.0f, 0.0f));
+	geom_Quad.AddData(0, glm::vec3(-1.0f, -1.0f, 0.0f));
+	geom_Quad.AddData(0, glm::vec3( 1.0f,  1.0f, 0.0f));
+	geom_Quad.AddData(0, glm::vec3( 1.0f, -1.0f, 0.0f));
 
+	geom_Quad.AddIndex(0,1,2);
+	geom_Quad.AddIndex(2,1,3);
+
+	geom_Quad.InitBuffers ();
 	//
 	// shaderek betöltése
 	//
-	simpleShader.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
-	simpleShader.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
-	simpleShader.BindAttribLoc(0, "vs_in_pos");
+	shader_Simple.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
+	shader_Simple.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
+	shader_Simple.BindAttribLoc(0, "vs_in_pos");
 
-	simpleShader.LinkProgram ();
+	shader_Simple.LinkProgram ();
 	// skybox shader
-	m_skybox_program.AttachShader(GL_VERTEX_SHADER, "skybox.vert");
-	m_skybox_program.AttachShader(GL_FRAGMENT_SHADER, "skybox.frag");
+	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
+	shader_EnvMap.AttachShader(GL_FRAGMENT_SHADER, "envmap.frag");
 
-	m_skybox_program.BindAttribLoc(0, "vs_in_pos");
+	shader_EnvMap.BindAttribLoc(0, "vs_in_pos");
 
-	if (!m_skybox_program.LinkProgram())
+	if (!shader_EnvMap.LinkProgram())
 	{
 		return false;
 	}
@@ -201,10 +211,10 @@ void CMyApp::Clean()
 	glDeleteFramebuffers(1, &m_fbo);
 
 	m_env_program.Clean();
-	m_skybox_program.Clean();
+	shader_EnvMap.Clean();
 
 	m_env_program.Clean();
-	m_skybox_program.Clean();
+	shader_EnvMap.Clean();
 
 	delete m_mesh;
 	delete m_cow_mesh;
@@ -227,18 +237,29 @@ void CMyApp::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	simpleShader.On();
+	shader_Simple.On();
 	{
 		glm::mat4 MVP = m_camera.GetViewProj ();
-		simpleShader.SetUniform ("MVP", MVP);
+		shader_Simple.SetUniform ("MVP", MVP);
 		
-		m_vb_skybox.On();
+		geom_SkyBox.On();
 
-			m_vb_skybox.DrawIndexed(GL_TRIANGLES);
+			geom_SkyBox.DrawIndexed(GL_TRIANGLES);
 
-		m_vb_skybox.Off();
+		geom_SkyBox.Off();
 	}
-	simpleShader.Off ();
+	shader_Simple.Off ();
+
+	shader_EnvMap.On();
+	{
+		geom_Quad.On ();
+
+			geom_Quad.DrawIndexed(GL_TRIANGLES);
+			
+		geom_Quad.Off ();
+	}
+	shader_EnvMap.Off();
+
 	/*program.On();
 
 	program.SetTexture("textureShadow", 1, m_shadow_texture);

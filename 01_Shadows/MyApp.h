@@ -47,9 +47,10 @@ protected:
 
 	gCamera			m_camera;
 	// melysegi puffer kirajzolasa
-	gVertexBuffer	m_vb_skybox;
+	gVertexBuffer	geom_SkyBox;
+	gVertexBuffer   geom_Quad;
 
-	gShaderProgram	m_skybox_program;
+	gShaderProgram	shader_EnvMap;
 	gShaderProgram	m_env_program;
 
 	Mesh			*m_mesh;
@@ -60,6 +61,6 @@ protected:
 	int			m_width = 640, m_height = 480;
 
 
-	gShaderProgram simpleShader;
+	gShaderProgram shader_Simple;
 };
 

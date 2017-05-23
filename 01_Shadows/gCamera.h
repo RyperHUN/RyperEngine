@@ -73,6 +73,8 @@ private:
 
 	glm::mat4	m_matViewProj;
 
+	glm::mat4 rayDirMatrix; //rayDirMtx * pos_ndc = 
+
 	bool	m_slow;
 
 	/// <summary>
