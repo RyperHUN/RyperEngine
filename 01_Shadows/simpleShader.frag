@@ -49,7 +49,7 @@ vec3 calcDirLight(DirLight light, vec3 normal)
 
 	///TODO Specular shading
 	//vec3 reflectDir = reflect(-lightDir, normal);
- //   float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    //   float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
 	light.color = vec3(1,1,1); //TODO
 	vec3 diffuse = diff * light.color * kd;
@@ -64,5 +64,6 @@ void main()
 	//fs_out_col = vec4(calcSpotLight (spotlight), 1);
 	fs_out_col = vec4(calcDirLight(dirlight, normal), 1);
 	
-	//fs_out_col = vec4(normal, 1.0);
+	fs_out_col = vec4(normal, 1.0);
+	fs_out_col = vec4(frag_tex.xy, 0, 1);
 }

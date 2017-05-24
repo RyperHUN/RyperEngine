@@ -95,6 +95,18 @@ bool CMyApp::Init()
 	buffer_Quad.AddData(0, glm::vec3( 1.0f,  1.0f, 0.0f));
 	buffer_Quad.AddData(0, glm::vec3( 1.0f, -1.0f, 0.0f));
 
+	buffer_Quad.AddAttribute (1,3);
+	buffer_Quad.AddData(1, glm::vec3(0,0,1));
+	buffer_Quad.AddData(1, glm::vec3(0, 0, 1));
+	buffer_Quad.AddData(1, glm::vec3(0, 0, 1));
+	buffer_Quad.AddData(1, glm::vec3(0, 0, 1));
+
+	buffer_Quad.AddAttribute (2, 2);
+	buffer_Quad.AddData(2, glm::vec2(0, 0));
+	buffer_Quad.AddData(2, glm::vec2(0, 1));
+	buffer_Quad.AddData(2, glm::vec2(1, 0));
+	buffer_Quad.AddData(2, glm::vec2(1, 1));
+
 	buffer_Quad.AddIndex(0,1,2);
 	buffer_Quad.AddIndex(2,1,3);
 
