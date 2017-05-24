@@ -180,7 +180,10 @@ bool CMyApp::Init()
 	GameObj * sphere2 = new GameObj (*sphere);
 	sphere2->pos = glm::vec3(2,0,-3);
 	gameObjs.push_back(sphere2);
-	gameObjs.push_back(new Quadobj{&shader_Simple, &geom_Quad, glm::vec3{-1,-2,-5},glm::vec3(10,10,1)});
+	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad, glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1) };
+	quadObj->rotAxis = glm::vec3(-1,0,0);
+	quadObj->rotAngle = M_PI / 2.0;
+	gameObjs.push_back(quadObj);
 
 	return true;
 }
