@@ -194,7 +194,7 @@ bool CMyApp::Init()
 	GameObj *sphere = new GameObj(shaderLights,&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
 	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
 	shaderLights.push_back(ShaderLight{&dirLight, "dirlight"});
-	shaderLights.push_back(ShaderLight{ &pointLight, "pointlight" });
+	shaderLights.push_back(ShaderLight{ &pointLight, "pointlight[0]" });
 
 	gameObjs.push_back(sphere);
 	GameObj * sphere2 = new GameObj (*sphere);

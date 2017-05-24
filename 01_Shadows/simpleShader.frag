@@ -34,9 +34,11 @@ struct PointLight {
 uniform vec3 ka = vec3(0.2,0,0);
 uniform vec3 kd = vec3(0.8,0,0);
 
+#define POINT_LIGHT_NUM 1
+
 uniform SpotLight spotlight;
 uniform DirLight dirlight;
-uniform PointLight pointlight;
+uniform PointLight pointlight[POINT_LIGHT_NUM];
 uniform vec3 wEye;
 
 vec3 calcSpotLight (SpotLight light)
@@ -98,8 +100,9 @@ void main()
 {
 	vec3 normal = normalize (frag_normal);
 	
-	vec3 color = ka;	
-	color += calcPointLight(pointlight,normal);
+	vec3 color = ka;
+	for(int i = 0; i < POINT_LIGHT_NUM; i++)
+		color += calcPointLight(pointlight[i],normal);
 	color += calcSpotLight (spotlight);
 	color += calcDirLight (dirlight, normal);
 
