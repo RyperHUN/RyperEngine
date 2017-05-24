@@ -34,7 +34,7 @@ struct PointLight {
 uniform vec3 ka = vec3(0.2,0,0);
 uniform vec3 kd = vec3(0.8,0,0);
 
-#define POINT_LIGHT_NUM 1
+#define POINT_LIGHT_NUM 3
 
 uniform SpotLight spotlight;
 uniform DirLight dirlight;

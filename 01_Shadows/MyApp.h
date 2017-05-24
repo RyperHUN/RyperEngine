@@ -66,7 +66,7 @@ protected:
 	//Lights
 	SpotLight spotLight;
 	DirLight dirLight;
-	PointLight pointLight;
+	std::vector<PointLight> pointLight;
 	
 
 	gShaderProgram shader_Simple;
