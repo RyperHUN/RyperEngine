@@ -83,6 +83,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FrustumG.cpp" />
     <ClCompile Include="gCamera.cpp" />
     <ClCompile Include="gShaderProgram.cpp" />
     <ClCompile Include="gVertexBuffer.cpp" />
@@ -92,6 +93,7 @@
     <ClCompile Include="ObjParser_OGL3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FrustumG.h" />
     <ClInclude Include="GameObjects.h" />
     <ClInclude Include="gCamera.h" />
     <ClInclude Include="Geometry.h" />
