@@ -50,7 +50,8 @@ protected:
 	gCamera			m_camera;
 	// melysegi puffer kirajzolasa
 	gVertexBuffer	geom_Box;
-	gVertexBuffer   geom_Quad;
+	gVertexBuffer   buffer_Quad;
+	TriangleMesh    geom_Quad;
 	Sphere          geom_Sphere;
 
 	gShaderProgram	shader_EnvMap;

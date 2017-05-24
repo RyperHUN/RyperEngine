@@ -89,16 +89,16 @@ bool CMyApp::Init()
 
 	geom_Box.InitBuffers();
 //////////////////////////////
-	geom_Quad.AddAttribute(0,3);
-	geom_Quad.AddData(0, glm::vec3(-1.0f,  1.0f, 0.0f));
-	geom_Quad.AddData(0, glm::vec3(-1.0f, -1.0f, 0.0f));
-	geom_Quad.AddData(0, glm::vec3( 1.0f,  1.0f, 0.0f));
-	geom_Quad.AddData(0, glm::vec3( 1.0f, -1.0f, 0.0f));
+	buffer_Quad.AddAttribute(0,3);
+	buffer_Quad.AddData(0, glm::vec3(-1.0f,  1.0f, 0.0f));
+	buffer_Quad.AddData(0, glm::vec3(-1.0f, -1.0f, 0.0f));
+	buffer_Quad.AddData(0, glm::vec3( 1.0f,  1.0f, 0.0f));
+	buffer_Quad.AddData(0, glm::vec3( 1.0f, -1.0f, 0.0f));
 
-	geom_Quad.AddIndex(0,1,2);
-	geom_Quad.AddIndex(2,1,3);
+	buffer_Quad.AddIndex(0,1,2);
+	buffer_Quad.AddIndex(2,1,3);
 
-	geom_Quad.InitBuffers ();
+	buffer_Quad.InitBuffers ();
 	//
 	// shaderek betöltése
 	//
@@ -171,12 +171,15 @@ bool CMyApp::Init()
 	if (!m_env_program.LinkProgram())
 		return false;
 
+	geom_Quad = TriangleMesh (buffer_Quad);
+
 	GameObj sphere = GameObj(&shader_Simple, &geom_Sphere,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
 	sphere.shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
 
 	gameObjs.push_back(sphere);
 	sphere.pos = glm::vec3(2,0,-3);
 	gameObjs.push_back(sphere);
+	gameObjs.push_back(GameObj{&shader_Simple, &geom_Quad, glm::vec3{-1,-2,-5},glm::vec3(10,10,1)});
 
 	return true;
 }
@@ -254,27 +257,19 @@ void CMyApp::Render()
 	RenderState state;
 	state.camera = &m_camera;
 
-	shader_Simple.On();
-	{
-		glm::mat4 MVP = m_camera.GetViewProj ();
-		shader_Simple.SetUniform ("MVP", MVP);
-		shader_Simple.SetUniform ("M", glm::mat4(1.0f));
-		
-		for(auto& obj : gameObjs)
-			obj.Draw (state);
-	}
-	shader_Simple.Off ();
+	for(auto& obj : gameObjs)
+		obj.Draw (state);
 
 	//////////////////////////////Environment map drawing!!!
 	shader_EnvMap.On();
 	{
-		geom_Quad.On ();
+		buffer_Quad.On ();
 
 			shader_EnvMap.SetUniform("rayDirMatrix", m_camera.GetRayDirMtx ());
 			shader_EnvMap.SetCubeTexture ("texCube",0, textureCube_id);
-			geom_Quad.DrawIndexed(GL_TRIANGLES);
+			buffer_Quad.DrawIndexed(GL_TRIANGLES);
 			
-		geom_Quad.Off ();
+		buffer_Quad.Off ();
 	}
 	shader_EnvMap.Off();
 }

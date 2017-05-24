@@ -43,16 +43,20 @@ public:
 		//shader->Bind(state);
 		auto inverseTest = state.M * state.Minv;
 
-		glm::mat4 MVP = state.camera->GetViewProj() * state.M;
-		shader->SetUniform("MVP", MVP);
-		shader->SetUniform("M", state.M);
-		shader->SetUniform("Minv", state.Minv);
+		shader->On ();
+		{
+			glm::mat4 MVP = state.camera->GetViewProj() * state.M;
+			shader->SetUniform("MVP", MVP);
+			shader->SetUniform("M", state.M);
+			shader->SetUniform("Minv", state.Minv);
 
-		///TODO
-		for(auto& light : shaderLights)
-			light.uploadToGPU(*shader);
+			///TODO
+			for(auto& light : shaderLights)
+				light.uploadToGPU(*shader);
 
-		geometry->Draw();
+			geometry->Draw();
+		}
+		shader->Off();
 	}
 	virtual void Animate(float time, float dt)
 	{

@@ -6,12 +6,17 @@
 
 struct Geometry {
 	gVertexBuffer buffer;
+	Geometry(){}
 
-	void Draw() {
+	virtual void Draw() {
 		buffer.On();
 		buffer.DrawIndexed(GL_TRIANGLES);
 		buffer.Off();
 	}
+protected:
+	Geometry(gVertexBuffer &&buffer)
+		:buffer(buffer) 
+	{}
 };
 
 struct VertexData {
@@ -88,5 +93,18 @@ struct Sphere : public ParamSurface
 		vd.position = vd.normal * radius;
 		vd.uv = glm::vec2(u,v);
 		return vd;
+	}
+};
+
+struct TriangleMesh : public Geometry
+{
+	TriangleMesh (gVertexBuffer buffer)
+		:Geometry (std::move(buffer))
+	{
+	}
+	TriangleMesh (){}
+	void Create()
+	{
+		buffer.InitBuffers ();
 	}
 };
