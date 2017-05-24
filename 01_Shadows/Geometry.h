@@ -3,6 +3,7 @@
 #include "gVertexBuffer.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "Mesh_OGL3.h"
 
 struct Geometry {
 	gVertexBuffer buffer;
@@ -106,5 +107,19 @@ struct TriangleMesh : public Geometry
 	void Create()
 	{
 		buffer.InitBuffers ();
+	}
+};
+
+struct TriangleMeshLoaded : public Geometry
+{
+	Mesh * mesh;
+	TriangleMeshLoaded(Mesh *mesh = nullptr)
+		:mesh(mesh)
+	{
+	}
+	virtual void Draw()  override
+	{
+		if(mesh)
+			mesh->draw ();
 	}
 };

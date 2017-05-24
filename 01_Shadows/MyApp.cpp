@@ -9,7 +9,7 @@
 CMyApp::CMyApp(void)
 {
 	m_textureID = 0;
-	m_mesh = 0;
+	mesh_Suzanne = 0;
 }
 
 
@@ -142,8 +142,8 @@ bool CMyApp::Init()
 	m_textureID = TextureFromFile("texture.png");
 
 	// mesh betöltés
-	m_mesh = ObjParser::parse("suzanne.obj");
-	m_mesh->initBuffers();
+	mesh_Suzanne = ObjParser::parse("suzanne.obj");
+	mesh_Suzanne->initBuffers();
 
 	m_cow_mesh = ObjParser::parse("cow.obj");
 	m_cow_mesh->initBuffers();
@@ -191,8 +191,10 @@ bool CMyApp::Init()
 	
 	MaterialPtr material1 = std::make_shared<Material>(glm::vec3(0.1f,0,0),glm::vec3(0.8f, 0,0),glm::vec3(1,1,1));
 	MaterialPtr material2 = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
+	MaterialPtr material3 = std::make_shared<Material>(glm::vec3(0.0f,0.1f,0.1f), glm::vec3(0,0.7f,0.7f), glm::vec3(1, 1, 1));
 
 	geom_Quad = TriangleMesh (buffer_Quad);
+	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
 
 	GameObj *sphere = new GameObj(shaderLights,&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
 	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
@@ -210,6 +212,10 @@ bool CMyApp::Init()
 	quadObj->rotAxis = glm::vec3(-1,0,0);
 	quadObj->rotAngle = M_PI / 2.0;
 	gameObjs.push_back(quadObj);
+
+	GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
+	suzanne->scale = glm::vec3(5,5,5);
+	gameObjs.push_back (suzanne);
 
 	return true;
 }
@@ -260,7 +266,7 @@ void CMyApp::Clean()
 	m_env_program.Clean();
 	shader_EnvMap.Clean();
 
-	delete m_mesh;
+	delete mesh_Suzanne;
 	delete m_cow_mesh;
 }
 

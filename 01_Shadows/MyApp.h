@@ -52,11 +52,12 @@ protected:
 	gVertexBuffer   buffer_Quad;
 	TriangleMesh    geom_Quad;
 	Sphere          geom_Sphere;
+	TriangleMeshLoaded geom_Suzanne;
 
 	gShaderProgram	shader_EnvMap;
 	gShaderProgram	m_env_program;
 
-	Mesh			*m_mesh;
+	Mesh			*mesh_Suzanne;
 	Mesh			*m_cow_mesh;
 
 	GLuint			textureCube_id; // env map
