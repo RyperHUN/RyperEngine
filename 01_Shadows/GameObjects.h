@@ -27,14 +27,15 @@ public:
 	gShaderProgram *   shader;
 	std::shared_ptr<Material> material;
 	Geometry * geometry;
-	std::vector<ShaderLight> shaderLights;
+	std::vector<ShaderLight>& shaderLights;
 	glm::vec3 scale, pos, rotAxis;
 	float rotAngle = 0.0f;
 public:
-	GameObj(gShaderProgram* shader, Geometry * geom, std::shared_ptr<Material> material,glm::vec3 pos,
+	GameObj(std::vector<ShaderLight>& shaderLights,gShaderProgram* shader, Geometry * geom, std::shared_ptr<Material> material,glm::vec3 pos,
 		glm::vec3 scale = glm::vec3{1,1,1},
 		glm::vec3 rotAxis = glm::vec3{0,1,0})
-		:shader(shader), geometry(geom), pos(pos), scale(scale), rotAxis(rotAxis), material(material)
+		:shader(shader), geometry(geom), pos(pos), scale(scale), rotAxis(rotAxis), material(material),
+		shaderLights(shaderLights)
 	{
 	
 	}

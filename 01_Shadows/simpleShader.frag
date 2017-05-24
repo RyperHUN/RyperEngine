@@ -91,9 +91,9 @@ void main()
 	vec3 normal = normalize (frag_normal);
 	
 	vec3 color = ka;	
-	color += calcPointLight(pointlight,normal);
+	//color += calcPointLight(pointlight,normal);
 	//color += calcSpotLight (spotlight);
-	//color += calcDirLight (dirlight, normal);
+	color += calcDirLight (dirlight, normal);
 
 	fs_out_col = vec4(color, 1.0);
 	

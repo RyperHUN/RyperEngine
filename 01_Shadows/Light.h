@@ -7,12 +7,18 @@
 struct Light
 {
 	virtual void uploadToGPU (gShaderProgram &, std::string prefix) = 0;
+	virtual void Animate(float time, float dt)
+	{
+	}
 };
 
 struct ShaderLight
 {
 	Light* light;
 	std::string prefix;
+	ShaderLight (Light* light, std::string prefix)
+		:light(light), prefix(prefix)
+	{}
 	void uploadToGPU (gShaderProgram & program)
 	{
 		light->uploadToGPU (program, prefix);
@@ -52,6 +58,11 @@ public:
 	virtual void uploadToGPU(gShaderProgram & prog, std::string prefix) override
 	{
 		prog.SetUniform((prefix + ".direction").c_str(), glm::normalize(direction));
+	}
+	void Animate(float time, float dt) override
+	{
+		direction = glm::vec3(sinf(time), cosf(time), 0);
+		direction = glm::normalize(direction);
 	}
 };
 

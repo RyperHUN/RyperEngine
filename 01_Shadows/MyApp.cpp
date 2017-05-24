@@ -191,16 +191,16 @@ bool CMyApp::Init()
 
 	geom_Quad = TriangleMesh (buffer_Quad);
 
-	GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
-	sphere->shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
-	sphere->shaderLights.push_back(ShaderLight{&dirLight, "dirlight"});
-	sphere->shaderLights.push_back(ShaderLight{ &pointLight, "pointlight" });
+	GameObj *sphere = new GameObj(shaderLights,&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
+	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
+	shaderLights.push_back(ShaderLight{&dirLight, "dirlight"});
+	shaderLights.push_back(ShaderLight{ &pointLight, "pointlight" });
 
 	gameObjs.push_back(sphere);
 	GameObj * sphere2 = new GameObj (*sphere);
 	sphere2->pos = glm::vec3(2,0,-3);
 	gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1) };
+	Quadobj *quadObj = new Quadobj{ shaderLights, &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1) };
 	quadObj->rotAxis = glm::vec3(-1,0,0);
 	quadObj->rotAngle = M_PI / 2.0;
 	gameObjs.push_back(quadObj);
@@ -273,6 +273,8 @@ void CMyApp::Update()
 	// Update gameObj;
 	for(auto& obj : gameObjs)
 		obj->Animate (t, delta_time);
+	for(auto& light : shaderLights)
+		light.light->Animate(t, delta_time);
 }
 
 void CMyApp::Render()
