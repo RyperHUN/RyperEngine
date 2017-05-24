@@ -66,6 +66,7 @@ protected:
 	//Lights
 	SpotLight spotLight;
 	DirLight dirLight;
+	PointLight pointLight;
 	
 
 	gShaderProgram shader_Simple;

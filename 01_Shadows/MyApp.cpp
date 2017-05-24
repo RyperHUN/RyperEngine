@@ -184,6 +184,7 @@ bool CMyApp::Init()
 		return false;
 
 	dirLight = DirLight{ glm::vec3(-1,-1,0) };
+	pointLight = PointLight{glm::vec3(0,2,6)};
 	
 	MaterialPtr material1 = std::make_shared<Material>(glm::vec3(0.1f,0,0),glm::vec3(0.8f, 0,0),glm::vec3(1,1,1));
 	MaterialPtr material2 = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
@@ -193,6 +194,7 @@ bool CMyApp::Init()
 	GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
 	sphere->shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
 	sphere->shaderLights.push_back(ShaderLight{&dirLight, "dirlight"});
+	sphere->shaderLights.push_back(ShaderLight{ &pointLight, "pointlight" });
 
 	gameObjs.push_back(sphere);
 	GameObj * sphere2 = new GameObj (*sphere);

@@ -52,6 +52,7 @@ public:
 			shader->SetUniform("MVP", MVP);
 			shader->SetUniform("M", state.M);
 			shader->SetUniform("Minv", state.Minv);
+			shader->SetUniform("wEye", state.camera->GetEye ());
 
 			///TODO
 			for(auto& light : shaderLights)

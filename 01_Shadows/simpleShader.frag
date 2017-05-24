@@ -19,6 +19,16 @@ struct DirLight {
 	vec3 color;
 };
 
+struct PointLight {    
+    vec3 position;
+    
+    float constant;
+    float linear;
+    float quadratic;  
+
+	vec3 color;
+};  
+
 //uniform samplerCube cubeTexture; TODO
 
 uniform vec3 ka = vec3(0.2,0,0);
@@ -26,6 +36,8 @@ uniform vec3 kd = vec3(0.8,0,0);
 
 uniform SpotLight spotlight;
 uniform DirLight dirlight;
+uniform PointLight pointlight;
+uniform vec3 wEye;
 
 vec3 calcSpotLight (SpotLight light)
 {
@@ -57,13 +69,31 @@ vec3 calcDirLight(DirLight light, vec3 normal)
 	return diffuse;
 }
 
+vec3 calcPointLight (PointLight light, vec3 normal)
+{
+	vec3 toLight = normalize(light.position - wFragPos);
+	float diff = max(dot(normal, toLight), 0.0);
+
+	float dist = length(light.position - wFragPos);
+	//Lecsenges
+	float attenuation = 1.0f / 
+	(light.constant + light.linear * dist +  light.quadratic * (dist * dist));   
+
+	light.color = vec3(1,1,1);
+	vec3 diffuse = light.color * diff * kd;
+	diffuse *= attenuation; 
+
+	return diffuse;
+}
+
 void main()
 {
 	vec3 normal = normalize (frag_normal);
 	
 	vec3 color = ka;	
-	color += calcSpotLight (spotlight);
-	color += calcDirLight (dirlight, normal);
+	color += calcPointLight(pointlight,normal);
+	//color += calcSpotLight (spotlight);
+	//color += calcDirLight (dirlight, normal);
 
 	fs_out_col = vec4(color, 1.0);
 	

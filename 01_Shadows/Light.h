@@ -54,3 +54,23 @@ public:
 		prog.SetUniform((prefix + ".direction").c_str(), glm::normalize(direction));
 	}
 };
+
+struct PointLight : public Light
+{
+	glm::vec3 position;
+
+	float attuentationConst = 0.0f;
+	float attuentationLinear = 0.2f;
+	float attuentationQuadratic = 0.3f;
+public:
+	PointLight(glm::vec3 pos = glm::vec3(0, -1, 0))
+		: position(pos)
+	{}
+	virtual void uploadToGPU(gShaderProgram & prog, std::string prefix) override
+	{
+		prog.SetUniform((prefix + ".position").c_str(), position);
+		prog.SetUniform((prefix + ".linear").c_str(), attuentationLinear);
+		prog.SetUniform((prefix + ".constant").c_str(), attuentationConst);
+		prog.SetUniform((prefix + ".quadratic").c_str(), attuentationConst);
+	}
+};
