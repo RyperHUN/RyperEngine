@@ -84,4 +84,9 @@ public:
 		prog.SetUniform((prefix + ".constant").c_str(), attuentationConst);
 		prog.SetUniform((prefix + ".quadratic").c_str(), attuentationConst);
 	}
+	void Animate(float time, float dt) override
+	{
+		attuentationLinear += sin(time * 10) * dt * 0.1;
+		attuentationLinear = glm::clamp(attuentationLinear, 0.2f, 1.0f);
+	}
 };
