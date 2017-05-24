@@ -75,6 +75,9 @@
     <ClInclude Include="GameObjects.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">

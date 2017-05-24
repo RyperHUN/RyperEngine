@@ -7,12 +7,16 @@
 #include <glm/gtx/transform2.hpp>
 #include "Light.h"
 #include "gCamera.h"
+#include  "Material.h"
+#include <memory>
+
+using MaterialPtr = std::shared_ptr<Material>;
 
 struct RenderState
 {
 	gCamera * camera;
 	glm::mat4 M, V, P, Minv;
-	//Material *material;
+
 	//Texture* texture;
 	//Vector<light> lights;
 	//glm::vec3 lightPos;
@@ -21,17 +25,16 @@ struct RenderState
 class GameObj {
 public:
 	gShaderProgram *   shader;
-	//Material * material;
-	//Texture *  texture;
+	std::shared_ptr<Material> material;
 	Geometry * geometry;
 	std::vector<ShaderLight> shaderLights;
 	glm::vec3 scale, pos, rotAxis;
 	float rotAngle = 0.0f;
 public:
-	GameObj(gShaderProgram* shader, Geometry * geom, glm::vec3 pos, 
+	GameObj(gShaderProgram* shader, Geometry * geom, std::shared_ptr<Material> material,glm::vec3 pos,
 		glm::vec3 scale = glm::vec3{1,1,1},
 		glm::vec3 rotAxis = glm::vec3{0,1,0})
-		:shader(shader), geometry(geom), pos(pos), scale(scale), rotAxis(rotAxis)
+		:shader(shader), geometry(geom), pos(pos), scale(scale), rotAxis(rotAxis), material(material)
 	{
 	
 	}
@@ -53,6 +56,7 @@ public:
 			///TODO
 			for(auto& light : shaderLights)
 				light.uploadToGPU(*shader);
+			material->uploadToGpu (*shader);
 
 			geometry->Draw();
 		}
