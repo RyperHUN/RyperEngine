@@ -67,6 +67,6 @@ protected:
 
 	gShaderProgram shader_Simple;
 
-	std::vector<GameObj> gameObjs;
+	std::vector<GameObj*> gameObjs; ///TODO Delete
 };
 

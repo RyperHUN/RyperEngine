@@ -63,3 +63,20 @@ public:
 		rotAngle += dt;
 	}
 };
+
+struct Quadobj : public GameObj
+{
+	using GameObj::GameObj;
+
+	void Draw(RenderState state) override
+	{
+		glDisable(GL_CULL_FACE);
+
+		GameObj::Draw (state);
+
+		glEnable(GL_CULL_FACE);
+	}
+	virtual void Animate(float time, float dt) override
+	{
+	}
+};

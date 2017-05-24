@@ -173,13 +173,14 @@ bool CMyApp::Init()
 
 	geom_Quad = TriangleMesh (buffer_Quad);
 
-	GameObj sphere = GameObj(&shader_Simple, &geom_Sphere,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
-	sphere.shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
+	GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
+	sphere->shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
 
 	gameObjs.push_back(sphere);
-	sphere.pos = glm::vec3(2,0,-3);
-	gameObjs.push_back(sphere);
-	gameObjs.push_back(GameObj{&shader_Simple, &geom_Quad, glm::vec3{-1,-2,-5},glm::vec3(10,10,1)});
+	GameObj * sphere2 = new GameObj (*sphere);
+	sphere2->pos = glm::vec3(2,0,-3);
+	gameObjs.push_back(sphere2);
+	gameObjs.push_back(new Quadobj{&shader_Simple, &geom_Quad, glm::vec3{-1,-2,-5},glm::vec3(10,10,1)});
 
 	return true;
 }
@@ -248,7 +249,7 @@ void CMyApp::Update()
 
 	// Update gameObj;
 	for(auto& obj : gameObjs)
-		obj.Animate (t, delta_time);
+		obj->Animate (t, delta_time);
 }
 
 void CMyApp::Render()
@@ -258,7 +259,7 @@ void CMyApp::Render()
 	state.camera = &m_camera;
 
 	for(auto& obj : gameObjs)
-		obj.Draw (state);
+		obj->Draw (state);
 
 	//////////////////////////////Environment map drawing!!!
 	shader_EnvMap.On();
