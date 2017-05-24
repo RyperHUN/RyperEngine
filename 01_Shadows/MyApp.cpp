@@ -286,9 +286,16 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 {
 	m_camera.KeyboardDown(key);
 
+	static bool isWireFrame = false;
 	switch (key.keysym.sym)
 	{
-		;
+		case SDLK_f:
+			if(!isWireFrame)
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			else
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			isWireFrame = !isWireFrame;
+		break;
 	}
 }
 
