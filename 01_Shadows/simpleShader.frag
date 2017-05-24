@@ -50,6 +50,14 @@ vec3 calcSpotLight (SpotLight light)
 		float interp = smoothstep(spotlight.cutOff * 0.96,spotlight.cutOff,theta);
 	    color = mix(vec3(0,0,0),kd,interp);// Do lighting calculations
 	}
+
+	float dist = distance(wFragPos, spotlight.position);
+
+	if (dist > 10.0)
+	{
+		color *= 10.0f / dist; //attenuation with distance
+	}
+
 	return color;
 }
 
@@ -91,8 +99,8 @@ void main()
 	vec3 normal = normalize (frag_normal);
 	
 	vec3 color = ka;	
-	//color += calcPointLight(pointlight,normal);
-	//color += calcSpotLight (spotlight);
+	color += calcPointLight(pointlight,normal);
+	color += calcSpotLight (spotlight);
 	color += calcDirLight (dirlight, normal);
 
 	fs_out_col = vec4(color, 1.0);
