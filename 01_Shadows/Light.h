@@ -23,7 +23,7 @@ struct SpotLight : public Light
 {
 	glm::vec3 position;
 	glm::vec3 direction;
-	float cutOff = 20.5f;
+	float cutOff = 15.5f;
 	float outerCutOff = 25.5f;
 
 	//float constant;

@@ -33,9 +33,9 @@ vec3 calcSpotLight (SpotLight light)
 	float theta     = dot(lightDir, normalize(-spotlight.direction));
 	
 	vec3 color = vec3(0,0,0);
-	if(theta > spotlight.cutOff * 0.95) 
+	if(theta > spotlight.cutOff * 0.96) 
 	{
-		float interp = smoothstep(spotlight.cutOff * 0.95,spotlight.cutOff,theta);
+		float interp = smoothstep(spotlight.cutOff * 0.96,spotlight.cutOff,theta);
 	    color = mix(vec3(0,0,0),kd,interp);// Do lighting calculations
 	}
 	return color;
@@ -60,10 +60,13 @@ vec3 calcDirLight(DirLight light, vec3 normal)
 void main()
 {
 	vec3 normal = normalize (frag_normal);
-		
-	//fs_out_col = vec4(calcSpotLight (spotlight), 1);
-	fs_out_col = vec4(calcDirLight(dirlight, normal), 1);
 	
-	fs_out_col = vec4(normal, 1.0);
-	fs_out_col = vec4(frag_tex.xy, 0, 1);
+	vec3 color = ka;	
+	color += calcSpotLight (spotlight);
+	color += calcDirLight (dirlight, normal);
+
+	fs_out_col = vec4(color, 1.0);
+	
+	//fs_out_col = vec4(normal, 1.0);
+	//fs_out_col = vec4(frag_tex.xy, 0, 1);
 }
