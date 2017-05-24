@@ -53,6 +53,7 @@ protected:
 	TriangleMesh    geom_Quad;
 	Sphere          geom_Sphere;
 	TriangleMeshLoaded geom_Suzanne;
+	TriangleMeshLoaded geom_Cow;
 
 	gShaderProgram	shader_EnvMap;
 	gShaderProgram	m_env_program;
@@ -75,4 +76,6 @@ protected:
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete
 };
+
+
 

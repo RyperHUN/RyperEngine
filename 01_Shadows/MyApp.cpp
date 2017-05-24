@@ -6,8 +6,22 @@
 
 #include "ObjParser_OGL3.h"
 
+float randomPoint()
+{
+	int modulus = 20000;
+	float random = rand() % modulus;
+	random = random / (modulus / 2.0f) - 1.0f;
+	return random;
+}
+//returns random vec [-1,1]
+glm::vec3 randomVec()
+{
+	return glm::vec3(randomPoint(), randomPoint(), randomPoint());
+}
+
 CMyApp::CMyApp(void)
 {
+	srand(2);
 	m_textureID = 0;
 	mesh_Suzanne = 0;
 }
@@ -195,6 +209,7 @@ bool CMyApp::Init()
 
 	geom_Quad = TriangleMesh (buffer_Quad);
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
+	geom_Cow = TriangleMeshLoaded(m_cow_mesh);
 
 	GameObj *sphere = new GameObj(shaderLights,&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
 	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
@@ -216,6 +231,24 @@ bool CMyApp::Init()
 	GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
 	suzanne->scale = glm::vec3(5,5,5);
 	gameObjs.push_back (suzanne);
+	for(int i = 0;i < 10; i++)
+	{
+		GameObj * obj = new GameObj(*suzanne);
+		gameObjs.push_back (obj);
+		//if(i %2 == 0)
+		//	obj->geometry = &geom_Cow;
+	}
+
+	float scaleFactor = 50.0f;
+	for(auto &obj : gameObjs)
+	{
+		glm::vec3 random = randomVec();
+		float randomY = random.y * 3;
+		random *= scaleFactor;
+		random.y = 10 + randomY;
+		obj->pos = random;
+	}
+	quadObj->pos = glm::vec3(0,0,0);
 
 	return true;
 }
