@@ -21,7 +21,6 @@
 class CMyApp
 {
 public:
-	SpotLight spotLight;
 	CMyApp(void);
 	~CMyApp(void);
 
@@ -63,6 +62,10 @@ protected:
 	GLuint			textureCube_id; // env map
 
 	int			m_width = 640, m_height = 480;
+
+	//Lights
+	SpotLight spotLight;
+	DirLight dirLight;
 	
 
 	gShaderProgram shader_Simple;

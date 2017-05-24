@@ -40,3 +40,17 @@ struct SpotLight : public Light
 		prog.SetUniform ((prefix + ".outerCutOff").c_str(), glm::cos(glm::radians(cutOff)));
 	}
 };
+
+struct DirLight : public Light
+{
+private:
+	glm::vec3 direction;
+public:
+	DirLight (glm::vec3 dir = glm::vec3(0,-1,0))
+		:direction(glm::normalize(dir))
+	{}
+	virtual void uploadToGPU(gShaderProgram & prog, std::string prefix) override
+	{
+		prog.SetUniform((prefix + ".direction").c_str(), glm::normalize(direction));
+	}
+};
