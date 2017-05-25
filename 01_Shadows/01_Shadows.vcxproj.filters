@@ -22,6 +22,9 @@
     <Filter Include="Utils\Helpers">
       <UniqueIdentifier>{4ea6841d-ce53-4df4-a2c3-aec7ee013f35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Debug">
+      <UniqueIdentifier>{460e6e20-8cb3-4acd-a61a-b9265f1af071}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -109,6 +112,12 @@
     </None>
     <None Include="shadowShader.frag">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="quadTexturer.vert">
+      <Filter>Shaders\Debug</Filter>
+    </None>
+    <None Include="quadTexturer.frag">
+      <Filter>Shaders\Debug</Filter>
     </None>
   </ItemGroup>
 </Project>

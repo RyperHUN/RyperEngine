@@ -78,6 +78,7 @@ protected:
 	gShaderProgram  shader_Simple;
 	gShaderProgram  shader_Shadow;
 	gShaderProgram	shader_EnvMap;
+	gShaderProgram  shader_DebugQuadTexturer;
 
 
 	std::vector<ShaderLight> shaderLights;

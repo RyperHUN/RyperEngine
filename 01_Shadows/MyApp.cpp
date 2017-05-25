@@ -141,6 +141,10 @@ bool CMyApp::Init()
 	shader_Shadow.AttachShader(GL_FRAGMENT_SHADER, "shadowShader.frag");
 	shader_Shadow.LinkProgram ();
 
+	shader_DebugQuadTexturer.AttachShader (GL_VERTEX_SHADER, "quadTexturer.vert");
+	shader_DebugQuadTexturer.AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
+	shader_DebugQuadTexturer.LinkProgram ();
+
 	if (!shader_EnvMap.LinkProgram())
 	{
 		return false;
@@ -338,7 +342,6 @@ void CMyApp::Render()
 	//////////////////////////////First render to depth map
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	
 
 	for (auto& obj : gameObjs)
 		obj->Draw(state,&shader_Shadow);
@@ -360,6 +363,17 @@ void CMyApp::Render()
 		buffer_Quad.Off ();
 	}
 	shader_EnvMap.Off();
+	//////////////////////////////Shadow map debug texture drawing
+	shader_DebugQuadTexturer.On();
+	{
+		buffer_Quad.On();
+			
+			shader_DebugQuadTexturer.SetUniform("M",
+				glm::translate(glm::vec3(0.5,0.5,0))*glm::scale(glm::vec3(0.5,0.5,1)));
+			buffer_Quad.DrawIndexed(GL_TRIANGLES);
+		buffer_Quad.Off();
+	}
+	shader_DebugQuadTexturer.Off();
 }
 
 void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
