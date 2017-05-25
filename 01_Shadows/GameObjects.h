@@ -16,6 +16,7 @@ struct RenderState
 {
 	glm::vec3 wEye;
 	glm::mat4 M, PV, Minv;
+	glm::mat4 LightSpaceMtx;
 
 	//Texture* texture;
 	//Vector<light> lights;
@@ -56,6 +57,7 @@ public:
 			shaderParam->SetUniform("M", state.M);
 			shaderParam->SetUniform("Minv", state.Minv);
 			shaderParam->SetUniform("wEye", state.wEye);
+			shaderParam->SetUniform("LightSpaceMtx", state.LightSpaceMtx);
 
 			///TODO
 			for(auto& light : shaderLights)

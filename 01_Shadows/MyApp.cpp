@@ -346,7 +346,8 @@ void CMyApp::Render()
 		glm::vec3(0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-	state.PV = lightSpaceMatrix;
+
+	state.LightSpaceMtx = lightSpaceMatrix;
 	glDisable(GL_CULL_FACE);
 
 	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT);
@@ -360,6 +361,7 @@ void CMyApp::Render()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	///////////////////////////Normal rendering
+	shader_Simple.SetTexture ("shadowMap",0,texture_ShadowMap);
 	state.PV = m_camera.GetViewProj();
 	glViewport(0, 0, m_width, m_height);
 	for(auto& obj : gameObjs)

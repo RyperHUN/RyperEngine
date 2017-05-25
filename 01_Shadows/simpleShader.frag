@@ -3,6 +3,8 @@
 in vec3 wFragPos;
 in vec3 frag_normal;
 in vec2 frag_tex;
+in vec4 fragPosLightSpace4;
+uniform sampler2D shadowMap;
 
 out vec4 fs_out_col;
 
@@ -96,18 +98,38 @@ vec3 calcPointLight (PointLight light, vec3 normal)
 	return diffuse;
 }
 
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // Transform to [0,1] range for texture coord
+    projCoords = projCoords * 0.5 + 0.5;
+    // Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float shadowDepth = texture(shadowMap, projCoords.xy).r; 
+    // Get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // Check whether current frag pos is in shadow
+    if(currentDepth < shadowDepth)
+		return 1.0;
+	else
+		return 0.0;
+}  
+
 void main()
 {
 	vec3 normal = normalize (frag_normal);
 	
 	vec3 color = ka;
-	//for(int i = 0; i < POINT_LIGHT_NUM; i++)
-	//	color += calcPointLight(pointlight[i],normal);
-	//color += calcSpotLight (spotlight);
-	color += calcDirLight (dirlight, normal);
-
-	fs_out_col = vec4(color, 1.0);
+	float isShadow = ShadowCalculation(fragPosLightSpace4);
 	
+		//for(int i = 0; i < POINT_LIGHT_NUM; i++)
+		//	color += calcPointLight(pointlight[i],normal);
+		//color += calcSpotLight (spotlight);
+	if(isShadow > 0.5)
+	{
+		color += calcDirLight (dirlight, normal);
+	}
+	fs_out_col = vec4(color, 1.0);
 	//fs_out_col = vec4(normal, 1.0);
 	//fs_out_col = vec4(frag_tex.xy, 0, 1);
 }

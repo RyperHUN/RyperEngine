@@ -62,8 +62,8 @@ public:
 	}
 	void Animate(float time, float dt) override
 	{
-		direction = glm::vec3(sinf(time), cosf(time), 0);
-		direction = glm::normalize(direction);
+		//direction = glm::vec3(sinf(time), cosf(time), 0);
+		//direction = glm::normalize(direction);
 	}
 };
 
