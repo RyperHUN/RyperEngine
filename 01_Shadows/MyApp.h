@@ -55,7 +55,7 @@ protected:
 	TriangleMeshLoaded geom_Suzanne;
 	TriangleMeshLoaded geom_Cow;
 
-	gShaderProgram	shader_EnvMap;
+	
 	gShaderProgram	m_env_program;
 
 	Mesh			*mesh_Suzanne;
@@ -75,7 +75,10 @@ protected:
 	std::vector<PointLight> pointLight;
 	
 
-	gShaderProgram shader_Simple;
+	gShaderProgram  shader_Simple;
+	gShaderProgram  shader_Shadow;
+	gShaderProgram	shader_EnvMap;
+
 
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete

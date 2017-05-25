@@ -137,6 +137,10 @@ bool CMyApp::Init()
 	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
 	shader_EnvMap.AttachShader(GL_FRAGMENT_SHADER, "envmap.frag");
 
+	shader_Shadow.AttachShader(GL_VERTEX_SHADER, "shadowShader.vert");
+	shader_Shadow.AttachShader(GL_FRAGMENT_SHADER, "shadowShader.frag");
+	shader_Shadow.LinkProgram ();
+
 	if (!shader_EnvMap.LinkProgram())
 	{
 		return false;
@@ -334,10 +338,11 @@ void CMyApp::Render()
 	//////////////////////////////First render to depth map
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glClear(GL_DEPTH_BUFFER_BIT);
-		
 	
+
 	for (auto& obj : gameObjs)
-		obj->Draw(state);
+		obj->Draw(state,&shader_Shadow);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	for(auto& obj : gameObjs)

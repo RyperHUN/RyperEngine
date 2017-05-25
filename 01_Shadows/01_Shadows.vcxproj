@@ -109,6 +109,8 @@
   <ItemGroup>
     <None Include="envmap.frag" />
     <None Include="envmap.vert" />
+    <None Include="shadowShader.frag" />
+    <None Include="shadowShader.vert" />
     <None Include="simpleShader.frag" />
     <None Include="simpleShader.vert" />
     <None Include="skybox.frag" />

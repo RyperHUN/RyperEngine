@@ -104,5 +104,11 @@
     <None Include="simpleShader.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shadowShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shadowShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
