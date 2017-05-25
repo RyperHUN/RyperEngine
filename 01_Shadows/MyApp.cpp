@@ -335,8 +335,9 @@ void CMyApp::Render()
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glClear(GL_DEPTH_BUFFER_BIT);
 		
-	/*ConfigureShaderAndMatrices();
-	RenderScene();*/
+	
+	for (auto& obj : gameObjs)
+		obj->Draw(state);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	for(auto& obj : gameObjs)

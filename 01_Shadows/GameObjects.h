@@ -39,7 +39,9 @@ public:
 	{
 	
 	}
-	virtual void Draw(RenderState state) {
+	virtual void Draw(RenderState state, gShaderProgram * shaderParam = nullptr) {
+		if(shaderParam == nullptr)
+			shaderParam = shader;
 		state.M = glm::translate(pos) * glm::rotate(rotAngle, rotAxis) * glm::scale(scale);
 		state.Minv = glm::inverse(state.M);
 		//state.Minv = glm::scale(1.0f / scale) *  glm::rotate(-rotAngle, rotAxis) * glm::translate(-pos);
@@ -47,22 +49,22 @@ public:
 		//shader->Bind(state);
 		auto inverseTest = state.M * state.Minv;
 
-		shader->On ();
+		shaderParam->On ();
 		{
 			glm::mat4 MVP = state.PV * state.M;
-			shader->SetUniform("MVP", MVP);
-			shader->SetUniform("M", state.M);
-			shader->SetUniform("Minv", state.Minv);
-			shader->SetUniform("wEye", state.wEye);
+			shaderParam->SetUniform("MVP", MVP);
+			shaderParam->SetUniform("M", state.M);
+			shaderParam->SetUniform("Minv", state.Minv);
+			shaderParam->SetUniform("wEye", state.wEye);
 
 			///TODO
 			for(auto& light : shaderLights)
-				light.uploadToGPU(*shader);
-			material->uploadToGpu (*shader);
+				light.uploadToGPU(*shaderParam);
+			material->uploadToGpu (*shaderParam);
 
 			geometry->Draw();
 		}
-		shader->Off();
+		shaderParam->Off();
 	}
 
 	virtual void Animate(float time, float dt)
@@ -75,11 +77,11 @@ struct Quadobj : public GameObj
 {
 	using GameObj::GameObj;
 
-	void Draw(RenderState state) override
+	void Draw(RenderState state, gShaderProgram * shaderParam = nullptr) override
 	{
 		glDisable(GL_CULL_FACE);
 
-		GameObj::Draw (state);
+		GameObj::Draw (state, shaderParam);
 
 		glEnable(GL_CULL_FACE);
 	}
