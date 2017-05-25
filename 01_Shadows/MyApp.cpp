@@ -250,6 +250,8 @@ bool CMyApp::Init()
 	}
 	quadObj->pos = glm::vec3(0,0,0);
 
+	CreateFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
+
 	return true;
 }
 
@@ -326,7 +328,16 @@ void CMyApp::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	RenderState state;
-	state.camera = &m_camera;
+	state.PV = m_camera.GetViewProj ();
+	state.wEye = m_camera.GetEye ();
+
+	//////////////////////////////First render to depth map
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	glClear(GL_DEPTH_BUFFER_BIT);
+		
+	/*ConfigureShaderAndMatrices();
+	RenderScene();*/
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	for(auto& obj : gameObjs)
 		obj->Draw (state);

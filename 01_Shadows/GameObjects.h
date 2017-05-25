@@ -14,8 +14,8 @@ using MaterialPtr = std::shared_ptr<Material>;
 
 struct RenderState
 {
-	gCamera * camera;
-	glm::mat4 M, V, P, Minv;
+	glm::vec3 wEye;
+	glm::mat4 M, PV, Minv;
 
 	//Texture* texture;
 	//Vector<light> lights;
@@ -49,11 +49,11 @@ public:
 
 		shader->On ();
 		{
-			glm::mat4 MVP = state.camera->GetViewProj() * state.M;
+			glm::mat4 MVP = state.PV * state.M;
 			shader->SetUniform("MVP", MVP);
 			shader->SetUniform("M", state.M);
 			shader->SetUniform("Minv", state.Minv);
-			shader->SetUniform("wEye", state.camera->GetEye ());
+			shader->SetUniform("wEye", state.wEye);
 
 			///TODO
 			for(auto& light : shaderLights)
@@ -64,6 +64,7 @@ public:
 		}
 		shader->Off();
 	}
+
 	virtual void Animate(float time, float dt)
 	{
 		rotAngle += dt;
