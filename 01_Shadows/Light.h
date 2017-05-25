@@ -50,8 +50,9 @@ struct SpotLight : public Light
 struct DirLight : public Light
 {
 private:
-	glm::vec3 direction;
+	
 public:
+	glm::vec3 direction;
 	DirLight (glm::vec3 dir = glm::vec3(0,-1,0))
 		:direction(glm::normalize(dir))
 	{}
@@ -61,8 +62,8 @@ public:
 	}
 	void Animate(float time, float dt) override
 	{
-		//direction = glm::vec3(sinf(time), cosf(time), 0);
-		//direction = glm::normalize(direction);
+		direction = glm::vec3(sinf(time), cosf(time), 0);
+		direction = glm::normalize(direction);
 	}
 };
 

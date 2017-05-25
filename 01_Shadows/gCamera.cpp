@@ -8,7 +8,7 @@
 /// <summary>
 /// Initializes a new instance of the <see cref="gCamera"/> class.
 /// </summary>
-gCamera::gCamera(void) : m_eye(0.0f, 20.0f, 20.0f), lookAtPoint(0.0f), upVector(0.0f, 1.0f, 0.0f), m_speed(16.0f), m_goFw(0), m_goRight(0), m_slow(false)
+gCamera::gCamera(void) : m_eye(0.0f, 0.0f, 0.0f), lookAtPoint(0.0f), upVector(0.0f, 1.0f, 0.0f), m_speed(30.0f), m_goFw(0), m_goRight(0), m_slow(false)
 {
 	SetView( glm::vec3(0,20,20), glm::vec3(0,0,0), glm::vec3(0,1,0));
 

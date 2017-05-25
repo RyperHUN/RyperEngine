@@ -336,18 +336,32 @@ void CMyApp::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	RenderState state;
-	state.PV = m_camera.GetViewProj ();
 	state.wEye = m_camera.GetEye ();
 
 	//////////////////////////////First render to depth map
+	GLfloat near_plane = 0.1f, far_plane = 100.0f;
+	glm::mat4 lightProjection = glm::ortho(-60.0f, 60.0f, 100.0f, -100.0f, -80.0f, 80.0f);
+	glm::vec3 pos = -dirLight.direction * 4.0f;
+	glm::mat4 lightView = glm::lookAt(pos,
+		glm::vec3(0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+	state.PV = lightSpaceMatrix;
+	glDisable(GL_CULL_FACE);
+
+	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	{
+		glClear(GL_DEPTH_BUFFER_BIT);
 
-	for (auto& obj : gameObjs)
-		obj->Draw(state,&shader_Shadow);
-
+		for (auto& obj : gameObjs)
+			obj->Draw(state,&shader_Shadow);
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	///////////////////////////Normal rendering
+	state.PV = m_camera.GetViewProj();
+	glViewport(0, 0, m_width, m_height);
 	for(auto& obj : gameObjs)
 		obj->Draw (state);
 
