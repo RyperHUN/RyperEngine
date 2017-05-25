@@ -65,6 +65,9 @@ protected:
 
 	int			m_width = 640, m_height = 480;
 
+	GLuint frameBuffer;
+	GLuint texture_ShadowMap;
+
 	//Lights
 	SpotLight spotLight;
 	DirLight dirLight;

@@ -255,17 +255,17 @@ bool CMyApp::Init()
 
 void CMyApp::CreateFBO(int w, int h)
 {
-	/*static bool was_created = false;
+	static bool was_created = false;
 	if (was_created)
 	{
-		glDeleteFramebuffers(1, &m_fbo);
-		glDeleteTextures(1, &m_shadow_texture);		
+		glDeleteFramebuffers(1, &frameBuffer);
+		glDeleteTextures(1, &texture_ShadowMap);
 	}
-	glGenFramebuffers(1, &m_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+	glGenFramebuffers(1, &frameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
-	glGenTextures(1, &m_shadow_texture);
-	glBindTexture(GL_TEXTURE_2D, m_shadow_texture);
+	glGenTextures(1, &texture_ShadowMap);
+	glBindTexture(GL_TEXTURE_2D, texture_ShadowMap);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -273,7 +273,7 @@ void CMyApp::CreateFBO(int w, int h)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_shadow_texture, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture_ShadowMap, 0);
 
 	glDrawBuffer(GL_NONE);
 
@@ -284,7 +284,7 @@ void CMyApp::CreateFBO(int w, int h)
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	was_created = true;*/
+	was_created = true;
 }
 
 void CMyApp::Clean()
