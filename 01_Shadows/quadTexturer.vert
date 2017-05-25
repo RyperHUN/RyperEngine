@@ -1,9 +1,9 @@
 #version 430
 
 // VBO-ból érkezõ változók
-in vec3 vs_in_pos;
-in vec3 vs_in_normal;
-in vec2 vs_in_tex;
+layout (location = 0) in vec3 vs_in_pos;
+layout (location = 1) in vec3 vs_in_normal;
+layout (location = 2) in vec2 vs_in_tex;
 
 uniform mat4 M;
 

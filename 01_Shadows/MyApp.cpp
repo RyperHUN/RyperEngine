@@ -22,7 +22,7 @@ glm::vec3 randomVec()
 CMyApp::CMyApp(void)
 {
 	srand(2);
-	m_textureID = 0;
+	texture_Map = 0;
 	mesh_Suzanne = 0;
 }
 
@@ -161,7 +161,7 @@ bool CMyApp::Init()
 	m_camera.SetProj(45.0f, 640.0f/480.0f, 0.01f, 1000.0f);
 
 	// textúra betöltése
-	m_textureID = TextureFromFile("texture.png");
+	texture_Map = TextureFromFile("texture.png");
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("suzanne.obj");
@@ -300,7 +300,7 @@ void CMyApp::CreateFBO(int w, int h)
 void CMyApp::Clean()
 {
 	glDeleteTextures(1, &textureCube_id);
-	glDeleteTextures(1, &m_textureID);
+	glDeleteTextures(1, &texture_Map);
 	glDeleteFramebuffers(1, &m_fbo);
 
 	m_env_program.Clean();
@@ -368,8 +368,10 @@ void CMyApp::Render()
 	{
 		buffer_Quad.On();
 			
+			shader_DebugQuadTexturer.SetTexture("loadedTex", 0, texture_ShadowMap);
 			shader_DebugQuadTexturer.SetUniform("M",
 				glm::translate(glm::vec3(0.5,0.5,0))*glm::scale(glm::vec3(0.5,0.5,1)));
+			//shader_DebugQuadTexturer.SetUniform("M", glm::mat4(1.0));
 			buffer_Quad.DrawIndexed(GL_TRIANGLES);
 		buffer_Quad.Off();
 	}

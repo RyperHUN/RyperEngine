@@ -43,7 +43,7 @@ protected:
 	void CreateFBO(int, int);
 
 	// OpenGL-es dolgok
-	GLuint m_textureID; // textúra erõforrás azonosító
+	GLuint texture_Map; // textúra erõforrás azonosító
 	GLuint m_fbo; //Frame Buffer Object
 
 	gCamera			m_camera;
@@ -68,6 +68,7 @@ protected:
 	GLuint frameBuffer;
 	GLuint texture_ShadowMap;
 	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+
 
 	//Lights
 	SpotLight spotLight;
