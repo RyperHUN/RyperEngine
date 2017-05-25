@@ -361,7 +361,9 @@ void CMyApp::Render()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	///////////////////////////Normal rendering
-	shader_Simple.SetTexture ("shadowMap",0,texture_ShadowMap);
+	shader_Simple.On();
+	shader_Simple.SetTexture ("shadowMap",2,texture_ShadowMap);
+	shader_Simple.SetTexture ("diffuseTex", 0, texture_Map);
 	state.PV = m_camera.GetViewProj();
 	glViewport(0, 0, m_width, m_height);
 	for(auto& obj : gameObjs)
@@ -384,7 +386,7 @@ void CMyApp::Render()
 	{
 		buffer_Quad.On();
 			
-			shader_DebugQuadTexturer.SetTexture("loadedTex", 0, texture_ShadowMap);
+			shader_DebugQuadTexturer.SetTexture("loadedTex", 2, texture_ShadowMap);
 			shader_DebugQuadTexturer.SetUniform("M",
 				glm::translate(glm::vec3(0.5,0.5,0))*glm::scale(glm::vec3(0.5,0.5,1)));
 			//shader_DebugQuadTexturer.SetUniform("M", glm::mat4(1.0));
