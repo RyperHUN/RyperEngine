@@ -388,7 +388,7 @@ void CMyApp::Render()
 			shader_DebugQuadTexturer.SetUniform("M",
 				glm::translate(glm::vec3(0.5,0.5,0))*glm::scale(glm::vec3(0.5,0.5,1)));
 			//shader_DebugQuadTexturer.SetUniform("M", glm::mat4(1.0));
-			buffer_Quad.DrawIndexed(GL_TRIANGLES);
+			//buffer_Quad.DrawIndexed(GL_TRIANGLES);
 		buffer_Quad.Off();
 	}
 	shader_DebugQuadTexturer.Off();
