@@ -85,21 +85,26 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 	return diffuse + specular;
 }
 
-vec3 calcPointLight (PointLight light, vec3 normal)
+vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir)
 {
 	vec3 toLight = normalize(light.position - wFragPos);
 	float diff = max(dot(normal, toLight), 0.0);
+	// Specular shading
+    vec3 reflectDir = reflect(-toLight, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
 	float dist = length(light.position - wFragPos);
 	//Lecsenges
 	float attenuation = 1.0f / 
 	(light.constant + light.linear * dist +  light.quadratic * (dist * dist));   
 
-	light.color = vec3(1,1,1);
-	vec3 diffuse = light.color * diff * kd * texture(diffuseTex, frag_tex).xyz;
-	diffuse *= attenuation; 
+	light.color   = vec3(1,1,1);
+	vec3 diffuse  = light.color * diff * kd * texture(diffuseTex, frag_tex).xyz;
+	vec3 specular = light.color * spec * ks * texture(diffuseTex, frag_tex).xyz;
+	diffuse  *= attenuation; 
+	specular *= attenuation;
 
-	return diffuse;
+	return diffuse + specular;
 }
 
 float ShadowCalculation(vec4 fragPosLightSpace)
@@ -128,13 +133,13 @@ void main()
 	vec3 color = ka * texture(diffuseTex, frag_tex).xyz;
 	float isShadow = ShadowCalculation(fragPosLightSpace4);
 	
-	//for(int i = 0; i < POINT_LIGHT_NUM; i++)
-	//	color += calcPointLight(pointlight[i],normal);
+	for(int i = 0; i < POINT_LIGHT_NUM; i++)
+		color += calcPointLight(pointlight[i],normal,viewDir);
 	//color += calcSpotLight (spotlight);
-	if(isShadow > 0.5)
-	{
-		color += calcDirLight (dirlight, normal, viewDir);
-	}
+	//if(isShadow > 0.5)
+	//{
+	//	color += calcDirLight (dirlight, normal, viewDir);
+	//}
 	fs_out_col = vec4(color, 1.0);
 	//fs_out_col = texture(diffuseTex, frag_tex);
 	//fs_out_col = vec4(normal, 1.0);
