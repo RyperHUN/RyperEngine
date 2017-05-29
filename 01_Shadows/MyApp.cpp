@@ -164,8 +164,6 @@ bool CMyApp::Init()
 	// egyéb inicializálás
 	//
 
-	m_camera.SetProj(45.0f, 640.0f/480.0f, 0.01f, 1000.0f);
-
 	// textúra betöltése
 	texture_Map = TextureFromFile("texture.png");
 
@@ -269,6 +267,7 @@ bool CMyApp::Init()
 	lightRenderer = LightRenderer (&geom_Box, &shader_LightRender);
 	for(auto& light : pointLight)
 		lightRenderer.AddLight(&light);
+	lightRenderer.AddLight(&dirLight);
 
 	return true;
 }

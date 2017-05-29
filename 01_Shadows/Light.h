@@ -9,6 +9,7 @@
 
 struct Light
 {
+	glm::vec3 position;
 	virtual void uploadToGPU (gShaderProgram &, std::string prefix) = 0;
 	virtual void Animate(float time, float dt)
 	{
@@ -30,7 +31,6 @@ struct ShaderLight
 
 struct SpotLight : public Light
 {
-	glm::vec3 position;
 	glm::vec3 direction;
 	float cutOff = 15.5f;
 	float outerCutOff = 25.5f;
@@ -53,34 +53,40 @@ struct SpotLight : public Light
 struct DirLight : public Light
 {
 private:
-	
+	float distance = 100.0f;
 public:
 	glm::vec3 direction;
 	DirLight (glm::vec3 dir = glm::vec3(0,-1,0))
-		:direction(glm::normalize(dir))
-	{}
+	{
+		SetDir(dir);
+	}
 	virtual void uploadToGPU(gShaderProgram & prog, std::string prefix) override
 	{
 		prog.SetUniform((prefix + ".direction").c_str(), glm::normalize(direction));
 	}
 	void Animate(float time, float dt) override
 	{
-		//direction = glm::vec3(sinf(time), cosf(time), 0);
-		//direction = glm::normalize(direction);
+		glm::vec3 dir = glm::vec3(sinf(time), cosf(time), 0);
+		SetDir(dir);
+	}
+	void SetDir (glm::vec3 dir)
+	{
+		direction = glm::normalize(dir);
+		position  = -direction * distance;
 	}
 };
 
 struct PointLight : public Light
 {
-	glm::vec3 position;
 
 	float attuentationConst = 0.0f;
 	float attuentationLinear = 0.2f;
 	float attuentationQuadratic = 0.3f;
 public:
 	PointLight(glm::vec3 pos = glm::vec3(0, -1, 0))
-		: position(pos)
-	{}
+	{
+		position = pos;
+	}
 	virtual void uploadToGPU(gShaderProgram & prog, std::string prefix) override
 	{
 		prog.SetUniform((prefix + ".position").c_str(), position);
@@ -97,7 +103,7 @@ public:
 
 struct LightRenderer
 {
-	std::vector<PointLight*> lights;
+	std::vector<Light*> lights;
 	Geometry* geom;
 	gShaderProgram * shader;
 	LightRenderer(){}
@@ -105,7 +111,7 @@ struct LightRenderer
 		: geom(geom), shader(shader)
 	{
 	}
-	void AddLight(PointLight * light)
+	void AddLight(Light * light)
 	{
 		lights.push_back(light);
 	}
@@ -117,7 +123,7 @@ struct LightRenderer
 		{
 			for(auto& light : lights)
 			{
-				glm::mat4 MVP = VP * glm::translate(light->position) * glm::scale(glm::vec3(0.1,0.1,0.1));
+				glm::mat4 MVP = VP * glm::translate(light->position) * glm::scale(glm::vec3(0.15,0.15,0.15));
 				shader->SetUniform("MVP",MVP);
 				geom->Draw();
 			}

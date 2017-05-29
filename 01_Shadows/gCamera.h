@@ -104,6 +104,7 @@ public:
 	float	m_goRight;
 	float   m_goUp = 0.0f;
 
+	float zNear,zFar;
 	
 };
 

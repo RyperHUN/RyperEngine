@@ -8,13 +8,16 @@
 /// <summary>
 /// Initializes a new instance of the <see cref="gCamera"/> class.
 /// </summary>
-gCamera::gCamera(void) : m_eye(0.0f, 0.0f, 0.0f), lookAtPoint(0.0f), upVector(0.0f, 1.0f, 0.0f), m_speed(30.0f), m_goFw(0), m_goRight(0), m_slow(false)
+gCamera::gCamera(void) 
+	: m_eye(0.0f, 0.0f, 0.0f), lookAtPoint(0.0f),
+	upVector(0.0f, 1.0f, 0.0f), m_speed(30.0f), m_goFw(0), m_goRight(0), m_slow(false)
+	,zFar(10'000'000'000.0f),zNear(0.1f)
 {
 	SetView( glm::vec3(0,20,20), glm::vec3(0,0,0), glm::vec3(0,1,0));
 
 	m_dist = glm::length( lookAtPoint - m_eye );	
 
-	SetProj(45.0f, 640/480.0f, 0.001f, 1000.0f);
+	SetProj(45.0f, 640/480.0f, zNear, zFar);
 }
 
 gCamera::gCamera(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _up) : m_speed(16.0f), m_goFw(0), m_goRight(0), m_dist(10), m_slow(false)
@@ -87,9 +90,7 @@ void gCamera::SetSpeed(float _val)
 
 void gCamera::Resize(int _w, int _h)
 {
-	m_matProj = glm::perspective(	45.0f, _w/(float)_h, 0.01f, 1000.0f);
-
-	m_matViewProj = m_matProj * m_viewMatrix;
+	SetProj(45.0f, _w / (float)_h, zNear, zFar);
 }
 
 void gCamera::KeyboardDown(SDL_KeyboardEvent& key)
