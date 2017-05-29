@@ -1,5 +1,8 @@
 #pragma once
 
+// GLEW
+#include <GL/glew.h>
+
 #include "gShaderProgram.h"
 #include <glm/glm.hpp>
 #include <string>
@@ -89,5 +92,37 @@ public:
 	{
 		attuentationLinear += sin(time * 10) * dt * 0.1;
 		attuentationLinear = glm::clamp(attuentationLinear, 0.2f, 1.0f);
+	}
+};
+
+struct LightRenderer
+{
+	std::vector<PointLight*> lights;
+	Geometry* geom;
+	gShaderProgram * shader;
+	LightRenderer(){}
+	LightRenderer (Geometry * geom, gShaderProgram * shader)
+		: geom(geom), shader(shader)
+	{
+	}
+	void AddLight(PointLight * light)
+	{
+		lights.push_back(light);
+	}
+
+	void Draw(glm::mat4 VP)
+	{
+		glDisable(GL_CULL_FACE);
+		shader->On();
+		{
+			for(auto& light : lights)
+			{
+				glm::mat4 MVP = VP * glm::translate(light->position) * glm::scale(glm::vec3(0.1,0.1,0.1));
+				shader->SetUniform("MVP",MVP);
+				geom->Draw();
+			}
+		}
+		shader->Off();
+		glEnable(GL_CULL_FACE);
 	}
 };

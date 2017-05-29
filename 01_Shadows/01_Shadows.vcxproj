@@ -109,6 +109,8 @@
   <ItemGroup>
     <None Include="envmap.frag" />
     <None Include="envmap.vert" />
+    <None Include="LightShader.frag" />
+    <None Include="LightShader.vert" />
     <None Include="quadTexturer.frag" />
     <None Include="quadTexturer.vert" />
     <None Include="shadowShader.frag" />

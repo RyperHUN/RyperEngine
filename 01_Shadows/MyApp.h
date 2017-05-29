@@ -48,8 +48,9 @@ protected:
 
 	gCamera			m_camera;
 	// melysegi puffer kirajzolasa
-	gVertexBuffer	geom_Box;
+	gVertexBuffer	buffer_Box;
 	gVertexBuffer   buffer_Quad;
+	TriangleMesh    geom_Box;
 	TriangleMesh    geom_Quad;
 	Sphere          geom_Sphere;
 	TriangleMeshLoaded geom_Suzanne;
@@ -75,13 +76,14 @@ protected:
 	DirLight dirLight;
 	std::vector<PointLight> pointLight;
 	
-
+	gShaderProgram  shader_LightRender;
 	gShaderProgram  shader_Simple;
 	gShaderProgram  shader_Shadow;
 	gShaderProgram	shader_EnvMap;
 	gShaderProgram  shader_DebugQuadTexturer;
 
 
+	LightRenderer lightRenderer;
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete
 };

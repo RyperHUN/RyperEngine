@@ -76,32 +76,34 @@ bool CMyApp::Init()
 	geom_Sphere.Create (30,30);
 
 	// skybox kocka
-	geom_Box.AddAttribute(0, 3);
+	buffer_Box.AddAttribute(0, 3);
 
-	geom_Box.AddData(0, -10, -10, 10);	// 0
-	geom_Box.AddData(0, 10, -10, 10);	// 1
-	geom_Box.AddData(0, -10, 10, 10);	// 2
-	geom_Box.AddData(0, 10, 10, 10);	// 3
+	buffer_Box.AddData(0, -10, -10, 10);	// 0
+	buffer_Box.AddData(0, 10, -10, 10);	// 1
+	buffer_Box.AddData(0, -10, 10, 10);	// 2
+	buffer_Box.AddData(0, 10, 10, 10);	// 3
 
-	geom_Box.AddData(0, -10, -10, -10);	// 4
-	geom_Box.AddData(0, 10, -10, -10);	// 5
-	geom_Box.AddData(0, -10, 10, -10);	// 6
-	geom_Box.AddData(0, 10, 10, -10);	// 7
+	buffer_Box.AddData(0, -10, -10, -10);	// 4
+	buffer_Box.AddData(0, 10, -10, -10);	// 5
+	buffer_Box.AddData(0, -10, 10, -10);	// 6
+	buffer_Box.AddData(0, 10, 10, -10);	// 7
 
-	geom_Box.AddIndex(1, 0, 2);
-	geom_Box.AddIndex(3, 1, 2);
-	geom_Box.AddIndex(5, 1, 3);
-	geom_Box.AddIndex(7, 5, 3);
-	geom_Box.AddIndex(4, 5, 7);
-	geom_Box.AddIndex(6, 4, 7);
-	geom_Box.AddIndex(0, 4, 6);
-	geom_Box.AddIndex(2, 0, 6);
-	geom_Box.AddIndex(3, 2, 6);
-	geom_Box.AddIndex(7, 3, 6);
-	geom_Box.AddIndex(5, 4, 0);
-	geom_Box.AddIndex(1, 5, 0);
+	buffer_Box.AddIndex(1, 0, 2);
+	buffer_Box.AddIndex(3, 1, 2);
+	buffer_Box.AddIndex(5, 1, 3);
+	buffer_Box.AddIndex(7, 5, 3);
+	buffer_Box.AddIndex(4, 5, 7);
+	buffer_Box.AddIndex(6, 4, 7);
+	buffer_Box.AddIndex(0, 4, 6);
+	buffer_Box.AddIndex(2, 0, 6);
+	buffer_Box.AddIndex(3, 2, 6);
+	buffer_Box.AddIndex(7, 3, 6);
+	buffer_Box.AddIndex(5, 4, 0);
+	buffer_Box.AddIndex(1, 5, 0);
 
-	geom_Box.InitBuffers();
+	buffer_Box.InitBuffers();
+
+	geom_Box = TriangleMesh(buffer_Box);
 //////////////////////////////
 	buffer_Quad.AddAttribute(0,3);
 	buffer_Quad.AddData(0, glm::vec3(-1.0f,  1.0f, 0.0f));
@@ -144,6 +146,10 @@ bool CMyApp::Init()
 	shader_DebugQuadTexturer.AttachShader (GL_VERTEX_SHADER, "quadTexturer.vert");
 	shader_DebugQuadTexturer.AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
 	shader_DebugQuadTexturer.LinkProgram ();
+
+	shader_LightRender.AttachShader(GL_VERTEX_SHADER, "LightShader.vert");
+	shader_LightRender.AttachShader(GL_FRAGMENT_SHADER, "LightShader.frag");
+	shader_LightRender.LinkProgram();
 
 	if (!shader_EnvMap.LinkProgram())
 	{
@@ -259,6 +265,10 @@ bool CMyApp::Init()
 	quadObj->pos = glm::vec3(0,0,0);
 
 	CreateFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
+	
+	lightRenderer = LightRenderer (&geom_Box, &shader_LightRender);
+	for(auto& light : pointLight)
+		lightRenderer.AddLight(&light);
 
 	return true;
 }
@@ -368,6 +378,9 @@ void CMyApp::Render()
 	glViewport(0, 0, m_width, m_height);
 	for(auto& obj : gameObjs)
 		obj->Draw (state);
+
+	//Draw lights
+	lightRenderer.Draw(m_camera.GetViewProj());
 
 	//////////////////////////////Environment map drawing!!!
 	shader_EnvMap.On();

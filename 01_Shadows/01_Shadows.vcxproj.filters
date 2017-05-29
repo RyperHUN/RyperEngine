@@ -119,5 +119,11 @@
     <None Include="quadTexturer.frag">
       <Filter>Shaders\Debug</Filter>
     </None>
+    <None Include="LightShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="LightShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
