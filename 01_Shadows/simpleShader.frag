@@ -35,14 +35,16 @@ struct PointLight {
 //uniform samplerCube cubeTexture; TODO
 
 uniform vec3 ka = vec3(0.2,0,0);
-uniform vec3 kd = vec3(0.8,0,0);
+uniform vec3 kd = vec3(0.6,0,0);
+uniform vec3 ks = vec3(0.8,0.8,0.8);
+uniform vec3 wEye;
+uniform float shininess = 20.0f;
 
 #define POINT_LIGHT_NUM 3
 
 uniform SpotLight spotlight;
 uniform DirLight dirlight;
 uniform PointLight pointlight[POINT_LIGHT_NUM];
-uniform vec3 wEye;
 
 vec3 calcSpotLight (SpotLight light)
 {
@@ -67,20 +69,20 @@ vec3 calcSpotLight (SpotLight light)
 	return color;
 }
 
-vec3 calcDirLight(DirLight light, vec3 normal)
+vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
 	vec3 toLight = normalize(-light.direction);
 
 	float diff = max(dot(normal, toLight), 0.0);
 
-	///TODO Specular shading
-	//vec3 reflectDir = reflect(-lightDir, normal);
-    //   float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	vec3 reflectDir = reflect(-toLight, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
-	light.color = vec3(1,1,1); //TODO
-	vec3 diffuse = diff * light.color * kd *texture(diffuseTex, frag_tex).xyz;
-	
-	return diffuse;
+	light.color   = vec3(1,1,1); //TODO
+	vec3 diffuse  = diff * light.color * kd *texture(diffuseTex, frag_tex).xyz;
+	vec3 specular = spec * light.color * ks *texture(diffuseTex, frag_tex).xyz;
+
+	return diffuse + specular;
 }
 
 vec3 calcPointLight (PointLight light, vec3 normal)
@@ -120,17 +122,18 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-	vec3 normal = normalize (frag_normal);
+	vec3 normal  = normalize (frag_normal);
+	vec3 viewDir = normalize(wEye - wFragPos);
 	
 	vec3 color = ka * texture(diffuseTex, frag_tex).xyz;
 	float isShadow = ShadowCalculation(fragPosLightSpace4);
 	
-	for(int i = 0; i < POINT_LIGHT_NUM; i++)
-		color += calcPointLight(pointlight[i],normal);
-	color += calcSpotLight (spotlight);
+	//for(int i = 0; i < POINT_LIGHT_NUM; i++)
+	//	color += calcPointLight(pointlight[i],normal);
+	//color += calcSpotLight (spotlight);
 	if(isShadow > 0.5)
 	{
-		color += calcDirLight (dirlight, normal);
+		color += calcDirLight (dirlight, normal, viewDir);
 	}
 	fs_out_col = vec4(color, 1.0);
 	//fs_out_col = texture(diffuseTex, frag_tex);
