@@ -140,13 +140,17 @@ GLuint TextureFromFile(const char* filename)
 		else
 			img_mode = GL_RGB;
 	#endif
+	//int num;
+	//glGetIntegerv(GL_MAX_TEXTURE_SIZE, &num);
+	//std::cout << "Max tex:" << num;
 
     GLuint tex;
     glGenTextures(1, &tex);
   
     glBindTexture(GL_TEXTURE_2D, tex);
-	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, loaded_img->w, loaded_img->h, img_mode, GL_UNSIGNED_BYTE, loaded_img->pixels);
-  
+	//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, loaded_img->w, loaded_img->h, img_mode, GL_UNSIGNED_BYTE, loaded_img->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, loaded_img->w, loaded_img->h, 0, img_mode, GL_UNSIGNED_BYTE, loaded_img->pixels);
+
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
   

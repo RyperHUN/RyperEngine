@@ -68,6 +68,7 @@ protected:
 
 	GLuint frameBuffer;
 	GLuint texture_ShadowMap;
+	GLuint texture_HeightMap;
 	const GLuint SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
 
 

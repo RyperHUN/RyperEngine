@@ -83,6 +83,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bezier.cpp" />
     <ClCompile Include="FrustumG.cpp" />
     <ClCompile Include="gCamera.cpp" />
     <ClCompile Include="gShaderProgram.cpp" />
@@ -91,8 +92,10 @@
     <ClCompile Include="Mesh_OGL3.cpp" />
     <ClCompile Include="MyApp.cpp" />
     <ClCompile Include="ObjParser_OGL3.cpp" />
+    <ClCompile Include="UtilityFuncs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bezier.h" />
     <ClInclude Include="FrustumG.h" />
     <ClInclude Include="GameObjects.h" />
     <ClInclude Include="gCamera.h" />
@@ -105,6 +108,7 @@
     <ClInclude Include="Mesh_OGL3.h" />
     <ClInclude Include="MyApp.h" />
     <ClInclude Include="ObjParser_OGL3.h" />
+    <ClInclude Include="UtilityFuncs.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.frag" />

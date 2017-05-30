@@ -136,10 +136,10 @@ void main()
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
 		color += calcPointLight(pointlight[i],normal,viewDir);
 	//color += calcSpotLight (spotlight);
-	//if(isShadow > 0.5)
-	//{
-	//	color += calcDirLight (dirlight, normal, viewDir);
-	//}
+	if(isShadow > 0.5)
+	{
+		color += calcDirLight (dirlight, normal, viewDir);
+	}
 	fs_out_col = vec4(color, 1.0);
 	//fs_out_col = texture(diffuseTex, frag_tex);
 	//fs_out_col = vec4(normal, 1.0);

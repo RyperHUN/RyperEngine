@@ -5,19 +5,7 @@
 #include <math.h>
 
 #include "ObjParser_OGL3.h"
-
-float randomPoint()
-{
-	int modulus = 20000;
-	float random = rand() % modulus;
-	random = random / (modulus / 2.0f) - 1.0f;
-	return random;
-}
-//returns random vec [-1,1]
-glm::vec3 randomVec()
-{
-	return glm::vec3(randomPoint(), randomPoint(), randomPoint());
-}
+#include "UtilityFuncs.h"
 
 CMyApp::CMyApp(void)
 {
@@ -166,6 +154,7 @@ bool CMyApp::Init()
 
 	// textúra betöltése
 	texture_Map = TextureFromFile("texture.png");
+	texture_HeightMap = TextureFromFile("HeightMap.png");
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("suzanne.obj");
@@ -254,7 +243,7 @@ bool CMyApp::Init()
 	float scaleFactor = 50.0f;
 	for(auto &obj : gameObjs)
 	{
-		glm::vec3 random = randomVec();
+		glm::vec3 random = Util::randomVec();
 		float randomY = random.y * 3;
 		random *= scaleFactor;
 		random.y = 10 + randomY;
@@ -372,7 +361,7 @@ void CMyApp::Render()
 	///////////////////////////Normal rendering
 	shader_Simple.On();
 	shader_Simple.SetTexture ("shadowMap",2,texture_ShadowMap);
-	shader_Simple.SetTexture ("diffuseTex", 0, texture_Map);
+	shader_Simple.SetTexture ("diffuseTex", 0, texture_HeightMap);
 	state.PV = m_camera.GetViewProj();
 	glViewport(0, 0, m_width, m_height);
 	for(auto& obj : gameObjs)

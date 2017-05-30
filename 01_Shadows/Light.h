@@ -66,8 +66,8 @@ public:
 	}
 	void Animate(float time, float dt) override
 	{
-		//glm::vec3 dir = glm::vec3(sinf(time), cosf(time), 0);
-		//SetDir(dir);
+		glm::vec3 dir = glm::vec3(sinf(time), cosf(time), 0);
+		SetDir(dir);
 	}
 	void SetDir (glm::vec3 dir)
 	{
@@ -78,7 +78,6 @@ public:
 
 struct PointLight : public Light
 {
-
 	float attuentationConst = 0.0f;
 	float attuentationLinear = 0.2f;
 	float attuentationQuadratic = 0.3f;

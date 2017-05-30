@@ -49,6 +49,12 @@
     <ClCompile Include="FrustumG.cpp">
       <Filter>Utils\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="Bezier.cpp">
+      <Filter>Utils\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="UtilityFuncs.cpp">
+      <Filter>Utils\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyApp.h">
@@ -85,6 +91,12 @@
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="FrustumG.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Bezier.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilityFuncs.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
