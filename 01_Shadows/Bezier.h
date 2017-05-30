@@ -39,14 +39,14 @@ public:
 	static BezierSurface GenRandomSurface (size_t u_cp, size_t v_cp)
 	{
 		std::vector<Vec> cp;
-		for (int i = 0; i <= u_cp; ++i)
-			for (int j = 0; j <= v_cp; ++j)
+		for (int i = 0; i < u_cp; ++i)
+			for (int j = 0; j < v_cp; ++j)
 			{
 				float u = i / (float)u_cp;
 				float v = j / (float)v_cp;
-				float x = u * 2.0f - 1.0f;
-				float y = (v * 2.0f - 1.0f) * -1.0f;
-				float z = Util::randomPoint () * 2.0f;
+				float x = v * 2.0f - 1.0f;
+				float y = (u * 2.0f - 1.0f) * -1.0f;
+				float z = Util::randomPoint () * 80.0f;
 
 				cp.push_back(Vec{x,y,z});
 			}

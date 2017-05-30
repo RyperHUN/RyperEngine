@@ -53,6 +53,7 @@ protected:
 	TriangleMesh    geom_Box;
 	TriangleMesh    geom_Quad;
 	Sphere          geom_Sphere;
+	HeightMap		geom_Bezier;
 	TriangleMeshLoaded geom_Suzanne;
 	TriangleMeshLoaded geom_Cow;
 

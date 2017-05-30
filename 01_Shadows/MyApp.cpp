@@ -211,6 +211,7 @@ bool CMyApp::Init()
 	geom_Quad = TriangleMesh (buffer_Quad);
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
 	geom_Cow = TriangleMeshLoaded(m_cow_mesh);
+	geom_Bezier.Create (10,10);
 
 	GameObj *sphere = new GameObj(shaderLights,&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
 	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
@@ -224,7 +225,7 @@ bool CMyApp::Init()
 	GameObj * sphere2 = new GameObj (*sphere);
 	sphere2->pos = glm::vec3(2,0,-3);
 	gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ shaderLights, &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1) };
+	Quadobj *quadObj = new Quadobj{ shaderLights, &shader_Simple, &geom_Bezier,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1) };
 	quadObj->rotAxis = glm::vec3(-1,0,0);
 	quadObj->rotAngle = M_PI / 2.0;
 	gameObjs.push_back(quadObj);

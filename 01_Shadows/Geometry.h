@@ -83,7 +83,7 @@ struct HeightMap : public Geometry
 {
 	void Create(int N, int M)
 	{
-		BezierSurface bezier = BezierSurface::GenRandomSurface (5,5);
+		BezierSurface bezier = BezierSurface::GenRandomSurface (6,6);
 		BezierSurface bezierU = bezier.DerivativeByU ();
 		BezierSurface bezierV = bezier.DerivativeByV ();
 		buffer.AddAttribute(0, 3);  //Vertex Pos
