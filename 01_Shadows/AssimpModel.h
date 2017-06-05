@@ -148,7 +148,7 @@ private:
 			std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
 			textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 			// 4. height maps
-			std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+			std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_reflect");
 			textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 		}
 

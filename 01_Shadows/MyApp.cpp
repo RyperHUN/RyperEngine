@@ -8,7 +8,7 @@
 #include "UtilityFuncs.h"
 
 CMyApp::CMyApp(void)
-	:geom_Man{"Model/nanosuit/nanosuit.obj"}
+	:geom_Man{"Model/nanosuit_reflection/nanosuit.obj"}
 {
 	srand(2);
 	texture_Map = 0;
@@ -265,10 +265,10 @@ bool CMyApp::Init()
 	auto obj = new GameObj(*suzanne);
 	obj->geometry = &geom_Man;
 	gameObjs.push_back(obj);
-	gameObjs.push_back(quadObj);
+	//gameObjs.push_back(quadObj);
 	obj->rotAxis = glm::vec3{0,1,0};
 	obj->rotAngle = 0;
-	obj->scale = glm::vec3{0.5f};
+	obj->scale = glm::vec3{1.0f};
 	obj->material = materialMan;
 	obj->shader = &shader_Simple;
 	obj->pos = glm::vec3(0,10,10);
@@ -377,6 +377,7 @@ void CMyApp::Render()
 	shader_Simple.On();
 	shader_Simple.SetTexture ("shadowMap",15,texture_ShadowMap);
 	shader_Simple.SetTexture ("texture_diffuse1", 0, texture_HeightMap);
+	shader_EnvMap.SetCubeTexture("skyBox", 14, textureCube_id);
 	state.PV = m_camera.GetViewProj();
 	glViewport(0, 0, m_width, m_height);
 	for(auto& obj : gameObjs)
@@ -391,7 +392,7 @@ void CMyApp::Render()
 		buffer_Quad.On ();
 
 			shader_EnvMap.SetUniform("rayDirMatrix", m_camera.GetRayDirMtx ());
-			shader_EnvMap.SetCubeTexture ("texCube",0, textureCube_id);
+			shader_EnvMap.SetCubeTexture ("skyBox",0, textureCube_id);
 			buffer_Quad.DrawIndexed(GL_TRIANGLES);
 			
 		buffer_Quad.Off ();

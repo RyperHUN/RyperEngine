@@ -7,6 +7,9 @@ in vec4 fragPosLightSpace4;
 uniform sampler2D shadowMap;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
+uniform sampler2D texture_reflect1;
+
+uniform samplerCube skyBox;
 
 out vec4 fs_out_col;
 
@@ -129,7 +132,9 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 void main()
 {
 	vec3 normal  = normalize (frag_normal);
-	vec3 viewDir = normalize(wEye - wFragPos);
+	vec3 viewDir = normalize (wEye - wFragPos);
+	vec3 reflectedDir   = reflect(-viewDir, normal);
+	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	
 	vec3 color = ka * texture(texture_diffuse1, frag_tex).xyz;
 	float isShadow = ShadowCalculation(fragPosLightSpace4);
@@ -142,7 +147,10 @@ void main()
 		color += calcDirLight (dirlight, normal, viewDir);
 	}
 	fs_out_col = vec4(color, 1.0);
-	//fs_out_col = texture(texture_diffuse1, frag_tex);
+	vec4 reflectedColor = texture(skyBox, reflectedDir);
+	vec4 refractedColor = texture(skyBox, refractedDir);
+	fs_out_col = mix(reflectedColor, refractedColor, 0.5);
+	//fs_out_col = texture(texture_reflect1, frag_tex);
 	//fs_out_col = vec4(normal, 1.0);
 	//fs_out_col = vec4(frag_tex.xy, 0, 1);
 }

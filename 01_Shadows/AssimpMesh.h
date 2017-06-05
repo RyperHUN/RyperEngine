@@ -79,7 +79,7 @@ public:
 				ss << specularNr++; // transfer unsigned int to stream
 			else if (name == "texture_normal")
 				ss << normalNr++; // transfer unsigned int to stream
-			else if (name == "texture_height")
+			else if (name == "texture_reflect")
 				ss << heightNr++; // transfer unsigned int to stream
 			number = ss.str();
 			// now set the sampler to the correct texture unit
