@@ -10,7 +10,7 @@ struct Geometry {
 	gVertexBuffer buffer;
 	Geometry(){}
 
-	virtual void Draw() {
+	virtual void Draw(gShaderProgram * shader = nullptr) {
 		buffer.On();
 		buffer.DrawIndexed(GL_TRIANGLES);
 		buffer.Off();
@@ -176,7 +176,7 @@ struct TriangleMeshLoaded : public Geometry
 		:mesh(mesh)
 	{
 	}
-	virtual void Draw()  override
+	virtual void Draw(gShaderProgram * shader = nullptr)  override
 	{
 		if(mesh)
 			mesh->draw ();

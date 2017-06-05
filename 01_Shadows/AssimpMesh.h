@@ -58,9 +58,9 @@ public:
 	}
 
 	// render the mesh
-	void Draw(gShaderProgram shader)
+	void Draw(gShaderProgram *shader)
 	{
-		shader.On ();
+		shader->On ();
 		// bind appropriate textures
 		unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
@@ -83,7 +83,7 @@ public:
 				ss << heightNr++; // transfer unsigned int to stream
 			number = ss.str();
 			// now set the sampler to the correct texture unit
-			shader.SetTexture ((name + number).c_str(), i, textures[i].id);
+			shader->SetTexture ((name + number).c_str(), i, textures[i].id);
 		}
 
 		// draw mesh
@@ -93,7 +93,7 @@ public:
 
 		// always good practice to set everything back to defaults once configured.
 		glActiveTexture(GL_TEXTURE0);
-		shader.Off();
+		shader->Off();
 	}
 
 private:

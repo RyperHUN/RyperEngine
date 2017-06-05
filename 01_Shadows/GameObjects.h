@@ -68,13 +68,16 @@ public:
 				light.uploadToGPU(*shaderParam);
 			material->uploadToGpu (*shaderParam);
 
-			geometry->Draw();
+			geometry->Draw(shaderParam);
 		}
 		shaderParam->Off();
 	}
 
 	virtual void Animate(float time, float dt)
 	{
+		quaternion = glm::angleAxis(rotAngle, rotAxis);
+		return;
+
 		glm::quat begin = glm::angleAxis(glm::radians(20.0f), glm::normalize(glm::vec3(0,0,1)));
 		glm::quat end   = glm::angleAxis(glm::radians(180.0f), glm::normalize(glm::vec3(1, 1, 0)));
 		static glm::vec3 beginPos = pos;

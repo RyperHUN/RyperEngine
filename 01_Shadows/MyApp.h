@@ -17,6 +17,7 @@
 #include "gVertexBuffer.h"
 #include "Mesh_OGL3.h"
 #include "GameObjects.h"
+#include "AssimpModel.h"
 
 class CMyApp
 {

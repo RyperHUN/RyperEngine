@@ -7,9 +7,8 @@
 #include "ObjParser_OGL3.h"
 #include "UtilityFuncs.h"
 
-#include "AssimpModel.h"
-
 CMyApp::CMyApp(void)
+	:geom_Man{"Model/nanosuit/nanosuit.obj"}
 {
 	srand(2);
 	texture_Map = 0;
@@ -209,6 +208,7 @@ bool CMyApp::Init()
 	MaterialPtr material1 = std::make_shared<Material>(glm::vec3(0.1f,0,0),glm::vec3(0.8f, 0,0),glm::vec3(1,1,1));
 	MaterialPtr material2 = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
 	MaterialPtr material3 = std::make_shared<Material>(glm::vec3(0.0f,0.1f,0.1f), glm::vec3(0,0.7f,0.7f), glm::vec3(1, 1, 1));
+	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f,0.1f,0.1f), glm::vec3(0.7f,0.7f,0.7f), glm::vec3(1,1,1));
 
 	geom_Quad = TriangleMesh (buffer_Quad);
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
@@ -263,8 +263,14 @@ bool CMyApp::Init()
 	gameObjs.clear();
 
 	auto obj = new GameObj(*suzanne);
+	obj->geometry = &geom_Man;
 	gameObjs.push_back(obj);
 	gameObjs.push_back(quadObj);
+	obj->rotAxis = glm::vec3{0,1,0};
+	obj->rotAngle = 0;
+	obj->scale = glm::vec3{0.5f};
+	obj->material = materialMan;
+	obj->shader = &shader_Simple;
 	obj->pos = glm::vec3(0,10,10);
 
 	return true;
@@ -369,7 +375,7 @@ void CMyApp::Render()
 
 	///////////////////////////Normal rendering
 	shader_Simple.On();
-	shader_Simple.SetTexture ("shadowMap",2,texture_ShadowMap);
+	shader_Simple.SetTexture ("shadowMap",15,texture_ShadowMap);
 	shader_Simple.SetTexture ("texture_diffuse1", 0, texture_HeightMap);
 	state.PV = m_camera.GetViewProj();
 	glViewport(0, 0, m_width, m_height);
@@ -396,7 +402,7 @@ void CMyApp::Render()
 	{
 		buffer_Quad.On();
 			
-			shader_DebugQuadTexturer.SetTexture("loadedTex", 2, texture_ShadowMap);
+			shader_DebugQuadTexturer.SetTexture("loadedTex", 15, texture_ShadowMap);
 			shader_DebugQuadTexturer.SetUniform("M",
 				glm::translate(glm::vec3(0.5,0.5,0))*glm::scale(glm::vec3(0.5,0.5,1)));
 			//shader_DebugQuadTexturer.SetUniform("M", glm::mat4(1.0));
