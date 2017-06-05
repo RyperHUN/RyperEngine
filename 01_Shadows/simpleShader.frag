@@ -5,7 +5,8 @@ in vec3 frag_normal;
 in vec2 frag_tex;
 in vec4 fragPosLightSpace4;
 uniform sampler2D shadowMap;
-uniform sampler2D diffuseTex;
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_specular1;
 
 out vec4 fs_out_col;
 
@@ -52,7 +53,7 @@ vec3 calcSpotLight (SpotLight light)
 	float theta     = dot(lightDir, normalize(-spotlight.direction));
 	
 	vec3 color = vec3(0,0,0);
-	vec3 texturedColor = kd * texture(diffuseTex, frag_tex).xyz;
+	vec3 texturedColor = kd * texture(texture_diffuse1, frag_tex).xyz;
 	if(theta > spotlight.cutOff * 0.96) 
 	{
 		float interp = smoothstep(spotlight.cutOff * 0.96,spotlight.cutOff,theta);
@@ -79,8 +80,8 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
 	light.color   = vec3(1,1,1); //TODO
-	vec3 diffuse  = diff * light.color * kd *texture(diffuseTex, frag_tex).xyz;
-	vec3 specular = spec * light.color * ks *texture(diffuseTex, frag_tex).xyz;
+	vec3 diffuse  = diff * light.color * kd *texture(texture_diffuse1, frag_tex).xyz;
+	vec3 specular = spec * light.color * ks *texture(texture_specular1, frag_tex).xyz;
 
 	return diffuse + specular;
 }
@@ -99,8 +100,8 @@ vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir)
 	(light.constant + light.linear * dist +  light.quadratic * (dist * dist));   
 
 	light.color   = vec3(1,1,1);
-	vec3 diffuse  = light.color * diff * kd * texture(diffuseTex, frag_tex).xyz;
-	vec3 specular = light.color * spec * ks * texture(diffuseTex, frag_tex).xyz;
+	vec3 diffuse  = light.color * diff * kd * texture(texture_diffuse1, frag_tex).xyz;
+	vec3 specular = light.color * spec * ks * texture(texture_specular1, frag_tex).xyz;
 	diffuse  *= attenuation; 
 	specular *= attenuation;
 
@@ -130,7 +131,7 @@ void main()
 	vec3 normal  = normalize (frag_normal);
 	vec3 viewDir = normalize(wEye - wFragPos);
 	
-	vec3 color = ka * texture(diffuseTex, frag_tex).xyz;
+	vec3 color = ka * texture(texture_diffuse1, frag_tex).xyz;
 	float isShadow = ShadowCalculation(fragPosLightSpace4);
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
@@ -141,7 +142,7 @@ void main()
 		color += calcDirLight (dirlight, normal, viewDir);
 	}
 	fs_out_col = vec4(color, 1.0);
-	//fs_out_col = texture(diffuseTex, frag_tex);
-	fs_out_col = vec4(normal, 1.0);
+	//fs_out_col = texture(texture_diffuse1, frag_tex);
+	//fs_out_col = vec4(normal, 1.0);
 	//fs_out_col = vec4(frag_tex.xy, 0, 1);
 }

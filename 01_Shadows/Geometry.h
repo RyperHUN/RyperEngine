@@ -171,8 +171,8 @@ struct TriangleMesh : public Geometry
 
 struct TriangleMeshLoaded : public Geometry
 {
-	Mesh * mesh;
-	TriangleMeshLoaded(Mesh *mesh = nullptr)
+	OGL_Mesh * mesh;
+	TriangleMeshLoaded(OGL_Mesh *mesh = nullptr)
 		:mesh(mesh)
 	{
 	}

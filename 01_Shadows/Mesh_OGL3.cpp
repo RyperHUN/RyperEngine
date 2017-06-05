@@ -1,14 +1,14 @@
 #include "Mesh_OGL3.h"
 
-Mesh::Mesh(void)
+OGL_Mesh::OGL_Mesh(void)
 {
 }
 
-Mesh::~Mesh(void)
+OGL_Mesh::~OGL_Mesh(void)
 {
 }
 
-void Mesh::initBuffers()
+void OGL_Mesh::initBuffers()
 {
 	glGenVertexArrays(1, &vertexArrayObject);
 	glGenBuffers(1, &vertexBuffer);
@@ -32,7 +32,7 @@ void Mesh::initBuffers()
 	glBindVertexArray(0);
 }
 
-void Mesh::draw()
+void OGL_Mesh::draw()
 {
 	glBindVertexArray(vertexArrayObject);
 

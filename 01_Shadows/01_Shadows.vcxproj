@@ -61,7 +61,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -79,7 +79,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -92,9 +92,12 @@
     <ClCompile Include="Mesh_OGL3.cpp" />
     <ClCompile Include="MyApp.cpp" />
     <ClCompile Include="ObjParser_OGL3.cpp" />
+    <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="UtilityFuncs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssimpMesh.h" />
+    <ClInclude Include="AssimpModel.h" />
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="FrustumG.h" />
     <ClInclude Include="GameObjects.h" />

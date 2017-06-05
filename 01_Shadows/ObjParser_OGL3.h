@@ -13,7 +13,7 @@
 class ObjParser
 {
 public:
-	static Mesh* parse(const char* fileName);
+	static OGL_Mesh* parse(const char* fileName);
 
 	enum Exception { EXC_FILENOTFOUND };
 private:
@@ -32,7 +32,7 @@ private:
 	void skipLine();
 	void addIndexedVertex(const IndexedVert& vertex);
 
-	Mesh* mesh;
+	OGL_Mesh* mesh;
 	std::ifstream ifs;
 
 	std::vector<glm::vec3> positions;

@@ -56,12 +56,13 @@ protected:
 	HeightMap		geom_Bezier;
 	TriangleMeshLoaded geom_Suzanne;
 	TriangleMeshLoaded geom_Cow;
+	AssimpModel		geom_Man;
 
 	
 	gShaderProgram	m_env_program;
 
-	Mesh			*mesh_Suzanne;
-	Mesh			*m_cow_mesh;
+	OGL_Mesh			*mesh_Suzanne;
+	OGL_Mesh			*m_cow_mesh;
 
 	GLuint			textureCube_id; // env map
 

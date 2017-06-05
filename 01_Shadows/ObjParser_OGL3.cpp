@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Mesh* ObjParser::parse(const char* fileName)
+OGL_Mesh* ObjParser::parse(const char* fileName)
 {
 	ObjParser theParser;
 
@@ -12,7 +12,7 @@ Mesh* ObjParser::parse(const char* fileName)
 	if (!theParser.ifs)
 		throw(EXC_FILENOTFOUND);
 
-	theParser.mesh = new Mesh();
+	theParser.mesh = new OGL_Mesh();
 
 	while(theParser.skipCommentLine()) 
 	{
@@ -86,7 +86,7 @@ void ObjParser::addIndexedVertex(const IndexedVert& vertex)
 {
 	if (vertexIndices[vertex] == 0) // new vertex
 	{
-		Mesh::Vertex v;
+		OGL_Mesh::Vertex v;
 		v.position = positions[vertex.v];
 		if (vertex.vt != -1)
 			v.texcoord = texcoords[vertex.vt];

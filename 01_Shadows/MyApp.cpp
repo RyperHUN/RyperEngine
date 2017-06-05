@@ -7,6 +7,8 @@
 #include "ObjParser_OGL3.h"
 #include "UtilityFuncs.h"
 
+#include "AssimpModel.h"
+
 CMyApp::CMyApp(void)
 {
 	srand(2);
@@ -368,7 +370,7 @@ void CMyApp::Render()
 	///////////////////////////Normal rendering
 	shader_Simple.On();
 	shader_Simple.SetTexture ("shadowMap",2,texture_ShadowMap);
-	shader_Simple.SetTexture ("diffuseTex", 0, texture_HeightMap);
+	shader_Simple.SetTexture ("texture_diffuse1", 0, texture_HeightMap);
 	state.PV = m_camera.GetViewProj();
 	glViewport(0, 0, m_width, m_height);
 	for(auto& obj : gameObjs)

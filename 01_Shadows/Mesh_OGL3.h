@@ -5,7 +5,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-class Mesh
+class OGL_Mesh
 {
 public:
 	struct Vertex
@@ -15,8 +15,8 @@ public:
 		glm::vec2 texcoord;
 	};
 
-	Mesh(void);
-	~Mesh(void);
+	OGL_Mesh(void);
+	~OGL_Mesh(void);
 
 	void initBuffers();
 	void draw();

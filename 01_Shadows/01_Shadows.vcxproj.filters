@@ -55,6 +55,9 @@
     <ClCompile Include="UtilityFuncs.cpp">
       <Filter>Utils\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyApp.h">
@@ -97,6 +100,12 @@
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="UtilityFuncs.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpMesh.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpModel.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
