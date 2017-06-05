@@ -264,6 +264,7 @@ bool CMyApp::Init()
 
 	auto obj = new GameObj(*suzanne);
 	obj->geometry = &geom_Man;
+	geom_Man.meshes[0].textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
 	gameObjs.push_back(obj);
 	//gameObjs.push_back(quadObj);
 	obj->rotAxis = glm::vec3{0,1,0};
@@ -375,9 +376,9 @@ void CMyApp::Render()
 
 	///////////////////////////Normal rendering
 	shader_Simple.On();
+	shader_EnvMap.SetCubeTexture("skyBox", 13, textureCube_id);
 	shader_Simple.SetTexture ("shadowMap",15,texture_ShadowMap);
-	shader_Simple.SetTexture ("texture_diffuse1", 0, texture_HeightMap);
-	shader_EnvMap.SetCubeTexture("skyBox", 14, textureCube_id);
+	//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 	state.PV = m_camera.GetViewProj();
 	glViewport(0, 0, m_width, m_height);
 	for(auto& obj : gameObjs)
@@ -392,7 +393,7 @@ void CMyApp::Render()
 		buffer_Quad.On ();
 
 			shader_EnvMap.SetUniform("rayDirMatrix", m_camera.GetRayDirMtx ());
-			shader_EnvMap.SetCubeTexture ("skyBox",0, textureCube_id);
+			shader_EnvMap.SetCubeTexture ("skyBox",14, textureCube_id);
 			buffer_Quad.DrawIndexed(GL_TRIANGLES);
 			
 		buffer_Quad.Off ();

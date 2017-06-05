@@ -73,6 +73,11 @@ public:
 			stringstream ss;
 			string number;
 			string name = textures[i].type;
+			if (name == "skyBox")
+			{
+				shader->SetCubeTexture(name.c_str(), i, textures[i].id);
+				continue;
+			}
 			if (name == "texture_diffuse")
 				ss << diffuseNr++; // transfer unsigned int to stream
 			else if (name == "texture_specular")
@@ -81,6 +86,7 @@ public:
 				ss << normalNr++; // transfer unsigned int to stream
 			else if (name == "texture_reflect")
 				ss << heightNr++; // transfer unsigned int to stream
+
 			number = ss.str();
 			// now set the sampler to the correct texture unit
 			shader->SetTexture ((name + number).c_str(), i, textures[i].id);
