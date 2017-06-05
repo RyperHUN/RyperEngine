@@ -264,12 +264,13 @@ bool CMyApp::Init()
 
 	auto obj = new GameObj(*suzanne);
 	obj->geometry = &geom_Man;
-	geom_Man.meshes[0].textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
+	for(auto& mesh : geom_Man.meshes)
+		mesh.textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
 	gameObjs.push_back(obj);
 	//gameObjs.push_back(quadObj);
 	obj->rotAxis = glm::vec3{0,1,0};
 	obj->rotAngle = 0;
-	obj->scale = glm::vec3{1.0f};
+	obj->scale = glm::vec3{0.5f};
 	obj->material = materialMan;
 	obj->shader = &shader_Simple;
 	obj->pos = glm::vec3(0,10,10);
@@ -376,7 +377,7 @@ void CMyApp::Render()
 
 	///////////////////////////Normal rendering
 	shader_Simple.On();
-	shader_EnvMap.SetCubeTexture("skyBox", 13, textureCube_id);
+	shader_EnvMap.SetCubeTexture("skyBox", 12, textureCube_id);
 	shader_Simple.SetTexture ("shadowMap",15,texture_ShadowMap);
 	//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 	state.PV = m_camera.GetViewProj();

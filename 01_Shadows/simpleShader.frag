@@ -147,19 +147,18 @@ void main()
 		color += calcDirLight (dirlight, normal, viewDir);
 	}
 	vec4 colorWLight    = vec4(color, 1.0);
+	//fs_out_col   = colorWLight;
+/////////////////////////////////////////////
+//Reflection
 	vec4 reflectedColor = vec4(texture(skyBox, reflectedDir).xyz, 1.0);
 	vec4 refractedColor = vec4(texture(skyBox, refractedDir).xyz, 1.0);
-	fs_out_col = texture(skyBox,reflectedDir);
 	
-	//vec4 reflectedWithTex = vec4((reflectedColor.xyz * texture(texture_reflect1, frag_tex).xyz), 1.0);
-	//fs_out_col   = reflectedWithTex;
-	//fs_out_col   = colorWLight;
-	//fs_out_col = vec4(mix(colorWLight.xyz, reflectedWithTex.xyz, 1.0) ,1.0);
+	vec4 reflectedWithTex = vec4(reflectedColor * texture(texture_reflect1, frag_tex));
+	
+	//fs_out_col = vec4(mix(colorWLight.xyz, reflectedWithTex.xyz, 0.5) ,1.0);
+	fs_out_col = colorWLight + reflectedWithTex;
 
-	//if(gl_FragCoord.x > 300)
-	//	fs_out_col = colorWLight;
-	//else
-	//	fs_out_col = reflectedWithTex;
+
 	//fs_out_col = texture(texture_reflect1, frag_tex);
 	//fs_out_col = vec4(normal, 1.0);
 	//fs_out_col = vec4(frag_tex.xy, 0, 1);
