@@ -142,6 +142,6 @@ void main()
 	}
 	fs_out_col = vec4(color, 1.0);
 	//fs_out_col = texture(diffuseTex, frag_tex);
-	//fs_out_col = vec4(normal, 1.0);
+	fs_out_col = vec4(normal, 1.0);
 	//fs_out_col = vec4(frag_tex.xy, 0, 1);
 }

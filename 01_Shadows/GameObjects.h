@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform2.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include "Light.h"
 #include "gCamera.h"
 #include  "Material.h"
@@ -30,22 +32,24 @@ public:
 	Geometry * geometry;
 	std::vector<ShaderLight>& shaderLights;
 	glm::vec3 scale, pos, rotAxis;
+
+	glm::quat quaternion;
 	float rotAngle = 0.0f;
 public:
 	GameObj(std::vector<ShaderLight>& shaderLights,gShaderProgram* shader, Geometry * geom, std::shared_ptr<Material> material,glm::vec3 pos,
 		glm::vec3 scale = glm::vec3{1,1,1},
 		glm::vec3 rotAxis = glm::vec3{0,1,0})
-		:shader(shader), geometry(geom), pos(pos), scale(scale), rotAxis(rotAxis), material(material),
+		:shader(shader), geometry(geom), pos(pos), scale(scale), rotAxis(glm::normalize(rotAxis)), material(material),
 		shaderLights(shaderLights)
 	{
-	
+		quaternion = glm::angleAxis((float)M_PI / 2.0f, this->rotAxis);
 	}
 	virtual void Draw(RenderState state, gShaderProgram * shaderParam = nullptr) {
 		if(shaderParam == nullptr)
 			shaderParam = shader;
-		state.M = glm::translate(pos) * glm::rotate(rotAngle, rotAxis) * glm::scale(scale);
-		state.Minv = glm::inverse(state.M);
-		//state.Minv = glm::scale(1.0f / scale) *  glm::rotate(-rotAngle, rotAxis) * glm::translate(-pos);
+		state.M = glm::translate(pos) * glm::toMat4(quaternion) * glm::scale(scale);
+		//state.Minv = glm::inverse(state.M);
+		state.Minv = glm::scale(1.0f / scale) *  glm::toMat4(glm::inverse(quaternion))* glm::translate(-pos);
 		//state.material = material; /*state.texture = texture;*/
 		//shader->Bind(state);
 		auto inverseTest = state.M * state.Minv;
@@ -71,7 +75,20 @@ public:
 
 	virtual void Animate(float time, float dt)
 	{
+		glm::quat begin = glm::angleAxis(glm::radians(20.0f), glm::normalize(glm::vec3(0,0,1)));
+		glm::quat end   = glm::angleAxis(glm::radians(180.0f), glm::normalize(glm::vec3(1, 1, 0)));
+		static glm::vec3 beginPos = pos;
+		static glm::vec3 endPos = pos + glm::vec3(1,1,-0.5) * 15.0f;
+
 		rotAngle += dt;
+		quaternion = glm::angleAxis(rotAngle, rotAxis);
+		glm::quat quat2 = glm::angleAxis(rotAngle * 2 , glm::normalize(glm::cross(rotAxis, glm::vec3(1,1,1))));
+		quaternion = quaternion * quat2;
+
+		float ratio = glm::mod(time, 1.0f);
+
+		quaternion = mix(begin, end, ratio * 2); //SLERP!
+		pos = mix(beginPos, endPos, ratio);
 	}
 };
 

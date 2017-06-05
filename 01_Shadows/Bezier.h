@@ -38,6 +38,7 @@ public:
 
 	static BezierSurface GenRandomSurface (size_t u_cp, size_t v_cp)
 	{
+		srand(50);
 		std::vector<Vec> cp;
 		for (int i = 0; i < u_cp; ++i)
 			for (int j = 0; j < v_cp; ++j)

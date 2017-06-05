@@ -225,8 +225,7 @@ bool CMyApp::Init()
 	GameObj * sphere2 = new GameObj (*sphere);
 	sphere2->pos = glm::vec3(2,0,-3);
 	gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ shaderLights, &shader_Simple, &geom_Bezier,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1) };
-	quadObj->rotAxis = glm::vec3(-1,0,0);
+	Quadobj *quadObj = new Quadobj{ shaderLights, &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0)};
 	quadObj->rotAngle = M_PI / 2.0;
 	gameObjs.push_back(quadObj);
 
@@ -258,6 +257,13 @@ bool CMyApp::Init()
 	for(auto& light : pointLight)
 		lightRenderer.AddLight(&light);
 	lightRenderer.AddLight(&dirLight);
+
+	gameObjs.clear();
+
+	auto obj = new GameObj(*suzanne);
+	gameObjs.push_back(obj);
+	gameObjs.push_back(quadObj);
+	obj->pos = glm::vec3(0,10,10);
 
 	return true;
 }
@@ -369,7 +375,7 @@ void CMyApp::Render()
 		obj->Draw (state);
 
 	//Draw lights
-	lightRenderer.Draw(m_camera.GetViewProj());
+	//lightRenderer.Draw(m_camera.GetViewProj());
 
 	//////////////////////////////Environment map drawing!!!
 	shader_EnvMap.On();
