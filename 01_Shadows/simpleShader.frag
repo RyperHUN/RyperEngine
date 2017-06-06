@@ -1,9 +1,14 @@
 #version 430
 
-in vec3 wFragPos;
-in vec3 frag_normal;
-in vec2 frag_tex;
-in vec4 fragPosLightSpace4;
+in VS_OUT 
+{
+	in vec3 wFragPos;
+	in vec3 frag_normal;
+	in vec2 frag_tex;
+	in vec4 fragPosLightSpace4;
+} FS;
+
+
 uniform sampler2D shadowMap;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
@@ -52,18 +57,18 @@ uniform PointLight pointlight[POINT_LIGHT_NUM];
 
 vec3 calcSpotLight (SpotLight light)
 {
-	vec3 lightDir   = normalize(spotlight.position - wFragPos);
+	vec3 lightDir   = normalize(spotlight.position - FS.wFragPos);
 	float theta     = dot(lightDir, normalize(-spotlight.direction));
 	
 	vec3 color = vec3(0,0,0);
-	vec3 texturedColor = kd * texture(texture_diffuse1, frag_tex).xyz;
+	vec3 texturedColor = kd * texture(texture_diffuse1, FS.frag_tex).xyz;
 	if(theta > spotlight.cutOff * 0.96) 
 	{
 		float interp = smoothstep(spotlight.cutOff * 0.96,spotlight.cutOff,theta);
 	    color = mix(vec3(0,0,0),texturedColor,interp);// Do lighting calculations
 	}
 
-	float dist = distance(wFragPos, spotlight.position);
+	float dist = distance(FS.wFragPos, spotlight.position);
 
 	if (dist > 10.0)
 	{
@@ -83,28 +88,28 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
 	light.color   = vec3(1,1,1); //TODO
-	vec3 diffuse  = diff * light.color * kd *texture(texture_diffuse1, frag_tex).xyz;
-	vec3 specular = spec * light.color * ks *texture(texture_specular1, frag_tex).xyz;
+	vec3 diffuse  = diff * light.color * kd *texture(texture_diffuse1, FS.frag_tex).xyz;
+	vec3 specular = spec * light.color * ks *texture(texture_specular1, FS.frag_tex).xyz;
 
 	return diffuse + specular;
 }
 
 vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir)
 {
-	vec3 toLight = normalize(light.position - wFragPos);
+	vec3 toLight = normalize(light.position - FS.wFragPos);
 	float diff = max(dot(normal, toLight), 0.0);
 	// Specular shading
     vec3 reflectDir = reflect(-toLight, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
-	float dist = length(light.position - wFragPos);
+	float dist = length(light.position - FS.wFragPos);
 	//Lecsenges
 	float attenuation = 1.0f / 
 	(light.constant + light.linear * dist +  light.quadratic * (dist * dist));   
 
 	light.color   = vec3(1,1,1);
-	vec3 diffuse  = light.color * diff * kd * texture(texture_diffuse1, frag_tex).xyz;
-	vec3 specular = light.color * spec * ks * texture(texture_specular1, frag_tex).xyz;
+	vec3 diffuse  = light.color * diff * kd * texture(texture_diffuse1, FS.frag_tex).xyz;
+	vec3 specular = light.color * spec * ks * texture(texture_specular1, FS.frag_tex).xyz;
 	diffuse  *= attenuation; 
 	specular *= attenuation;
 
@@ -131,13 +136,13 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-	vec3 normal  = normalize (frag_normal);
-	vec3 viewDir = normalize (wEye - wFragPos);
+	vec3 normal  = normalize (FS.frag_normal);
+	vec3 viewDir = normalize (wEye - FS.wFragPos);
 	vec3 reflectedDir   = reflect(-viewDir, normal);
 	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	
-	vec3 color = ka * texture(texture_diffuse1, frag_tex).xyz;
-	float isShadow = ShadowCalculation(fragPosLightSpace4);
+	vec3 color = ka * texture(texture_diffuse1, FS.frag_tex).xyz;
+	float isShadow = ShadowCalculation(FS.fragPosLightSpace4);
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
 		color += calcPointLight(pointlight[i],normal,viewDir);
@@ -153,13 +158,13 @@ void main()
 	vec4 reflectedColor = vec4(texture(skyBox, reflectedDir).xyz, 1.0);
 	vec4 refractedColor = vec4(texture(skyBox, refractedDir).xyz, 1.0);
 	
-	vec4 reflectedWithTex = vec4(reflectedColor * texture(texture_reflect1, frag_tex));
+	vec4 reflectedWithTex = vec4(reflectedColor * texture(texture_reflect1, FS.frag_tex));
 	
 	//fs_out_col = vec4(mix(colorWLight.xyz, reflectedWithTex.xyz, 0.5) ,1.0);
 	fs_out_col = colorWLight + reflectedWithTex;
 
 
-	//fs_out_col = texture(texture_reflect1, frag_tex);
+	//fs_out_col = texture(texture_reflect1, FS.frag_tex);
 	//fs_out_col = vec4(normal, 1.0);
-	//fs_out_col = vec4(frag_tex.xy, 0, 1);
+	//fs_out_col = vec4(FS.frag_tex.xy, 0, 1);
 }
