@@ -33,9 +33,20 @@ public:
 
 	void Draw(GLenum mode, GLint first, GLsizei count);
 	void DrawIndexed(GLenum mode, GLint first, GLsizei count, const GLvoid* indices);
-	void DrawIndexed(GLenum mode)
+	void DrawIndexed(GLenum mode = GL_TRIANGLES)
 	{
 		glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
+	}
+
+	void Draw(GLenum mode = GL_TRIANGLES)
+	{
+		if (indices.size() > 0)
+			DrawIndexed(mode);
+		else
+		{
+			int triangleNum = values[0].size() / (3 * 3); //3 float/ vec3, 3vec3 / face
+			Draw(mode, 0, triangleNum);
+		}
 	}
 
 	void InitBuffers();
