@@ -7,7 +7,7 @@ class gCamera
 {
 public:
 	gCamera(void);
-	gCamera(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _up);
+	gCamera(glm::vec3 eye, glm::vec3 at, glm::vec3 up);
 	~gCamera(void);
 
 	/// <summary>
@@ -16,13 +16,13 @@ public:
 	/// <returns>The 4x4 view matrix</returns>
 	glm::mat4 GetViewMatrix();
 
-	void Update(float _deltaTime);
+	void Update(float deltaTime);
 
-	void SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _up);
-	void SetProj(float _angle, float _aspect, float _zn, float _zf); 
-	void LookAt(glm::vec3 _at);
+	void SetView(glm::vec3 eye, glm::vec3 at, glm::vec3 up);
+	void SetProj(float angle, float aspect, float zn, float zf);
+	void LookAt(glm::vec3 at);
 
-	void SetSpeed(float _val);
+	void SetSpeed(float val);
 	glm::vec3 GetEye()
 	{
 		return eyePos;
@@ -47,12 +47,12 @@ public:
 	{
 		return projViewMatrix;
 	}
-	glm::mat4 GetRayDirMtx ()
+	glm::mat4 GetRayDirMtx()
 	{
 		return rayDirMatrix;
 	}
 
-	void Resize(int _w, int _h);
+	void Resize(int w, int h);
 
 	void KeyboardDown(SDL_KeyboardEvent& key);
 	void KeyboardUp(SDL_KeyboardEvent& key);
@@ -104,7 +104,7 @@ public:
 	float	m_goRight;
 	float   m_goUp = 0.0f;
 
-	float zNear,zFar;
-	
+	float zNear, zFar;
+
 };
 

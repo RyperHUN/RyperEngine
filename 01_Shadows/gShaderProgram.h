@@ -18,9 +18,9 @@ public:
 
 	operator int() const { return m_id_program; }
 
-	bool AttachShader(GLenum _shaderType, const char* _filename);
-	void BindAttribLoc(int _index, const char* _uniform);
-	void BindFragDataLoc(int _index, const char* _uniform);
+	bool AttachShader(GLenum shaderType, const char* filename);
+	void BindAttribLoc(int index, const char* uniform);
+	void BindFragDataLoc(int index, const char* uniform);
 	bool LinkProgram();
 
 	void SetVerbose(bool);
@@ -30,22 +30,22 @@ public:
 
 	void Clean();
 
-	void SetUniform(const char* _uniform, glm::vec2& _vec);
-	void SetUniform(const char* _uniform, glm::vec3& _vec);
-	void SetUniform(const char* _uniform, glm::vec4& _vec);
-	void SetUniform(const char* _uniform, glm::mat4& _mat);
-	void SetUniform(const char* _uniform, int _i);
-	void SetUniform(const char* _uniform, float _f);
-	void SetUniform(const char* _uniform, float _a, float _b);
-	void SetUniform(const char* _uniform, float _a, float _b, float _c);
-	void SetUniform(const char* _uniform, float _a, float _b, float _c, float _d);
-	void SetSubroutine(GLenum _shadertype, const char* _subroutine_variable, const char* _routine_instance);
-	void SetTexture(const char* _uniform, int _sampler, GLuint _textureID);
-	void SetCubeTexture(const char* _uniform, int _sampler, GLuint _textureID);
+	void SetUniform(const char* uniform, glm::vec2& vec);
+	void SetUniform(const char* uniform, glm::vec3& vec);
+	void SetUniform(const char* uniform, glm::vec4& vec);
+	void SetUniform(const char* uniform, glm::mat4& mat);
+	void SetUniform(const char* uniform, int i);
+	void SetUniform(const char* uniform, float f);
+	void SetUniform(const char* uniform, float a, float b);
+	void SetUniform(const char* uniform, float a, float b, float c);
+	void SetUniform(const char* uniform, float a, float b, float c, float d);
+	void SetSubroutine(GLenum shadertype, const char* subroutine_variable, const char* routine_instance);
+	void SetTexture(const char* uniform, int sampler, GLuint textureID);
+	void SetCubeTexture(const char* uniform, int sampler, GLuint textureID);
 protected:
-	GLuint	getLocation(const char* _uniform);
-	GLuint	getSubroutineIndex(GLenum _shader_type, const char* _uniform);
-	GLuint	loadShader(GLenum _shaderType, const char* _fileName);
+	GLuint	getLocation(const char* uniform);
+	GLuint	getSubroutineIndex(GLenum shader_type, const char* uniform);
+	GLuint	loadShader(GLenum shaderType, const char* fileName);
 
 	GLuint							m_id_program;
 	std::map< std::string, GLint >	m_map_uniform_locations;

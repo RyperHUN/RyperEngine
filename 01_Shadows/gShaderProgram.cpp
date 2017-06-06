@@ -16,20 +16,20 @@ gShaderProgram::~gShaderProgram(void)
 {
 }
 
-bool gShaderProgram::AttachShader( GLenum _shaderType,  const char* _filename )
+bool gShaderProgram::AttachShader(GLenum shaderType, const char* filename)
 {
-	GLuint loaded_shader = loadShader(_shaderType, _filename);
-	if ( loaded_shader == 0 )
+	GLuint loaded_shader = loadShader(shaderType, filename);
+	if (loaded_shader == 0)
 		return false;
 
-	m_list_shaders_attached.push_back( loaded_shader );
+	m_list_shaders_attached.push_back(loaded_shader);
 
-	if ( m_id_program == 0 )
+	if (m_id_program == 0)
 	{
 		m_id_program = glCreateProgram();
-		if ( m_id_program == 0 )
+		if (m_id_program == 0)
 		{
-			if ( m_verbose )
+			if (m_verbose)
 			{
 				std::cout << "Hiba a shader program létrehozásakor" << std::endl;
 			}
@@ -37,14 +37,14 @@ bool gShaderProgram::AttachShader( GLenum _shaderType,  const char* _filename )
 		}
 	}
 
-	glAttachShader( m_id_program, loaded_shader );
+	glAttachShader(m_id_program, loaded_shader);
 
 	return true;
 }
 
 bool gShaderProgram::LinkProgram()
 {
-	if ( m_id_program == 0 )
+	if (m_id_program == 0)
 		return false;
 
 	glLinkProgram(m_id_program);
@@ -54,11 +54,11 @@ bool gShaderProgram::LinkProgram()
 
 	glGetProgramiv(m_id_program, GL_LINK_STATUS, &result);
 	glGetProgramiv(m_id_program, GL_INFO_LOG_LENGTH, &infoLogLength);
-	if ( GL_FALSE == result)
+	if (GL_FALSE == result)
 	{
-		if ( m_verbose )
+		if (m_verbose)
 		{
-			std::vector<char> ProgramErrorMessage( infoLogLength );
+			std::vector<char> ProgramErrorMessage(infoLogLength);
 			glGetProgramInfoLog(m_id_program, infoLogLength, NULL, &ProgramErrorMessage[0]);
 			fprintf(stdout, "%s\n", &ProgramErrorMessage[0]);
 		}
@@ -96,52 +96,52 @@ bool gShaderProgram::LinkProgram()
 void gShaderProgram::Clean()
 {
 	// töröljük a már linkelt linkelt shadereket
-	for (	std::list<GLuint>::iterator _it = m_list_shaders_attached.begin();
-			_it != m_list_shaders_attached.end();
-			++_it )
+	for (std::list<GLuint>::iterator it = m_list_shaders_attached.begin();
+		it != m_list_shaders_attached.end();
+		++it)
 	{
-		if ( m_id_program != 0 && *_it != 0)
-			glDetachShader( m_id_program, *_it );
-		if ( *_it != 0 )
-			glDeleteShader( *_it );
+		if (m_id_program != 0 && *it != 0)
+			glDetachShader(m_id_program, *it);
+		if (*it != 0)
+			glDeleteShader(*it);
 	}
 	glDeleteProgram(m_id_program);
 }
 
-void gShaderProgram::SetVerbose( bool _val )
+void gShaderProgram::SetVerbose(bool val)
 {
-	m_verbose = _val;
+	m_verbose = val;
 }
 
-GLuint gShaderProgram::loadShader(GLenum _shaderType, const char* _fileName)
+GLuint gShaderProgram::loadShader(GLenum shaderType, const char* fileName)
 {
 	// shader azonosito letrehozasa
-	GLuint loadedShader = glCreateShader( _shaderType );
+	GLuint loadedShader = glCreateShader(shaderType);
 
 	// ha nem sikerult hibauzenet es -1 visszaadasa
-	if ( loadedShader == 0 )
+	if (loadedShader == 0)
 	{
 		if (m_verbose)
-			fprintf(stderr, "Hiba a %s shader fájl inicializálásakor (glCreateShader)!", _fileName);
+			fprintf(stderr, "Hiba a %s shader fájl inicializálásakor (glCreateShader)!", fileName);
 		return 0;
 	}
-	
-	// shaderkod betoltese _fileName fajlbol
+
+	// shaderkod betoltese fileName fajlbol
 	std::string shaderCode = "";
 
-	// _fileName megnyitasa
-	std::ifstream shaderStream(_fileName);
+	// fileName megnyitasa
+	std::ifstream shaderStream(fileName);
 
-	if ( !shaderStream.is_open() )
+	if (!shaderStream.is_open())
 	{
 		if (m_verbose)
-			fprintf(stderr, "Hiba a %s shader fájl betöltésekor!", _fileName);
+			fprintf(stderr, "Hiba a %s shader fájl betöltésekor!", fileName);
 		return 0;
 	}
 
 	// file tartalmanak betoltese a shaderCode string-be
 	std::string line = "";
-	while ( std::getline(shaderStream, line) )
+	while (std::getline(shaderStream, line))
 	{
 		shaderCode += line + "\n";
 	}
@@ -150,22 +150,22 @@ GLuint gShaderProgram::loadShader(GLenum _shaderType, const char* _fileName)
 
 	// fajlbol betoltott kod hozzarendelese a shader-hez
 	const char* sourcePointer = shaderCode.c_str();
-	glShaderSource( loadedShader, 1, &sourcePointer, NULL );
+	glShaderSource(loadedShader, 1, &sourcePointer, NULL);
 
 	// shader leforditasa
-	glCompileShader( loadedShader );
+	glCompileShader(loadedShader);
 
 	// ellenorizzuk, h minden rendben van-e
 	GLint result = GL_FALSE;
-    int infoLogLength;
+	int infoLogLength;
 
 	// forditas statuszanak lekerdezese
 	glGetShaderiv(loadedShader, GL_COMPILE_STATUS, &result);
 	glGetShaderiv(loadedShader, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-	if ( GL_FALSE == result )
+	if (GL_FALSE == result)
 	{
-		std::cout << "Hiba: " << _fileName << std::endl;
+		std::cout << "Hiba: " << fileName << std::endl;
 		if (m_verbose)
 		{
 			// hibauzenet elkerese es kiirasa
@@ -180,92 +180,92 @@ GLuint gShaderProgram::loadShader(GLenum _shaderType, const char* _fileName)
 	return loadedShader;
 }
 
-void gShaderProgram::BindAttribLoc(int _index, const char* _uniform)
+void gShaderProgram::BindAttribLoc(int index, const char* uniform)
 {
-	glBindAttribLocation(m_id_program, _index, _uniform);
+	glBindAttribLocation(m_id_program, index, uniform);
 }
 
-void gShaderProgram::BindFragDataLoc(int _index, const char* _uniform)
+void gShaderProgram::BindFragDataLoc(int index, const char* uniform)
 {
-	glBindFragDataLocation(m_id_program, _index, _uniform);
+	glBindFragDataLocation(m_id_program, index, uniform);
 }
 
-void gShaderProgram::SetUniform(const char* _uniform, glm::vec2& _vec)
+void gShaderProgram::SetUniform(const char* uniform, glm::vec2& vec)
 {
-	GLint loc = getLocation(_uniform);
-	glUniform2fv( loc, 1, &_vec[0] );
+	GLint loc = getLocation(uniform);
+	glUniform2fv(loc, 1, &vec[0]);
 }
 
-void gShaderProgram::SetUniform(const char* _uniform, glm::vec3& _vec)
+void gShaderProgram::SetUniform(const char* uniform, glm::vec3& vec)
 {
-	GLint loc = getLocation(_uniform);
-	glUniform3fv( loc, 1, &_vec[0] );
+	GLint loc = getLocation(uniform);
+	glUniform3fv(loc, 1, &vec[0]);
 }
 
-void gShaderProgram::SetUniform(const char* _uniform, int _i)
+void gShaderProgram::SetUniform(const char* uniform, int i)
 {
-	GLint loc = getLocation(_uniform);
-	glUniform1i( loc, _i );
+	GLint loc = getLocation(uniform);
+	glUniform1i(loc, i);
 }
 
-void gShaderProgram::SetUniform(const char* _uniform, float _f)
+void gShaderProgram::SetUniform(const char* uniform, float f)
 {
-	GLint loc = getLocation(_uniform);
-	glUniform1f( loc, _f );
+	GLint loc = getLocation(uniform);
+	glUniform1f(loc, f);
 }
 
-void gShaderProgram::SetUniform(const char* _uniform, float _a, float _b)
+void gShaderProgram::SetUniform(const char* uniform, float a, float b)
 {
-	GLint loc = getLocation(_uniform);
-	glUniform2f( loc, _a, _b);
+	GLint loc = getLocation(uniform);
+	glUniform2f(loc, a, b);
 }
 
-void gShaderProgram::SetUniform(const char* _uniform, float _a, float _b, float _c)
+void gShaderProgram::SetUniform(const char* uniform, float a, float b, float c)
 {
-	GLint loc = getLocation(_uniform);
-	glUniform3f( loc, _a, _b, _c );
-}
-
-
-void gShaderProgram::SetUniform(const char* _uniform, float _a, float _b, float _c, float _d)
-{
-	GLint loc = getLocation(_uniform);
-	glUniform4f( loc, _a, _b, _c, _d );
+	GLint loc = getLocation(uniform);
+	glUniform3f(loc, a, b, c);
 }
 
 
-void gShaderProgram::SetUniform(const char* _uniform, glm::vec4& _vec)
+void gShaderProgram::SetUniform(const char* uniform, float a, float b, float c, float d)
 {
-	GLint loc = getLocation(_uniform);
-	glUniform4fv( loc, 1, &_vec[0] );
+	GLint loc = getLocation(uniform);
+	glUniform4f(loc, a, b, c, d);
 }
 
-void gShaderProgram::SetUniform(const char* _uniform, glm::mat4& _mat)
+
+void gShaderProgram::SetUniform(const char* uniform, glm::vec4& vec)
 {
-	GLint loc = getLocation(_uniform);
-	glUniformMatrix4fv( loc, 1, GL_FALSE, &(_mat[0][0]) );
+	GLint loc = getLocation(uniform);
+	glUniform4fv(loc, 1, &vec[0]);
 }
 
-inline GLuint	gShaderProgram::getLocation(const char* _uniform)
+void gShaderProgram::SetUniform(const char* uniform, glm::mat4& mat)
 {
-	std::map< std::string, int >::iterator loc_it = m_map_uniform_locations.find(_uniform);
-	if ( loc_it == m_map_uniform_locations.end() )
+	GLint loc = getLocation(uniform);
+	glUniformMatrix4fv(loc, 1, GL_FALSE, &(mat[0][0]));
+}
+
+inline GLuint	gShaderProgram::getLocation(const char* uniform)
+{
+	std::map< std::string, int >::iterator loc_it = m_map_uniform_locations.find(uniform);
+	if (loc_it == m_map_uniform_locations.end())
 	{
-		GLint my_loc = glGetUniformLocation(m_id_program, _uniform);
-		m_map_uniform_locations[_uniform] = my_loc;
+		GLint my_loc = glGetUniformLocation(m_id_program, uniform);
+		m_map_uniform_locations[uniform] = my_loc;
 		return my_loc;
 	}
 	else
 		return loc_it->second;
 }
 
-GLuint gShaderProgram::getSubroutineIndex(GLenum _shader_type, const char* _uniform)
+GLuint gShaderProgram::getSubroutineIndex(GLenum shader_type, const char* uniform)
 {
-	auto loc_it = m_subroutine_function_indices[_shader_type].find(_uniform);
-	if (loc_it == m_subroutine_function_indices[_shader_type].end())
+	auto loc_it = m_subroutine_function_indices[shader_type].find(uniform);
+	if (loc_it == m_subroutine_function_indices[shader_type].end())
 	{
-		GLint my_loc = glGetSubroutineIndex(m_id_program, _shader_type, _uniform);
-		m_subroutine_function_indices[_shader_type][_uniform] = my_loc;
+		GLint my_loc = glGetSubroutineIndex(m_id_program, shader_type, uniform);
+		m_subroutine_function_indices[shader_type][uniform] = my_loc;
 		return my_loc;
 	}
 	else
@@ -282,28 +282,28 @@ void gShaderProgram::Off()
 	glUseProgram(0);
 }
 
-void gShaderProgram::SetTexture(const char* _uniform, int _sampler, GLuint _textureID)
+void gShaderProgram::SetTexture(const char* uniform, int sampler, GLuint textureID)
 {
-	glActiveTexture(GL_TEXTURE0 + _sampler);
-	glBindTexture(GL_TEXTURE_2D, _textureID);
-	SetUniform(_uniform, _sampler);
+	glActiveTexture(GL_TEXTURE0 + sampler);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	SetUniform(uniform, sampler);
 }
 
-void gShaderProgram::SetCubeTexture(const char* _uniform, int _sampler, GLuint _textureID)
+void gShaderProgram::SetCubeTexture(const char* uniform, int sampler, GLuint textureID)
 {
-	glActiveTexture(GL_TEXTURE0 + _sampler);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureID);
-	SetUniform(_uniform, _sampler);
+	glActiveTexture(GL_TEXTURE0 + sampler);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	SetUniform(uniform, sampler);
 }
 
-void gShaderProgram::SetSubroutine(GLenum _shadertype, const char* _subroutine_variable, const char* _routine_instance)
+void gShaderProgram::SetSubroutine(GLenum shadertype, const char* subroutine_variable, const char* routine_instance)
 {
-	auto sub_idx = m_subroutine_uniform_indices[_shadertype].find(_subroutine_variable);
-	auto fnc_idx = getSubroutineIndex(_shadertype, _routine_instance);
-	if ( sub_idx != m_subroutine_uniform_indices[_shadertype].end() && fnc_idx != -1 )
+	auto sub_idx = m_subroutine_uniform_indices[shadertype].find(subroutine_variable);
+	auto fnc_idx = getSubroutineIndex(shadertype, routine_instance);
+	if (sub_idx != m_subroutine_uniform_indices[shadertype].end() && fnc_idx != -1)
 	{
-		m_subroutine_mappings[_shadertype][sub_idx->second] = fnc_idx;
-		glUniformSubroutinesuiv(_shadertype, m_subroutine_uniform_indices[_shadertype].size(), &m_subroutine_mappings[_shadertype][0]);
+		m_subroutine_mappings[shadertype][sub_idx->second] = fnc_idx;
+		glUniformSubroutinesuiv(shadertype, m_subroutine_uniform_indices[shadertype].size(), &m_subroutine_mappings[shadertype][0]);
 	}
 }
 
