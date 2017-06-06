@@ -13,8 +13,8 @@ uniform mat4 LightSpaceMtx;
 out VS_OUT 
 {
 	out vec3 wFragPos;
-	out vec3 frag_normal;
-	out vec2 frag_tex;
+	out vec3 normal;
+	out vec2 texCoord;
 	out vec4 fragPosLightSpace4;
 } VS;
 
@@ -25,7 +25,7 @@ void main()
 	gl_Position = MVP*vec4( vs_in_pos, 1 );
 
 	VS.wFragPos = (M * vec4(vs_in_pos, 1)).xyz;
-	VS.frag_normal = (vec4(vs_in_normal, 0)* Minv).xyz;
-	VS.frag_tex = vs_in_tex;
+	VS.normal = (vec4(vs_in_normal, 0)* Minv).xyz;
+	VS.texCoord = vs_in_tex;
 	VS.fragPosLightSpace4 = (LightSpaceMtx * vec4(VS.wFragPos, 1.0));
 }

@@ -3,8 +3,8 @@
 in VS_OUT 
 {
 	in vec3 wFragPos;
-	in vec3 frag_normal;
-	in vec2 frag_tex;
+	in vec3 normal;
+	in vec2 texCoord;
 	in vec4 fragPosLightSpace4;
 } FS;
 
@@ -41,35 +41,34 @@ struct PointLight {
 	vec3 color;
 };  
 
-//uniform samplerCube cubeTexture; TODO
-
 uniform vec3 ka = vec3(0.2,0,0);
 uniform vec3 kd = vec3(0.6,0,0);
 uniform vec3 ks = vec3(0.8,0.8,0.8);
 uniform vec3 wEye;
 uniform float shininess = 20.0f;
 
+//TODO define only for max light, and upload used point light number
 #define POINT_LIGHT_NUM 3
 
 uniform SpotLight spotlight;
 uniform DirLight dirlight;
 uniform PointLight pointlight[POINT_LIGHT_NUM];
 
-vec3 calcSpotLight (SpotLight light)
+//TODO Specular
+vec3 calcSpotLight (SpotLight light, vec3 wFragPos)
 {
-	vec3 lightDir   = normalize(spotlight.position - FS.wFragPos);
-	float theta     = dot(lightDir, normalize(-spotlight.direction));
+	vec3 lightDir = normalize(spotlight.position - wFragPos);
+	float theta   = dot(lightDir, normalize(-spotlight.direction));
 	
 	vec3 color = vec3(0,0,0);
-	vec3 texturedColor = kd * texture(texture_diffuse1, FS.frag_tex).xyz;
+	vec3 texturedColor = kd * texture(texture_diffuse1, FS.texCoord).xyz;
 	if(theta > spotlight.cutOff * 0.96) 
 	{
 		float interp = smoothstep(spotlight.cutOff * 0.96,spotlight.cutOff,theta);
 	    color = mix(vec3(0,0,0),texturedColor,interp);// Do lighting calculations
 	}
-
-	float dist = distance(FS.wFragPos, spotlight.position);
-
+	
+	float dist = distance(wFragPos, spotlight.position);
 	if (dist > 10.0)
 	{
 		color *= 10.0f / dist; //attenuation with distance
@@ -88,28 +87,28 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
 	light.color   = vec3(1,1,1); //TODO
-	vec3 diffuse  = diff * light.color * kd *texture(texture_diffuse1, FS.frag_tex).xyz;
-	vec3 specular = spec * light.color * ks *texture(texture_specular1, FS.frag_tex).xyz;
+	vec3 diffuse  = diff * light.color * kd *texture(texture_diffuse1, FS.texCoord).xyz;
+	vec3 specular = spec * light.color * ks *texture(texture_specular1, FS.texCoord).xyz;
 
 	return diffuse + specular;
 }
 
-vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir)
+vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir, vec3 wFragPos)
 {
-	vec3 toLight = normalize(light.position - FS.wFragPos);
+	vec3 toLight = normalize(light.position - wFragPos);
 	float diff = max(dot(normal, toLight), 0.0);
 	// Specular shading
     vec3 reflectDir = reflect(-toLight, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
-	float dist = length(light.position - FS.wFragPos);
+	float dist = length(light.position - wFragPos);
 	//Lecsenges
 	float attenuation = 1.0f / 
 	(light.constant + light.linear * dist +  light.quadratic * (dist * dist));   
 
 	light.color   = vec3(1,1,1);
-	vec3 diffuse  = light.color * diff * kd * texture(texture_diffuse1, FS.frag_tex).xyz;
-	vec3 specular = light.color * spec * ks * texture(texture_specular1, FS.frag_tex).xyz;
+	vec3 diffuse  = light.color * diff * kd * texture(texture_diffuse1, FS.texCoord).xyz;
+	vec3 specular = light.color * spec * ks * texture(texture_specular1, FS.texCoord).xyz;
 	diffuse  *= attenuation; 
 	specular *= attenuation;
 
@@ -136,17 +135,17 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-	vec3 normal  = normalize (FS.frag_normal);
+	vec3 normal  = normalize (FS.normal);
 	vec3 viewDir = normalize (wEye - FS.wFragPos);
 	vec3 reflectedDir   = reflect(-viewDir, normal);
 	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	
-	vec3 color = ka * texture(texture_diffuse1, FS.frag_tex).xyz;
+	vec3 color = ka * texture(texture_diffuse1, FS.texCoord).xyz;
 	float isShadow = ShadowCalculation(FS.fragPosLightSpace4);
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
-		color += calcPointLight(pointlight[i],normal,viewDir);
-	//color += calcSpotLight (spotlight);
+		color += calcPointLight(pointlight[i],normal,viewDir, FS.wFragPos);
+	color += calcSpotLight (spotlight, FS.wFragPos);
 	if(isShadow > 0.5)
 	{
 		color += calcDirLight (dirlight, normal, viewDir);
@@ -158,13 +157,13 @@ void main()
 	vec4 reflectedColor = vec4(texture(skyBox, reflectedDir).xyz, 1.0);
 	vec4 refractedColor = vec4(texture(skyBox, refractedDir).xyz, 1.0);
 	
-	vec4 reflectedWithTex = vec4(reflectedColor * texture(texture_reflect1, FS.frag_tex));
+	vec4 reflectedWithTex = vec4(reflectedColor * texture(texture_reflect1, FS.texCoord));
 	
 	//fs_out_col = vec4(mix(colorWLight.xyz, reflectedWithTex.xyz, 0.5) ,1.0);
 	fs_out_col = colorWLight + reflectedWithTex;
 
 
-	//fs_out_col = texture(texture_reflect1, FS.frag_tex);
+	//fs_out_col = texture(texture_reflect1, FS.texCoord);
 	//fs_out_col = vec4(normal, 1.0);
-	//fs_out_col = vec4(FS.frag_tex.xy, 0, 1);
+	//fs_out_col = vec4(FS.texCoord.xy, 0, 1);
 }
