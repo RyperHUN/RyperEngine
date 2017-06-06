@@ -56,8 +56,8 @@ public:
 
 		shaderParam->On ();
 		{
-			glm::mat4 MVP = state.PV * state.M;
-			shaderParam->SetUniform("MVP", MVP);
+			glm::mat4 PVM = state.PV * state.M;
+			shaderParam->SetUniform("PVM", PVM);
 			shaderParam->SetUniform("M", state.M);
 			shaderParam->SetUniform("Minv", state.Minv);
 			shaderParam->SetUniform("wEye", state.wEye);

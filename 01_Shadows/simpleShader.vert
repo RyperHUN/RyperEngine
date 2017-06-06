@@ -4,7 +4,7 @@ in vec3 vs_in_pos;
 in vec3 vs_in_normal;
 in vec2 vs_in_tex;
 
-uniform mat4 MVP;
+uniform mat4 PVM;
 uniform mat4 M;
 uniform mat4 Minv;
 uniform mat4 LightSpaceMtx;
@@ -22,7 +22,7 @@ out VS_OUT
 
 void main()
 {
-	gl_Position = MVP*vec4( vs_in_pos, 1 );
+	gl_Position = PVM*vec4( vs_in_pos, 1 );
 
 	VS.wFragPos = (M * vec4(vs_in_pos, 1)).xyz;
 	VS.normal = (vec4(vs_in_normal, 0)* Minv).xyz;

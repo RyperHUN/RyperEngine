@@ -380,7 +380,7 @@ void CMyApp::Render()
 	shader_EnvMap.SetCubeTexture("skyBox", 12, textureCube_id);
 	shader_Simple.SetTexture ("shadowMap",15,texture_ShadowMap);
 	//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
-	state.PV = m_camera.GetViewProj();
+	state.PV = m_camera.GetProjView();
 	glViewport(0, 0, m_width, m_height);
 	for(auto& obj : gameObjs)
 		obj->Draw (state);

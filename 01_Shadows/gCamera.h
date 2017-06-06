@@ -25,7 +25,7 @@ public:
 	void SetSpeed(float _val);
 	glm::vec3 GetEye()
 	{
-		return m_eye;
+		return eyePos;
 	}
 
 	glm::vec3 GetAt()
@@ -40,12 +40,12 @@ public:
 
 	glm::mat4 GetProj()
 	{
-		return m_matProj;
+		return projMatrix;
 	}
 
-	glm::mat4 GetViewProj()
+	glm::mat4 GetProjView()
 	{
-		return m_matViewProj;
+		return projViewMatrix;
 	}
 	glm::mat4 GetRayDirMtx ()
 	{
@@ -65,16 +65,18 @@ public:
 	///  The traversal speed of the camera
 	float		m_speed;
 	/// The view matrix of the camera
-	glm::mat4	m_viewMatrix;
+	glm::mat4	viewMatrix;
 
-	glm::mat4	m_matViewProj;
+	glm::mat4	projMatrix;
 
-	glm::mat4 rayDirMatrix; //rayDirMtx * pos_ndc = 
+	glm::mat4	projViewMatrix;
+
+	glm::mat4 rayDirMatrix; //viewDir = rayDirMtx * pos_ndc;
 
 	bool	m_slow;
 
 	/// The camera position.
-	glm::vec3	m_eye;
+	glm::vec3	eyePos;
 
 	/// The vector pointing upwards
 	glm::vec3	upVector;
@@ -97,8 +99,6 @@ public:
 
 	/// The unit vector pointing to the 'right'
 	glm::vec3	rightVector;
-
-	glm::mat4	m_matProj;
 
 	float	m_goFw;
 	float	m_goRight;

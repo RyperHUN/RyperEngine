@@ -9,13 +9,13 @@
 /// Initializes a new instance of the <see cref="gCamera"/> class.
 /// </summary>
 gCamera::gCamera(void) 
-	: m_eye(0.0f, 0.0f, 0.0f), lookAtPoint(0.0f),
+	: eyePos(0.0f, 0.0f, 0.0f), lookAtPoint(0.0f),
 	upVector(0.0f, 1.0f, 0.0f), m_speed(30.0f), m_goFw(0), m_goRight(0), m_slow(false)
 	,zFar(10'000'000'000.0f),zNear(0.1f)
 {
 	SetView( glm::vec3(0,20,20), glm::vec3(0,0,0), glm::vec3(0,1,0));
 
-	m_dist = glm::length( lookAtPoint - m_eye );	
+	m_dist = glm::length( lookAtPoint - eyePos );	
 
 	SetProj(45.0f, 640/480.0f, zNear, zFar);
 }
@@ -31,14 +31,14 @@ gCamera::~gCamera(void)
 
 void gCamera::SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _up)
 {
-	m_eye	= _eye;
+	eyePos	= _eye;
 	lookAtPoint	= _at;
 	upVector	= _up;
 
-	forwardVector  = glm::normalize( lookAtPoint - m_eye  );
+	forwardVector  = glm::normalize( lookAtPoint - eyePos  );
 	rightVector = glm::normalize( glm::cross( forwardVector, upVector ) );
 
-	m_dist = glm::length( lookAtPoint - m_eye );	
+	m_dist = glm::length( lookAtPoint - eyePos );	
 
 	m_u = atan2f( forwardVector.z, forwardVector.x );
 	m_v = acosf( forwardVector.y );
@@ -46,28 +46,28 @@ void gCamera::SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _up)
 
 void gCamera::SetProj(float angle, float aspectRatio, float zNear, float zFar)
 {
-	m_matProj = glm::perspective( angle, aspectRatio, zNear, zFar);
-	m_matViewProj = m_matProj * m_viewMatrix;
+	projMatrix = glm::perspective( angle, aspectRatio, zNear, zFar);
+	projViewMatrix = projMatrix * viewMatrix;
 }
 
 glm::mat4 gCamera::GetViewMatrix()
 {
-	return m_viewMatrix;
+	return viewMatrix;
 }
 
 void gCamera::Update(float _deltaTime)
 {
-	m_eye += (m_goFw*forwardVector + m_goRight*rightVector)*m_speed*_deltaTime;
+	eyePos += (m_goFw*forwardVector + m_goRight*rightVector)*m_speed*_deltaTime;
 	lookAtPoint  += (m_goFw*forwardVector + m_goRight*rightVector)*m_speed*_deltaTime;
 
 	float deltaY = m_speed * _deltaTime * m_goUp;
-	m_eye.y += deltaY;
+	eyePos.y += deltaY;
 	lookAtPoint.y += m_speed * _deltaTime * m_goUp;
 
-	m_viewMatrix = glm::lookAt( m_eye, lookAtPoint, upVector);
-	m_matViewProj = m_matProj * m_viewMatrix;
+	viewMatrix = glm::lookAt( eyePos, lookAtPoint, upVector);
+	projViewMatrix = projMatrix * viewMatrix;
 
-	rayDirMatrix = glm::inverse (m_matViewProj *  glm::translate(m_eye));
+	rayDirMatrix = glm::inverse (projViewMatrix *  glm::translate(eyePos));
 }
 
 void gCamera::UpdateUV(float du, float dv)
@@ -75,11 +75,11 @@ void gCamera::UpdateUV(float du, float dv)
 	m_u		+= du;
 	m_v		 = glm::clamp<float>(m_v + dv, 0.1f, 3.1f);
 
-	lookAtPoint = m_eye + m_dist*glm::vec3(	cosf(m_u)*sinf(m_v), 
+	lookAtPoint = eyePos + m_dist*glm::vec3(	cosf(m_u)*sinf(m_v), 
 										cosf(m_v), 
 										sinf(m_u)*sinf(m_v) );
 
-	forwardVector = glm::normalize( lookAtPoint - m_eye );
+	forwardVector = glm::normalize( lookAtPoint - eyePos );
 	rightVector = glm::normalize( glm::cross( forwardVector, upVector ) );
 }
 
@@ -164,6 +164,6 @@ void gCamera::MouseMove(SDL_MouseMotionEvent& mouse)
 
 void gCamera::LookAt(glm::vec3 _at)
 {
-	SetView(m_eye, _at, upVector);
+	SetView(eyePos, _at, upVector);
 }
 
