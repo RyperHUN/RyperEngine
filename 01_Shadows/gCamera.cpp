@@ -67,7 +67,7 @@ void gCamera::Update(float _deltaTime)
 	m_viewMatrix = glm::lookAt( m_eye, lookAtPoint, upVector);
 	m_matViewProj = m_matProj * m_viewMatrix;
 
-	rayDirMatrix = glm::transpose(glm::inverse (m_matViewProj *  glm::translate(m_eye)));
+	rayDirMatrix = glm::inverse (m_matViewProj *  glm::translate(m_eye));
 }
 
 void gCamera::UpdateUV(float du, float dv)

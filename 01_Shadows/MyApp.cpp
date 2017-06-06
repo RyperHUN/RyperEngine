@@ -208,7 +208,7 @@ bool CMyApp::Init()
 	MaterialPtr material1 = std::make_shared<Material>(glm::vec3(0.1f,0,0),glm::vec3(0.8f, 0,0),glm::vec3(1,1,1));
 	MaterialPtr material2 = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
 	MaterialPtr material3 = std::make_shared<Material>(glm::vec3(0.0f,0.1f,0.1f), glm::vec3(0,0.7f,0.7f), glm::vec3(1, 1, 1));
-	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f,0.1f,0.1f), glm::vec3(0.7f,0.7f,0.7f), glm::vec3(1,1,1));
+	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1,1,1));
 
 	geom_Quad = TriangleMesh (buffer_Quad);
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);

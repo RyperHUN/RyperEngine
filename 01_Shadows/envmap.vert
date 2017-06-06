@@ -11,5 +11,5 @@ void main()
 {
 	vec4 pos = vec4( vs_in_pos.xy,0.9999, 1 );
 	gl_Position = pos;
-	viewDir = pos * rayDirMatrix;
+	viewDir = rayDirMatrix * pos;
 }
