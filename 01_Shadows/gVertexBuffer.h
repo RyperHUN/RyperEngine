@@ -14,28 +14,28 @@ public:
 	gVertexBuffer(void);
 	~gVertexBuffer(void);
 
-	void AddAttribute(int _idx, int _comps);
-	
-	/// _idx: the attribute channel on which data is being supplied
-	void AddData(int _idx, float _x);
-	void AddData(int _idx, float _x, float _y);
-	void AddData(int _idx, float _x, float _y, float _z);
-	void AddData(int _idx, float _x, float _y, float _z, float _w);
-	void AddData(int _idx, glm::vec4& _v);
-	void AddData(int _idx, glm::vec3& _v);
-	void AddData(int _idx, glm::vec2& _v);
-	void AddIndex(unsigned int _a);
-	void AddIndex(unsigned int _a, unsigned int _b);
-	void AddIndex(unsigned int _a, unsigned int _b, int unsigned _c);
-	void AddIndex(unsigned int _a, unsigned int _b, int unsigned _c, int unsigned _d);
+	void AddAttribute(int idx, int comps);
 
-	void SetPatchVertices(int _n);
+	/// idx: the attribute channel on which data is being supplied
+	void AddData(int idx, float x);
+	void AddData(int idx, float x, float y);
+	void AddData(int idx, float x, float y, float z);
+	void AddData(int idx, float x, float y, float z, float w);
+	void AddData(int idx, glm::vec4& v);
+	void AddData(int idx, glm::vec3& v);
+	void AddData(int idx, glm::vec2& v);
+	void AddIndex(unsigned int a);
+	void AddIndex(unsigned int a, unsigned int b);
+	void AddIndex(unsigned int a, unsigned int b, int unsigned c);
+	void AddIndex(unsigned int a, unsigned int b, int unsigned c, int unsigned d);
 
-	void Draw(GLenum _mode, GLint _first, GLsizei _count);
-	void DrawIndexed(GLenum _mode, GLint _first, GLsizei _count, const GLvoid* _indices);
-	void DrawIndexed(GLenum _mode)
+	void SetPatchVertices(int n);
+
+	void Draw(GLenum mode, GLint first, GLsizei count);
+	void DrawIndexed(GLenum mode, GLint first, GLsizei count, const GLvoid* indices);
+	void DrawIndexed(GLenum mode)
 	{
-		glDrawElements(_mode, m_indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
 	}
 
 	void InitBuffers();
@@ -48,15 +48,15 @@ public:
 	struct AttribDesc
 	{
 		AttribDesc() : idx(0), comps(1), stride(0), usage(GL_STATIC_DRAW) {}
-		AttribDesc(int _idx, int _comps) : idx(_idx), comps(_comps), usage(GL_STATIC_DRAW)
+		AttribDesc(int idx, int comps) : idx(idx), comps(comps), usage(GL_STATIC_DRAW)
 		{
-			stride = _comps*sizeof(GL_FLOAT);
+			stride = comps * sizeof(GL_FLOAT);
 		}
-		AttribDesc(int _idx, int _comps, int _stride) : idx(_idx), comps(_comps), stride(_stride), usage(GL_STATIC_DRAW) {}
-		AttribDesc(int _idx, int _comps, int _stride, int _usage) : idx(_idx), comps(_comps), stride(_stride), usage(_usage) {}
+		AttribDesc(int idx, int comps, int stride) : idx(idx), comps(comps), stride(stride), usage(GL_STATIC_DRAW) {}
+		AttribDesc(int idx, int comps, int stride, int usage) : idx(idx), comps(comps), stride(stride), usage(usage) {}
 		int	idx;
 		int comps;
-		int stride;  
+		int stride;
 		int usage;
 	};
 
@@ -64,11 +64,11 @@ protected:
 	GLuint	m_vao;
 
 	// associate an attribute descriptor struct with a channel index
-	std::map< int, AttribDesc >	m_attribs;
+	std::map< int, AttribDesc >	attribs;
 
-	std::map< int, std::vector<float> >	m_values;
-	std::vector<unsigned int> m_indices;
+	std::map< int, std::vector<float> >	values;
+	std::vector<unsigned int> indices;
 
-	std::list<GLuint>	m_vbo_ids;
+	std::list<GLuint>	vboIds;
 };
 

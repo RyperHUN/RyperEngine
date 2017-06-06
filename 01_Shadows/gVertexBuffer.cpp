@@ -12,68 +12,68 @@ gVertexBuffer::~gVertexBuffer(void)
 
 void gVertexBuffer::Clean()
 {
-	m_indices.clear();
-	m_attribs.clear();
-	m_values.clear();
-	for( std::list<GLuint>::iterator it = m_vbo_ids.begin(); it != m_vbo_ids.end(); ++it)
+	indices.clear();
+	attribs.clear();
+	values.clear();
+	for (std::list<GLuint>::iterator it = vboIds.begin(); it != vboIds.end(); ++it)
 	{
-		glDeleteBuffers(1, &(*it) );
+		glDeleteBuffers(1, &(*it));
 	}
 	glDeleteVertexArrays(1, &m_vao);
-	m_vbo_ids.clear();
+	vboIds.clear();
 }
 
-void gVertexBuffer::AddAttribute(int _idx, int _comps)
+void gVertexBuffer::AddAttribute(int idx, int comps)
 {
-	AttribDesc desc(_idx, _comps);
-	m_attribs[_idx] = desc;
+	AttribDesc desc(idx, comps);
+	attribs[idx] = desc;
 }
 
-void gVertexBuffer::AddData(int _idx, float _x)
+void gVertexBuffer::AddData(int idx, float x)
 {
-	m_values[_idx].push_back(_x);
+	values[idx].push_back(x);
 }
 
-void gVertexBuffer::AddData(int _idx, float _x, float _y)
+void gVertexBuffer::AddData(int idx, float x, float y)
 {
-	m_values[_idx].push_back(_x);
-	m_values[_idx].push_back(_y);
+	values[idx].push_back(x);
+	values[idx].push_back(y);
 }
 
-void gVertexBuffer::AddData(int _idx, float _x, float _y, float _z)
+void gVertexBuffer::AddData(int idx, float x, float y, float z)
 {
-	m_values[_idx].push_back(_x);
-	m_values[_idx].push_back(_y);
-	m_values[_idx].push_back(_z);
+	values[idx].push_back(x);
+	values[idx].push_back(y);
+	values[idx].push_back(z);
 }
 
-void gVertexBuffer::AddData(int _idx, float _x, float _y, float _z, float _w)
+void gVertexBuffer::AddData(int idx, float x, float y, float z, float w)
 {
-	m_values[_idx].push_back(_x);
-	m_values[_idx].push_back(_y);
-	m_values[_idx].push_back(_z);
-	m_values[_idx].push_back(_w);
+	values[idx].push_back(x);
+	values[idx].push_back(y);
+	values[idx].push_back(z);
+	values[idx].push_back(w);
 }
 
-void gVertexBuffer::AddData(int _idx, glm::vec2& _v)
+void gVertexBuffer::AddData(int idx, glm::vec2& v)
 {
-	m_values[_idx].push_back(_v.x);
-	m_values[_idx].push_back(_v.y);
+	values[idx].push_back(v.x);
+	values[idx].push_back(v.y);
 }
 
-void gVertexBuffer::AddData(int _idx, glm::vec3& _v)
+void gVertexBuffer::AddData(int idx, glm::vec3& v)
 {
-	m_values[_idx].push_back(_v.x);
-	m_values[_idx].push_back(_v.y);
-	m_values[_idx].push_back(_v.z);
+	values[idx].push_back(v.x);
+	values[idx].push_back(v.y);
+	values[idx].push_back(v.z);
 }
 
-void gVertexBuffer::AddData(int _idx, glm::vec4& _v)
+void gVertexBuffer::AddData(int idx, glm::vec4& v)
 {
-	m_values[_idx].push_back(_v.x);
-	m_values[_idx].push_back(_v.y);
-	m_values[_idx].push_back(_v.z);
-	m_values[_idx].push_back(_v.w);
+	values[idx].push_back(v.x);
+	values[idx].push_back(v.y);
+	values[idx].push_back(v.z);
+	values[idx].push_back(v.w);
 }
 
 void gVertexBuffer::InitBuffers()
@@ -82,37 +82,37 @@ void gVertexBuffer::InitBuffers()
 	glBindVertexArray(m_vao);
 
 	// for each attribute, create a VBO and fill it with the data and set the VAO attribs
-	for ( std::map<int, AttribDesc>::iterator it = m_attribs.begin(); it != m_attribs.end(); ++it)
+	for (std::map<int, AttribDesc>::iterator it = attribs.begin(); it != attribs.end(); ++it)
 	{
 		GLuint vbo_id = 0;
 		glGenBuffers(1, &vbo_id);
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-		glBufferData(	GL_ARRAY_BUFFER,									// dest
-						sizeof(GL_FLOAT)*m_values[it->second.idx].size(),	// size
-						&(m_values[it->second.idx][0]),						// source
-						it->second.usage );									// usage
+		glBufferData(GL_ARRAY_BUFFER,									// dest
+			sizeof(GL_FLOAT)*values[it->second.idx].size(),	// size
+			&(values[it->second.idx][0]),						// source
+			it->second.usage);									// usage
 
-		glVertexAttribPointer(	it->second.idx,		// channel
-								it->second.comps,	// number of components
-								GL_FLOAT,			// type
-								GL_FALSE,			// normalized flag
-								it->second.stride,	// stride
-								0);					// offset
+		glVertexAttribPointer(it->second.idx,		// channel
+			it->second.comps,	// number of components
+			GL_FLOAT,			// type
+			GL_FALSE,			// normalized flag
+			it->second.stride,	// stride
+			0);					// offset
 
 		glEnableVertexAttribArray(it->second.idx);
 
-		m_vbo_ids.push_back( vbo_id );
+		vboIds.push_back(vbo_id);
 	}
 
 	// if indices are specified, upload the element array to the GPU
-	if ( m_indices.size() > 0 )
+	if (indices.size() > 0)
 	{
 		GLuint index_buffer = 0;
 		glGenBuffers(1, &index_buffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
 
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*m_indices.size(), &(m_indices[0]), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*indices.size(), &(indices[0]), GL_STATIC_DRAW);
 	}
 
 	glBindVertexArray(0);
@@ -131,41 +131,41 @@ void gVertexBuffer::Off()
 	glBindVertexArray(0);
 }
 
-void gVertexBuffer::AddIndex(unsigned int _a)
+void gVertexBuffer::AddIndex(unsigned int a)
 {
-	m_indices.push_back(_a);
+	indices.push_back(a);
 }
 
-void gVertexBuffer::AddIndex(unsigned int _a, unsigned int _b)
+void gVertexBuffer::AddIndex(unsigned int a, unsigned int b)
 {
-	m_indices.push_back(_a);
-	m_indices.push_back(_b);
+	indices.push_back(a);
+	indices.push_back(b);
 }
 
-void gVertexBuffer::AddIndex(unsigned int _a, unsigned int _b, unsigned int _c)
+void gVertexBuffer::AddIndex(unsigned int a, unsigned int b, unsigned int c)
 {
-	m_indices.push_back(_a);
-	m_indices.push_back(_b);
-	m_indices.push_back(_c);
+	indices.push_back(a);
+	indices.push_back(b);
+	indices.push_back(c);
 }
 
-void gVertexBuffer::AddIndex(unsigned int _a, unsigned int _b, unsigned int _c, unsigned int _d)
+void gVertexBuffer::AddIndex(unsigned int a, unsigned int b, unsigned int c, unsigned int d)
 {
-	m_indices.push_back(_a);
-	m_indices.push_back(_b);
-	m_indices.push_back(_c);
-	m_indices.push_back(_d);
+	indices.push_back(a);
+	indices.push_back(b);
+	indices.push_back(c);
+	indices.push_back(d);
 }
 
-void gVertexBuffer::SetPatchVertices(int _n)
+void gVertexBuffer::SetPatchVertices(int n)
 {
-	glPatchParameteri(GL_PATCH_VERTICES, _n);
+	glPatchParameteri(GL_PATCH_VERTICES, n);
 }
-void gVertexBuffer::Draw(GLenum _mode, GLint _first, GLsizei _count)
+void gVertexBuffer::Draw(GLenum mode, GLint first, GLsizei count)
 {
-	glDrawArrays(_mode, _first, _count);
+	glDrawArrays(mode, first, count);
 }
-void gVertexBuffer::DrawIndexed(GLenum _mode, GLint _first, GLsizei _count, const GLvoid* _indices = 0)
+void gVertexBuffer::DrawIndexed(GLenum mode, GLint first, GLsizei count, const GLvoid* indices = 0)
 {
-	glDrawElements(_mode, _count, GL_UNSIGNED_INT, _indices);
+	glDrawElements(mode, count, GL_UNSIGNED_INT, indices);
 }
