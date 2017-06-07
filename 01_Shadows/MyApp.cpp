@@ -66,29 +66,134 @@ bool CMyApp::Init()
 
 	// skybox kocka
 	buffer_Box.AddAttribute(0, 3);
+	buffer_Box.AddAttribute(1, 3);
+	buffer_Box.AddAttribute(2, 2);
 
-	buffer_Box.AddData(0, -10, -10, 10);	// 0
-	buffer_Box.AddData(0, 10, -10, 10);	// 1
-	buffer_Box.AddData(0, -10, 10, 10);	// 2
-	buffer_Box.AddData(0, 10, 10, 10);	// 3
+	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);  
+	buffer_Box.AddData(0, 0.5f, -0.5f, -0.5f);
+	buffer_Box.AddData(0, 0.5f, 0.5f, -0.5f);
+	buffer_Box.AddData(0, 0.5f, 0.5f, -0.5f);
+	buffer_Box.AddData(0, -0.5f, 0.5f, -0.5f);
+	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);
 
-	buffer_Box.AddData(0, -10, -10, -10);	// 4
-	buffer_Box.AddData(0, 10, -10, -10);	// 5
-	buffer_Box.AddData(0, -10, 10, -10);	// 6
-	buffer_Box.AddData(0, 10, 10, -10);	// 7
+	buffer_Box.AddData(0, -0.5f, -0.5f, 0.5f);  
+	buffer_Box.AddData(0, 0.5f, -0.5f, 0.5f);
+	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
+	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
+	buffer_Box.AddData(0, -0.5f, 0.5f, 0.5f);
+	buffer_Box.AddData(0, -0.5f, -0.5f, 0.5f);
 
-	buffer_Box.AddIndex(1, 0, 2);
-	buffer_Box.AddIndex(3, 1, 2);
-	buffer_Box.AddIndex(5, 1, 3);
-	buffer_Box.AddIndex(7, 5, 3);
-	buffer_Box.AddIndex(4, 5, 7);
-	buffer_Box.AddIndex(6, 4, 7);
-	buffer_Box.AddIndex(0, 4, 6);
-	buffer_Box.AddIndex(2, 0, 6);
-	buffer_Box.AddIndex(3, 2, 6);
-	buffer_Box.AddIndex(7, 3, 6);
-	buffer_Box.AddIndex(5, 4, 0);
-	buffer_Box.AddIndex(1, 5, 0);
+	buffer_Box.AddData(0, -0.5f, 0.5f, 0.5f);   
+	buffer_Box.AddData(0, -0.5f, 0.5f, -0.5f);
+	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);
+	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);
+	buffer_Box.AddData(0, -0.5f, -0.5f, 0.5f);
+	buffer_Box.AddData(0, -0.5f, 0.5f, 0.5f);
+
+	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);    
+	buffer_Box.AddData(0, 0.5f, 0.5f, -0.5f);
+	buffer_Box.AddData(0, 0.5f, -0.5f, -0.5f);
+	buffer_Box.AddData(0, 0.5f, -0.5f, -0.5f);
+	buffer_Box.AddData(0, 0.5f, -0.5f, 0.5f);
+	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
+
+	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);   
+	buffer_Box.AddData(0, 0.5f, -0.5f, -0.5f);
+	buffer_Box.AddData(0, 0.5f, -0.5f, 0.5f);
+	buffer_Box.AddData(0, 0.5f, -0.5f, 0.5f);
+	buffer_Box.AddData(0, -0.5f, -0.5f, 0.5f);
+	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);
+
+	buffer_Box.AddData(0, -0.5f, 0.5f, -0.5f);   
+	buffer_Box.AddData(0, 0.5f, 0.5f, -0.5f);
+	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
+	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
+	buffer_Box.AddData(0, -0.5f, 0.5f, 0.5f);
+	buffer_Box.AddData(0, -0.5f, 0.5f, -0.5f);
+
+	buffer_Box.AddData(1, 0, 0, -1.0f);
+	buffer_Box.AddData(1, 0, 0, -1.0f);
+	buffer_Box.AddData(1, 0, 0, -1.0f);
+	buffer_Box.AddData(1, 0, 0, -1.0f);
+	buffer_Box.AddData(1, 0, 0, -1.0f);
+	buffer_Box.AddData(1, 0, 0, -1.0f);
+
+	buffer_Box.AddData(1, 0, 0, 1.0f);
+	buffer_Box.AddData(1, 0, 0, 1.0f);
+	buffer_Box.AddData(1, 0, 0, 1.0f);
+	buffer_Box.AddData(1, 0, 0, 1.0f);
+	buffer_Box.AddData(1, 0, 0, 1.0f);
+	buffer_Box.AddData(1, 0, 0, 1.0f);
+
+	buffer_Box.AddData(1, -1.0f, 0, 0);
+	buffer_Box.AddData(1, -1.0f, 0, 0);
+	buffer_Box.AddData(1, -1.0f, 0, 0);
+	buffer_Box.AddData(1, -1.0f, 0, 0);
+	buffer_Box.AddData(1, -1.0f, 0, 0);
+	buffer_Box.AddData(1, -1.0f, 0, 0);
+
+	buffer_Box.AddData(1, 1.0f, 0, 0);
+	buffer_Box.AddData(1, 1.0f, 0, 0);
+	buffer_Box.AddData(1, 1.0f, 0, 0);
+	buffer_Box.AddData(1, 1.0f, 0, 0);
+	buffer_Box.AddData(1, 1.0f, 0, 0);
+	buffer_Box.AddData(1, 1.0f, 0, 0);
+
+	buffer_Box.AddData(1, 0, -1.0f, 0);
+	buffer_Box.AddData(1, 0, -1.0f, 0);
+	buffer_Box.AddData(1, 0, -1.0f, 0);
+	buffer_Box.AddData(1, 0, -1.0f, 0);
+	buffer_Box.AddData(1, 0, -1.0f, 0);
+	buffer_Box.AddData(1, 0, -1.0f, 0);
+
+	buffer_Box.AddData(1, 0, 1.0f, 0);
+	buffer_Box.AddData(1, 0, 1.0f, 0);
+	buffer_Box.AddData(1, 0, 1.0f, 0);
+	buffer_Box.AddData(1, 0, 1.0f, 0);
+	buffer_Box.AddData(1, 0, 1.0f, 0);
+	buffer_Box.AddData(1, 0, 1.0f, 0);
+
+	buffer_Box.AddData(2, 0.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 1.0f);
+	buffer_Box.AddData(2, 1.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 0.0f);
+
+	buffer_Box.AddData(2, 0.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 1.0f);
+	buffer_Box.AddData(2, 1.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 0.0f);
+
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 1.0f);
+	buffer_Box.AddData(2, 0.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+
+	buffer_Box.AddData(2, 0.0f, 1.0f);
+	buffer_Box.AddData(2, 1.0f, 1.0f);
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+	buffer_Box.AddData(2, 0.0f, 0.0f);
+	buffer_Box.AddData(2, 0.0f, 1.0f);
+
+	buffer_Box.AddData(2, 0.0f, 1.0f);
+	buffer_Box.AddData(2, 1.0f, 1.0f);
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+	buffer_Box.AddData(2, 1.0f, 0.0f);
+	buffer_Box.AddData(2, 0.0f, 0.0f);
+	buffer_Box.AddData(2, 0.0f, 1.0f);
 
 	buffer_Box.InitBuffers();
 
@@ -386,7 +491,7 @@ void CMyApp::Render()
 		obj->Draw (state);
 
 	//Draw lights
-	//lightRenderer.Draw(m_camera.GetViewProj());
+	lightRenderer.Draw(m_camera.GetProjView());
 
 	//////////////////////////////Environment map drawing!!!
 	shader_EnvMap.On();

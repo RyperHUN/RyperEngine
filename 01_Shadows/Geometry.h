@@ -12,7 +12,7 @@ struct Geometry {
 
 	virtual void Draw(gShaderProgram * shader = nullptr) {
 		buffer.On();
-		buffer.DrawIndexed(GL_TRIANGLES);
+		buffer.Draw();
 		buffer.Off();
 	}
 protected:

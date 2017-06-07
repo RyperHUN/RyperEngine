@@ -122,8 +122,8 @@ struct LightRenderer
 		{
 			for(auto& light : lights)
 			{
-				glm::mat4 MVP = VP * glm::translate(light->position) * glm::scale(glm::vec3(0.15,0.15,0.15));
-				shader->SetUniform("MVP",MVP);
+				glm::mat4 PVM = VP * glm::translate(light->position) * glm::scale(glm::vec3(5));
+				shader->SetUniform("PVM",PVM);
 				geom->Draw();
 			}
 		}
