@@ -9,7 +9,8 @@
 #include "GeometryCreator.h"
 
 CMyApp::CMyApp(void)
-	:geom_Man{"Model/nanosuit_reflection/nanosuit.obj"}
+	:geom_Man{ "Model/model.dae" }
+	,geom_AnimatedMan{"Model/model.dae"}
 {
 	srand(2);
 	texture_Map = 0;
@@ -101,28 +102,24 @@ bool CMyApp::Init()
 	{
 		return false;
 	}
-	//
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
 	//
 	CreateFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
 
-	//
+///////////////////////////////////////////////////////////
 	// egyéb inicializálás
-	//
+
 
 	// textúra betöltése
-	texture_Map = TextureFromFile("texture.png");
+	texture_Map		  = TextureFromFile("texture.png");
 	texture_HeightMap = TextureFromFile("HeightMap.png");
+	textureCube_id    = LoadCubeMap("pictures/skybox/");
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("suzanne.obj");
+	m_cow_mesh   = ObjParser::parse("cow.obj");
 	mesh_Suzanne->initBuffers();
-
-	m_cow_mesh = ObjParser::parse("cow.obj");
 	m_cow_mesh->initBuffers();
-
-	// cube map betöltése
-	textureCube_id = LoadCubeMap("pictures/skybox/");
 
 	dirLight = DirLight{ glm::vec3(-1,-1,0) };
 	pointLight.push_back(PointLight{glm::vec3(0,2,6)});
@@ -189,9 +186,10 @@ bool CMyApp::Init()
 		mesh.textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
 	gameObjs.push_back(obj);
 	//gameObjs.push_back(quadObj);
-	obj->rotAxis = glm::vec3{0,1,0};
-	obj->rotAngle = 0;
-	obj->scale = glm::vec3{0.5f};
+	obj->rotAxis = glm::vec3{1,0,0};
+	obj->rotAngle = -M_PI / 2; //For cowboy animated man
+	//obj->rotAngle = 0;
+	obj->scale = glm::vec3{1.0f};
 	obj->material = materialMan;
 	obj->shader = &shader_Simple;
 	obj->pos = glm::vec3(0,10,10);

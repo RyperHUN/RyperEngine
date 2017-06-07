@@ -117,7 +117,7 @@ struct LightRenderer
 
 	void Draw(glm::mat4 VP)
 	{
-		glDisable(GL_CULL_FACE);
+		glDisable(GL_CULL_FACE); //TODO Lights coordinates are not CCW
 		shader->On();
 		{
 			for(auto& light : lights)
