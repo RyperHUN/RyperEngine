@@ -111,6 +111,9 @@
     <ClInclude Include="AssimpModel.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="GeometryCreator.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">

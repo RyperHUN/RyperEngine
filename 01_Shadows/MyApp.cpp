@@ -6,6 +6,7 @@
 
 #include "ObjParser_OGL3.h"
 #include "UtilityFuncs.h"
+#include "GeometryCreator.h"
 
 CMyApp::CMyApp(void)
 	:geom_Man{"Model/nanosuit_reflection/nanosuit.obj"}
@@ -65,162 +66,15 @@ bool CMyApp::Init()
 	geom_Sphere.Create (30,30);
 
 	// skybox kocka
-	buffer_Box.AddAttribute(0, 3);
-	buffer_Box.AddAttribute(1, 3);
-	buffer_Box.AddAttribute(2, 2);
-
-	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);  
-	buffer_Box.AddData(0, 0.5f, -0.5f, -0.5f);
-	buffer_Box.AddData(0, 0.5f, 0.5f, -0.5f);
-	buffer_Box.AddData(0, 0.5f, 0.5f, -0.5f);
-	buffer_Box.AddData(0, -0.5f, 0.5f, -0.5f);
-	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);
-
-	buffer_Box.AddData(0, -0.5f, -0.5f, 0.5f);  
-	buffer_Box.AddData(0, 0.5f, -0.5f, 0.5f);
-	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
-	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
-	buffer_Box.AddData(0, -0.5f, 0.5f, 0.5f);
-	buffer_Box.AddData(0, -0.5f, -0.5f, 0.5f);
-
-	buffer_Box.AddData(0, -0.5f, 0.5f, 0.5f);   
-	buffer_Box.AddData(0, -0.5f, 0.5f, -0.5f);
-	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);
-	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);
-	buffer_Box.AddData(0, -0.5f, -0.5f, 0.5f);
-	buffer_Box.AddData(0, -0.5f, 0.5f, 0.5f);
-
-	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);    
-	buffer_Box.AddData(0, 0.5f, 0.5f, -0.5f);
-	buffer_Box.AddData(0, 0.5f, -0.5f, -0.5f);
-	buffer_Box.AddData(0, 0.5f, -0.5f, -0.5f);
-	buffer_Box.AddData(0, 0.5f, -0.5f, 0.5f);
-	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
-
-	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);   
-	buffer_Box.AddData(0, 0.5f, -0.5f, -0.5f);
-	buffer_Box.AddData(0, 0.5f, -0.5f, 0.5f);
-	buffer_Box.AddData(0, 0.5f, -0.5f, 0.5f);
-	buffer_Box.AddData(0, -0.5f, -0.5f, 0.5f);
-	buffer_Box.AddData(0, -0.5f, -0.5f, -0.5f);
-
-	buffer_Box.AddData(0, -0.5f, 0.5f, -0.5f);   
-	buffer_Box.AddData(0, 0.5f, 0.5f, -0.5f);
-	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
-	buffer_Box.AddData(0, 0.5f, 0.5f, 0.5f);
-	buffer_Box.AddData(0, -0.5f, 0.5f, 0.5f);
-	buffer_Box.AddData(0, -0.5f, 0.5f, -0.5f);
-
-	buffer_Box.AddData(1, 0, 0, -1.0f);
-	buffer_Box.AddData(1, 0, 0, -1.0f);
-	buffer_Box.AddData(1, 0, 0, -1.0f);
-	buffer_Box.AddData(1, 0, 0, -1.0f);
-	buffer_Box.AddData(1, 0, 0, -1.0f);
-	buffer_Box.AddData(1, 0, 0, -1.0f);
-
-	buffer_Box.AddData(1, 0, 0, 1.0f);
-	buffer_Box.AddData(1, 0, 0, 1.0f);
-	buffer_Box.AddData(1, 0, 0, 1.0f);
-	buffer_Box.AddData(1, 0, 0, 1.0f);
-	buffer_Box.AddData(1, 0, 0, 1.0f);
-	buffer_Box.AddData(1, 0, 0, 1.0f);
-
-	buffer_Box.AddData(1, -1.0f, 0, 0);
-	buffer_Box.AddData(1, -1.0f, 0, 0);
-	buffer_Box.AddData(1, -1.0f, 0, 0);
-	buffer_Box.AddData(1, -1.0f, 0, 0);
-	buffer_Box.AddData(1, -1.0f, 0, 0);
-	buffer_Box.AddData(1, -1.0f, 0, 0);
-
-	buffer_Box.AddData(1, 1.0f, 0, 0);
-	buffer_Box.AddData(1, 1.0f, 0, 0);
-	buffer_Box.AddData(1, 1.0f, 0, 0);
-	buffer_Box.AddData(1, 1.0f, 0, 0);
-	buffer_Box.AddData(1, 1.0f, 0, 0);
-	buffer_Box.AddData(1, 1.0f, 0, 0);
-
-	buffer_Box.AddData(1, 0, -1.0f, 0);
-	buffer_Box.AddData(1, 0, -1.0f, 0);
-	buffer_Box.AddData(1, 0, -1.0f, 0);
-	buffer_Box.AddData(1, 0, -1.0f, 0);
-	buffer_Box.AddData(1, 0, -1.0f, 0);
-	buffer_Box.AddData(1, 0, -1.0f, 0);
-
-	buffer_Box.AddData(1, 0, 1.0f, 0);
-	buffer_Box.AddData(1, 0, 1.0f, 0);
-	buffer_Box.AddData(1, 0, 1.0f, 0);
-	buffer_Box.AddData(1, 0, 1.0f, 0);
-	buffer_Box.AddData(1, 0, 1.0f, 0);
-	buffer_Box.AddData(1, 0, 1.0f, 0);
-
-	buffer_Box.AddData(2, 0.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 1.0f);
-	buffer_Box.AddData(2, 1.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 0.0f);
-
-	buffer_Box.AddData(2, 0.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 1.0f);
-	buffer_Box.AddData(2, 1.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 0.0f);
-
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-	buffer_Box.AddData(2, 0.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-	buffer_Box.AddData(2, 1.0f, 1.0f);
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-	buffer_Box.AddData(2, 0.0f, 0.0f);
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-	buffer_Box.AddData(2, 1.0f, 1.0f);
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-	buffer_Box.AddData(2, 1.0f, 0.0f);
-	buffer_Box.AddData(2, 0.0f, 0.0f);
-	buffer_Box.AddData(2, 0.0f, 1.0f);
-
+	GeomCreator::CreateBoxGeom(buffer_Box);
 	buffer_Box.InitBuffers();
 
 	geom_Box = TriangleMesh(buffer_Box);
 //////////////////////////////
-	buffer_Quad.AddAttribute(0,3);
-	buffer_Quad.AddData(0, glm::vec3(-1.0f,  1.0f, 0.0f));
-	buffer_Quad.AddData(0, glm::vec3(-1.0f, -1.0f, 0.0f));
-	buffer_Quad.AddData(0, glm::vec3( 1.0f,  1.0f, 0.0f));
-	buffer_Quad.AddData(0, glm::vec3( 1.0f, -1.0f, 0.0f));
-
-	buffer_Quad.AddAttribute (1,3);
-	buffer_Quad.AddData(1, glm::vec3(0,0,1));
-	buffer_Quad.AddData(1, glm::vec3(0, 0, 1));
-	buffer_Quad.AddData(1, glm::vec3(0, 0, 1));
-	buffer_Quad.AddData(1, glm::vec3(0, 0, 1));
-
-	buffer_Quad.AddAttribute (2, 2);
-	buffer_Quad.AddData(2, glm::vec2(0, 0));
-	buffer_Quad.AddData(2, glm::vec2(0, 1));
-	buffer_Quad.AddData(2, glm::vec2(1, 0));
-	buffer_Quad.AddData(2, glm::vec2(1, 1));
-
-	buffer_Quad.AddIndex(0,1,2);
-	buffer_Quad.AddIndex(2,1,3);
-
+	GeomCreator::CreateQuadGeom(buffer_Quad);
 	buffer_Quad.InitBuffers ();
+
+	geom_Quad = TriangleMesh(buffer_Quad);
 	//
 	// shaderek betöltése
 	//
@@ -315,7 +169,6 @@ bool CMyApp::Init()
 	MaterialPtr material3 = std::make_shared<Material>(glm::vec3(0.0f,0.1f,0.1f), glm::vec3(0,0.7f,0.7f), glm::vec3(1, 1, 1));
 	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1,1,1));
 
-	geom_Quad = TriangleMesh (buffer_Quad);
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
 	geom_Cow = TriangleMeshLoaded(m_cow_mesh);
 	geom_Bezier.Create (10,10);
