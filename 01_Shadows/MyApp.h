@@ -38,6 +38,8 @@ public:
 	void MouseUp(SDL_MouseButtonEvent&);
 	void MouseWheel(SDL_MouseWheelEvent&);
 	void Resize(int, int);
+
+	GLuint LoadCubeMap (std::string prefix);
 protected:
 	// belsõ eljárások
 	GLuint GenTexture();
@@ -58,9 +60,6 @@ protected:
 	TriangleMeshLoaded geom_Suzanne;
 	TriangleMeshLoaded geom_Cow;
 	AssimpModel		geom_Man;
-
-	
-	gShaderProgram	m_env_program;
 
 	OGL_Mesh			*mesh_Suzanne;
 	OGL_Mesh			*m_cow_mesh;

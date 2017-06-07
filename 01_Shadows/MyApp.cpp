@@ -80,8 +80,6 @@ bool CMyApp::Init()
 	//
 	shader_Simple.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
 	shader_Simple.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
-	
-
 	shader_Simple.LinkProgram ();
 	// skybox shader
 	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
@@ -106,7 +104,7 @@ bool CMyApp::Init()
 	//
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
 	//
-	//CreateFBO(1024, 1024);
+	CreateFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
 
 	//
 	// egyéb inicializálás
@@ -124,45 +122,12 @@ bool CMyApp::Init()
 	m_cow_mesh->initBuffers();
 
 	// cube map betöltése
-	glGenTextures(1, &textureCube_id);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureCube_id);
-
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-	TextureFromFileAttach("xpos.png", GL_TEXTURE_CUBE_MAP_POSITIVE_X);
-	TextureFromFileAttach("xneg.png", GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
-	TextureFromFileAttach("ypos.png", GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
-	TextureFromFileAttach("yneg.png", GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
-	TextureFromFileAttach("zpos.png", GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
-	TextureFromFileAttach("zneg.png", GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
-
-	/*TextureFromFileAttach("xpos.jpg", GL_TEXTURE_CUBE_MAP_POSITIVE_X);
-	TextureFromFileAttach("xneg.jpg", GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
-	TextureFromFileAttach("ypos.jpg", GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
-	TextureFromFileAttach("yneg.jpg", GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
-	TextureFromFileAttach("zpos.jpg", GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
-	TextureFromFileAttach("zneg.jpg", GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);*/
-
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-	// env map shader betoltese
-	m_env_program.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
-	m_env_program.AttachShader(GL_FRAGMENT_SHADER, "envmap.frag");
-
-	if (!m_env_program.LinkProgram())
-		return false;
+	textureCube_id = LoadCubeMap("pictures/skybox/");
 
 	dirLight = DirLight{ glm::vec3(-1,-1,0) };
 	pointLight.push_back(PointLight{glm::vec3(0,2,6)});
 	pointLight.push_back(PointLight{ glm::vec3(-20,5,-10) });
 	pointLight.push_back(PointLight{ glm::vec3(20,10,-30) });
-
 	
 	MaterialPtr material1 = std::make_shared<Material>(glm::vec3(0.1f,0,0),glm::vec3(0.8f, 0,0),glm::vec3(1,1,1));
 	MaterialPtr material2 = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
@@ -210,8 +175,6 @@ bool CMyApp::Init()
 		obj->pos = random;
 	}
 	quadObj->pos = glm::vec3(0,0,0);
-
-	CreateFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
 	
 	lightRenderer = LightRenderer (&geom_Box, &shader_LightRender);
 	for(auto& light : pointLight)
@@ -236,50 +199,14 @@ bool CMyApp::Init()
 	return true;
 }
 
-void CMyApp::CreateFBO(int w, int h)
-{
-	static bool was_created = false;
-	if (was_created)
-	{
-		glDeleteFramebuffers(1, &frameBuffer);
-		glDeleteTextures(1, &texture_ShadowMap);
-	}
-	glGenFramebuffers(1, &frameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-
-	glGenTextures(1, &texture_ShadowMap);
-	glBindTexture(GL_TEXTURE_2D, texture_ShadowMap);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture_ShadowMap, 0);
-
-	glDrawBuffer(GL_NONE);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		std::cout << "baj van :( \n";
-		return;
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	was_created = true;
-}
-
 void CMyApp::Clean()
 {
 	glDeleteTextures(1, &textureCube_id);
 	glDeleteTextures(1, &texture_Map);
 	glDeleteFramebuffers(1, &m_fbo);
 
-	m_env_program.Clean();
 	shader_EnvMap.Clean();
 
-	m_env_program.Clean();
 	shader_EnvMap.Clean();
 
 	delete mesh_Suzanne;
@@ -421,4 +348,64 @@ void CMyApp::Resize(int _w, int _h)
 	m_height = _h;
 
 	m_camera.Resize(_w, _h);
+}
+
+void CMyApp::CreateFBO(int w, int h)
+{
+	static bool was_created = false;
+	if (was_created)
+	{
+		glDeleteFramebuffers(1, &frameBuffer);
+		glDeleteTextures(1, &texture_ShadowMap);
+	}
+	glGenFramebuffers(1, &frameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+	glGenTextures(1, &texture_ShadowMap);
+	glBindTexture(GL_TEXTURE_2D, texture_ShadowMap);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture_ShadowMap, 0);
+
+	glDrawBuffer(GL_NONE);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "baj van :( \n";
+		return;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	was_created = true;
+}
+
+GLuint CMyApp::LoadCubeMap(std::string prefix)
+{
+	GLuint textureId;
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	TextureFromFileAttach((prefix + "xpos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_X);
+	TextureFromFileAttach((prefix + "xneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
+	TextureFromFileAttach((prefix + "ypos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
+	TextureFromFileAttach((prefix + "yneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
+	TextureFromFileAttach((prefix + "zpos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
+	TextureFromFileAttach((prefix + "zneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+	return textureId;
 }
