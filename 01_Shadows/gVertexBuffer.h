@@ -44,8 +44,8 @@ public:
 			DrawIndexed(mode);
 		else
 		{
-			int triangleNum = values[0].size() / (3 * 3); //3 float/ vec3, 3vec3 / face
-			Draw(mode, 0, triangleNum); //TODO Test
+			int triangleNum = values[0].size() / 3; //3 float/ vec3
+			Draw(mode, 0, triangleNum); 
 		}
 	}
 
