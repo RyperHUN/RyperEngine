@@ -20,6 +20,10 @@
 #include <iostream>
 #include <map>
 #include <vector>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform2.hpp>
 using namespace std;
 
 unsigned int TextureFromFileA(const char *path, const string &directory, bool gamma = false);
@@ -46,6 +50,7 @@ public:
 	// draws the model, and thus all its meshes
 	void Draw(gShaderProgram *shader = nullptr) override
 	{
+		UploadFinalTransformations(shader);
 		for (unsigned int i = 0; i < meshes.size(); i++)
 			meshes[i].Draw(shader);
 	}
@@ -147,7 +152,7 @@ private:
 				//TODO Add baseVertex??
 				size_t vertexId = bone->mWeights[j].mVertexId;
 				float weight    = bone->mWeights[j].mWeight;
-				vertexWeightData[vertexId].AddBoneData(vertexId, weight);
+				vertexWeightData[vertexId].AddBoneData(boneIndex, weight);
 			}
 
 			//From szecsi
@@ -167,25 +172,72 @@ private:
 		}
 	}
 	///FInal matrix[boneIndex] = offsetMatrix[boneIndex] * boneFrame.transformMatrix
+	glm::mat4 globalTransformInverse;
 	void processAnimations(const aiScene *scene)
 	{
 		if (!scene->HasAnimations())
 			return;
 
 		glm::mat4 globalTransform = aiMatrix4x4ToGlm(&scene->mRootNode->mTransformation);
-		glm::mat4 globalTransformInverse = glm::inverse(globalTransform);
+		globalTransformInverse = glm::inverse(globalTransform);
 
 		aiAnimation* anim = scene->mAnimations[0]; //TODO load all animations
 		
-		ReadNodeHierarchy(scene, scene->mRootNode,glm::mat4(1.0)); //Root transform must be identity 
+		ReadNodeHierarchy(scene, scene->mRootNode,glm::mat4(1.0)); //Root transform must be identity
+	}
+	void UploadFinalTransformations (gShaderProgram * shader)
+	{
+		assert(shader);
+		static const std::string uniformName = "boneTransformations[";
+
+		for (int i = 0; i < boneInfo.size(); i++)
+		{
+			shader->SetUniform((uniformName + std::to_string(i) + "]").c_str(), boneInfo[i].finalTransform);
+		}
 	}
 
 	void ReadNodeHierarchy(const aiScene *scene, const aiNode* node, glm::mat4 parentTransform)
 	{
+		string NodeName(node->mName.data);
+
+		const aiAnimation* pAnimation = scene->mAnimations[0];
+
+		glm::mat4 NodeTransformation(aiMatrix4x4ToGlm(&node->mTransformation));
+
+		const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
+
+		if (pNodeAnim) {
+			// Interpolate scaling and generate scaling transformation matrix
+			aiVector3D Scaling = pNodeAnim->mScalingKeys[0].mValue;
+			glm::vec3 scale(Scaling.x, Scaling.y, Scaling.z);
+
+			// Interpolate rotation and generate rotation transformation matrix
+			aiQuaternion Rotation = pNodeAnim->mRotationKeys[0].mValue;
+			glm::quat quaternion(Rotation.w, Rotation.x, Rotation.y, Rotation.z); ///TODO Maybe exchange w with x?
+
+			// Interpolate translation and generate translation transformation matrix
+			aiVector3D Translation = pNodeAnim->mPositionKeys[0].mValue;
+			glm::vec3 translate = glm::vec3(Translation.x, Translation.y, Translation.z);
+			
+
+			// Combine the above transformations
+			NodeTransformation = glm::translate(translate) * glm::toMat4(quaternion) * glm::scale(scale);  //TranslationM * RotationM * ScalingM;
+		}
+
+		glm::mat4 GlobalTransformation = parentTransform * NodeTransformation;
+
 		
+		if (boneMapping.find(NodeName) != boneMapping.end()) {
+			int BoneIndex = boneMapping[NodeName];
+			boneInfo[BoneIndex].finalTransform = globalTransformInverse * GlobalTransformation * boneInfo[BoneIndex].offsetMatrix;
+		}
+
+		for (int i = 0; i < node->mNumChildren; i++) {
+			ReadNodeHierarchy(scene, node->mChildren[i], GlobalTransformation);
+		}
 	}
 	///TODO std::map lot faster
-	const aiNodeAnim* FindNodeAnim(aiAnimation* anim, const string nodeName) 
+	const aiNodeAnim* FindNodeAnim(const aiAnimation* anim, const string nodeName) 
 	{
 		for(int i = 0 ; i < anim->mNumChannels; i++)
 		{
@@ -196,6 +248,7 @@ private:
 				return nodeAnim;
 			}
 		}
+		return nullptr;
 	}
 	// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 	void processNode(aiNode *node, const aiScene *scene)

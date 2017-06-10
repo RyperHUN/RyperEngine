@@ -11,6 +11,9 @@ uniform mat4 M;
 uniform mat4 Minv;
 uniform mat4 LightSpaceMtx;
 
+#define MAX_BONES 40
+uniform mat4 boneTransformations[MAX_BONES];
+
 //Interface Block
 out VS_OUT 
 {
@@ -25,7 +28,12 @@ out VS_OUT
 
 void main()
 {
-	gl_Position = PVM*vec4( vs_in_pos, 1 );
+	ivec3 BoneIDs = ivec3(boneId.x, boneId.y, boneId.z);
+	mat4 boneTransform = boneTransformations[BoneIDs[0]] * weights[0];
+    boneTransform += boneTransformations[BoneIDs[1]] * weights[1];
+    boneTransform += boneTransformations[BoneIDs[2]] * weights[2];
+
+	gl_Position = PVM * boneTransform * vec4( vs_in_pos, 1 );
 
 	VS.wFragPos = (M * vec4(vs_in_pos, 1)).xyz;
 	VS.normal = (vec4(vs_in_normal, 0)* Minv).xyz;
