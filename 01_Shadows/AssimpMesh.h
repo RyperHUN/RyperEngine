@@ -54,7 +54,7 @@ public:
 		this->textures = textures;
 
 		// now that we have all the required data, set the vertex buffers and its attribute pointers.
-		setupMesh();
+		//setupMesh();
 	}
 
 	// render the mesh
@@ -105,7 +105,7 @@ public:
 private:
 	/*  Render data  */
 	unsigned int VBO, EBO;
-
+public:
 	/*  Functions    */
 	// initializes all the buffer objects/arrays
 	void setupMesh()

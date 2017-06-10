@@ -6,6 +6,7 @@ in VS_OUT
 	in vec3 normal;
 	in vec2 texCoord;
 	in vec4 fragPosLightSpace4;
+	in vec3 testColor;
 } FS;
 
 
@@ -166,4 +167,5 @@ void main()
 	//fs_out_col = texture(texture_reflect1, FS.texCoord);
 	//fs_out_col = vec4(normal, 1.0);
 	//fs_out_col = vec4(FS.texCoord.xy, 0, 1);
+	//fs_out_col = vec4(FS.testColor,1);
 }

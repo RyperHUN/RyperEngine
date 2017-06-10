@@ -35,6 +35,7 @@ public:
 	string directory;
 	bool gammaCorrection;
 
+
 	/*  Functions   */
 	// constructor, expects a filepath to a 3D model.
 	AssimpModel(string const &path, bool gamma = false) : gammaCorrection(gamma)
@@ -55,7 +56,7 @@ private:
 	void loadModel(string const &path)
 	{
 		// read file via ASSIMP
-		Assimp::Importer importer;
+		Assimp::Importer importer; //TODO Save scene + importer!!
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		// check for errors
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
@@ -68,8 +69,134 @@ private:
 
 		// process ASSIMP's root node recursively
 		processNode(scene->mRootNode, scene);
+		
+		processAnimations(scene);
+	}
+	struct RiggingInfo
+	{
+		glm::quat rotation;
+		glm::vec3 translation;
+		RiggingInfo (aiQuaternion quat, aiVector3D vec)
+			: rotation(quat.x, quat.y, quat.z, quat.w),
+				translation(vec.x, vec.y, vec.z)
+		{}
+	};
+	struct BoneInfo
+	{
+		glm::mat4 offsetMatrix;
+		glm::mat4 finalTransform;
+	};
+#define NUM_BONES_PER_VERTEX 3
+	struct VertexWeightData
+	{
+		glm::vec3 IDs;
+		glm::vec3 weights;
+		int size = 0;
+		void AddBoneData(size_t id, float weight)
+		{
+			if(size == 3)
+				return;
+			assert(size < 3); ///TODO Normalize weights + IDs
+			
+			IDs[size] = id;
+			weights[size] = weight;
+			
+			size++;
+		}
+		//Weights now add up to 1;
+		void normalizeWeights()
+		{
+			float sum = 0;
+			for(int i = 0; i < size; i++)
+				sum += weights[i];
+
+			for(int i = 0; i < size; i++)
+				weights[i] /= sum;
+		}
+	};
+
+	std::vector<std::string> boneNames;
+	std::vector<RiggingInfo> rigging;
+
+	std::vector<BoneInfo> boneInfo;
+	std::map<std::string, int> boneMapping;
+	std::map<int, VertexWeightData> vertexWeightData; //Vertex id alapjan lekerheto az adat
+	
+	void processBones(const aiScene *scene, aiMesh * aimesh, Mesh &ownMesh)
+	{	
+		int numBones = 0; //Elofordulhat hogy 2x ugyanaz a bone van benne emiatt kell ez?
+		for(int i = 0 ; i < aimesh->mNumBones; i++)
+		{
+			aiBone* bone = aimesh->mBones[i];
+			std::string boneName = bone->mName.C_Str();
+			boneNames.push_back(boneName);
+			int boneIndex = -1;
+			if(boneMapping.find(boneName) == boneMapping.end()) //not found name
+			{
+				boneIndex = numBones++;
+				boneInfo.push_back(BoneInfo{});
+				boneMapping[boneName] = boneIndex;
+			}
+			else
+				boneIndex = boneMapping[boneName]; //Already have id
+
+			boneInfo[boneIndex].offsetMatrix = aiMatrix4x4ToGlm (&bone->mOffsetMatrix);
+
+			for(int j = 0; j < bone->mNumWeights; j++)
+			{
+				//TODO Add baseVertex??
+				size_t vertexId = bone->mWeights[j].mVertexId;
+				float weight    = bone->mWeights[j].mWeight;
+				vertexWeightData[vertexId].AddBoneData(vertexId, weight);
+			}
+
+			//From szecsi
+			/*aiQuaternion quat;
+			aiVector3D   translate;
+			bone->mOffsetMatrix.DecomposeNoScaling(quat, translate);
+			rigging.push_back(RiggingInfo{quat, translate});*/
+			
+		}
+		for(auto & pair : vertexWeightData)
+		{
+			VertexWeightData & boneData = pair.second;
+			boneData.normalizeWeights(); //weights add up to 1
+			
+			ownMesh.vertices[pair.first].Tangent = boneData.weights; //TODO Ideiglenes adat mentes csontoknak
+			ownMesh.vertices[pair.first].Bitangent = boneData.IDs;
+		}
+	}
+	///FInal matrix[boneIndex] = offsetMatrix[boneIndex] * boneFrame.transformMatrix
+	void processAnimations(const aiScene *scene)
+	{
+		if (!scene->HasAnimations())
+			return;
+
+		glm::mat4 globalTransform = aiMatrix4x4ToGlm(&scene->mRootNode->mTransformation);
+		glm::mat4 globalTransformInverse = glm::inverse(globalTransform);
+
+		aiAnimation* anim = scene->mAnimations[0]; //TODO load all animations
+		
+		ReadNodeHierarchy(scene, scene->mRootNode,glm::mat4(1.0)); //Root transform must be identity 
 	}
 
+	void ReadNodeHierarchy(const aiScene *scene, const aiNode* node, glm::mat4 parentTransform)
+	{
+		
+	}
+	///TODO std::map lot faster
+	const aiNodeAnim* FindNodeAnim(aiAnimation* anim, const string nodeName) 
+	{
+		for(int i = 0 ; i < anim->mNumChannels; i++)
+		{
+			const aiNodeAnim * nodeAnim = anim->mChannels[i];
+
+			if(std::string(nodeAnim->mNodeName.C_Str()) == nodeName)
+			{
+				return nodeAnim;
+			}
+		}
+	}
 	// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 	void processNode(aiNode *node, const aiScene *scene)
 	{
@@ -80,6 +207,9 @@ private:
 			// the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			meshes.push_back(processMesh(mesh, scene));
+			if (mesh->HasBones())
+				processBones(scene, mesh, meshes.back());
+			meshes.back().setupMesh();
 		}
 		// after we've processed all of the meshes (if any) we then recursively process each of the children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -187,6 +317,20 @@ private:
 			}
 		}
 		return textures;
+	}
+
+	inline glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4* from)
+	{
+		//glm::mat4 m = glm::transpose(glm::make_mat4(&aiM.a1));
+		glm::mat4 to;
+
+
+		to[0][0] = (GLfloat)from->a1; to[0][1] = (GLfloat)from->b1;  to[0][2] = (GLfloat)from->c1; to[0][3] = (GLfloat)from->d1;
+		to[1][0] = (GLfloat)from->a2; to[1][1] = (GLfloat)from->b2;  to[1][2] = (GLfloat)from->c2; to[1][3] = (GLfloat)from->d2;
+		to[2][0] = (GLfloat)from->a3; to[2][1] = (GLfloat)from->b3;  to[2][2] = (GLfloat)from->c3; to[2][3] = (GLfloat)from->d3;
+		to[3][0] = (GLfloat)from->a4; to[3][1] = (GLfloat)from->b4;  to[3][2] = (GLfloat)from->c4; to[3][3] = (GLfloat)from->d4;
+
+		return to;
 	}
 };
 
