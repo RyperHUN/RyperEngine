@@ -29,11 +29,15 @@ unsigned int TextureFromFileA(const char *path, const string &directory, bool ga
 
 struct Geometry;
 
-struct Model
-{
-	std::shared_ptr<Material> material;
-	Geometry * geometry;
-};
+//struct Mesh
+//{
+//	GeometryPtr vertexBuffer;
+//	MaterialPtr material;
+//};
+//struct Model
+//{
+//	std::vector<Mesh> meshes;
+//};
 
 struct BoneInfo
 {
@@ -136,9 +140,9 @@ struct Animator
 
 		ReadNodeHierarchy(0, scene, scene->mRootNode, glm::mat4(1.0)); //Root transform must be identity
 	}
-	void processBones(const aiScene *scene, aiMesh * aimesh, BufferedMesh &ownMesh,
-		std::map<int, VertexWeightData>& vertexWeightData)
+	void processBones(const aiScene *scene, aiMesh * aimesh, BufferedMesh &ownMesh)
 	{
+		std::map<int, VertexWeightData> vertexWeightData;
 		int numBones = 0; //Elofordulhat hogy 2x ugyanaz a bone van benne emiatt kell ez?
 		for (int i = 0; i < aimesh->mNumBones; i++)
 		{
@@ -379,13 +383,12 @@ class AssimpModel : public Geometry
 {
 public:
 	/*  Model Data */
-	std::map<int, VertexWeightData> vertexWeightData; //Vertex id alapjan lekerheto az adat
-	vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 	vector<BufferedMesh> meshes;
 	string directory;
+	Assimp::Importer importer;
+
 	bool isAnimated;
 	Animator * animator = nullptr;
-	Assimp::Importer importer;
 	
 	AssimpModel(string const &path)
 	{
@@ -442,7 +445,7 @@ private:
 			meshes.push_back(Loader::processMesh(mesh, scene,directory));
 			if (mesh->HasBones())
 				if(animator)
-					animator->processBones(scene, mesh, meshes.back(), vertexWeightData);
+					animator->processBones(scene, mesh, meshes.back());
 			meshes.back().Init();
 		}
 	

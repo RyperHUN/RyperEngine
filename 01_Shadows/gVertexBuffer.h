@@ -21,9 +21,9 @@ public:
 	void AddData(int idx, float x, float y);
 	void AddData(int idx, float x, float y, float z);
 	void AddData(int idx, float x, float y, float z, float w);
-	void AddData(int idx, glm::vec4& v);
-	void AddData(int idx, glm::vec3& v);
-	void AddData(int idx, glm::vec2& v);
+	void AddData(int idx, const glm::vec4& v);
+	void AddData(int idx, const glm::vec3& v);
+	void AddData(int idx, const glm::vec2& v);
 	void AddIndex(unsigned int a);
 	void AddIndex(unsigned int a, unsigned int b);
 	void AddIndex(unsigned int a, unsigned int b, int unsigned c);
