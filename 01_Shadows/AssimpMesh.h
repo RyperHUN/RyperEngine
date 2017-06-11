@@ -50,6 +50,103 @@ struct Texture {
 	aiString path;
 };
 
+enum LOCATION {
+	POSITION = 0,
+	NORMAL = 1,
+	UV = 2,
+	WEIGHT = 3,
+	BONEID = 4,
+	TANGENT = 5,
+	BITANGENT = 6,
+};
+class BufferedMesh
+{
+	gVertexBuffer vertexBuffer;
+	MaterialPtr material;
+public:
+	vector<Texture> textures;
+	BufferedMesh(std::vector<unsigned int> indices, std::vector<Texture> textures)
+		:textures(textures)
+	{
+		for(int i = 0; i < indices.size(); i++)
+			vertexBuffer.AddIndex(indices[i]);
+		vertexBuffer.AddAttribute(0, 3); //Pos
+		vertexBuffer.AddAttribute(1, 3); //Norm
+		vertexBuffer.AddAttribute(2, 2); //UV
+		vertexBuffer.AddAttribute(3, 3); //Weight
+		vertexBuffer.AddAttribute(4, 3); //Bone id
+		vertexBuffer.AddAttribute(5, 3); //Tangeng
+		vertexBuffer.AddAttribute(6, 3); //Bitangent
+	}
+	void Init(){ vertexBuffer.InitBuffers();}
+	template<typename T>
+	void AddAttribute(LOCATION loc, std::vector<T>& attribute)
+	{
+		for(int i = 0; i < attribute.size(); i++)
+			vertexBuffer.AddData((int)loc,attribute[i]);
+	}
+	template<typename T>
+	void AddAttribute(LOCATION loc, T & attribute)
+	{
+		vertexBuffer.AddData((int)loc, attribute);
+	}
+	void AddAttributes(std::vector<MeshVertexData> & vertices)
+	{
+		for(int i = 0; i < vertices.size();i++)
+		{
+			MeshVertexData& vertex = vertices[i];
+			AddAttribute(POSITION, vertex.Position);
+			AddAttribute(NORMAL,vertex.Normal);
+			AddAttribute(UV, vertex.TexCoords);
+			AddAttribute(TANGENT, vertex.Tangent);
+			AddAttribute(TANGENT, vertex.Bitangent);
+		}
+	}
+	void Draw(gShaderProgram *shader)
+	{
+		shader->On();
+		// bind appropriate textures
+		unsigned int diffuseNr = 1;
+		unsigned int specularNr = 1;
+		unsigned int normalNr = 1;
+		unsigned int heightNr = 1;
+		for (unsigned int i = 0; i < textures.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
+											  // retrieve texture number (the N in diffuse_textureN)
+			stringstream ss;
+			string number;
+			string name = textures[i].type;
+			if (name == "skyBox")
+			{
+				shader->SetCubeTexture(name.c_str(), i, textures[i].id);
+				continue;
+			}
+			if (name == "texture_diffuse")
+				ss << diffuseNr++; // transfer unsigned int to stream
+			else if (name == "texture_specular")
+				ss << specularNr++; // transfer unsigned int to stream
+			else if (name == "texture_normal")
+				ss << normalNr++; // transfer unsigned int to stream
+			else if (name == "texture_reflect")
+				ss << heightNr++; // transfer unsigned int to stream
+
+			number = ss.str();
+			// now set the sampler to the correct texture unit
+			shader->SetTexture((name + number).c_str(), i, textures[i].id);
+		}
+
+		// draw mesh
+		vertexBuffer.On();
+		vertexBuffer.Draw();
+		vertexBuffer.Off();
+
+		// always good practice to set everything back to defaults once configured.
+		glActiveTexture(GL_TEXTURE0);
+		shader->Off();
+	}
+};
+
 ///TODO It could be improved with gVertexBuffer
 class GenericMesh
 {
