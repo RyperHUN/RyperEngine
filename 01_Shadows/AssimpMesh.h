@@ -73,8 +73,8 @@ public:
 		vertexBuffer.AddAttribute(0, 3); //Pos
 		vertexBuffer.AddAttribute(1, 3); //Norm
 		vertexBuffer.AddAttribute(2, 2); //UV
-		vertexBuffer.AddAttribute(3, 3); //Weight
-		vertexBuffer.AddAttribute(4, 3); //Bone id
+		vertexBuffer.AddAttribute(3, 4); //Weight
+		vertexBuffer.AddAttribute(4, 4); //Bone id
 		vertexBuffer.AddAttribute(5, 3); //Tangeng
 		vertexBuffer.AddAttribute(6, 3); //Bitangent
 	}

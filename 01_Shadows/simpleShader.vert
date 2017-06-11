@@ -3,8 +3,8 @@
 layout (location = 0) in vec3 vs_in_pos;
 layout (location = 1) in vec3 vs_in_normal;
 layout (location = 2) in vec2 vs_in_tex;
-layout (location = 3) in vec3 weights;
-layout (location = 4) in vec3 boneId;
+layout (location = 3) in vec4 weights;
+layout (location = 4) in vec4 boneId;
 
 uniform mat4 PVM;
 uniform mat4 M;
@@ -22,15 +22,15 @@ out VS_OUT
 	out vec3 normal;
 	out vec2 texCoord;
 	out vec4 fragPosLightSpace4;
-	out vec3 testColor;
+	out vec4 testColor;
 } VS;
 
 mat4 getBoneTransform ()
 {
-	ivec3 BoneIDs	   = ivec3(boneId.x, boneId.y, boneId.z);
+	ivec4 BoneIDs	   = ivec4(boneId.x, boneId.y, boneId.z, boneId.w);
 	mat4 boneTransform = boneTransformations[BoneIDs[0]] * weights[0];
-	boneTransform     += boneTransformations[BoneIDs[1]] * weights[1];
-	boneTransform     += boneTransformations[BoneIDs[2]] * weights[2];
+	for(int i = 1; i < 4; i++)
+		boneTransform     += boneTransformations[BoneIDs[1]] * weights[1];
 	return boneTransform;
 }
 

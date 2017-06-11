@@ -6,7 +6,7 @@ in VS_OUT
 	in vec3 normal;
 	in vec2 texCoord;
 	in vec4 fragPosLightSpace4;
-	in vec3 testColor;
+	in vec4 testColor;
 } FS;
 
 

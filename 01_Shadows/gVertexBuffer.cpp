@@ -84,6 +84,8 @@ void gVertexBuffer::InitBuffers()
 	// for each attribute, create a VBO and fill it with the data and set the VAO attribs
 	for (std::map<int, AttribDesc>::iterator it = attribs.begin(); it != attribs.end(); ++it)
 	{
+		if(values[it->second.idx].size() == 0)
+			continue;
 		GLuint vbo_id = 0;
 		glGenBuffers(1, &vbo_id);
 
