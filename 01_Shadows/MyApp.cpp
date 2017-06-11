@@ -202,9 +202,7 @@ void CMyApp::Clean()
 	glDeleteTextures(1, &texture_Map);
 	glDeleteFramebuffers(1, &m_fbo);
 
-	shader_EnvMap.Clean();
-
-	shader_EnvMap.Clean();
+	shader_EnvMap.Clean(); 
 
 	delete mesh_Suzanne;
 	delete m_cow_mesh;
@@ -214,7 +212,7 @@ void CMyApp::Update()
 {
 	static Uint32 last_time = SDL_GetTicks();
 	float delta_time = (SDL_GetTicks() - last_time)/1000.0f;
-	float t = SDL_GetTicks() / 5000.0f;
+	float t = SDL_GetTicks() / 1000.0f;
 
 	m_camera.Update(delta_time);
 	spotLight.direction = m_camera.forwardVector;

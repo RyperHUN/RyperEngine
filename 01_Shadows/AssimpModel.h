@@ -38,6 +38,7 @@ public:
 	vector<Mesh> meshes;
 	string directory;
 	bool gammaCorrection;
+	bool isAnimated;
 
 	const aiScene* scene;
 	Assimp::Importer importer;
@@ -175,6 +176,7 @@ private:
 	{
 		if (!scene->HasAnimations())
 			return;
+		isAnimated = true;
 
 		glm::mat4 globalTransform = assimpToGlm(scene->mRootNode->mTransformation);
 		globalTransformInverse = glm::inverse(globalTransform);
@@ -186,6 +188,7 @@ private:
 	void UploadFinalTransformations (gShaderProgram * shader)
 	{
 		assert(shader);
+		shader->SetUniform("isAnimated",isAnimated);
 		static const std::string uniformName = "boneTransformations[";
 
 		for (int i = 0; i < boneInfo.size(); i++)
