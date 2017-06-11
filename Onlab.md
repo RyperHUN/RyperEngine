@@ -8,7 +8,8 @@ Component Based:
 	-RandyGaul [Tul optimalizalt] = http://www.randygaul.net/2013/05/20/component-based-engine-design/
 	-GameProg patterns  http://gameprogrammingpatterns.com/component.html
 	
-	
+Kerdesek:
+	-Effect framework mire jo? Pros cons?
 	
 1) Mi az az offset Matrix?
 	bone -> localba visz.

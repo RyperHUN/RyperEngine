@@ -6,6 +6,14 @@
 #include "Mesh_OGL3.h"
 #include "Bezier.h"
 
+namespace Geom{
+	struct Box
+	{
+		glm::vec3 max;
+		glm::vec3 min;
+	};
+};
+
 struct Geometry {
 	gVertexBuffer buffer;
 	Geometry(){}
@@ -14,6 +22,23 @@ struct Geometry {
 		buffer.On();
 		buffer.Draw();
 		buffer.Off();
+	}
+	Geom::Box getLocalAABB()
+	{
+		std::vector<glm::vec3> positions = buffer.GetPositionData();
+		glm::vec3 max = positions[0];
+		glm::vec3 min = positions[0];
+		for(glm::vec3& pos : positions)
+		{
+			if(pos.x > max.x) max.x = pos.x;
+			if(pos.y > max.y) max.y = pos.y;
+			if(pos.z > max.z) max.z = pos.z;
+
+			if(pos.x < min.x) min.x = pos.x;
+			if(pos.y < min.y) min.y = pos.y;
+			if(pos.z < min.z) min.z = pos.z;
+		}
+		return Geom::Box{max, min};
 	}
 protected:
 	Geometry(gVertexBuffer &&buffer)
@@ -169,6 +194,7 @@ struct TriangleMesh : public Geometry
 	}
 };
 
+///TODO OGL_mesh helyett sajat vertexBuffer hasznalata ittis.
 struct TriangleMeshLoaded : public Geometry
 {
 	OGL_Mesh * mesh;
