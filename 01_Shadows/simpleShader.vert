@@ -33,10 +33,13 @@ void main()
     boneTransform += boneTransformations[BoneIDs[1]] * weights[1];
     boneTransform += boneTransformations[BoneIDs[2]] * weights[2];
 
-	gl_Position = PVM * boneTransform * vec4( vs_in_pos, 1 );
+	vec4 objSpacePos    = boneTransform * vec4( vs_in_pos, 1 );
+	vec4 objSpaceNormal = boneTransform * vec4(vs_in_normal, 0);
 
-	VS.wFragPos = (M * vec4(vs_in_pos, 1)).xyz;
-	VS.normal = (vec4(vs_in_normal, 0)* Minv).xyz;
+	gl_Position = PVM * objSpacePos;
+
+	VS.wFragPos = (M * objSpacePos).xyz;
+	VS.normal = (objSpaceNormal * Minv).xyz;
 	VS.texCoord = vs_in_tex;
 	VS.fragPosLightSpace4 = (LightSpaceMtx * vec4(VS.wFragPos, 1.0));
 	VS.testColor = weights;
