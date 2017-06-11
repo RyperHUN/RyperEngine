@@ -134,7 +134,7 @@ private:
 			else
 				boneIndex = boneMapping[boneName]; //Already have id
 
-			boneInfo[boneIndex].offsetMatrix = aiMatrix4x4ToGlm (&bone->mOffsetMatrix);
+			boneInfo[boneIndex].offsetMatrix = assimpToGlm (bone->mOffsetMatrix);
 
 			for(int j = 0; j < bone->mNumWeights; j++)
 			{
@@ -161,7 +161,7 @@ private:
 		if (!scene->HasAnimations())
 			return;
 
-		glm::mat4 globalTransform = aiMatrix4x4ToGlm(&scene->mRootNode->mTransformation);
+		glm::mat4 globalTransform = assimpToGlm(scene->mRootNode->mTransformation);
 		globalTransformInverse = glm::inverse(globalTransform);
 
 		aiAnimation* anim = scene->mAnimations[0]; //TODO load all animations
@@ -185,17 +185,17 @@ private:
 
 		const aiAnimation* pAnimation = scene->mAnimations[0];
 
-		glm::mat4 NodeTransformation(aiMatrix4x4ToGlm(&node->mTransformation));
+		glm::mat4 NodeTransformation(assimpToGlm(node->mTransformation));
 
 		const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
 
 		if (pNodeAnim) {
 			// Interpolate scaling and generate scaling transformation matrix
 			aiVector3D Scaling = pNodeAnim->mScalingKeys[0].mValue;
-			glm::vec3 scale(Scaling.x, Scaling.y, Scaling.z);
+			glm::vec3 scale = assimpToGlm (Scaling);
 
 			aiQuaternion Rotation = pNodeAnim->mRotationKeys[0].mValue;
-			glm::quat quaternion(Rotation.w, Rotation.x, Rotation.y, Rotation.z); ///TODO Maybe exchange w with x?
+			glm::quat quaternion = assimpToGlm (Rotation);
 
 			glm::vec3 translate = interpolatePosition(animationTime, pNodeAnim);
 
@@ -243,8 +243,8 @@ private:
 		assert(keyIndex >= 0);
 		auto& key1 = nodeAnim->mPositionKeys[keyIndex];
 		auto& key2 = nodeAnim->mPositionKeys[keyIndex + 1];
-		glm::vec3 pos1 = aiVecToGlm(key1.mValue);
-		glm::vec3 pos2 = aiVecToGlm(key2.mValue);
+		glm::vec3 pos1 = assimpToGlm(key1.mValue);
+		glm::vec3 pos2 = assimpToGlm(key2.mValue);
 		float timeDiff = key2.mTime - key1.mTime;
 		float mixTime  = (animationTime - key1.mTime) / timeDiff;
 		return glm::mix(pos1, pos2, mixTime);
@@ -371,23 +371,28 @@ private:
 		return textures;
 	}
 
-	inline glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4* from)
+	inline glm::mat4 assimpToGlm(const aiMatrix4x4& from)
 	{
 		//glm::mat4 m = glm::transpose(glm::make_mat4(&aiM.a1));
 		glm::mat4 to;
 
 
-		to[0][0] = (GLfloat)from->a1; to[0][1] = (GLfloat)from->b1;  to[0][2] = (GLfloat)from->c1; to[0][3] = (GLfloat)from->d1;
-		to[1][0] = (GLfloat)from->a2; to[1][1] = (GLfloat)from->b2;  to[1][2] = (GLfloat)from->c2; to[1][3] = (GLfloat)from->d2;
-		to[2][0] = (GLfloat)from->a3; to[2][1] = (GLfloat)from->b3;  to[2][2] = (GLfloat)from->c3; to[2][3] = (GLfloat)from->d3;
-		to[3][0] = (GLfloat)from->a4; to[3][1] = (GLfloat)from->b4;  to[3][2] = (GLfloat)from->c4; to[3][3] = (GLfloat)from->d4;
+		to[0][0] = (GLfloat)from.a1; to[0][1] = (GLfloat)from.b1;  to[0][2] = (GLfloat)from.c1; to[0][3] = (GLfloat)from.d1;
+		to[1][0] = (GLfloat)from.a2; to[1][1] = (GLfloat)from.b2;  to[1][2] = (GLfloat)from.c2; to[1][3] = (GLfloat)from.d2;
+		to[2][0] = (GLfloat)from.a3; to[2][1] = (GLfloat)from.b3;  to[2][2] = (GLfloat)from.c3; to[2][3] = (GLfloat)from.d3;
+		to[3][0] = (GLfloat)from.a4; to[3][1] = (GLfloat)from.b4;  to[3][2] = (GLfloat)from.c4; to[3][3] = (GLfloat)from.d4;
 
 		return to;
 	}
-	inline glm::vec3 aiVecToGlm(const aiVector3D& aiVec)
+	inline glm::vec3 assimpToGlm(const aiVector3D& aiVec)
 	{
 		glm::vec3 vec(aiVec.x, aiVec.y, aiVec.z);
 		return vec;
+	}
+	inline glm::quat assimpToGlm(const aiQuaternion& aiQuat)
+	{
+		glm::quat quaternion (aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z);
+		return quaternion;
 	}
 };
 
