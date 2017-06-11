@@ -209,8 +209,7 @@ private:
 			aiVector3D Scaling = pNodeAnim->mScalingKeys[0].mValue;
 			glm::vec3 scale = assimpToGlm (Scaling);
 
-			aiQuaternion Rotation = pNodeAnim->mRotationKeys[0].mValue;
-			glm::quat quaternion = assimpToGlm (Rotation);
+			glm::quat quaternion = interpolateRotation(animationTime, pNodeAnim);
 
 			glm::vec3 translate = interpolatePosition(animationTime, pNodeAnim);
 
@@ -262,6 +261,26 @@ private:
 		glm::vec3 pos2 = assimpToGlm(key2.mValue);
 		float timeDiff = key2.mTime - key1.mTime;
 		float mixTime  = (animationTime - key1.mTime) / timeDiff;
+		return glm::mix(pos1, pos2, mixTime);
+	}
+	glm::quat interpolateRotation(float animationTime, const aiNodeAnim* nodeAnim)
+	{
+		int keyIndex = -1;
+		for (int i = 0; i < nodeAnim->mNumRotationKeys - 1; i++)
+		{
+			if (animationTime <= (float)nodeAnim->mRotationKeys[i + 1].mTime)
+			{
+				keyIndex = i;
+				break;
+			}
+		}
+		assert(keyIndex >= 0);
+		auto& key1 = nodeAnim->mRotationKeys[keyIndex];
+		auto& key2 = nodeAnim->mRotationKeys[keyIndex + 1];
+		glm::quat pos1 = assimpToGlm(key1.mValue);
+		glm::quat pos2 = assimpToGlm(key2.mValue);
+		float timeDiff = key2.mTime - key1.mTime;
+		float mixTime = (animationTime - key1.mTime) / timeDiff;
 		return glm::mix(pos1, pos2, mixTime);
 	}
 	// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
