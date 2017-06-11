@@ -166,7 +166,7 @@ private:
 
 		aiAnimation* anim = scene->mAnimations[0]; //TODO load all animations
 		
-		ReadNodeHierarchy(scene, scene->mRootNode,glm::mat4(1.0)); //Root transform must be identity
+		ReadNodeHierarchy(0,scene, scene->mRootNode,glm::mat4(1.0)); //Root transform must be identity
 	}
 	void UploadFinalTransformations (gShaderProgram * shader)
 	{
@@ -179,7 +179,7 @@ private:
 		}
 	}
 
-	void ReadNodeHierarchy(const aiScene *scene, const aiNode* node, glm::mat4 parentTransform)
+	void ReadNodeHierarchy(float animationTime,const aiScene *scene, const aiNode* node, glm::mat4 parentTransform)
 	{
 		string NodeName(node->mName.data);
 
@@ -194,14 +194,10 @@ private:
 			aiVector3D Scaling = pNodeAnim->mScalingKeys[0].mValue;
 			glm::vec3 scale(Scaling.x, Scaling.y, Scaling.z);
 
-			// Interpolate rotation and generate rotation transformation matrix
 			aiQuaternion Rotation = pNodeAnim->mRotationKeys[0].mValue;
 			glm::quat quaternion(Rotation.w, Rotation.x, Rotation.y, Rotation.z); ///TODO Maybe exchange w with x?
 
-			// Interpolate translation and generate translation transformation matrix
-			aiVector3D Translation = pNodeAnim->mPositionKeys[0].mValue;
-			glm::vec3 translate = glm::vec3(Translation.x, Translation.y, Translation.z);
-			
+			glm::vec3 translate = interpolatePosition(animationTime, pNodeAnim);
 
 			// Combine the above transformations
 			NodeTransformation = glm::translate(translate) * glm::toMat4(quaternion) * glm::scale(scale);  //TranslationM * RotationM * ScalingM;
@@ -216,7 +212,7 @@ private:
 		}
 
 		for (int i = 0; i < node->mNumChildren; i++) {
-			ReadNodeHierarchy(scene, node->mChildren[i], GlobalTransformation);
+			ReadNodeHierarchy(animationTime,scene, node->mChildren[i], GlobalTransformation);
 		}
 	}
 	///TODO std::map lot faster
@@ -232,6 +228,26 @@ private:
 			}
 		}
 		return nullptr;
+	}
+	glm::vec3 interpolatePosition(float animationTime,const aiNodeAnim* nodeAnim)
+	{
+		int keyIndex = -1;
+		for (int i = 0; i < nodeAnim->mNumPositionKeys - 1; i++)
+		{
+			if (animationTime >= nodeAnim->mPositionKeys[i].mTime)
+			{
+				keyIndex = i;
+				break;
+			}
+		}
+		assert(keyIndex >= 0);
+		auto& key1 = nodeAnim->mPositionKeys[keyIndex];
+		auto& key2 = nodeAnim->mPositionKeys[keyIndex + 1];
+		glm::vec3 pos1 = aiVecToGlm(key1.mValue);
+		glm::vec3 pos2 = aiVecToGlm(key2.mValue);
+		float timeDiff = key2.mTime - key1.mTime;
+		float mixTime  = (animationTime - key1.mTime) / timeDiff;
+		return glm::mix(pos1, pos2, mixTime);
 	}
 	// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 	void processNode(aiNode *node, const aiScene *scene)
@@ -367,6 +383,11 @@ private:
 		to[3][0] = (GLfloat)from->a4; to[3][1] = (GLfloat)from->b4;  to[3][2] = (GLfloat)from->c4; to[3][3] = (GLfloat)from->d4;
 
 		return to;
+	}
+	inline glm::vec3 aiVecToGlm(const aiVector3D& aiVec)
+	{
+		glm::vec3 vec(aiVec.x, aiVec.y, aiVec.z);
+		return vec;
 	}
 };
 

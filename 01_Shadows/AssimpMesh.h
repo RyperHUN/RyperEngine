@@ -26,9 +26,9 @@ struct Vertex {
 	// texCoords
 	glm::vec2 TexCoords;
 	// tangent
-	glm::vec3 Tangent;
+	glm::vec3 Tangent; //== Weight//TODO now weights and bone id-s are stored in this two too
 	// bitangent
-	glm::vec3 Bitangent;
+	glm::vec3 Bitangent; //== IDs
 };
 
 struct Texture {
