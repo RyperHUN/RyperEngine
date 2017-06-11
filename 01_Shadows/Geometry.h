@@ -40,6 +40,27 @@ struct Geometry {
 		}
 		return Geom::Box{max, min};
 	}
+	Geom::Box getModelBox(glm::vec3 translate, glm::vec3 scale)
+	{
+		Geom::Box localBox = getLocalAABB ();
+		glm::vec4 min = glm::vec4{ localBox.min, 1.0};
+		glm::vec4 max = glm::vec4{ localBox.max, 1.0 };
+		glm::mat4 transform = glm::translate(translate) * glm::scale(scale);
+		min = transform * min;
+		max = transform * max;
+
+		Geom::Box modelBox {min, max};
+		return modelBox;
+	}
+	glm::mat4 getMatrixForBoxGeom(glm::vec3 translate, glm::vec3 scale)
+	{
+		Geom::Box box = getLocalAABB();
+		glm::vec3 localCenterPos  = (box.max + box.min) / 2.0f;
+		glm::vec3 localScale = box.max - localCenterPos; 
+
+		return glm::translate(translate) * glm::scale(scale) * glm::translate(localCenterPos) * glm::scale(localScale);
+	}
+	
 protected:
 	Geometry(gVertexBuffer &&buffer)
 		:buffer(buffer) 
