@@ -279,9 +279,14 @@ private:
 		auto& key2 = nodeAnim->mRotationKeys[keyIndex + 1];
 		glm::quat pos1 = assimpToGlm(key1.mValue);
 		glm::quat pos2 = assimpToGlm(key2.mValue);
+		
 		float timeDiff = key2.mTime - key1.mTime;
-		float mixTime = (animationTime - key1.mTime) / timeDiff;
-		return glm::mix(pos1, pos2, mixTime);
+		float mixTime  = (animationTime - key1.mTime) / timeDiff; //[0,1]
+		assert(0.0f <= mixTime && mixTime <= 1.0f);
+
+		glm::quat result = glm::slerp(pos1, pos2, mixTime);
+
+		return glm::normalize(result);
 	}
 	// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 	void processNode(aiNode *node, const aiScene *scene)
