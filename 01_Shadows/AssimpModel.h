@@ -77,15 +77,6 @@ private:
 		
 		processAnimations(scene);
 	}
-	struct RiggingInfo
-	{
-		glm::quat rotation;
-		glm::vec3 translation;
-		RiggingInfo (aiQuaternion quat, aiVector3D vec)
-			: rotation(quat.x, quat.y, quat.z, quat.w),
-				translation(vec.x, vec.y, vec.z)
-		{}
-	};
 	struct BoneInfo
 	{
 		glm::mat4 offsetMatrix;
@@ -99,9 +90,9 @@ private:
 		int size = 0;
 		void AddBoneData(size_t id, float weight)
 		{
-			if(size == 3)
+			if(size == NUM_BONES_PER_VERTEX)
 				return;
-			assert(size < 3); ///TODO Normalize weights + IDs
+			assert(size < NUM_BONES_PER_VERTEX); ///TODO Normalize weights + IDs
 			
 			IDs[size] = id;
 			weights[size] = weight;
@@ -120,8 +111,7 @@ private:
 		}
 	};
 
-	std::vector<std::string> boneNames;
-	std::vector<RiggingInfo> rigging;
+	
 
 	std::vector<BoneInfo> boneInfo;
 	std::map<std::string, int> boneMapping;
@@ -134,7 +124,6 @@ private:
 		{
 			aiBone* bone = aimesh->mBones[i];
 			std::string boneName = bone->mName.C_Str();
-			boneNames.push_back(boneName);
 			int boneIndex = -1;
 			if(boneMapping.find(boneName) == boneMapping.end()) //not found name
 			{
@@ -154,12 +143,6 @@ private:
 				float weight    = bone->mWeights[j].mWeight;
 				vertexWeightData[vertexId].AddBoneData(boneIndex, weight);
 			}
-
-			//From szecsi
-			/*aiQuaternion quat;
-			aiVector3D   translate;
-			bone->mOffsetMatrix.DecomposeNoScaling(quat, translate);
-			rigging.push_back(RiggingInfo{quat, translate});*/
 			
 		}
 		for(auto & pair : vertexWeightData)
@@ -171,8 +154,8 @@ private:
 			ownMesh.vertices[pair.first].Bitangent = boneData.IDs;
 		}
 	}
-	///FInal matrix[boneIndex] = offsetMatrix[boneIndex] * boneFrame.transformMatrix
-	glm::mat4 globalTransformInverse;
+	glm::mat4 globalTransformInverse; //Kulonbozo modellezo programok mas koordinata rendszerben mukodnek
+	//Ezzel beszorozva mar egyseges lesz a koordinata rendszer.
 	void processAnimations(const aiScene *scene)
 	{
 		if (!scene->HasAnimations())
