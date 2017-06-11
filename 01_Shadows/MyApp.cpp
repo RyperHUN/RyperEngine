@@ -9,8 +9,9 @@
 #include "GeometryCreator.h"
 
 CMyApp::CMyApp(void)
-	:geom_Man{ "Model/model.dae" }
-	,geom_AnimatedMan{"Model/model.dae"}
+	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/
+	geom_Man { "Model/model.dae" },
+	geom_AnimatedMan{"Model/model.dae"}
 {
 	srand(2);
 	texture_Map = 0;

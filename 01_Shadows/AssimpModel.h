@@ -7,6 +7,9 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform2.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include "glmUtils.h"
 #include <stb_image.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -20,184 +23,135 @@
 #include <iostream>
 #include <map>
 #include <vector>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
 using namespace std;
 
 unsigned int TextureFromFileA(const char *path, const string &directory, bool gamma = false);
 
 struct Geometry;
 
-class AssimpModel : public Geometry
+
+struct BoneInfo
 {
-public:
-	/*  Model Data */
-	vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-	vector<Mesh> meshes;
-	string directory;
-	bool gammaCorrection;
-	bool isAnimated;
+	glm::mat4 offsetMatrix;
+	glm::mat4 finalTransform;
+};
+#define NUM_BONES_PER_VERTEX 3
+struct VertexWeightData
+{
+	glm::vec3 IDs;
+	glm::vec3 weights;
+	int size = 0;
+	void AddBoneData(size_t id, float weight)
+	{
+		if (size == NUM_BONES_PER_VERTEX)
+			return;
+		assert(size < NUM_BONES_PER_VERTEX); ///TODO Normalize weights + IDs
 
+		IDs[size] = id;
+		weights[size] = weight;
+
+		size++;
+	}
+	//Weights now add up to 1;
+	void normalizeWeights()
+	{
+		float sum = 0;
+		for (int i = 0; i < size; i++)
+			sum += weights[i];
+
+		for (int i = 0; i < size; i++)
+			weights[i] /= sum;
+	}
+};
+
+struct Animator
+{
 	const aiScene* scene;
-	Assimp::Importer importer;
-	/*  Functions   */
-	// constructor, expects a filepath to a 3D model.
-	AssimpModel(string const &path, bool gamma = false) : gammaCorrection(gamma)
+	aiAnimation* currentAnim;
+	float animationTime;
+	std::vector<BoneInfo> boneTransforms;
+	std::map<std::string, int> boneMapping;
+	glm::mat4 globalTransformInverse; //Kulonbozo modellezo programok mas koordinata rendszerben mukodnek
+									  //Ezzel beszorozva mar egyseges lesz a koordinata rendszer.
+
+	Animator(const aiScene* scene)
+		:scene(scene)
 	{
-		loadModel(path);
+		assert(scene->mAnimations > 0);
+		currentAnim = scene->mAnimations[0];
+
+		processAnimations(scene);
 	}
-
-	// draws the model, and thus all its meshes
-	void Draw(gShaderProgram *shader = nullptr) override
+	void uploadToShader(gShaderProgram * shader)
 	{
-		UploadFinalTransformations(shader);
-		for (unsigned int i = 0; i < meshes.size(); i++)
-			meshes[i].Draw(shader);
+		static const std::string uniformName = "boneTransformations[";
+		for (int i = 0; i < boneTransforms.size(); i++)
+		{
+			shader->SetUniform((uniformName + std::to_string(i) + "]").c_str(), boneTransforms[i].finalTransform);
+		}
 	}
-
-	void UpdateAnimation (float time)
+	void UpdateAnimation(float time)
 	{
-		if(!scene->HasAnimations ()) return;
-
-		const aiAnimation* anim = scene->mAnimations[0];
+		const aiAnimation* anim = currentAnim;
 		float animDurationInTicks = anim->mDuration;
-	    float ticksPerSec = anim->mTicksPerSecond > 0 ? anim->mTicksPerSecond : 1; 
+		float ticksPerSec = anim->mTicksPerSecond > 0 ? anim->mTicksPerSecond : 1;
 		float animDurationSec = animDurationInTicks / ticksPerSec;
 
 		time = glm::mod(time, animDurationSec);
-		
+
 		ReadNodeHierarchy(time, scene, scene->mRootNode, glm::mat4(1.0));
 	}
-
-private:
-	/*  Functions   */
-	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-	void loadModel(string const &path)
-	{
-		// read file via ASSIMP
-		 
-		scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-		// check for errors
-		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
-		{
-			cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
-			return;
-		}
-		// retrieve the directory path of the filepath
-		directory = path.substr(0, path.find_last_of('/'));
-
-		// process ASSIMP's root node recursively
-		processNode(scene->mRootNode, scene);
-		
-		processAnimations(scene);
-	}
-	struct BoneInfo
-	{
-		glm::mat4 offsetMatrix;
-		glm::mat4 finalTransform;
-	};
-#define NUM_BONES_PER_VERTEX 3
-	struct VertexWeightData
-	{
-		glm::vec3 IDs;
-		glm::vec3 weights;
-		int size = 0;
-		void AddBoneData(size_t id, float weight)
-		{
-			if(size == NUM_BONES_PER_VERTEX)
-				return;
-			assert(size < NUM_BONES_PER_VERTEX); ///TODO Normalize weights + IDs
-			
-			IDs[size] = id;
-			weights[size] = weight;
-			
-			size++;
-		}
-		//Weights now add up to 1;
-		void normalizeWeights()
-		{
-			float sum = 0;
-			for(int i = 0; i < size; i++)
-				sum += weights[i];
-
-			for(int i = 0; i < size; i++)
-				weights[i] /= sum;
-		}
-	};
-
-	
-
-	std::vector<BoneInfo> boneInfo;
-	std::map<std::string, int> boneMapping;
-	std::map<int, VertexWeightData> vertexWeightData; //Vertex id alapjan lekerheto az adat
-	
-	void processBones(const aiScene *scene, aiMesh * aimesh, Mesh &ownMesh)
-	{	
-		int numBones = 0; //Elofordulhat hogy 2x ugyanaz a bone van benne emiatt kell ez?
-		for(int i = 0 ; i < aimesh->mNumBones; i++)
-		{
-			aiBone* bone = aimesh->mBones[i];
-			std::string boneName = bone->mName.C_Str();
-			int boneIndex = -1;
-			if(boneMapping.find(boneName) == boneMapping.end()) //not found name
-			{
-				boneIndex = numBones++;
-				boneInfo.push_back(BoneInfo{});
-				boneMapping[boneName] = boneIndex;
-			}
-			else
-				boneIndex = boneMapping[boneName]; //Already have id
-
-			boneInfo[boneIndex].offsetMatrix = assimpToGlm (bone->mOffsetMatrix);
-
-			for(int j = 0; j < bone->mNumWeights; j++)
-			{
-				//TODO Add baseVertex??
-				size_t vertexId = bone->mWeights[j].mVertexId;
-				float weight    = bone->mWeights[j].mWeight;
-				vertexWeightData[vertexId].AddBoneData(boneIndex, weight);
-			}
-			
-		}
-		for(auto & pair : vertexWeightData)
-		{
-			VertexWeightData & boneData = pair.second;
-			boneData.normalizeWeights(); //weights add up to 1
-			
-			ownMesh.vertices[pair.first].Tangent = boneData.weights; //TODO Ideiglenes adat mentes csontoknak
-			ownMesh.vertices[pair.first].Bitangent = boneData.IDs;
-		}
-	}
-	glm::mat4 globalTransformInverse; //Kulonbozo modellezo programok mas koordinata rendszerben mukodnek
-	//Ezzel beszorozva mar egyseges lesz a koordinata rendszer.
 	void processAnimations(const aiScene *scene)
 	{
 		if (!scene->HasAnimations())
 			return;
-		isAnimated = true;
 
 		glm::mat4 globalTransform = assimpToGlm(scene->mRootNode->mTransformation);
 		globalTransformInverse = glm::inverse(globalTransform);
 
 		aiAnimation* anim = scene->mAnimations[0]; //TODO load all animations
-		
-		ReadNodeHierarchy(0,scene, scene->mRootNode,glm::mat4(1.0)); //Root transform must be identity
-	}
-	void UploadFinalTransformations (gShaderProgram * shader)
-	{
-		assert(shader);
-		shader->SetUniform("isAnimated",isAnimated);
-		static const std::string uniformName = "boneTransformations[";
 
-		for (int i = 0; i < boneInfo.size(); i++)
+		ReadNodeHierarchy(0, scene, scene->mRootNode, glm::mat4(1.0)); //Root transform must be identity
+	}
+	void processBones(const aiScene *scene, aiMesh * aimesh, Mesh &ownMesh,
+		std::map<int, VertexWeightData>& vertexWeightData)
+	{
+		int numBones = 0; //Elofordulhat hogy 2x ugyanaz a bone van benne emiatt kell ez?
+		for (int i = 0; i < aimesh->mNumBones; i++)
 		{
-			shader->SetUniform((uniformName + std::to_string(i) + "]").c_str(), boneInfo[i].finalTransform);
+			aiBone* bone = aimesh->mBones[i];
+			std::string boneName = bone->mName.C_Str();
+			int boneIndex = -1;
+			if (boneMapping.find(boneName) == boneMapping.end()) //not found name
+			{
+				boneIndex = numBones++;
+				boneTransforms.push_back(BoneInfo{});
+				boneMapping[boneName] = boneIndex;
+			}
+			else
+				boneIndex = boneMapping[boneName]; //Already have id
+
+			boneTransforms[boneIndex].offsetMatrix = assimpToGlm(bone->mOffsetMatrix);
+
+			for (int j = 0; j < bone->mNumWeights; j++)
+			{
+				//TODO Add baseVertex??
+				size_t vertexId = bone->mWeights[j].mVertexId;
+				float weight = bone->mWeights[j].mWeight;
+				vertexWeightData[vertexId].AddBoneData(boneIndex, weight);
+			}
+
+		}
+		for (auto & pair : vertexWeightData)
+		{
+			VertexWeightData & boneData = pair.second;
+			boneData.normalizeWeights(); //weights add up to 1
+
+			ownMesh.vertices[pair.first].Tangent = boneData.weights; //TODO Ideiglenes adat mentes csontoknak
+			ownMesh.vertices[pair.first].Bitangent = boneData.IDs;
 		}
 	}
-
-	void ReadNodeHierarchy(float animationTime,const aiScene *scene, const aiNode* node, glm::mat4 parentTransform)
+	void ReadNodeHierarchy(float animationTime, const aiScene *scene, const aiNode* node, glm::mat4 parentTransform)
 	{
 		string NodeName(node->mName.data);
 
@@ -210,7 +164,7 @@ private:
 		if (pNodeAnim) {
 			// Interpolate scaling and generate scaling transformation matrix
 			aiVector3D Scaling = pNodeAnim->mScalingKeys[0].mValue;
-			glm::vec3 scale = assimpToGlm (Scaling);
+			glm::vec3 scale = assimpToGlm(Scaling);
 
 			glm::quat quaternion = interpolateRotation(animationTime, pNodeAnim);
 
@@ -222,31 +176,31 @@ private:
 
 		glm::mat4 GlobalTransformation = parentTransform * NodeTransformation;
 
-		
+
 		if (boneMapping.find(NodeName) != boneMapping.end()) {
 			int BoneIndex = boneMapping[NodeName];
-			boneInfo[BoneIndex].finalTransform = globalTransformInverse * GlobalTransformation * boneInfo[BoneIndex].offsetMatrix;
+			boneTransforms[BoneIndex].finalTransform = globalTransformInverse * GlobalTransformation * boneTransforms[BoneIndex].offsetMatrix;
 		}
 
 		for (int i = 0; i < node->mNumChildren; i++) {
-			ReadNodeHierarchy(animationTime,scene, node->mChildren[i], GlobalTransformation);
+			ReadNodeHierarchy(animationTime, scene, node->mChildren[i], GlobalTransformation);
 		}
 	}
 	///TODO std::map lot faster
-	const aiNodeAnim* FindNodeAnim(const aiAnimation* anim, const string nodeName) 
+	const aiNodeAnim* FindNodeAnim(const aiAnimation* anim, const string nodeName)
 	{
-		for(int i = 0 ; i < anim->mNumChannels; i++)
+		for (int i = 0; i < anim->mNumChannels; i++)
 		{
 			const aiNodeAnim * nodeAnim = anim->mChannels[i];
 
-			if(std::string(nodeAnim->mNodeName.C_Str()) == nodeName)
+			if (std::string(nodeAnim->mNodeName.C_Str()) == nodeName)
 			{
 				return nodeAnim;
 			}
 		}
 		return nullptr;
 	}
-	glm::vec3 interpolatePosition(float animationTime,const aiNodeAnim* nodeAnim)
+	glm::vec3 interpolatePosition(float animationTime, const aiNodeAnim* nodeAnim)
 	{
 		int keyIndex = -1;
 		for (int i = 0; i < nodeAnim->mNumPositionKeys - 1; i++)
@@ -263,7 +217,7 @@ private:
 		glm::vec3 pos1 = assimpToGlm(key1.mValue);
 		glm::vec3 pos2 = assimpToGlm(key2.mValue);
 		float timeDiff = key2.mTime - key1.mTime;
-		float mixTime  = (animationTime - key1.mTime) / timeDiff;
+		float mixTime = (animationTime - key1.mTime) / timeDiff;
 		return glm::mix(pos1, pos2, mixTime);
 	}
 	glm::quat interpolateRotation(float animationTime, const aiNodeAnim* nodeAnim)
@@ -282,15 +236,84 @@ private:
 		auto& key2 = nodeAnim->mRotationKeys[keyIndex + 1];
 		glm::quat pos1 = assimpToGlm(key1.mValue);
 		glm::quat pos2 = assimpToGlm(key2.mValue);
-		
+
 		float timeDiff = key2.mTime - key1.mTime;
-		float mixTime  = (animationTime - key1.mTime) / timeDiff; //[0,1]
+		float mixTime = (animationTime - key1.mTime) / timeDiff; //[0,1]
 		assert(0.0f <= mixTime && mixTime <= 1.0f);
 
 		glm::quat result = glm::slerp(pos1, pos2, mixTime);
 
 		return glm::normalize(result);
 	}
+};
+
+
+class AssimpModel : public Geometry
+{
+public:
+	/*  Model Data */
+	vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+	vector<Mesh> meshes;
+	string directory;
+	bool isAnimated;
+
+	Animator * animator = nullptr;
+
+	Assimp::Importer importer;
+	
+	// constructor, expects a filepath to a 3D model.
+
+	AssimpModel(string const &path)
+	{
+		loadModel(path);
+	}
+
+	// draws the model, and thus all its meshes
+	void Draw(gShaderProgram *shader = nullptr) override
+	{
+		UploadFinalTransformations(shader);
+		for (unsigned int i = 0; i < meshes.size(); i++)
+			meshes[i].Draw(shader);
+	}
+
+	void UpdateAnimation (float time)
+	{
+		if(!animator) return;
+
+		animator->UpdateAnimation(time);
+	}
+
+private:
+	/*  Functions   */
+	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
+	void loadModel(string const &path)
+	{
+		// read file via ASSIMP
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+		if(scene->HasAnimations())
+			animator = new Animator(scene);
+		// check for errors
+		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+		{
+			cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
+			return;
+		}
+		// retrieve the directory path of the filepath
+		directory = path.substr(0, path.find_last_of('/'));
+
+		// process ASSIMP's root node recursively
+		processNode(scene->mRootNode, scene);
+	}
+	
+	std::map<int, VertexWeightData> vertexWeightData; //Vertex id alapjan lekerheto az adat
+
+	void UploadFinalTransformations (gShaderProgram * shader)
+	{
+		assert(shader);
+		shader->SetUniform("isAnimated",isAnimated);
+		animator->uploadToShader (shader);
+	}
+
 	// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 	void processNode(aiNode *node, const aiScene *scene)
 	{
@@ -302,7 +325,8 @@ private:
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			meshes.push_back(processMesh(mesh, scene));
 			if (mesh->HasBones())
-				processBones(scene, mesh, meshes.back());
+				if(animator)
+					animator->processBones(scene, mesh, meshes.back(), vertexWeightData);
 			meshes.back().setupMesh();
 		}
 		// after we've processed all of the meshes (if any) we then recursively process each of the children nodes
@@ -316,14 +340,14 @@ private:
 	Mesh processMesh(aiMesh *mesh, const aiScene *scene)
 	{
 		// data to fill
-		vector<Vertex> vertices;
+		vector<MeshVertexData> vertices;
 		vector<unsigned int> indices;
 		vector<Texture> textures;
 
 		// Walk through each of the mesh's vertices
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
-			Vertex vertex;
+			MeshVertexData vertex;
 
 			if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
 			{
@@ -412,30 +436,24 @@ private:
 		}
 		return textures;
 	}
+};
 
-	inline glm::mat4 assimpToGlm(const aiMatrix4x4& from)
+///TODO
+class AssimpAnimatedModel : public Geometry
+{
+	vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+	vector<Mesh> meshes;
+	string directory;
+	bool isAnimated;
+
+	const aiScene* scene;
+	Assimp::Importer importer;
+	AssimpAnimatedModel(string const &path)
 	{
-		//glm::mat4 m = glm::transpose(glm::make_mat4(&aiM.a1));
-		glm::mat4 to;
-
-
-		to[0][0] = (GLfloat)from.a1; to[0][1] = (GLfloat)from.b1;  to[0][2] = (GLfloat)from.c1; to[0][3] = (GLfloat)from.d1;
-		to[1][0] = (GLfloat)from.a2; to[1][1] = (GLfloat)from.b2;  to[1][2] = (GLfloat)from.c2; to[1][3] = (GLfloat)from.d2;
-		to[2][0] = (GLfloat)from.a3; to[2][1] = (GLfloat)from.b3;  to[2][2] = (GLfloat)from.c3; to[2][3] = (GLfloat)from.d3;
-		to[3][0] = (GLfloat)from.a4; to[3][1] = (GLfloat)from.b4;  to[3][2] = (GLfloat)from.c4; to[3][3] = (GLfloat)from.d4;
-
-		return to;
-	}
-	inline glm::vec3 assimpToGlm(const aiVector3D& aiVec)
-	{
-		glm::vec3 vec(aiVec.x, aiVec.y, aiVec.z);
-		return vec;
-	}
-	inline glm::quat assimpToGlm(const aiQuaternion& aiQuat)
-	{
-		glm::quat quaternion (aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z);
-		return quaternion;
+		//loadModel(path);
 	}
 };
+
+
 
 #endif

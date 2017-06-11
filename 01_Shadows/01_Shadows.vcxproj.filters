@@ -114,6 +114,9 @@
     <ClInclude Include="GeometryCreator.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="glmUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">
