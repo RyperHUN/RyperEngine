@@ -191,6 +191,7 @@ bool CMyApp::Init()
 	cowboyObj->pos = glm::vec3(0,10,10);
 	cowboyObj->animateChar = [cowboyObj](float time){
 		AssimpModel* geom = (AssimpModel*)cowboyObj->geometry;
+		//geom->isAnimated = false;
 		geom->UpdateAnimation(time);
 	};
 

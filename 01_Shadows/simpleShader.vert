@@ -30,7 +30,7 @@ mat4 getBoneTransform ()
 	ivec4 BoneIDs	   = ivec4(boneId.x, boneId.y, boneId.z, boneId.w);
 	mat4 boneTransform = boneTransformations[BoneIDs[0]] * weights[0];
 	for(int i = 1; i < 4; i++)
-		boneTransform     += boneTransformations[BoneIDs[1]] * weights[1];
+		boneTransform     += boneTransformations[BoneIDs[i]] * weights[i];
 	return boneTransform;
 }
 

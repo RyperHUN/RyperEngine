@@ -44,13 +44,31 @@ struct VertexWeightData
 	void AddBoneData(size_t id, float weight)
 	{
 		if (size == NUM_BONES_PER_VERTEX)
-			return;
-		assert(size < NUM_BONES_PER_VERTEX); ///TODO Normalize weights + IDs
+		{
+			int minIndex = GetMinIndex();
+			if (weights[minIndex] < weight)
+			{
+				weights[minIndex] = weight;
+				IDs[minIndex]     = id;
+			}
+		}
+		else
+		{
+			IDs[size] = id;
+			weights[size] = weight;
 
-		IDs[size] = id;
-		weights[size] = weight;
-
-		size++;
+			size++;
+		}
+	}
+	int GetMinIndex()
+	{
+		int smallest = 0;
+		for(int i = 1; i < NUM_BONES_PER_VERTEX; i++)
+		{
+			if(weights[i] < weights[smallest])
+				smallest = i;
+		}
+		return smallest;
 	}
 	//Weights now add up to 1;
 	void normalizeWeights()
