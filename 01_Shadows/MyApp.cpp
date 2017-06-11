@@ -180,19 +180,18 @@ bool CMyApp::Init()
 
 	gameObjs.clear();
 
-	auto obj = new GameObj(*suzanne);
-	obj->geometry = &geom_Man;
+	AnimatedCharacter* cowboyObj = new AnimatedCharacter(shaderLights, &shader_Simple,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
 	for(auto& mesh : geom_Man.meshes)
 		mesh.textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
-	gameObjs.push_back(obj);
+	gameObjs.push_back(cowboyObj);
 	//gameObjs.push_back(quadObj);
-	obj->rotAxis = glm::vec3{1,0,0};
-	obj->rotAngle = -M_PI / 2; //For cowboy animated man
-	//obj->rotAngle = 0;
-	obj->scale = glm::vec3{1.0f};
-	obj->material = materialMan;
-	obj->shader = &shader_Simple;
-	obj->pos = glm::vec3(0,10,10);
+	cowboyObj->rotAxis = glm::vec3{1,0,0};
+	cowboyObj->rotAngle = -M_PI / 2; //For cowboy animated man
+	cowboyObj->pos = glm::vec3(0,10,10);
+	cowboyObj->animateChar = [cowboyObj](float time){
+		AssimpModel* geom = (AssimpModel*)cowboyObj->geometry;
+		geom->UpdateAnimation(time);
+	};
 
 	return true;
 }

@@ -11,6 +11,7 @@
 #include "gCamera.h"
 #include  "Material.h"
 #include <memory>
+#include <functional>
 
 using MaterialPtr = std::shared_ptr<Material>;
 
@@ -109,5 +110,19 @@ struct Quadobj : public GameObj
 	}
 	virtual void Animate(float time, float dt) override
 	{
+	}
+};
+
+
+
+struct AnimatedCharacter : public GameObj
+{
+	std::function<void(float)> animateChar;
+	using GameObj::GameObj;
+	virtual void Animate(float time, float dt) override
+	{
+		GameObj::Animate(time, dt);
+		assert(animateChar);
+		animateChar(time);
 	}
 };

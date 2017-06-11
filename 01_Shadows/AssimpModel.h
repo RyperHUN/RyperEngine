@@ -39,7 +39,8 @@ public:
 	string directory;
 	bool gammaCorrection;
 
-
+	const aiScene* scene;
+	Assimp::Importer importer;
 	/*  Functions   */
 	// constructor, expects a filepath to a 3D model.
 	AssimpModel(string const &path, bool gamma = false) : gammaCorrection(gamma)
@@ -55,14 +56,28 @@ public:
 			meshes[i].Draw(shader);
 	}
 
+	void UpdateAnimation (float time)
+	{
+		if(!scene->HasAnimations ()) return;
+
+		const aiAnimation* anim = scene->mAnimations[0];
+		float animDurationInTicks = anim->mDuration;
+	    float ticksPerSec = anim->mTicksPerSecond > 0 ? anim->mTicksPerSecond : 1; 
+		float animDurationSec = animDurationInTicks / ticksPerSec;
+
+		time = glm::mod(time, animDurationSec);
+		
+		ReadNodeHierarchy(time, scene, scene->mRootNode, glm::mat4(1.0));
+	}
+
 private:
 	/*  Functions   */
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 	void loadModel(string const &path)
 	{
 		// read file via ASSIMP
-		Assimp::Importer importer; //TODO Save scene + importer!!
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+		 
+		scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		// check for errors
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 		{
@@ -234,7 +249,7 @@ private:
 		int keyIndex = -1;
 		for (int i = 0; i < nodeAnim->mNumPositionKeys - 1; i++)
 		{
-			if (animationTime >= nodeAnim->mPositionKeys[i].mTime)
+			if (animationTime <= (float)nodeAnim->mPositionKeys[i + 1].mTime)
 			{
 				keyIndex = i;
 				break;
