@@ -29,6 +29,11 @@ unsigned int TextureFromFileA(const char *path, const string &directory, bool ga
 
 struct Geometry;
 
+struct Model
+{
+	std::shared_ptr<Material> material;
+	Geometry * geometry;
+};
 
 struct BoneInfo
 {
@@ -45,8 +50,8 @@ struct VertexWeightData
 	{
 		if (size == NUM_BONES_PER_VERTEX)
 		{
-			int minIndex = GetMinIndex();
-			if (weights[minIndex] < weight)
+			int minIndex = GetMinIndex(); 
+			if (weights[minIndex] < weight) //Replace smallest value, with new value
 			{
 				weights[minIndex] = weight;
 				IDs[minIndex]     = id;
@@ -410,8 +415,10 @@ private:
 			std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_reflect");
 			textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 		}
+		MaterialPtr material = make_shared<Material>(glm::vec3(0.1), glm::vec3(0.8), glm::vec3(1.0), 20.0f);
+		material->textures = std::move(textures);
 
-		BufferedMesh ownMesh = BufferedMesh(indices, textures);
+		BufferedMesh ownMesh = BufferedMesh(indices, textures, material);
 		// return a mesh object created from the extracted mesh data
 		ownMesh.AddAttributes(vertices);
 		return ownMesh;

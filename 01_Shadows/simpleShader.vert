@@ -12,7 +12,7 @@ uniform mat4 Minv;
 uniform mat4 LightSpaceMtx;
 uniform bool isAnimated;
 
-#define MAX_BONES 40
+#define MAX_BONES 41
 uniform mat4 boneTransformations[MAX_BONES];
 
 //Interface Block

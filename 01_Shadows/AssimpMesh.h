@@ -17,6 +17,7 @@
 
 #include "gShaderProgram.h"
 using namespace std;
+#include "Material.h"
 
 struct MeshVertexData {
 	// position
@@ -44,12 +45,6 @@ struct AnimatedVertexData {
 	glm::vec4 IDs;
 };
 
-struct Texture {
-	unsigned int id;
-	string type;
-	aiString path;
-};
-
 enum LOCATION {
 	POSITION = 0,
 	NORMAL = 1,
@@ -65,8 +60,8 @@ class BufferedMesh
 	MaterialPtr material;
 public:
 	vector<Texture> textures;
-	BufferedMesh(std::vector<unsigned int> indices, std::vector<Texture> textures)
-		:textures(textures)
+	BufferedMesh(std::vector<unsigned int> indices, std::vector<Texture> textures, MaterialPtr material)
+		:textures(textures), material(material)
 	{
 		for(int i = 0; i < indices.size(); i++)
 			vertexBuffer.AddIndex(indices[i]);
@@ -105,36 +100,7 @@ public:
 	void Draw(gShaderProgram *shader)
 	{
 		shader->On();
-		// bind appropriate textures
-		unsigned int diffuseNr = 1;
-		unsigned int specularNr = 1;
-		unsigned int normalNr = 1;
-		unsigned int heightNr = 1;
-		for (unsigned int i = 0; i < textures.size(); i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-											  // retrieve texture number (the N in diffuse_textureN)
-			stringstream ss;
-			string number;
-			string name = textures[i].type;
-			if (name == "skyBox")
-			{
-				shader->SetCubeTexture(name.c_str(), i, textures[i].id);
-				continue;
-			}
-			if (name == "texture_diffuse")
-				ss << diffuseNr++; // transfer unsigned int to stream
-			else if (name == "texture_specular")
-				ss << specularNr++; // transfer unsigned int to stream
-			else if (name == "texture_normal")
-				ss << normalNr++; // transfer unsigned int to stream
-			else if (name == "texture_reflect")
-				ss << heightNr++; // transfer unsigned int to stream
-
-			number = ss.str();
-			// now set the sampler to the correct texture unit
-			shader->SetTexture((name + number).c_str(), i, textures[i].id);
-		}
+		material->uploadToGpu(*shader);
 
 		// draw mesh
 		vertexBuffer.On();

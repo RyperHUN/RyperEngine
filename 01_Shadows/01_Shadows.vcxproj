@@ -117,6 +117,7 @@
     <ClInclude Include="UtilityFuncs.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="envmap.frag" />
     <None Include="envmap.vert" />
     <None Include="LightShader.frag" />

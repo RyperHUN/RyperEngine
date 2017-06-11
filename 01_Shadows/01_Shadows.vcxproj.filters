@@ -155,5 +155,6 @@
     <None Include="LightShader.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>
