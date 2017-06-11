@@ -31,6 +31,7 @@ public:
 	gShaderProgram *   shader;
 	std::shared_ptr<Material> material;
 	Geometry * geometry;
+	static Geometry * geom_box;
 	std::vector<ShaderLight>& shaderLights;
 	glm::vec3 scale, pos, rotAxis;
 
@@ -71,7 +72,24 @@ public:
 
 			geometry->Draw(shaderParam);
 		}
+		DrawBox(state, shaderParam);
+
 		shaderParam->Off();
+	}
+
+	void DrawBox (RenderState state, gShaderProgram * shaderParam = nullptr)
+	{
+		state.M = geometry->getMatrixForBoxGeom(pos, scale);
+		state.Minv = glm::inverse(state.M);
+		glm::mat4 PVM = state.PV * state.M;
+		shaderParam->SetUniform("PVM", PVM);
+		shaderParam->SetUniform("M", state.M);
+		shaderParam->SetUniform("Minv", state.Minv);
+		shaderParam->SetUniform("isAnimated", false);
+
+		geom_box->buffer.On();
+			geom_box->buffer.Draw(GL_TRIANGLES);
+		geom_box->buffer.Off();
 	}
 
 	virtual void Animate(float time, float dt)

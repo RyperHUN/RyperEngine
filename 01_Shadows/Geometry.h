@@ -18,6 +18,7 @@ struct Geometry {
 	gVertexBuffer buffer;
 	Geometry(){}
 
+	//TODO Idiot shader program is only here for AssimpModel
 	virtual void Draw(gShaderProgram * shader = nullptr) {
 		buffer.On();
 		buffer.Draw();

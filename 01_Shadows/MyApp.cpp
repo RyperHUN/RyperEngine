@@ -8,6 +8,8 @@
 #include "UtilityFuncs.h"
 #include "GeometryCreator.h"
 
+Geometry * GameObj::geom_box = nullptr;
+
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/
 	geom_Man { "Model/model.dae" },
@@ -152,16 +154,16 @@ bool CMyApp::Init()
 	quadObj->rotAngle = M_PI / 2.0;
 	gameObjs.push_back(quadObj);
 
-	GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
-	suzanne->scale = glm::vec3(5,5,5);
-	gameObjs.push_back (suzanne);
-	for(int i = 0;i < 10; i++)
-	{
-		GameObj * obj = new GameObj(*suzanne);
-		gameObjs.push_back (obj);
-		//if(i %2 == 0)
-		//	obj->geometry = &geom_Cow;
-	}
+	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
+	//suzanne->scale = glm::vec3(5,5,5);
+	//gameObjs.push_back (suzanne);
+	//for(int i = 0;i < 10; i++)
+	//{
+	//	GameObj * obj = new GameObj(*suzanne);
+	//	gameObjs.push_back (obj);
+	//	//if(i %2 == 0)
+	//	//	obj->geometry = &geom_Cow;
+	//}
 
 	float scaleFactor = 50.0f;
 	for(auto &obj : gameObjs)
@@ -179,12 +181,12 @@ bool CMyApp::Init()
 		lightRenderer.AddLight(&light);
 	lightRenderer.AddLight(&dirLight);
 
-	gameObjs.clear();
+	//gameObjs.clear();
 
 	AnimatedCharacter* cowboyObj = new AnimatedCharacter(shaderLights, &shader_Simple,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
 	for(auto& mesh : geom_Man.meshes)
 		mesh.textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
-	gameObjs.push_back(cowboyObj);
+	//gameObjs.push_back(cowboyObj);
 	//gameObjs.push_back(quadObj);
 	cowboyObj->rotAxis = glm::vec3{1,0,0};
 	cowboyObj->rotAngle = -M_PI / 2; //For cowboy animated man
@@ -194,6 +196,8 @@ bool CMyApp::Init()
 		//geom->isAnimated = false;
 		geom->UpdateAnimation(time);
 	};
+
+	GameObj::geom_box = &geom_Box;
 
 	return true;
 }

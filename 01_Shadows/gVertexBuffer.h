@@ -42,7 +42,7 @@ public:
 	{
 		std::vector<float>& pos = values[0];
 		std::vector<glm::vec3> result;
-		for(int i = 0 ;i < pos.size(); i++)
+		for(int i = 0 ;i*3 < pos.size(); i++)
 		{
 			int index = i * 3;
 			result.push_back(glm::vec3{pos[index],pos[index + 1], pos[index + 2]});
