@@ -11,6 +11,7 @@ Component Based:
 Kerdesek:
 	-Effect framework mire jo? Pros cons? 
 		(Nekem ugyjott le hogy #include tud segiteni kicsit ha sok helyen duplikalt kod lenne)
+	-
 	
 1) Mi az az offset Matrix?
 	bone -> localba visz.

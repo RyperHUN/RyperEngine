@@ -5,6 +5,43 @@
 #include <math.h>
 #include "Mesh_OGL3.h"
 #include "Bezier.h"
+#include "Material.h"
+
+enum LOCATION {
+	POSITION = 0,
+	NORMAL = 1,
+	UV = 2,
+	WEIGHT = 3,
+	BONEID = 4,
+	TANGENT = 5,
+	BITANGENT = 6,
+};
+
+struct MeshVertexData {
+	// position
+	glm::vec3 Position;
+	// normal
+	glm::vec3 Normal;
+	// texCoords
+	glm::vec2 TexCoords;
+	// tangent
+	glm::vec3 Tangent; //== Weight//TODO now weights and bone id-s are stored in this two too
+					   // bitangent
+	glm::vec3 Bitangent; //== IDs
+};
+
+struct AnimatedVertexData {
+	// position
+	glm::vec3 Position;
+	// normal
+	glm::vec3 Normal;
+	// texCoords
+	glm::vec2 TexCoords;
+	// tangent
+	glm::vec4 Weights; //== Weight//TODO now weights and bone id-s are stored in this two too
+					   // bitangent
+	glm::vec4 IDs;
+};
 
 namespace Geom{
 	struct Box
@@ -24,7 +61,7 @@ struct Geometry {
 		buffer.Draw();
 		buffer.Off();
 	}
-	Geom::Box getLocalAABB()
+	virtual Geom::Box getLocalAABB()
 	{
 		std::vector<glm::vec3> positions = buffer.GetPositionData();
 		glm::vec3 max = positions[0];
@@ -228,5 +265,66 @@ struct TriangleMeshLoaded : public Geometry
 	{
 		if(mesh)
 			mesh->draw ();
+	}
+};
+
+class BufferedMesh : public Geometry
+{
+	MaterialPtr material;
+public:
+	std::vector<Texture> textures;
+	BufferedMesh(MaterialPtr material)
+		:material(material)
+	{
+		buffer.AddAttribute(0, 3); //Pos
+		buffer.AddAttribute(1, 3); //Norm
+		buffer.AddAttribute(2, 2); //UV
+		buffer.AddAttribute(3, 4); //Weight
+		buffer.AddAttribute(4, 4); //Bone id
+		buffer.AddAttribute(5, 3); //Tangeng
+		buffer.AddAttribute(6, 3); //Bitangent
+	}
+	void Init() { buffer.InitBuffers(); }
+	template<typename T>
+	void AddAttribute(LOCATION loc, std::vector<T>& attribute)
+	{
+		for (int i = 0; i < attribute.size(); i++)
+			buffer.AddData((int)loc, attribute[i]);
+	}
+	template<typename T>
+	void AddAttribute(LOCATION loc, T & attribute)
+	{
+		buffer.AddData((int)loc, attribute);
+	}
+	void AddAttributes(std::vector<MeshVertexData> & vertices)
+	{
+		for (int i = 0; i < vertices.size(); i++)
+		{
+			MeshVertexData& vertex = vertices[i];
+			AddAttribute(POSITION, vertex.Position);
+			AddAttribute(NORMAL, vertex.Normal);
+			AddAttribute(UV, vertex.TexCoords);
+			AddAttribute(TANGENT, vertex.Tangent);
+			AddAttribute(TANGENT, vertex.Bitangent);
+		}
+	}
+	void AddIndices(std::vector<unsigned int> const& indices)
+	{
+		for (int i = 0; i < indices.size(); i++)
+			buffer.AddIndex(indices[i]);
+	}
+	void Draw(gShaderProgram *shader)
+	{
+		shader->On();
+		material->uploadToGpu(*shader);
+
+		// draw mesh
+		buffer.On();
+		buffer.Draw();
+		buffer.Off();
+
+		// always good practice to set everything back to defaults once configured.
+		glActiveTexture(GL_TEXTURE0);
+		shader->Off();
 	}
 };

@@ -340,9 +340,11 @@ struct Loader
 		MaterialPtr material = make_shared<Material>(glm::vec3(0.1), glm::vec3(0.8), glm::vec3(1.0), 20.0f);
 		material->textures = std::move(textures);
 
-		BufferedMesh ownMesh = BufferedMesh(indices, material);
-		// return a mesh object created from the extracted mesh data
+		BufferedMesh ownMesh = BufferedMesh(material);
+		ownMesh.AddIndices(indices);
 		ownMesh.AddAttributes(vertices);
+		// return a mesh object created from the extracted mesh data
+		
 		return ownMesh;
 	}
 	// checks all material textures of a given type and loads the textures if they're not loaded yet.
@@ -408,6 +410,21 @@ public:
 		if(!animator) return;
 
 		animator->UpdateAnimation(time);
+	}
+
+	Geom::Box getLocalAABB() override
+	{
+		assert(meshes.size() > 0);
+		Geom::Box biggest = meshes[0].getLocalAABB();
+		for(int i = 1; i < meshes.size(); i++)
+		{
+			Geom::Box box = meshes[i].getLocalAABB();
+			if(box.min < biggest.min)
+				biggest.min = box.min;
+			if(box.max > biggest.max)
+				biggest.max = box.max;
+		}
+		return biggest;
 	}
 
 private:

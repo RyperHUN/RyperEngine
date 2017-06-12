@@ -8,6 +8,16 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+inline bool operator<(glm::vec3 const& lhs, glm::vec3 const&rhs)
+{
+	return lhs.x < rhs.x && lhs.y < rhs.y && lhs.z < rhs.z;
+}
+
+inline bool operator>(glm::vec3 const& lhs, glm::vec3 const&rhs)
+{
+	return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z;
+}
+
 inline glm::mat4 assimpToGlm(const aiMatrix4x4& from)
 {
 	//glm::mat4 m = glm::transpose(glm::make_mat4(&aiM.a1));

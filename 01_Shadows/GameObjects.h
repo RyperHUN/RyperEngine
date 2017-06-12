@@ -13,8 +13,6 @@
 #include <memory>
 #include <functional>
 
-using MaterialPtr = std::shared_ptr<Material>;
-
 struct RenderState
 {
 	glm::vec3 wEye;

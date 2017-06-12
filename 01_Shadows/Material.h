@@ -7,6 +7,8 @@
 #include <assimp/Importer.hpp>
 #include <sstream>
 
+#include <memory>
+
 struct aiString;
 
 struct Texture {
@@ -62,3 +64,6 @@ struct Material
 		}
 	}
 };
+
+
+using MaterialPtr = std::shared_ptr<Material>;
