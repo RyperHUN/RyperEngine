@@ -414,6 +414,8 @@ public:
 
 	Geom::Box getLocalAABB() override
 	{
+		if (isCalculatedBox)
+			return cacheBox;
 		assert(meshes.size() > 0);
 		Geom::Box biggest = meshes[0].getLocalAABB();
 		for(int i = 1; i < meshes.size(); i++)
@@ -424,6 +426,8 @@ public:
 			if(box.max > biggest.max)
 				biggest.max = box.max;
 		}
+		isCalculatedBox = true;
+		cacheBox = biggest;
 		return biggest;
 	}
 

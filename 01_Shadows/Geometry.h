@@ -61,8 +61,12 @@ struct Geometry {
 		buffer.Draw();
 		buffer.Off();
 	}
+	Geom::Box cacheBox;
+	bool isCalculatedBox = false;
 	virtual Geom::Box getLocalAABB()
 	{
+		if(isCalculatedBox)
+			return cacheBox;
 		std::vector<glm::vec3> positions = buffer.GetPositionData();
 		glm::vec3 max = positions[0];
 		glm::vec3 min = positions[0];
@@ -76,7 +80,10 @@ struct Geometry {
 			if(pos.y < min.y) min.y = pos.y;
 			if(pos.z < min.z) min.z = pos.z;
 		}
-		return Geom::Box{max, min};
+		isCalculatedBox = true;
+		cacheBox = Geom::Box{ max, min };
+
+		return cacheBox;
 	}
 	Geom::Box getModelBox(glm::vec3 translate, glm::vec3 scale)
 	{

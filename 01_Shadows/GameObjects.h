@@ -70,7 +70,7 @@ public:
 
 			geometry->Draw(shaderParam);
 		}
-		DrawBox(state, shaderParam);
+		//DrawBox(state, shaderParam);
 
 		shaderParam->Off();
 	}
