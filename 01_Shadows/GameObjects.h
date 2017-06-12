@@ -34,6 +34,7 @@ public:
 
 	glm::quat quaternion;
 	float rotAngle = 0.0f;
+	bool isSelected = false;
 public:
 	GameObj(std::vector<ShaderLight>& shaderLights,gShaderProgram* shader, Geometry * geom, std::shared_ptr<Material> material,glm::vec3 pos,
 		glm::vec3 scale = glm::vec3{1,1,1},
@@ -143,6 +144,60 @@ struct BoundingBoxRenderer
 			DrawBox(state, obj);
 		glDisable(GL_BLEND);
 	}
+	struct Ray {
+		glm::vec3 origin;
+		glm::vec3 direction;
+		glm::vec3 dir_inv;
+	};
+	Ray createRay(glm::vec3 o, glm::vec3 d)
+	{
+		Ray ray;
+		ray.origin = o;
+		ray.direction = glm::normalize(d);
+		ray.dir_inv = (1.0f / d);
+		return ray;
+	}
+	float intersection(Geom::Box &b, Ray const& r) {
+		float t1 = (b.min[0] - r.origin[0])*r.dir_inv[0];
+		float t2 = (b.max[0] - r.origin[0])*r.dir_inv[0];
+
+		float tmin = glm::min(t1, t2);
+		float tmax = glm::max(t1, t2);
+
+		for (int i = 1; i < 3; ++i) {
+			t1 = (b.min[i] - r.origin[i])*r.dir_inv[i];
+			t2 = (b.max[i] - r.origin[i])*r.dir_inv[i];
+
+			tmin = glm::max(tmin, glm::min(t1, t2));
+			tmax = glm::min(tmax, glm::max(t1, t2));
+		}
+
+		bool intersect = tmax > glm::max(tmin, 0.0f);
+		if (intersect)
+			return tmin;
+
+		return -1.0;
+	}
+	void FindObject(glm::vec3 eye, glm::vec3 world)
+	{
+		Ray ray = createRay(eye, world - eye);
+		float smallest = -1.0f;
+		int savedIndex = -1;
+		for (int i = 0; i < gameObjs.size(); i++)
+		{
+			GameObj* obj = gameObjs[i];
+			obj->isSelected = false; //Mellekhatas
+			Geom::Box box = obj->geometry->getModelBox(obj->pos, obj->scale, obj->quaternion);
+			float t = intersection(box, ray);
+			if ((smallest > t || savedIndex == -1 ) && t >= 0)
+			{
+				savedIndex = i;
+				smallest = t;
+			}
+		}
+		if(savedIndex >= 0)
+			gameObjs[savedIndex]->isSelected = true;
+	}
 private:
 	void DrawBox(RenderState state, GameObj* obj)
 	{
@@ -151,6 +206,7 @@ private:
 		state.Minv = glm::inverse(state.M);
 		glm::mat4 PVM = state.PV * state.M;
 		shader->SetUniform("isAnimated", false);
+		shader->SetUniform("isSelected", obj->isSelected);
 		shader->SetUniform("PVM", PVM);
 		shader->SetUniform("M", state.M);
 		shader->SetUniform("Minv", state.Minv);

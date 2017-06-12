@@ -335,7 +335,8 @@ void CMyApp::MouseMove(SDL_MouseMotionEvent& mouse)
 
 void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 {
-	if (mouse.state & SDL_BUTTON_RMASK) //right Click
+	
+	if (mouse.button == SDL_BUTTON_RIGHT) //right Click
 	{
 		int pX = mouse.x; //Pixel X
 		int pY = mouse.y;
@@ -353,7 +354,7 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 		glm::vec4 world4 = PVInv * clipping;
 		glm::vec3 world = glm::vec3(world4) / world4.w;
 
-		//boundingBoxRenderer.FindObject(world);
+		boundingBoxRenderer.FindObject(m_camera.GetEye(), world);
 	}
 }
 

@@ -88,12 +88,12 @@ struct Geometry {
 
 		return cacheBox;
 	}
-	Geom::Box getModelBox(glm::vec3 translate, glm::vec3 scale)
+	Geom::Box getModelBox(glm::vec3 translate, glm::vec3 scale, glm::quat quaternion)
 	{
 		Geom::Box localBox = getLocalAABB ();
 		glm::vec4 min = glm::vec4{ localBox.min, 1.0};
 		glm::vec4 max = glm::vec4{ localBox.max, 1.0 };
-		glm::mat4 transform = glm::translate(translate) * glm::scale(scale);
+		glm::mat4 transform = glm::translate(translate) * glm::toMat4(quaternion) * glm::scale(scale);
 		min = transform * min;
 		max = transform * max;
 
