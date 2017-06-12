@@ -7,6 +7,9 @@
 #include "Bezier.h"
 #include "Material.h"
 
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 enum LOCATION {
 	POSITION = 0,
 	NORMAL = 1,
@@ -97,13 +100,13 @@ struct Geometry {
 		Geom::Box modelBox {min, max};
 		return modelBox;
 	}
-	glm::mat4 getMatrixForBoxGeom(glm::vec3 translate, glm::vec3 scale)
+	glm::mat4 getMatrixForBoxGeom(glm::vec3 translate, glm::vec3 scale, glm::quat quaternion)
 	{
 		Geom::Box box = getLocalAABB();
 		glm::vec3 localCenterPos  = (box.max + box.min) / 2.0f;
 		glm::vec3 localScale = box.max - localCenterPos; 
 
-		return glm::translate(translate) * glm::scale(scale) * glm::translate(localCenterPos) * glm::scale(localScale);
+		return glm::translate(translate) * glm::toMat4(quaternion) * glm::scale(scale) * glm::translate(localCenterPos) * glm::scale(localScale);
 	}
 	
 protected:

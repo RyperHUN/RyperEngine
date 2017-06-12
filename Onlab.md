@@ -11,7 +11,9 @@ Component Based:
 Kerdesek:
 	-Effect framework mire jo? Pros cons? 
 		(Nekem ugyjott le hogy #include tud segiteni kicsit ha sok helyen duplikalt kod lenne)
-	-
+	-Cook-Torrance modell mit jelent?
+	-Phong nal a reflect el szamitott spekularis miert nem jo?
+	-Shadow volume?
 	
 1) Mi az az offset Matrix?
 	bone -> localba visz.

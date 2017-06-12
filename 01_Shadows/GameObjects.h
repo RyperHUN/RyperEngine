@@ -62,6 +62,7 @@ public:
 			shaderParam->SetUniform("Minv", state.Minv);
 			shaderParam->SetUniform("wEye", state.wEye);
 			shaderParam->SetUniform("LightSpaceMtx", state.LightSpaceMtx);
+			shaderParam->SetUniform("isAnimated", false);
 
 			///TODO
 			for(auto& light : shaderLights)
@@ -70,24 +71,26 @@ public:
 
 			geometry->Draw(shaderParam);
 		}
-		//DrawBox(state, shaderParam);
+		DrawBox(state, shaderParam);
 
 		shaderParam->Off();
 	}
 
 	void DrawBox (RenderState state, gShaderProgram * shaderParam = nullptr)
 	{
-		state.M = geometry->getMatrixForBoxGeom(pos, scale);
+		shaderParam->On();
+		state.M = geometry->getMatrixForBoxGeom(pos, scale, quaternion);
 		state.Minv = glm::inverse(state.M);
 		glm::mat4 PVM = state.PV * state.M;
+		shaderParam->SetUniform("isAnimated", false);
 		shaderParam->SetUniform("PVM", PVM);
 		shaderParam->SetUniform("M", state.M);
 		shaderParam->SetUniform("Minv", state.Minv);
-		shaderParam->SetUniform("isAnimated", false);
 
 		geom_box->buffer.On();
 			geom_box->buffer.Draw(GL_TRIANGLES);
 		geom_box->buffer.Off();
+		shaderParam->Off();
 	}
 
 	virtual void Animate(float time, float dt)

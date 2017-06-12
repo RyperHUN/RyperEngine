@@ -181,9 +181,9 @@ bool CMyApp::Init()
 		lightRenderer.AddLight(&light);
 	lightRenderer.AddLight(&dirLight);
 
-	//gameObjs.clear();
+	gameObjs.clear();
 
-	AnimatedCharacter* cowboyObj = new AnimatedCharacter(shaderLights, &shader_Simple,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
+	AnimatedCharacter* cowboyObj = new AnimatedCharacter(shaderLights, &shader_LightRender,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
 	for(auto& mesh : geom_Man.meshes)
 		mesh.textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
 	gameObjs.push_back(cowboyObj);
@@ -256,8 +256,8 @@ void CMyApp::Render()
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		for (auto& obj : gameObjs)
-			obj->Draw(state,&shader_Shadow);
+		/*for (auto& obj : gameObjs)
+			obj->Draw(state,&shader_Shadow);*/
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -272,7 +272,7 @@ void CMyApp::Render()
 		obj->Draw (state);
 
 	//Draw lights
-	lightRenderer.Draw(m_camera.GetProjView());
+	//lightRenderer.Draw(m_camera.GetProjView());
 
 	//////////////////////////////Environment map drawing!!!
 	shader_EnvMap.On();
