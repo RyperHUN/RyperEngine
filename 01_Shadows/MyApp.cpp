@@ -8,13 +8,15 @@
 #include "UtilityFuncs.h"
 #include "GeometryCreator.h"
 
-Geometry * GameObj::geom_box = nullptr;
+Geometry * BoundingBoxRenderer::geom_box = nullptr;
 
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
 	geom_Man { "Model/model.dae" },
-	geom_AnimatedMan{"Model/model.dae"}
+	geom_AnimatedMan{"Model/model.dae"},
+	boundingBoxRenderer (gameObjs, &shader_LightRender)
 {
+	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
 	texture_Map = 0;
 	mesh_Suzanne = 0;
@@ -152,7 +154,7 @@ bool CMyApp::Init()
 	gameObjs.push_back(sphere2);
 	Quadobj *quadObj = new Quadobj{ shaderLights, &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0)};
 	quadObj->rotAngle = M_PI / 2.0;
-	//gameObjs.push_back(quadObj);
+	gameObjs.push_back(quadObj);
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
 	//suzanne->scale = glm::vec3(5,5,5);
@@ -181,9 +183,9 @@ bool CMyApp::Init()
 		lightRenderer.AddLight(&light);
 	lightRenderer.AddLight(&dirLight);
 
-	gameObjs.clear();
+	//gameObjs.clear();
 
-	AnimatedCharacter* cowboyObj = new AnimatedCharacter(shaderLights, &shader_LightRender,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
+	AnimatedCharacter* cowboyObj = new AnimatedCharacter(shaderLights, &shader_Simple,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
 	for(auto& mesh : geom_Man.meshes)
 		mesh.textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
 	gameObjs.push_back(cowboyObj);
@@ -196,8 +198,6 @@ bool CMyApp::Init()
 		//geom->isAnimated = false;
 		geom->UpdateAnimation(time);
 	};
-
-	GameObj::geom_box = &geom_Box;
 
 	return true;
 }
@@ -272,7 +272,8 @@ void CMyApp::Render()
 		obj->Draw (state);
 
 	//Draw lights
-	//lightRenderer.Draw(m_camera.GetProjView());
+	lightRenderer.Draw(m_camera.GetProjView());
+	boundingBoxRenderer.Draw(state);
 
 	//////////////////////////////Environment map drawing!!!
 	shader_EnvMap.On();

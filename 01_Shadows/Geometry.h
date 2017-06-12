@@ -100,15 +100,20 @@ struct Geometry {
 		Geom::Box modelBox {min, max};
 		return modelBox;
 	}
-	glm::mat4 getMatrixForBoxGeom(glm::vec3 translate, glm::vec3 scale, glm::quat quaternion)
+	glm::mat4 getModelMatrixForBoxGeom(glm::vec3 translate, glm::vec3 scale, glm::quat quaternion)
+	{
+		glm::mat4 Model = glm::translate(translate) * glm::toMat4(quaternion) * glm::scale(scale);
+
+		return Model * getLocalMatrixForBoxGeom();
+	}
+	glm::mat4 getLocalMatrixForBoxGeom() //You have to multiply it with Model matrix to get exact position
 	{
 		Geom::Box box = getLocalAABB();
-		glm::vec3 localCenterPos  = (box.max + box.min) / 2.0f;
-		glm::vec3 localScale = box.max - localCenterPos; 
+		glm::vec3 localCenterPos = (box.max + box.min) / 2.0f;
+		glm::vec3 localScale = box.max - localCenterPos;
 
-		return glm::translate(translate) * glm::toMat4(quaternion) * glm::scale(scale) * glm::translate(localCenterPos) * glm::scale(localScale);
+		return glm::translate(localCenterPos) * glm::scale(localScale);
 	}
-	
 protected:
 	Geometry(gVertexBuffer &&buffer)
 		:buffer(buffer) 

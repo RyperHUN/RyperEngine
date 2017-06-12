@@ -29,7 +29,6 @@ public:
 	gShaderProgram *   shader;
 	std::shared_ptr<Material> material;
 	Geometry * geometry;
-	static Geometry * geom_box;
 	std::vector<ShaderLight>& shaderLights;
 	glm::vec3 scale, pos, rotAxis;
 
@@ -71,25 +70,7 @@ public:
 
 			geometry->Draw(shaderParam);
 		}
-		DrawBox(state, shaderParam);
 
-		shaderParam->Off();
-	}
-
-	void DrawBox (RenderState state, gShaderProgram * shaderParam = nullptr)
-	{
-		shaderParam->On();
-		state.M = geometry->getMatrixForBoxGeom(pos, scale, quaternion);
-		state.Minv = glm::inverse(state.M);
-		glm::mat4 PVM = state.PV * state.M;
-		shaderParam->SetUniform("isAnimated", false);
-		shaderParam->SetUniform("PVM", PVM);
-		shaderParam->SetUniform("M", state.M);
-		shaderParam->SetUniform("Minv", state.Minv);
-
-		geom_box->buffer.On();
-			geom_box->buffer.Draw(GL_TRIANGLES);
-		geom_box->buffer.Off();
 		shaderParam->Off();
 	}
 
@@ -143,5 +124,37 @@ struct AnimatedCharacter : public GameObj
 		GameObj::Animate(time, dt);
 		assert(animateChar);
 		animateChar(time);
+	}
+};
+
+struct BoundingBoxRenderer
+{
+	static Geometry * geom_box;
+	gShaderProgram * shader;
+	std::vector<GameObj*>& gameObjs;
+	BoundingBoxRenderer(std::vector<GameObj*>& gameObj, gShaderProgram * shader)
+		:gameObjs(gameObj), shader(shader)
+	{}
+	void Draw(RenderState state)
+	{
+		for(GameObj * obj : gameObjs)
+			DrawBox(state, obj);
+	}
+private:
+	void DrawBox(RenderState state, GameObj* obj)
+	{
+		shader->On();
+		state.M = obj->geometry->getModelMatrixForBoxGeom(obj->pos, obj->scale, obj->quaternion);
+		state.Minv = glm::inverse(state.M);
+		glm::mat4 PVM = state.PV * state.M;
+		shader->SetUniform("isAnimated", false);
+		shader->SetUniform("PVM", PVM);
+		shader->SetUniform("M", state.M);
+		shader->SetUniform("Minv", state.Minv);
+
+		geom_box->buffer.On();
+			geom_box->buffer.Draw(GL_LINES);
+		geom_box->buffer.Off();
+		shader->Off();
 	}
 };

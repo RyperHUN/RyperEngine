@@ -89,6 +89,7 @@ protected:
 
 
 	LightRenderer lightRenderer;
+	BoundingBoxRenderer boundingBoxRenderer;
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete
 };
