@@ -9,48 +9,54 @@ namespace GeomCreator
 		buffer_Box.AddAttribute(0, 3);
 		buffer_Box.AddAttribute(1, 3);
 		buffer_Box.AddAttribute(2, 2);
+		
+		//Eleje
+		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
+		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
+		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
+	
+		//Hatulja
+		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
+		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		
+		//Bal oldal //TODO Tex
+		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0); buffer_Box.AddData(2, 0.0f, 0.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		
+		//Jobb oldal
+		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);	buffer_Box.AddData(2, 1.0f, 0.0f);
+		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);	buffer_Box.AddData(2, 0.0f, 0.0f);
+		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);	buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f);	buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);	buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);	buffer_Box.AddData(2, 0.0f, 0.0f);
 
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f);
-
-		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f);
-
-		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f);
-
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);
-
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f);
-
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f);
+		//Alja		
+		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
+		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
+		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
+		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f);	buffer_Box.AddData(2, 0.0f, 1.0f);
+		
+		//Teteje
+		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
+		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
+		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
 
 		buffer_Box.AddData(1, 0, 0, -1.0f);
 		buffer_Box.AddData(1, 0, 0, -1.0f);
@@ -93,48 +99,6 @@ namespace GeomCreator
 		buffer_Box.AddData(1, 0, 1.0f, 0);
 		buffer_Box.AddData(1, 0, 1.0f, 0);
 		buffer_Box.AddData(1, 0, 1.0f, 0);
-
-		buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 0.0f);
-
-		buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 0.0f);
-
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-
-		buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(2, 0.0f, 1.0f);
-
-		buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(2, 0.0f, 1.0f);
 	}
 	void CreateQuadGeom(gVertexBuffer &buffer)
 	{
