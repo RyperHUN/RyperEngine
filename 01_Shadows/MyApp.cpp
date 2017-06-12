@@ -14,7 +14,7 @@ CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
-	boundingBoxRenderer (gameObjs, &shader_LightRender)
+	boundingBoxRenderer (gameObjs, &shader_BoundingBox)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -102,6 +102,10 @@ bool CMyApp::Init()
 	shader_LightRender.AttachShader(GL_VERTEX_SHADER, "LightShader.vert");
 	shader_LightRender.AttachShader(GL_FRAGMENT_SHADER, "LightShader.frag");
 	shader_LightRender.LinkProgram();
+
+	shader_BoundingBox.AttachShader(GL_VERTEX_SHADER, "boundingBoxShader.vert");
+	shader_BoundingBox.AttachShader(GL_FRAGMENT_SHADER, "boundingBoxShader.frag");
+	shader_BoundingBox.LinkProgram();
 
 	if (!shader_EnvMap.LinkProgram())
 	{

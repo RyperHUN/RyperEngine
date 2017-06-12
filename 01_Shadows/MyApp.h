@@ -86,6 +86,7 @@ protected:
 	gShaderProgram  shader_Shadow;
 	gShaderProgram	shader_EnvMap;
 	gShaderProgram  shader_DebugQuadTexturer;
+	gShaderProgram  shader_BoundingBox;
 
 
 	LightRenderer lightRenderer;

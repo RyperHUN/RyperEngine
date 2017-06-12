@@ -165,5 +165,11 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
+    <None Include="boundingBoxShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="boundingBoxShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

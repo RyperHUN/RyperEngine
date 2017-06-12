@@ -153,7 +153,7 @@ private:
 		shader->SetUniform("Minv", state.Minv);
 
 		geom_box->buffer.On();
-			geom_box->buffer.Draw(GL_LINES);
+			geom_box->buffer.Draw(GL_LINE_STRIP);
 		geom_box->buffer.Off();
 		shader->Off();
 	}
