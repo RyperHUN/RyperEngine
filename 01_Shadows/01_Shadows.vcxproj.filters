@@ -25,6 +25,15 @@
     <Filter Include="Shaders\Debug">
       <UniqueIdentifier>{460e6e20-8cb3-4acd-a61a-b9265f1af071}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\Helpers\Math">
+      <UniqueIdentifier>{430eaa2f-a1a3-48d4-a87d-149ca581ce3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Helpers\Loader">
+      <UniqueIdentifier>{8d8e5bb4-09ea-4862-a3c2-a689ec408e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\GL_Wrapper">
+      <UniqueIdentifier>{1b6bc438-24b4-42ab-a842-c7981880100c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -34,54 +43,36 @@
     <ClCompile Include="gCamera.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="gShaderProgram.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh_OGL3.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjParser_OGL3.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="gVertexBuffer.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="FrustumG.cpp">
-      <Filter>Utils\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="Bezier.cpp">
-      <Filter>Utils\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="UtilityFuncs.cpp">
       <Filter>Utils\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Bezier.cpp">
+      <Filter>Utils\Helpers\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="FrustumG.cpp">
+      <Filter>Utils\Helpers\Math</Filter>
+    </ClCompile>
     <ClCompile Include="AssimpModel.cpp">
-      <Filter>Utils\Helpers</Filter>
+      <Filter>Utils\Helpers\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh_OGL3.cpp">
+      <Filter>Utils\Helpers\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjParser_OGL3.cpp">
+      <Filter>Utils\Helpers\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="gShaderProgram.cpp">
+      <Filter>Utils\GL_Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="gVertexBuffer.cpp">
+      <Filter>Utils\GL_Wrapper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyApp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GLUtils.hpp">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="gCamera.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="gShaderProgram.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh_OGL3.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjParser_OGL3.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="gVertexBuffer.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
@@ -96,26 +87,44 @@
     <ClInclude Include="Material.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="FrustumG.h">
-      <Filter>Utils\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Bezier.h">
-      <Filter>Utils\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="UtilityFuncs.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="AssimpMesh.h">
-      <Filter>Utils\Helpers</Filter>
+    <ClInclude Include="Bezier.h">
+      <Filter>Utils\Helpers\Math</Filter>
     </ClInclude>
-    <ClInclude Include="AssimpModel.h">
-      <Filter>Utils\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryCreator.h">
-      <Filter>Utils</Filter>
+    <ClInclude Include="FrustumG.h">
+      <Filter>Utils\Helpers\Math</Filter>
     </ClInclude>
     <ClInclude Include="glmUtils.h">
-      <Filter>Utils</Filter>
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpMesh.h">
+      <Filter>Utils\Helpers\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpModel.h">
+      <Filter>Utils\Helpers\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh_OGL3.h">
+      <Filter>Utils\Helpers\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjParser_OGL3.h">
+      <Filter>Utils\Helpers\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="gShaderProgram.h">
+      <Filter>Utils\GL_Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="gVertexBuffer.h">
+      <Filter>Utils\GL_Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="MyApp.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryCreator.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GLUtils.hpp">
+      <Filter>Utils\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
