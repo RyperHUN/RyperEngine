@@ -335,6 +335,26 @@ void CMyApp::MouseMove(SDL_MouseMotionEvent& mouse)
 
 void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 {
+	if (mouse.state & SDL_BUTTON_RMASK) //right Click
+	{
+		int pX = mouse.x; //Pixel X
+		int pY = mouse.y;
+		///c? - Clipping Space koordinatak - Ekkor vagyunk az egysegnegyzetbe
+		float cX = 2.0f * pX / m_width - 1;	// flip y axis
+		float cY = 1.0f - 2.0f * pY / m_height;
+
+		float depth;
+		pY = m_width - pY; // Igy az origo a bal also sarokba lesz.
+		glReadPixels(pX, pY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+		float cZ = depth * 2 - 1;
+
+		glm::vec4 clipping(cX, cY, cZ, 1.0);
+		glm::mat4 PVInv =  glm::inverse(m_camera.GetViewMatrix()) * glm::inverse(m_camera.GetProj());
+		glm::vec4 world4 = PVInv * clipping;
+		glm::vec3 world = glm::vec3(world4) / world4.w;
+
+		//boundingBoxRenderer.FindObject(world);
+	}
 }
 
 void CMyApp::MouseUp(SDL_MouseButtonEvent& mouse)
