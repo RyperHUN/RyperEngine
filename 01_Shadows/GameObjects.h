@@ -137,8 +137,11 @@ struct BoundingBoxRenderer
 	{}
 	void Draw(RenderState state)
 	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		for(GameObj * obj : gameObjs)
 			DrawBox(state, obj);
+		glDisable(GL_BLEND);
 	}
 private:
 	void DrawBox(RenderState state, GameObj* obj)
@@ -153,7 +156,7 @@ private:
 		shader->SetUniform("Minv", state.Minv);
 
 		geom_box->buffer.On();
-			geom_box->buffer.Draw(GL_LINE_STRIP);
+			geom_box->buffer.Draw(GL_TRIANGLES);
 		geom_box->buffer.Off();
 		shader->Off();
 	}
