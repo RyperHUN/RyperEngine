@@ -340,7 +340,7 @@ struct Loader
 		MaterialPtr material = make_shared<Material>(glm::vec3(0.1), glm::vec3(0.8), glm::vec3(1.0), 20.0f);
 		material->textures = std::move(textures);
 
-		BufferedMesh ownMesh = BufferedMesh(indices, textures, material);
+		BufferedMesh ownMesh = BufferedMesh(indices, material);
 		// return a mesh object created from the extracted mesh data
 		ownMesh.AddAttributes(vertices);
 		return ownMesh;

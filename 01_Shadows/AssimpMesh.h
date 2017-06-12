@@ -60,8 +60,8 @@ class BufferedMesh
 	MaterialPtr material;
 public:
 	vector<Texture> textures;
-	BufferedMesh(std::vector<unsigned int> indices, std::vector<Texture> textures, MaterialPtr material)
-		:textures(textures), material(material)
+	BufferedMesh(std::vector<unsigned int> indices,MaterialPtr material)
+		:material(material)
 	{
 		for(int i = 0; i < indices.size(); i++)
 			vertexBuffer.AddIndex(indices[i]);
