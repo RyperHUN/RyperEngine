@@ -1,9 +1,6 @@
 #pragma once
 #include <GL/glew.h> 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
-#include <glm/gtc/quaternion.hpp>
+#include "glmIncluder.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>

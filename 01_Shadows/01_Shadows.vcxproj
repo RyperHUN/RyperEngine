@@ -100,11 +100,13 @@
     <ClInclude Include="AssimpMesh.h" />
     <ClInclude Include="AssimpModel.h" />
     <ClInclude Include="Bezier.h" />
+    <ClInclude Include="fpsCamera.h" />
     <ClInclude Include="FrustumG.h" />
     <ClInclude Include="GameObjects.h" />
     <ClInclude Include="gCamera.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GeometryCreator.h" />
+    <ClInclude Include="glmIncluder.h" />
     <ClInclude Include="glmUtils.h" />
     <ClInclude Include="GLUtils.hpp" />
     <ClInclude Include="gShaderProgram.h" />
@@ -122,6 +124,8 @@
     <None Include="ClassDiagram.cd" />
     <None Include="envmap.frag" />
     <None Include="envmap.vert" />
+    <None Include="frustumVisualizer.frag" />
+    <None Include="frustumVisualizer.vert" />
     <None Include="LightShader.frag" />
     <None Include="LightShader.vert" />
     <None Include="quadTexturer.frag" />

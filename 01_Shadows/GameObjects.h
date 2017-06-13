@@ -2,11 +2,7 @@
 
 #include "gShaderProgram.h"
 #include "Geometry.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include "glmIncluder.h"
 #include "Light.h"
 #include "gCamera.h"
 #include  "Material.h"

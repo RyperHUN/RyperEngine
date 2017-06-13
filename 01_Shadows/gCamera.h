@@ -1,7 +1,8 @@
 #pragma once
 
 #include <SDL.h>
-#include <glm/glm.hpp>
+#include "glmIncluder.h"
+#include "FrustumG.h"
 
 class gCamera
 {
@@ -72,6 +73,8 @@ public:
 	glm::mat4	projViewMatrix;
 
 	glm::mat4 rayDirMatrix; //viewDir = rayDirMtx * pos_ndc;
+
+	FrustumG frustum;
 
 	bool	m_slow;
 

@@ -7,10 +7,7 @@
 #include "Bezier.h"
 #include "Material.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include "glmIncluder.h"
 
 enum LOCATION {
 	POSITION = 0,

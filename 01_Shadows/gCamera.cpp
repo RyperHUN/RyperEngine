@@ -1,15 +1,12 @@
 #include <iostream>
 #include "gCamera.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
 #include <math.h>
 
 /// <summary>
 /// Initializes a new instance of the <see cref="gCamera"/> class.
 /// </summary>
 gCamera::gCamera(void)
-	: eyePos(0.0f, 0.0f, 0.0f), lookAtPoint(0.0f),
+	: eyePos(0.0f, 20, 20), lookAtPoint(0.0f),
 	upVector(0.0f, 1.0f, 0.0f), m_speed(30.0f), m_goFw(0), m_goRight(0), m_slow(false)
 	, zFar(10'000'000'000.0f), zNear(0.1f)
 {
@@ -20,7 +17,8 @@ gCamera::gCamera(void)
 	SetProj(45.0f, 640 / 480.0f, zNear, zFar);
 }
 
-gCamera::gCamera(glm::vec3 eye, glm::vec3 at, glm::vec3 up) : m_speed(16.0f), m_goFw(0), m_goRight(0), m_dist(10), m_slow(false)
+gCamera::gCamera(glm::vec3 eye, glm::vec3 at, glm::vec3 up) 
+	: m_speed(16.0f), m_goFw(0), m_goRight(0), m_dist(10), m_slow(false)
 {
 	SetView(eye, at, up);
 }

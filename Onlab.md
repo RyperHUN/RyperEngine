@@ -14,6 +14,10 @@ Kerdesek:
 	-Cook-Torrance modell mit jelent?
 	-Phong nal a reflect el szamitott spekularis miert nem jo?
 	-Shadow volume?
+	-Quaterniobol hogyan lehet kiszedni az iranyt? 
+		->Lattam egy kamerat amit quaterniokkal oldottak meg, a pozicio ugye fix, de a kamera iranyat abbol hogy kapom meg?
+		->Illetve view es projection?
+	-Flat shading? Hogyan lehet ilyet? Mostanaba nagyon meno ez a technika szerintem [Flat shading kep included]
 	
 1) Mi az az offset Matrix?
 	bone -> localba visz.
