@@ -69,3 +69,34 @@ bool FrustumG::pointInFrustum(vec3 &p) {
 
 	return true;
 }
+
+int FrustumG::boxInFrustum(Geom::Box &b) 
+{
+
+	int result = INSIDE, out, in;
+
+	// for each plane do ...
+	for (int i = 0; i < 6; i++) {
+
+		// reset counters for corners in and out
+		out = 0; in = 0;
+		// for each corner of the box do ...
+		// get out of the cycle as soon as a box as corners
+		// both inside and out of the frustum
+		for (int k = 0; k < 8 && (in == 0 || out == 0); k++) {
+
+			// is the corner outside or inside
+			if (pl[i].distance(b.getVertex(k)) < 0)
+				out++;
+			else
+				in++;
+		}
+		//if all corners are out
+		if (!in)
+			return (OUTSIDE);
+		// if some corners are out and others are in
+		else if (out)
+			result = INTERSECT;
+	}
+	return(result);
+}

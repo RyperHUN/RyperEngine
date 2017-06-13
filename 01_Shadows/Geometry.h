@@ -7,6 +7,8 @@
 #include "Bezier.h"
 #include "Material.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform2.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 
@@ -51,6 +53,21 @@ namespace Geom{
 	{
 		glm::vec3 max;
 		glm::vec3 min;
+		glm::vec3 getVertex(int n)
+		{
+			assert(0 <= n && n < 8);
+			switch(n)
+			{
+			case 0: return min;
+			case 1: return max;
+			case 2: return glm::vec3(min.x, max.y, min.z);
+			case 3: return glm::vec3(max.x, max.y, min.z);
+			case 4: return glm::vec3(max.x, min.y, min.z);
+			case 5: return glm::vec3(min.x, min.y, max.z);
+			case 6: return glm::vec3(min.x, max.y, max.z);
+			case 8: return glm::vec3(max.x, min.y, max.z);
+			}
+		}
 	};
 };
 
