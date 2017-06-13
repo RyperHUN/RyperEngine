@@ -6,51 +6,86 @@
 #include "glmIncluder.h"
 #include "FrustumG.h"
 
-struct gCamera
+struct FPSCamera
 {
-	float keyPitch = 0, keyYaw = 0, keyRoll = 0;
-
+	//For View
+	float pitch = 0, yaw = 0, roll = 0;
+	//glm::quat cameraQuat;
+	glm::vec3	eyePos;
+	//For Projection
+	float aspectRatio;
+	float zNear, zFar;
+	float fovDegree = 90.0f; //In degree
 public:
-	gCamera(void)
+	FPSCamera(float zNear, float zFar, float width, float height)
+		:zNear(zNear), zFar(zFar)
 	{
-		
+		Resize(width, height);
+		UpdateViewMatrix();
 	}
-	gCamera(glm::vec3 eye, glm::vec3 at, glm::vec3 up);
+	//FPSCamera(glm::vec3 eye, glm::vec3 at, glm::vec3 up);
 
-	void UpdateViewMatrix ()
+	void UpdateViewMatrix()
 	{
 		//temporary frame quaternion from pitch,yaw,roll 
 		//here roll is not used
-		glm::quat key_quat = glm::quat(glm::vec3(keyPitch, keyYaw, keyRoll));
-		//reset values
-		keyPitch = keyYaw = keyRoll = 0;
+		glm::quat qPitch = glm::angleAxis(pitch, glm::vec3(1, 0, 0));
+		glm::quat qYaw = glm::angleAxis(yaw, glm::vec3(0, 1, 0));
+		//glm::quat qRoll = glm::angleAxis(roll, glm::vec3(0, 0, 1));
 
-		//order matters,update camera_quat
-		camera_quat = key_quat * camera_quat;
-		camera_quat = glm::normalize(camera_quat);
-		glm::mat4 rotate = glm::mat4_cast(camera_quat);
+		glm::quat orientation = qPitch * qYaw;
+		orientation = glm::normalize(orientation);
+		glm::mat4 rotate = glm::mat4_cast(orientation);
 
 		glm::mat4 translate = glm::mat4(1.0f);
-		translate = glm::translate(translate, -eyeVector);
+		translate = glm::translate(translate, -eyePos);
 
-		viewMatrix = rotate * translate;
+		viewMatrix = rotate * translate; //Same as glm::lookAt(), just with quaternions
+	}
+	void UpdateProjMatrix()
+	{
+		projMatrix = glm::perspective(glm::radians(fovDegree), aspectRatio, zNear, zFar);
+	}
+	void Resize(int w, int h)
+	{
+		aspectRatio = w / (float)h;
+		UpdateProjMatrix();
 	}
 
-	void Update(float deltaTime);
+	void Update(float deltaTime)
+	{
+		///TODO add movement
+		UpdateViewMatrix();
+		UpdateProjMatrix();
+		projViewMatrix = projMatrix * viewMatrix;
 
-	void SetView(glm::vec3 eye, glm::vec3 at, glm::vec3 up);
-	void SetProj(float angle, float aspect, float zn, float zf);
+		rayDirMatrix = glm::inverse(projViewMatrix *  glm::translate(eyePos));
+	}
+	
 
 	glm::mat4 GetViewMatrix(){return viewMatrix;}
 	glm::mat4 GetProj()	{return projMatrix;	}
 	glm::mat4 GetProjView()	{return projViewMatrix;	}
 	glm::mat4 GetRayDirMtx() {return rayDirMatrix; }
+	glm::vec3 GetEye() {return eyePos; }
 
-	void Resize(int w, int h);
 
-	void KeyboardDown(SDL_KeyboardEvent& key);
-	void KeyboardUp(SDL_KeyboardEvent& key);
-	void MouseMove(SDL_MouseMotionEvent& mouse);
+	void KeyboardDown(SDL_KeyboardEvent& key)
+	{}
+	void KeyboardUp(SDL_KeyboardEvent& key)
+	{}
+	void MouseMove(SDL_MouseMotionEvent& mouse)
+	{
+		if (mouse.state & SDL_BUTTON_LMASK)
+		{
+			//TODO Sensitivity
+			glm::vec2 mouseDelta(mouse.xrel / 100.0f, mouse.yrel / 100.0f);
+
+			yaw   += mouseDelta.x;
+			pitch += mouseDelta.y;
+			UpdateViewMatrix();
+		}
+	}
 
 public:
 
@@ -58,26 +93,10 @@ public:
 	float		m_speed;
 	/// The view matrix of the camera
 	glm::mat4	viewMatrix;
-
 	glm::mat4	projMatrix;
-
 	glm::mat4	projViewMatrix;
+	glm::mat4   rayDirMatrix; //viewDir = rayDirMtx * pos_ndc;
 
-	glm::mat4 rayDirMatrix; //viewDir = rayDirMtx * pos_ndc;
-
-	FrustumG frustum;
-
-	bool	m_slow;
-
-	/// The camera position.
-	glm::vec3	eyePos;
-
-	/// The vector pointing upwards
-	glm::vec3	upVector;
-
-	glm::vec3	lookAtPoint;
-
-	float zNear, zFar;
-
+	//FrustumG frustum; ///TODO Megold frustum calculationt
 };
 

@@ -14,7 +14,8 @@ CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
-	boundingBoxRenderer (gameObjs, &shader_BoundingBox)
+	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
+	m_camera(0.1, 1000, m_width, m_height)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -229,8 +230,10 @@ void CMyApp::Update()
 	float t = SDL_GetTicks() / 1000.0f;
 
 	m_camera.Update(delta_time);
-	spotLight.direction = m_camera.forwardVector;
-	spotLight.position  = m_camera.GetEye ();
+	///TODO
+	//FIX SPOTLIGHT
+	/*spotLight.direction = m_camera.forwardVector;
+	spotLight.position  = m_camera.GetEye ();*/
 
 	last_time = SDL_GetTicks();
 

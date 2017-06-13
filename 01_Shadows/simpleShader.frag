@@ -146,7 +146,7 @@ void main()
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
 		color += calcPointLight(pointlight[i],normal,viewDir, FS.wFragPos);
-	color += calcSpotLight (spotlight, FS.wFragPos);
+	//color += calcSpotLight (spotlight, FS.wFragPos);
 	if(isShadow > 0.5)
 	{
 		color += calcDirLight (dirlight, normal, viewDir);

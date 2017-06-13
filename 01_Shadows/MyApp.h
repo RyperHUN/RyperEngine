@@ -16,6 +16,7 @@
 #include "Mesh_OGL3.h"
 #include "GameObjects.h"
 #include "AssimpModel.h"
+#include "fpsCamera.h"
 
 class CMyApp
 {
@@ -47,7 +48,7 @@ protected:
 	GLuint texture_Map; // textúra erõforrás azonosító
 	GLuint m_fbo; //Frame Buffer Object
 
-	gCamera			m_camera;
+	FPSCamera		m_camera;
 	// melysegi puffer kirajzolasa
 	gVertexBuffer	buffer_Box;
 	gVertexBuffer   buffer_Quad;
