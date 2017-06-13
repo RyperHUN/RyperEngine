@@ -36,6 +36,7 @@ public:
 	float rotAngle = 0.0f;
 	bool isSelected = false;
 public:
+	GameObj ():shaderLights(std::vector<ShaderLight>()){}
 	GameObj(std::vector<ShaderLight>& shaderLights,gShaderProgram* shader, Geometry * geom, std::shared_ptr<Material> material,glm::vec3 pos,
 		glm::vec3 scale = glm::vec3{1,1,1},
 		glm::vec3 rotAxis = glm::vec3{0,1,0})
@@ -126,6 +127,27 @@ struct AnimatedCharacter : public GameObj
 		assert(animateChar);
 		animateChar(time);
 	}
+};
+
+struct FrustumRenderer : public GameObj
+{
+	gCamera * camera;
+	FrustumRenderer (gShaderProgram * shader, gCamera * camera)
+		: camera(camera)
+	{
+		this->shader = shader;
+	}
+	void Draw(RenderState state, gShaderProgram * shaderParam = nullptr) override
+	{
+		if (shaderParam == nullptr)
+			shaderParam = shader;
+
+		shaderParam->On();
+			shaderParam->SetUniform ("MVP", state.PV);
+
+		shaderParam->Off();
+	}
+	///TODO Frustum data upload
 };
 
 struct BoundingBoxRenderer

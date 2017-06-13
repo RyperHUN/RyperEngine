@@ -107,6 +107,10 @@ bool CMyApp::Init()
 	shader_BoundingBox.AttachShader(GL_FRAGMENT_SHADER, "boundingBoxShader.frag");
 	shader_BoundingBox.LinkProgram();
 
+	shader_Frustum.AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
+	shader_Frustum.AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
+	shader_Frustum.LinkProgram();
+
 	if (!shader_EnvMap.LinkProgram())
 	{
 		return false;

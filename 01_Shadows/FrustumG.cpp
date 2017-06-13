@@ -93,7 +93,7 @@ int FrustumG::boxInFrustum(Geom::Box &b)
 		}
 		//if all corners are out
 		if (!in)
-			return (OUTSIDE);
+			return OUTSIDE;
 		// if some corners are out and others are in
 		else if (out)
 			result = INTERSECT;
