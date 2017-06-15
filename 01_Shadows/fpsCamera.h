@@ -41,6 +41,7 @@ public:
 
 	void UpdateViewMatrix(float yaw = 0.0f, float pitch = 0.0f)
 	{
+		PreventShaking(yaw, pitch);
 		glm::vec3 right = GetRightVec(forwardDir);
 		glm::vec3 up = GetUpVec(forwardDir, right);
 
@@ -158,6 +159,17 @@ public:
 			glm::vec2 mouseDelta(mouse.xrel / 100.0f, mouse.yrel / 100.0f);
 
 			UpdateViewMatrix(mouseDelta.x, -mouseDelta.y);
+		}
+	}
+private:
+	void PreventShaking (float &yaw, float &pitch)
+	{
+		float dotUpForward = dot(globalUp, forwardDir);
+		if (dotUpForward > 0.95f && pitch > 0) {
+			pitch = 0;
+		}
+		if (dotUpForward  < -0.95f && pitch < 0) {
+			pitch = 0;
 		}
 	}
 };
