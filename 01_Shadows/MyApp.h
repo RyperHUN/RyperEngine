@@ -70,7 +70,7 @@ protected:
 	GLuint			textureCube_id; // env map
 
 	int			m_width = 640, m_height = 480;
-	
+	const bool IsFrameBufferRendering = true;
 	glFrameBuffer fbo_Rendered;
 	
 	GLuint frameBuffer;

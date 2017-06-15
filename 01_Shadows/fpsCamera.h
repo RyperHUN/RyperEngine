@@ -17,7 +17,7 @@ struct FPSCamera
 	float fovDegree = 90.0f; //In degree
 	//For Movement
 	glm::vec3 moveDir;
-	float cameraSpeed = 5.0f;
+	float cameraSpeed = 10.0f;
 	const glm::vec3 globalUp;
 
 	/// Matrices

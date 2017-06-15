@@ -248,7 +248,6 @@ void CMyApp::Update()
 
 void CMyApp::Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	RenderState state;
 	state.wEye = m_camera.GetEye ();
 
@@ -273,12 +272,16 @@ void CMyApp::Render()
 			obj->Draw(state,&shader_Shadow);*/
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	///////////////////////////Normal rendering
-	fbo_Rendered.CreateAttachments(m_width, m_height);
-	fbo_Rendered.On();
+	if(IsFrameBufferRendering)
 	{
+		fbo_Rendered.CreateAttachments(m_width, m_height);
+		fbo_Rendered.On();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	{
 		glViewport(0, 0, m_width, m_height);
 
 		shader_Simple.On();
@@ -319,22 +322,25 @@ void CMyApp::Render()
 			buffer_Quad.Off();
 		}
 		shader_DebugQuadTexturer.Off();
-	}	
-	fbo_Rendered.Off();
-
-	shader_DebugQuadTexturer.On();
-	{
-		buffer_Quad.On();
-		{
-			shader_DebugQuadTexturer.SetTexture("loadedTex", 15, fbo_Rendered.textureId);
-			shader_DebugQuadTexturer.SetUniform("M", glm::mat4(1.0));
-			shader_DebugQuadTexturer.SetUniform("isInvertY", true);
-
-			buffer_Quad.DrawIndexed(GL_TRIANGLES);
-		}
-		buffer_Quad.Off();
 	}
-	shader_DebugQuadTexturer.Off();
+	if(IsFrameBufferRendering)
+	{
+		fbo_Rendered.Off();
+
+		shader_DebugQuadTexturer.On();
+		{
+			buffer_Quad.On();
+			{
+				shader_DebugQuadTexturer.SetTexture("loadedTex", 15, fbo_Rendered.textureId);
+				shader_DebugQuadTexturer.SetUniform("M", glm::mat4(1.0));
+				shader_DebugQuadTexturer.SetUniform("isInvertY", true);
+
+				buffer_Quad.DrawIndexed(GL_TRIANGLES);
+			}
+			buffer_Quad.Off();
+		}
+		shader_DebugQuadTexturer.Off();
+	}
 }
 
 void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
@@ -377,9 +383,14 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 
 		float depth;
 		pY = m_height- pY; // Igy az origo a bal also sarokba lesz.
-		fbo_Rendered.On();
-		glReadPixels(pX, pY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-		fbo_Rendered.Off();
+		if(IsFrameBufferRendering)	
+			fbo_Rendered.On();
+		{
+			glReadPixels(pX, pY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+		}
+		if (IsFrameBufferRendering) 
+			fbo_Rendered.Off();
+
 		float cZ = depth * 2 - 1;
 
 		glm::vec4 clipping(cX, cY, cZ, 1.0);
