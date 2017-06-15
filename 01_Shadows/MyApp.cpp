@@ -207,37 +207,8 @@ bool CMyApp::Init()
 		//geom->isAnimated = false;
 		geom->UpdateAnimation(time);
 	};
-
-	///TODO FrameBuffer nested class
-	glGenFramebuffers(1, &frameBuffer_Render);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer_Render);
-	{
-		// generate texture
-		glGenTextures(1, &tex_Render);
-		glBindTexture(GL_TEXTURE_2D, tex_Render);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		// attach it to currently bound framebuffer object
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_Render, 0);
-
-		//CReate DEPTH render buffer object
-		//RBO faster > texture but write only
-		unsigned int rbo;
-		glGenRenderbuffers(1, &rbo);
-		glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_width, m_height);
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-		//Attach
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
+	fbo_Rendered.CreateAttachments(m_width, m_height);
 
 	return true;
 }
@@ -304,7 +275,8 @@ void CMyApp::Render()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	///////////////////////////Normal rendering
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer_Render);
+	fbo_Rendered.CreateAttachments(m_width, m_height);
+	fbo_Rendered.On();
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, m_width, m_height);
@@ -348,14 +320,13 @@ void CMyApp::Render()
 		}
 		shader_DebugQuadTexturer.Off();
 	}	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, m_width, m_height);
+	fbo_Rendered.Off();
 
 	shader_DebugQuadTexturer.On();
 	{
 		buffer_Quad.On();
 		{
-			shader_DebugQuadTexturer.SetTexture("loadedTex", 15, tex_Render);
+			shader_DebugQuadTexturer.SetTexture("loadedTex", 15, fbo_Rendered.textureId);
 			shader_DebugQuadTexturer.SetUniform("M", glm::mat4(1.0));
 			shader_DebugQuadTexturer.SetUniform("isInvertY", true);
 
@@ -405,10 +376,10 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 		float cY = 1.0f - 2.0f * pY / m_height;
 
 		float depth;
-		pY = m_width - pY; // Igy az origo a bal also sarokba lesz.
-		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer_Render);
+		pY = m_height- pY; // Igy az origo a bal also sarokba lesz.
+		fbo_Rendered.On();
 		glReadPixels(pX, pY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		fbo_Rendered.Off();
 		float cZ = depth * 2 - 1;
 
 		glm::vec4 clipping(cX, cY, cZ, 1.0);
@@ -437,6 +408,7 @@ void CMyApp::Resize(int _w, int _h)
 	m_height = _h;
 
 	m_camera.Resize(_w, _h);
+	fbo_Rendered.CreateAttachments(m_width, m_height);
 }
 
 void CMyApp::CreateFBO(int w, int h)

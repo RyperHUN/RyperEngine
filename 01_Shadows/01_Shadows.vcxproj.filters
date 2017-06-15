@@ -132,6 +132,9 @@
     <ClInclude Include="glmIncluder.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="glFrameBuffer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">

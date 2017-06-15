@@ -1,5 +1,7 @@
 #pragma once
 
+#include "glFrameBuffer.h"
+
 // GLEW
 #include <GL/glew.h>
 
@@ -69,10 +71,8 @@ protected:
 
 	int			m_width = 640, m_height = 480;
 	
-	GLuint frameBuffer_Render; ///TODo
-	GLuint tex_Render;
-
-
+	glFrameBuffer fbo_Rendered;
+	
 	GLuint frameBuffer;
 	GLuint texture_ShadowMap;
 	GLuint texture_HeightMap;

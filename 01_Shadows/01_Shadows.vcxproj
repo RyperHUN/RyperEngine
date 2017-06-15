@@ -106,6 +106,7 @@
     <ClInclude Include="gCamera.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GeometryCreator.h" />
+    <ClInclude Include="glFrameBuffer.h" />
     <ClInclude Include="glmIncluder.h" />
     <ClInclude Include="glmUtils.h" />
     <ClInclude Include="GLUtils.hpp" />
