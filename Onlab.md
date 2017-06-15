@@ -23,6 +23,13 @@ Kerdesek:
 	-Szerintem jovoheten nemjovok konzultalni, de tobbet haladnek, mikkel haladjak?
 	-Hova kene eljutni a vegere? Tehat mi az amit eltudok adni mint szakdoga?
 	
+Terv:
+- Frame Buffer
+	-> Post Process effectek
+- Frustum Culling
+- Animacio csak gombnyomasra?
+- 
+	
 1) Mi az az offset Matrix?
 	bone -> localba visz.
 	Bor feluleti pontjat hogyan kapod meg.
