@@ -68,6 +68,10 @@ protected:
 	GLuint			textureCube_id; // env map
 
 	int			m_width = 640, m_height = 480;
+	
+	GLuint frameBuffer_Render; ///TODo
+	GLuint tex_Render;
+
 
 	GLuint frameBuffer;
 	GLuint texture_ShadowMap;

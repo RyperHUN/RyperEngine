@@ -13,11 +13,15 @@ Kerdesek:
 		(Nekem ugyjott le hogy #include tud segiteni kicsit ha sok helyen duplikalt kod lenne)
 	-Cook-Torrance modell mit jelent?
 	-Phong nal a reflect el szamitott spekularis miert nem jo?
-	-Shadow volume?
+	-Shadow volume? Mit jelent? Ez a john carmackos megoldas Stencillel?
 	-Quaterniobol hogyan lehet kiszedni az iranyt? 
 		->Lattam egy kamerat amit quaterniokkal oldottak meg, a pozicio ugye fix, de a kamera iranyat abbol hogy kapom meg?
 		->Illetve view es projection?
-	-Flat shading? Hogyan lehet ilyet? Mostanaba nagyon meno ez a technika szerintem [Flat shading kep included]
+	-Flat shading? Hogyan lehet ilyet? Mostanaba nagyon meno ez a technika szerintem [Flat shading kep included]#
+	- Offscreen rendering, hogyan kene jol?
+	
+	-Szerintem jovoheten nemjovok konzultalni, de tobbet haladnek, mikkel haladjak?
+	-Hova kene eljutni a vegere? Tehat mi az amit eltudok adni mint szakdoga?
 	
 1) Mi az az offset Matrix?
 	bone -> localba visz.

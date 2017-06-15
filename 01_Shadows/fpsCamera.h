@@ -9,7 +9,7 @@
 struct FPSCamera
 {
 	//For lookAt
-	glm::vec3 forward;
+	glm::vec3 forwardDir;
 	glm::vec3 eyePos;
 	//For Projection
 	float aspectRatio;
@@ -20,7 +20,7 @@ struct FPSCamera
 	float cameraSpeed = 5.0f;
 	const glm::vec3 globalUp;
 
-	/// The view matrix of the camera
+	/// Matrices
 	glm::mat4	viewMatrix;
 	glm::mat4	projMatrix;
 	glm::mat4	projViewMatrix;
@@ -30,7 +30,7 @@ struct FPSCamera
 public:
 	FPSCamera(float zNear, float zFar, float width, float height)
 		:zNear(zNear), zFar(zFar), globalUp(0, 1, 0)
-		,forward(0,0,1)
+		,forwardDir(0,0,-1)
 	{
 		Resize(width, height);
 		eyePos = glm::vec3(5, 22, 24);
@@ -41,12 +41,12 @@ public:
 
 	void UpdateViewMatrix(float yaw = 0.0f, float pitch = 0.0f)
 	{
-		glm::vec3 right = GetRightVec(forward);
-		glm::vec3 up = GetUpVec(forward, right);
+		glm::vec3 right = GetRightVec(forwardDir);
+		glm::vec3 up = GetUpVec(forwardDir, right);
 
-		forward = forward + yaw * right + up * pitch;
-		forward = glm::normalize(forward);
-		viewMatrix = glm::lookAt(eyePos, eyePos + forward, globalUp);
+		forwardDir = forwardDir + yaw * right + up * pitch;
+		forwardDir = glm::normalize(forwardDir);
+		viewMatrix = glm::lookAt(eyePos, eyePos + forwardDir, globalUp);
 	}
 	void UpdateProjMatrix()
 	{
@@ -60,13 +60,13 @@ public:
 
 	void Update(float deltaTime)
 	{
-		glm::vec3 right = GetRightVec(forward);
-		glm::vec3 up    = GetUpVec (forward, right);
+		glm::vec3 right = GetRightVec(forwardDir);
+		glm::vec3 up    = GetUpVec (forwardDir, right);
 
 		float velocity = deltaTime * cameraSpeed;
 		eyePos += moveDir.x * velocity * right;
 		eyePos += moveDir.y * velocity * globalUp;
-		eyePos += moveDir.z * velocity * forward;
+		eyePos += moveDir.z * velocity * forwardDir;
 
 		UpdateViewMatrix();
 		UpdateProjMatrix();
