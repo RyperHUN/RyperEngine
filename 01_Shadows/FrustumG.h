@@ -36,7 +36,7 @@ private:
 
 public:
 
-	static enum { OUTSIDE, INTERSECT, INSIDE };
+	enum FRUSTUM_POS { OUTSIDE, INTERSECT, INSIDE };
 	Plane pl[6];
 	vec3 ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr;
 	float nearD, farD, ratio, angle, tang;

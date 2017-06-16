@@ -64,6 +64,9 @@ namespace Geom{
 			case 6: return glm::vec3(min.x, max.y, max.z);
 			case 8: return glm::vec3(max.x, min.y, max.z);
 			}
+
+			assert(false); //Cannot reach this
+			return min;
 		}
 	};
 };

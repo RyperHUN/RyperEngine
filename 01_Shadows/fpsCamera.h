@@ -166,7 +166,7 @@ private:
 	{
 		float dotUpForward = dot(globalUp, forwardDir);
 		if (dotUpForward > 0.95f && pitch > 0) {
-			pitch = 0;
+			pitch = 0; 
 		}
 		if (dotUpForward  < -0.95f && pitch < 0) {
 			pitch = 0;
