@@ -50,7 +50,9 @@ protected:
 	GLuint texture_Map; // textúra erõforrás azonosító
 	GLuint m_fbo; //Frame Buffer Object
 
-	FPSCamera		m_camera;
+	FPSCamera		activeCamera;
+	//TODO Camera manager
+	//FPSCamera		secondaryCamera; //TODO receive resize events also
 	// melysegi puffer kirajzolasa
 	gVertexBuffer	buffer_Box;
 	gVertexBuffer   buffer_Quad;

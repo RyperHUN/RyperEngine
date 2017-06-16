@@ -6,7 +6,7 @@
 #include "glmIncluder.h"
 #include "FrustumG.h"
 
-struct FPSCamera
+class FPSCamera
 {
 	//For lookAt
 	glm::vec3 forwardDir;
@@ -90,6 +90,7 @@ public:
 	glm::mat4 GetProjView()	{return projViewMatrix;	}
 	glm::mat4 GetRayDirMtx() {return rayDirMatrix; }
 	glm::vec3 GetEye() {return eyePos; }
+	glm::vec3 GetDir() {return forwardDir; }
 
 
 	void KeyboardDown(SDL_KeyboardEvent& key)
