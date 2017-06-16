@@ -14,13 +14,14 @@ CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
-	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
-	activeCamera(0.1, 1000, m_width, m_height, glm::vec3(5, 22, 24))
+	boundingBoxRenderer (gameObjs, &shader_BoundingBox)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
 	texture_Map = 0;
 	mesh_Suzanne = 0;
+	activeCamera = new FPSCamera(0.1, 1000, m_width, m_height, glm::vec3(5, 22, 24));
+	secondaryCamera = new FPSCamera(0.1, 1000, m_width, m_height, glm::vec3(10, 35, 24), glm::vec3(-0.5,-0.9, -0.5));
 }
 
 
@@ -231,9 +232,9 @@ void CMyApp::Update()
 	float delta_time = (SDL_GetTicks() - last_time)/1000.0f;
 	float t = SDL_GetTicks() / 1000.0f;
 
-	activeCamera.Update(delta_time);
-	spotLight.direction = activeCamera.GetDir ();
-	spotLight.position  = activeCamera.GetEye ();
+	activeCamera->Update(delta_time);
+	spotLight.direction = activeCamera->GetDir ();
+	spotLight.position  = activeCamera->GetEye ();
 
 	last_time = SDL_GetTicks();
 
@@ -247,7 +248,7 @@ void CMyApp::Update()
 void CMyApp::Render()
 {
 	RenderState state;
-	state.wEye = activeCamera.GetEye ();
+	state.wEye = activeCamera->GetEye ();
 
 	//////////////////////////////First render to depth map
 	GLfloat near_plane = 0.1f, far_plane = 100.0f;
@@ -286,12 +287,12 @@ void CMyApp::Render()
 		shader_EnvMap.SetCubeTexture("skyBox", 12, textureCube_id);
 		shader_Simple.SetTexture ("shadowMap",15,texture_ShadowMap);
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
-		state.PV = activeCamera.GetProjView();
+		state.PV = activeCamera->GetProjView();
 		for(auto& obj : gameObjs)
 			obj->Draw (state);
 
 		//Draw lights
-		lightRenderer.Draw(activeCamera.GetProjView());
+		lightRenderer.Draw(activeCamera->GetProjView());
 		boundingBoxRenderer.Draw(state);
 
 		//////////////////////////////Environment map drawing!!!
@@ -299,7 +300,7 @@ void CMyApp::Render()
 		{
 			buffer_Quad.On ();
 
-				shader_EnvMap.SetUniform("rayDirMatrix", activeCamera.GetRayDirMtx ());
+				shader_EnvMap.SetUniform("rayDirMatrix", activeCamera->GetRayDirMtx ());
 				shader_EnvMap.SetCubeTexture ("skyBox",14, textureCube_id);
 				buffer_Quad.DrawIndexed(GL_TRIANGLES);
 			
@@ -343,7 +344,7 @@ void CMyApp::Render()
 
 void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 {
-	activeCamera.KeyboardDown(key);
+	activeCamera->KeyboardDown(key);
 
 	static bool isWireFrame = false;
 	switch (key.keysym.sym)
@@ -354,18 +355,21 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 			else
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			isWireFrame = !isWireFrame;
-		break;
+			break;
+		case SDLK_c:
+			std::swap(activeCamera, secondaryCamera);
+			break;
 	}
 }
 
 void CMyApp::KeyboardUp(SDL_KeyboardEvent& key)
 {
-	activeCamera.KeyboardUp(key);
+	activeCamera->KeyboardUp(key);
 }
 
 void CMyApp::MouseMove(SDL_MouseMotionEvent& mouse)
 {
-	activeCamera.MouseMove(mouse);
+	activeCamera->MouseMove(mouse);
 }
 
 void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
@@ -392,11 +396,11 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 		float cZ = depth * 2 - 1;
 
 		glm::vec4 clipping(cX, cY, cZ, 1.0);
-		glm::mat4 PVInv =  glm::inverse(activeCamera.GetViewMatrix()) * glm::inverse(activeCamera.GetProj());
+		glm::mat4 PVInv =  glm::inverse(activeCamera->GetViewMatrix()) * glm::inverse(activeCamera->GetProj());
 		glm::vec4 world4 = PVInv * clipping;
 		glm::vec3 world = glm::vec3(world4) / world4.w;
 
-		boundingBoxRenderer.FindObject(activeCamera.GetEye(), world);
+		boundingBoxRenderer.FindObject(activeCamera->GetEye(), world);
 	}
 }
 
@@ -416,7 +420,7 @@ void CMyApp::Resize(int _w, int _h)
 	m_width = _w;
 	m_height = _h;
 
-	activeCamera.Resize(_w, _h);
+	activeCamera->Resize(_w, _h);
 	fbo_Rendered.CreateAttachments(m_width, m_height);
 }
 
