@@ -15,7 +15,7 @@ CMyApp::CMyApp(void)
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
 	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
-	m_camera(0.1, 1000, m_width, m_height)
+	m_camera(0.1, 1000, m_width, m_height, glm::vec3(5, 22, 24))
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);

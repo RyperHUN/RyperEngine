@@ -28,16 +28,15 @@ struct FPSCamera
 
 	//FrustumG frustum; ///TODO Megold frustum calculationt
 public:
-	FPSCamera(float zNear, float zFar, float width, float height)
+	FPSCamera(float zNear, float zFar, float width, float height,
+			  glm::vec3 eyePos, glm::vec3 forwardDir = glm::vec3(0,0,-1))
 		:zNear(zNear), zFar(zFar), globalUp(0, 1, 0)
-		,forwardDir(0,0,-1)
+		,forwardDir(forwardDir), eyePos(eyePos)
 	{
 		Resize(width, height);
-		eyePos = glm::vec3(5, 22, 24);
 
 		UpdateViewMatrix();
 	}
-	//FPSCamera(glm::vec3 eye, glm::vec3 at, glm::vec3 up);
 
 	void UpdateViewMatrix(float yaw = 0.0f, float pitch = 0.0f)
 	{
