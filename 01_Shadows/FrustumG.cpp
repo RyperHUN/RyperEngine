@@ -16,7 +16,7 @@ void FrustumG::setCamInternals(float angle, float ratio, float nearD, float farD
 	fw = fh * ratio;
 	}
 
-void FrustumG::setCamDef(vec3 &eyePos, vec3 &lookDir, vec3 &upVec)
+void FrustumG::setCamDef(vec3 const&eyePos, vec3 const&lookDir, vec3 const&globalUp)
 {
 	vec3 nearClipCenter, farClipCenter, X, Y, Z;
 
@@ -27,11 +27,11 @@ void FrustumG::setCamDef(vec3 &eyePos, vec3 &lookDir, vec3 &upVec)
 	Z = glm::normalize(Z);
 
 	// X axis of camera with given "up" vector and Z axis
-	X = upVec * Z;
+	X = glm::cross(globalUp ,Z);
 	X = glm::normalize(X);
 
 	// the real "up" vector is the cross product of Z and X
-	Y = Z * X;
+	Y = glm::cross(Z,X);
 
 	// compute the centers of the near and far planes
 	nearClipCenter = eyePos - Z * nearD;

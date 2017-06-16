@@ -135,6 +135,9 @@
     <ClInclude Include="glFrameBuffer.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="CameraRenderer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">

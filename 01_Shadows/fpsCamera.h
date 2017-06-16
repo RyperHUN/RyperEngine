@@ -25,9 +25,8 @@ class FPSCamera
 	glm::mat4	projMatrix;
 	glm::mat4	projViewMatrix;
 	glm::mat4   rayDirMatrix; //viewDir = rayDirMtx * pos_ndc;
-
-	//FrustumG frustum; ///TODO Megold frustum calculationt
 public:
+	FrustumG frustum;
 	FPSCamera(float zNear, float zFar, float width, float height,
 			  glm::vec3 eyePos, glm::vec3 forwardDir = glm::vec3(0,0,-1))
 		:zNear(zNear), zFar(zFar), globalUp(0, 1, 0)
@@ -47,10 +46,12 @@ public:
 		forwardDir = forwardDir + yaw * right + up * pitch;
 		forwardDir = glm::normalize(forwardDir);
 		viewMatrix = glm::lookAt(eyePos, eyePos + forwardDir, globalUp);
+		frustum.setCamDef(eyePos, eyePos + forwardDir, globalUp);
 	}
 	void UpdateProjMatrix()
 	{
 		projMatrix = glm::perspective(glm::radians(fovDegree), aspectRatio, zNear, zFar);
+		frustum.setCamInternals(fovDegree, aspectRatio, zNear, zFar);
 	}
 	void Resize(int w, int h)
 	{
@@ -68,8 +69,8 @@ public:
 		eyePos += moveDir.y * velocity * globalUp;
 		eyePos += moveDir.z * velocity * forwardDir;
 
-		UpdateViewMatrix();
 		UpdateProjMatrix();
+		UpdateViewMatrix();
 		projViewMatrix = projMatrix * viewMatrix;
 
 		rayDirMatrix = glm::inverse(projViewMatrix *  glm::translate(eyePos));

@@ -19,6 +19,7 @@
 #include "GameObjects.h"
 #include "AssimpModel.h"
 #include "fpsCamera.h"
+#include "CameraRenderer.h"
 
 class CMyApp
 {
@@ -50,9 +51,12 @@ protected:
 	GLuint texture_Map; // textúra erõforrás azonosító
 	GLuint m_fbo; //Frame Buffer Object
 
-	FPSCamera*		activeCamera;
+	using FPSCameraPtr = std::shared_ptr<FPSCamera>;
+	FPSCameraPtr	activeCamera;
 	//TODO Camera manager
-	FPSCamera*		secondaryCamera; //TODO receive resize events also
+	FPSCameraPtr	secondaryCamera; //TODO receive resize events also
+	CameraRenderer cameraRenderer;
+
 	// melysegi puffer kirajzolasa
 	gVertexBuffer	buffer_Box;
 	gVertexBuffer   buffer_Quad;
@@ -72,7 +76,7 @@ protected:
 	GLuint			textureCube_id; // env map
 
 	int			m_width = 640, m_height = 480;
-	const bool IsFrameBufferRendering = true;
+	const bool IsFrameBufferRendering = false;
 	glFrameBuffer fbo_Rendered;
 	
 	GLuint frameBuffer;

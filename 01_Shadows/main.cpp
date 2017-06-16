@@ -99,6 +99,7 @@ int main( int argc, char* args[] )
 		std::cout << "[GLEW] Hiba az inicializálás során!" << std::endl;
 		return 1;
 	}
+	glGetError();
 
 	// kérdezzük le az OpenGL verziót
 	int glVersion[2] = {-1, -1}; 

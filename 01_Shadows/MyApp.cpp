@@ -14,14 +14,15 @@ CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
-	boundingBoxRenderer (gameObjs, &shader_BoundingBox)
+	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
+	cameraRenderer (&shader_BoundingBox)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
 	texture_Map = 0;
 	mesh_Suzanne = 0;
-	activeCamera = new FPSCamera(0.1, 1000, m_width, m_height, glm::vec3(5, 22, 24));
-	secondaryCamera = new FPSCamera(0.1, 1000, m_width, m_height, glm::vec3(10, 35, 24), glm::vec3(-0.5,-0.9, -0.5));
+	activeCamera = std::make_shared<FPSCamera>(1, 1000, m_width, m_height, glm::vec3(5, 22, 24));
+	secondaryCamera = std::make_shared<FPSCamera>(1, 1000, m_width, m_height, glm::vec3(10, 35, 24), glm::vec3(-0.5,-0.9, -0.5));
 }
 
 
@@ -321,6 +322,8 @@ void CMyApp::Render()
 			buffer_Quad.Off();
 		}
 		shader_DebugQuadTexturer.Off();
+
+		cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 	}
 	if(IsFrameBufferRendering)
 	{

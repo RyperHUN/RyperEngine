@@ -102,6 +102,7 @@
     <ClInclude Include="AssimpMesh.h" />
     <ClInclude Include="AssimpModel.h" />
     <ClInclude Include="Bezier.h" />
+    <ClInclude Include="CameraRenderer.h" />
     <ClInclude Include="fpsCamera.h" />
     <ClInclude Include="FrustumG.h" />
     <ClInclude Include="GameObjects.h" />

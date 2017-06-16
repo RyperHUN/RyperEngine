@@ -43,7 +43,7 @@ public:
 	float nw, nh, fw, fh;
 
 	void setCamInternals(float angle, float ratio, float nearD, float farD);
-	void setCamDef(vec3 &eyePos, vec3 &lookDir, vec3 &upVec);
+	void setCamDef(vec3 const&eyePos, vec3 const&lookDir, vec3 const&upVec);
 	bool pointInFrustum(vec3 &p);
 
 	////int sphereInFrustum(vec3 &p, float raio);
