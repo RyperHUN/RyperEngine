@@ -268,6 +268,7 @@ struct Animator
 		assert(0.0f <= mixTime && mixTime <= 1.0f);
 
 		glm::quat result = glm::slerp(pos1, pos2, mixTime);
+		result = pos1;
 
 		return glm::normalize(result);
 	}

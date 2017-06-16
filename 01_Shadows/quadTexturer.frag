@@ -67,7 +67,19 @@ vec4 Grayscale (vec2 tex)
     color = vec4(average, average, average, 1.0);
 	return color;
 }
-//
+
+vec4 ToneMapping (vec2 tex, float exposure)
+{             
+    const float gamma = 2.2;
+    vec3 hdrColor = texture(loadedTex, tex).rgb;
+  
+    // Exposure tone mapping
+    vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
+    // Gamma correction 
+    mapped = pow(mapped, vec3(1.0 / gamma));
+  
+    return vec4(mapped, 1.0);
+}  
 
 void main()
 {   
@@ -75,8 +87,9 @@ void main()
 	if(isInvertY)
 		tex = vec2(fragTex.x, 1.0 - fragTex.y);
 
-	fs_out_col = KernelProcess(tex, EdgeDetectKernel);
+	//fs_out_col = KernelProcess(tex, EdgeDetectKernel);
 	//fs_out_col = InvertColor (tex);
 	//fs_out_col = Grayscale(tex);
+	fs_out_col = ToneMapping(tex, 1.0);
 	//fs_out_col = texture(loadedTex, tex);
 }  
