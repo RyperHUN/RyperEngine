@@ -250,6 +250,7 @@ void CMyApp::Render()
 {
 	RenderState state;
 	state.wEye = activeCamera->GetEye ();
+	FrustumCulling (secondaryCamera);
 
 	//////////////////////////////First render to depth map
 	GLfloat near_plane = 0.1f, far_plane = 100.0f;
@@ -290,7 +291,7 @@ void CMyApp::Render()
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 		state.PV = activeCamera->GetProjView();
 		for(auto& obj : gameObjs)
-			obj->Draw (state);
+				obj->Draw (state);
 
 		//Draw lights
 		lightRenderer.Draw(activeCamera->GetProjView());
@@ -342,6 +343,19 @@ void CMyApp::Render()
 			buffer_Quad.Off();
 		}
 		shader_DebugQuadTexturer.Off();
+	}
+}
+
+void CMyApp::FrustumCulling (FPSCameraPtr camera)
+{
+	for(GameObj* obj : gameObjs)
+	{
+		Geom::Box box = obj->GetModelBox();
+		auto result = camera->frustum.boxInFrustum(box);
+		if (result == FrustumG::INSIDE || result == FrustumG::INTERSECT)
+			obj->isInsideFrustum = true;
+		else
+			obj->isInsideFrustum = false;
 	}
 }
 

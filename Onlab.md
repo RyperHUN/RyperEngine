@@ -58,4 +58,7 @@ Kerdesek:
 Terv:
 - Frustum Culling
 - Animacio csak gombnyomasra?
-- 
+- TODO Add namespace
+- TODO Add defs.h -> sok typedef
+- TODO Lecserel tamas wrapperjere!! 
+

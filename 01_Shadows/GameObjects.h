@@ -22,6 +22,7 @@ struct RenderState
 
 class GameObj {
 public:
+	bool isInsideFrustum = false;
 	gShaderProgram *   shader;
 	std::shared_ptr<Material> material;
 	Geometry * geometry;
@@ -42,6 +43,8 @@ public:
 		quaternion = glm::angleAxis((float)M_PI / 2.0f, this->rotAxis);
 	}
 	virtual void Draw(RenderState state, gShaderProgram * shaderParam = nullptr) {
+		if (!isInsideFrustum)
+			return;
 		if(shaderParam == nullptr)
 			shaderParam = shader;
 		state.M = glm::translate(pos) * glm::toMat4(quaternion) * glm::scale(scale);
@@ -91,6 +94,11 @@ public:
 
 		quaternion = mix(begin, end, ratio * 2); //SLERP!
 		pos = mix(beginPos, endPos, ratio);
+	}
+	Geom::Box GetModelBox()
+	{
+		assert(geometry != nullptr);
+		return geometry->getModelBox(pos, scale, quaternion);
 	}
 };
 
