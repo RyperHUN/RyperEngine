@@ -268,7 +268,7 @@ struct Animator
 		assert(0.0f <= mixTime && mixTime <= 1.0f);
 
 		glm::quat result = glm::slerp(pos1, pos2, mixTime);
-		result = pos1;
+		//result = pos1; //Debug for watching keyframes
 
 		return glm::normalize(result);
 	}

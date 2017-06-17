@@ -16,9 +16,9 @@ void FrustumG::setCamInternals(float angle, float ratio, float nearD, float farD
 	fw = fh * ratio;
 	}
 
-void FrustumG::setCamDef(vec3 const&eyePos, vec3 const&lookDir, vec3 const&globalUp)
+void FrustumG::setCamDef(glm::vec3 const&eyePos, glm::vec3 const&lookDir, glm::vec3 const&globalUp)
 {
-	vec3 nearClipCenter, farClipCenter, X, Y, Z;
+	glm::vec3 nearClipCenter, farClipCenter, X, Y, Z;
 
 	// compute the Z axis of camera
 	// this axis points in the opposite direction from
@@ -60,8 +60,7 @@ void FrustumG::setCamDef(vec3 const&eyePos, vec3 const&lookDir, vec3 const&globa
 	pl[FARP].set3Points(ftr, ftl, fbl);
 }
 
-
-bool FrustumG::pointInFrustum(vec3 &p) {
+bool FrustumG::pointInFrustum(glm::vec3 &p) {
 	for (int i = 0; i < 6; i++) {
 		if (pl[i].distance(p) < 0)
 			return false;

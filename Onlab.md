@@ -1,4 +1,5 @@
 Sourcek eddig:
+	-Learn OpenGL
 Karakter animacio:
 	-Assimp Scene struct: http://assimp.sourceforge.net/lib_html/structai_scene.html
 	-Assimp reszletes leiras adatokrol: http://assimp.sourceforge.net/lib_html/data.html
@@ -7,6 +8,9 @@ Karakter animacio:
 Component Based:
 	-RandyGaul [Tul optimalizalt] = http://www.randygaul.net/2013/05/20/component-based-engine-design/
 	-GameProg patterns  http://gameprogrammingpatterns.com/component.html
+Frustum Culling:
+	-http://www.lighthouse3d.com/tutorials/view-frustum-culling/view-frustums-shape/
+	-
 	
 Kerdesek:
 	-Miert lenghet ki egy kicsit a jobb (szembol bal) laba a karatkernek?
@@ -49,6 +53,7 @@ Kerdesek:
 	-Konyv ajanlas?
 	
 	-//TODO Tone map akar tamas jegyzetebol
+	
 	
 Terv:
 - Frustum Culling

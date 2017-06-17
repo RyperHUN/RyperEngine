@@ -5,30 +5,10 @@
 #define ANG2RAD 3.14159265358979323846/180.0
 #include <glm/glm.hpp>
 #include "Geometry.h"
-using glm::vec3;
-
-struct Plane
-{
-	vec3 a,b,c;
-	vec3 normal;
-	void set3Points(vec3 a,vec3 b, vec3 c)
-	{
-		this->a = a;
-		this->b = b;
-		this->c = c;
-		normal = glm::normalize(glm::cross(b-a,c-b));
-	}
-	float distance(vec3 p)
-	{
-		vec3 toPoint = p - a;
-		return glm::dot(normal,toPoint);
-	}
-};
 
 class FrustumG {
 
 private:
-
 	enum {
 		TOP = 0, BOTTOM, LEFT,
 		RIGHT, NEARP, FARP
@@ -37,16 +17,16 @@ private:
 public:
 
 	enum FRUSTUM_POS { OUTSIDE, INTERSECT, INSIDE };
-	Plane pl[6];
-	vec3 ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr;
+	Geom::Plane pl[6];
+	glm::vec3 ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr;
 	float nearD, farD, ratio, angle, tang;
 	float nw, nh, fw, fh;
 
 	void setCamInternals(float angle, float ratio, float nearD, float farD);
-	void setCamDef(vec3 const&eyePos, vec3 const&lookDir, vec3 const&upVec);
-	bool pointInFrustum(vec3 &p);
+	void setCamDef(glm::vec3 const&eyePos, glm::vec3 const&lookDir, glm::vec3 const&upVec);
+	bool pointInFrustum(glm::vec3 &p);
 
-	////int sphereInFrustum(vec3 &p, float raio);
+	////int sphereInFrustum(glm::vec3 &p, float raio);
 	///SAT is faster
 	//http://www.dyn4j.org/2010/01/sat/
 	int boxInFrustum(Geom::Box &b);

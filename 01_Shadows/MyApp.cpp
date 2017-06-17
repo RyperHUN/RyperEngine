@@ -21,8 +21,8 @@ CMyApp::CMyApp(void)
 	srand(2);
 	texture_Map = 0;
 	mesh_Suzanne = 0;
-	activeCamera = std::make_shared<FPSCamera>(1, 1000, m_width, m_height, glm::vec3(5, 22, 24));
-	secondaryCamera = std::make_shared<FPSCamera>(1, 1000, m_width, m_height, glm::vec3(10, 35, 24), glm::vec3(-0.5,-0.9, -0.5));
+	activeCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(5, 22, 24));
+	secondaryCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(10, 35, 24), glm::vec3(-0.5,-0.9, -0.5));
 }
 
 

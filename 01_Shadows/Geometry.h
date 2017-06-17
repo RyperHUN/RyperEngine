@@ -69,6 +69,23 @@ namespace Geom{
 			return min;
 		}
 	};
+	struct Plane
+	{
+		glm::vec3 a, b, c;
+		glm::vec3 normal;
+		void set3Points(glm::vec3 a, glm::vec3 b, glm::vec3 c)
+		{
+			this->a = a;
+			this->b = b;
+			this->c = c;
+			normal = glm::normalize(glm::cross(b - a, c - b));
+		}
+		float distance(glm::vec3 p)
+		{
+			glm::vec3 toPoint = p - a;
+			return glm::dot(normal, toPoint);
+		}
+	};
 };
 
 struct Geometry {
