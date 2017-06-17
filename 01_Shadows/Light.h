@@ -10,7 +10,18 @@
 struct Light
 {
 	glm::vec3 position;
-	virtual void uploadToGPU (gShaderProgram &, std::string prefix) = 0;
+	glm::vec3 color;
+	Light()
+		:Light(glm::vec3(0), glm::vec3(1))
+	{}
+	Light (glm::vec3 position, glm::vec3 color)
+		:position(position), color(color)
+	{}
+	virtual void uploadToGPU (gShaderProgram & prog, std::string prefix)
+	{
+		prog.SetUniform((prefix + ".position").c_str(), position);
+		prog.SetUniform((prefix + ".color").c_str(), color);
+	}
 	virtual void Animate(float time, float dt)
 	{
 	}
@@ -38,12 +49,14 @@ struct SpotLight : public Light
 	//float constant;
 	//float linear;
 	//float quadratic;
-
-	glm::vec3 color;
+	SpotLight(){}
+	SpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color = glm::vec3(1))
+		: Light(position, color), direction(glm::normalize(direction))
+	{}
 
 	virtual void uploadToGPU(gShaderProgram & prog, std::string prefix) override
 	{
-		prog.SetUniform ((prefix + ".position").c_str(),position);
+		Light::uploadToGPU(prog, prefix);
 		prog.SetUniform ((prefix + ".direction").c_str(), glm::normalize(direction));
 		prog.SetUniform ((prefix + ".cutOff").c_str(), glm::cos(glm::radians(cutOff)));
 		prog.SetUniform ((prefix + ".outerCutOff").c_str(), glm::cos(glm::radians(cutOff)));
@@ -56,12 +69,14 @@ private:
 	float distance = 100.0f;
 public:
 	glm::vec3 direction;
-	DirLight (glm::vec3 dir = glm::vec3(0,-1,0))
+	DirLight (glm::vec3 dir = glm::vec3(0,-1,0), glm::vec3 color = glm::vec3(1))
+		:Light(-dir * 10.0f, color)
 	{
 		SetDir(dir);
 	}
 	virtual void uploadToGPU(gShaderProgram & prog, std::string prefix) override
 	{
+		Light::uploadToGPU(prog, prefix);
 		prog.SetUniform((prefix + ".direction").c_str(), glm::normalize(direction));
 	}
 	void Animate(float time, float dt) override
@@ -82,13 +97,12 @@ struct PointLight : public Light
 	float attuentationLinear = 0.2f;
 	float attuentationQuadratic = 0.3f;
 public:
-	PointLight(glm::vec3 pos = glm::vec3(0, -1, 0))
-	{
-		position = pos;
-	}
+	PointLight(glm::vec3 pos = glm::vec3(0, -1, 0), glm::vec3 color = glm::vec3(1))
+		:Light(pos,color)
+	{}
 	virtual void uploadToGPU(gShaderProgram & prog, std::string prefix) override
 	{
-		prog.SetUniform((prefix + ".position").c_str(), position);
+		Light::uploadToGPU(prog, prefix);
 		prog.SetUniform((prefix + ".linear").c_str(), attuentationLinear);
 		prog.SetUniform((prefix + ".constant").c_str(), attuentationConst);
 		prog.SetUniform((prefix + ".quadratic").c_str(), attuentationConst);
@@ -121,8 +135,9 @@ struct LightRenderer
 		{
 			for(auto& light : lights)
 			{
-				glm::mat4 PVM = VP * glm::translate(light->position) * glm::scale(glm::vec3(2));
+				glm::mat4 PVM = VP * glm::translate(light->position) * glm::scale(glm::vec3(0.5));
 				shader->SetUniform("PVM",PVM);
+				shader->SetUniform("color", light->color);
 				geom->Draw();
 			}
 		}

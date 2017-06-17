@@ -24,6 +24,7 @@ struct SpotLight {
     vec3  position;
     vec3  direction;
     float cutOff;
+	vec3 color;
 }; 
 
 struct DirLight {
@@ -62,7 +63,7 @@ vec3 calcSpotLight (SpotLight light, vec3 wFragPos)
 	float theta   = dot(lightDir, normalize(-spotlight.direction));
 	
 	vec3 color = vec3(0,0,0);
-	vec3 texturedColor = kd * texture(texture_diffuse1, FS.texCoord).xyz;
+	vec3 texturedColor = light.color * kd * texture(texture_diffuse1, FS.texCoord).xyz ;
 	if(theta > spotlight.cutOff * 0.96) 
 	{
 		float interp = smoothstep(spotlight.cutOff * 0.96,spotlight.cutOff,theta);
@@ -87,7 +88,6 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 	vec3 reflectDir = reflect(-toLight, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
-	light.color   = vec3(1,1,1); //TODO
 	vec3 diffuse  = diff * light.color * kd *texture(texture_diffuse1, FS.texCoord).xyz;
 	vec3 specular = spec * light.color * ks *texture(texture_specular1, FS.texCoord).xyz;
 
@@ -107,7 +107,6 @@ vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir, vec3 wFragPos)
 	float attenuation = 1.0f / 
 	(light.constant + light.linear * dist +  light.quadratic * (dist * dist));   
 
-	light.color   = vec3(1,1,1);
 	vec3 diffuse  = light.color * diff * kd * texture(texture_diffuse1, FS.texCoord).xyz;
 	vec3 specular = light.color * spec * ks * texture(texture_specular1, FS.texCoord).xyz;
 	diffuse  *= attenuation; 
