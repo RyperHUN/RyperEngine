@@ -115,6 +115,35 @@ vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir, vec3 wFragPos)
 	return diffuse + specular;
 }
 
+float ShadowCalcWithPcf(vec4 fragPosLightSpace)
+{
+	// perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // Transform to [0,1] range for texture coord
+    projCoords = projCoords * 0.5 + 0.5;
+	//Percentage Closer Filtering
+	float shadowMapSizePixel = 4096.0;
+	float texelSize = 1.0 / shadowMapSizePixel;
+	int pcfSize = 5; //TODO Uniform
+
+	float bias = 0.005;
+	int sumShadowPixels = (pcfSize * 2 + 1) * (pcfSize * 2 + 1);
+	float notInShadowTexel = 0;
+	float currentDepth = projCoords.z;
+	for(int i = -pcfSize; i <= pcfSize; i++)
+	{
+		for(int j = -pcfSize; j <= pcfSize; j++)
+		{
+			vec2 offset = vec2(i, j) * texelSize;
+			// Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+			float shadowDepth = texture(shadowMap, projCoords.xy + offset).r; 
+			if(currentDepth - bias < shadowDepth)
+				notInShadowTexel+= 1;
+		}
+	}
+	return float(notInShadowTexel) / float(sumShadowPixels);
+}
+
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
     // perform perspective divide
@@ -141,15 +170,14 @@ void main()
 	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	
 	vec3 color = ka * texture(texture_diffuse1, FS.texCoord).xyz;
-	float isShadow = ShadowCalculation(FS.fragPosLightSpace4);
+	//float isShadow = ShadowCalculation(FS.fragPosLightSpace4);
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
 		color += calcPointLight(pointlight[i],normal,viewDir, FS.wFragPos);
 	color += calcSpotLight (spotlight, FS.wFragPos);
-	if(isShadow > 0.5)
-	{
-		color += calcDirLight (dirlight, normal, viewDir);
-	}
+	float lightValue = ShadowCalcWithPcf (FS.fragPosLightSpace4);
+	color += calcDirLight (dirlight, normal, viewDir) * lightValue;
+	
 	vec4 colorWLight    = vec4(color, 1.0);
 	//fs_out_col   = colorWLight;
 /////////////////////////////////////////////
@@ -161,7 +189,7 @@ void main()
 	
 	//fs_out_col = vec4(mix(colorWLight.xyz, reflectedWithTex.xyz, 0.5) ,1.0);
 	fs_out_col = colorWLight + reflectedWithTex;
-
+	//fs_out_col = vec4(lightValue, 0,0,1);
 
 	//fs_out_col = texture(texture_reflect1, FS.texCoord);
 	//fs_out_col = vec4(abs(normal), 1.0);
