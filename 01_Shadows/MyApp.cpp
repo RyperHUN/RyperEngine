@@ -87,29 +87,36 @@ bool CMyApp::Init()
 	//
 	// shaderek betöltése
 	//
+	shader_Simple.CreateShadowShader();
 	shader_Simple.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
 	shader_Simple.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
 	shader_Simple.LinkProgram ();
 	// skybox shader
+	shader_EnvMap.CreateShadowShader();
 	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
 	shader_EnvMap.AttachShader(GL_FRAGMENT_SHADER, "envmap.frag");
 
+	///TODO Delete shadow shader
 	shader_Shadow.AttachShader(GL_VERTEX_SHADER, "shadowShader.vert");
 	shader_Shadow.AttachShader(GL_FRAGMENT_SHADER, "shadowShader.frag");
 	shader_Shadow.LinkProgram ();
 
+	shader_DebugQuadTexturer.CreateShadowShader();
 	shader_DebugQuadTexturer.AttachShader (GL_VERTEX_SHADER, "quadTexturer.vert");
 	shader_DebugQuadTexturer.AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
 	shader_DebugQuadTexturer.LinkProgram ();
 
+	shader_LightRender.CreateShadowShader();
 	shader_LightRender.AttachShader(GL_VERTEX_SHADER, "LightShader.vert");
 	shader_LightRender.AttachShader(GL_FRAGMENT_SHADER, "LightShader.frag");
 	shader_LightRender.LinkProgram();
 
+	shader_BoundingBox.CreateShadowShader();
 	shader_BoundingBox.AttachShader(GL_VERTEX_SHADER, "boundingBoxShader.vert");
 	shader_BoundingBox.AttachShader(GL_FRAGMENT_SHADER, "boundingBoxShader.frag");
 	shader_BoundingBox.LinkProgram();
 
+	shader_Frustum.CreateShadowShader();
 	shader_Frustum.AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
 	shader_Frustum.AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
 	shader_Frustum.LinkProgram();
@@ -263,6 +270,7 @@ void CMyApp::Render()
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
+	state.PV = lightProjection * lightView;
 	state.LightSpaceMtx = lightSpaceMatrix;
 	glDisable(GL_CULL_FACE);
 
@@ -271,8 +279,8 @@ void CMyApp::Render()
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		/*for (auto& obj : gameObjs)
-			obj->Draw(state,&shader_Shadow);*/
+		for (auto& obj : gameObjs)
+			obj->Draw(state,obj->shader->GetShadowShader());
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -326,7 +334,7 @@ void CMyApp::Render()
 		}
 		shader_DebugQuadTexturer.Off();
 
-		cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
+		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 	}
 	if(IsFrameBufferRendering)
 	{

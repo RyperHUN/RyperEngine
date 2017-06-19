@@ -9,9 +9,11 @@
 #include <vector>
 
 #include <glm\glm.hpp>
+#include <memory>
 
 class gShaderProgram
 {
+	std::unique_ptr<gShaderProgram> shadowShader;
 public:
 	gShaderProgram(void);
 	~gShaderProgram(void);
@@ -42,6 +44,12 @@ public:
 	void SetSubroutine(GLenum shadertype, const char* subroutine_variable, const char* routine_instance);
 	void SetTexture(const char* uniform, int sampler, GLuint textureID);
 	void SetCubeTexture(const char* uniform, int sampler, GLuint textureID);
+
+	gShaderProgram* GetShadowShader (){return shadowShader.get();}
+	void CreateShadowShader ()
+	{
+		shadowShader = std::unique_ptr<gShaderProgram>(new gShaderProgram);
+	}
 protected:
 	GLuint	getLocation(const char* uniform);
 	GLuint	getSubroutineIndex(GLenum shader_type, const char* uniform);

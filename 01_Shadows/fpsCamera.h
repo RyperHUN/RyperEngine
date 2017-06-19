@@ -100,7 +100,7 @@ public:
 		UpdateViewMatrix();
 		projViewMatrix = projMatrix * viewMatrix;
 
-		rayDirMatrix = glm::inverse(projViewMatrix *  glm::translate(eyePos));
+		rayDirMatrix = glm::inverse(projViewMatrix *  glm::translate(eyePos));	//(E-1 * PV-1) == (E-1 * V-1 * P-1)
 	}
 
 	//In cameraCoord

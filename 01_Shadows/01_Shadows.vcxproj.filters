@@ -132,14 +132,14 @@
     <ClInclude Include="glmIncluder.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="glFrameBuffer.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="CameraRenderer.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Defs.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glFrameBuffer.h">
+      <Filter>Utils\GL_Wrapper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

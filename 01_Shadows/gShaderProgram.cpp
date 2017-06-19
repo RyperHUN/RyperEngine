@@ -18,6 +18,10 @@ gShaderProgram::~gShaderProgram(void)
 
 bool gShaderProgram::AttachShader(GLenum shaderType, const char* filename)
 {
+	if(shadowShader)
+		if(shaderType != GL_FRAGMENT_SHADER)
+			shadowShader->AttachShader (shaderType, filename);
+
 	GLuint loaded_shader = loadShader(shaderType, filename);
 	if (loaded_shader == 0)
 		return false;
@@ -46,6 +50,14 @@ bool gShaderProgram::LinkProgram()
 {
 	if (m_id_program == 0)
 		return false;
+
+	if(shadowShader)
+	{
+		if(!shadowShader->AttachShader(GL_FRAGMENT_SHADER, "shadowShader.frag"))//TODO Better solution for shadowShader
+			std::cout << "Error attaching fragment shadow shader" << std::endl;
+		if(!shadowShader->LinkProgram())
+			std::cout << "Error linking shadow shader" << std::endl;
+	}
 
 	glLinkProgram(m_id_program);
 
