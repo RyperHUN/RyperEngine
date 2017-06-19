@@ -212,6 +212,8 @@ bool CMyApp::Init()
 	
 	fbo_Rendered.CreateAttachments(m_width, m_height);
 
+	activeCamera = std::make_shared<TPSCamera>(0.1, 100, m_width, m_height, cowboyObj->pos);
+
 	return true;
 }
 

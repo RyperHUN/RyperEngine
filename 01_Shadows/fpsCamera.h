@@ -199,6 +199,106 @@ private:
 	}
 };
 
+class TPSCamera : public Camera
+{
+	//For lookAt
+	glm::vec3 forwardDir;
+	//For Projection
+	float aspectRatio;
+	float zNear, zFar;
+	float fovDegree = 90.0f; //In degree
+							 //For Movement
+	const glm::vec3 globalUp, globalRight, globalBack;
+
+	float yaw = 0.0f, pitch = 0.0f;
+
+public:
+	glm::vec3 selectedPos;
+	TPSCamera(float zNear, float zFar, float width, float height,
+			  glm::vec3 selectedPos = glm::vec3(0))
+		:zNear(zNear), zFar(zFar), selectedPos(selectedPos)
+		, globalUp(0, 1, 0), globalRight(1,0,0), globalBack(0,0,-1)
+	{
+		Resize(width, height);
+
+		UpdateViewMatrix();
+	}
+
+	void UpdateViewMatrix(float yawDt = 0.0f, float pitchDt = 0.0f) override
+	{
+		yaw += yawDt;
+		pitch += pitchDt;
+
+		float radius = 15.0f;
+
+		glm::vec3 horizontalCircle = (radius * cos(yaw)) * -globalBack +
+									 (radius * sin(yaw)) * globalRight;
+
+		glm::vec3 finalVec = cos(pitch) * horizontalCircle + 
+							(sin(pitch) * radius) * globalUp;
+
+		eyePos = selectedPos + finalVec;
+		forwardDir = glm::normalize(selectedPos - eyePos);
+		viewMatrix = glm::lookAt(eyePos, eyePos + forwardDir, globalUp);
+		frustum.setCamDef(eyePos, eyePos + forwardDir, globalUp);
+	}
+	void UpdateProjMatrix() override
+	{
+		projMatrix = glm::perspective(glm::radians(fovDegree), aspectRatio, zNear, zFar);
+		frustum.setCamInternals(fovDegree, aspectRatio, zNear, zFar);
+	}
+	void Resize(int w, int h) override
+	{
+		aspectRatio = w / (float)h;
+		UpdateProjMatrix();
+	}
+
+	void Update(float deltaTime) override
+	{
+		UpdateProjMatrix();
+		UpdateViewMatrix();
+		projViewMatrix = projMatrix * viewMatrix;
+
+		rayDirMatrix = glm::inverse(projViewMatrix *  glm::translate(eyePos));
+	}
+
+	//In cameraCoord
+	glm::vec3 GetRightVec(glm::vec3 forward)
+	{
+		return glm::normalize(glm::cross(forward, globalUp));
+	}
+	glm::vec3 GetUpVec(glm::vec3 forward, glm::vec3 right)
+	{
+		return glm::normalize(glm::cross(right, forward));
+	}
+
+	glm::mat4 GetViewMatrix() { return viewMatrix; }
+	glm::mat4 GetProj() { return projMatrix; }
+	glm::mat4 GetProjView() { return projViewMatrix; }
+	glm::mat4 GetRayDirMtx() { return rayDirMatrix; }
+	glm::vec3 GetEye() { return eyePos; }
+	glm::vec3 GetDir() override { return forwardDir; }
+
+
+	void KeyboardDown(SDL_KeyboardEvent& key) override
+	{
+	}
+	void KeyboardUp(SDL_KeyboardEvent& key) override
+	{
+	}
+	void MouseMove(SDL_MouseMotionEvent& mouse) override
+	{
+		if (mouse.state & SDL_BUTTON_LMASK)
+		{
+			//TODO Sensitivity
+			glm::vec2 mouseDelta(mouse.xrel / 200.0f, -mouse.yrel / 200.0f);
+
+			UpdateViewMatrix(mouseDelta.x, -mouseDelta.y);
+		}
+	}
+private:
+};
+
 //struct FPSCamera
 //{
 //	//For View
