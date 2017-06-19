@@ -48,7 +48,7 @@ Kerdesek:
 		-> Vegtelen messzi van levagodik -> Amikor a hatteret rajzolja az ember, akkor beleveszi a napot is.
 	
 	-Flat shading?
-	-Hova kene eljutni a vegere? Tehat mi az amit eltudok adni mint szakdoga?
+	-Hova kene eljutni a vegere? Tehat mi az amit eltudok adni mint szakdoga? -> Barmit elkezdhetem irni
 	-Szerintem jovoheten nemjovok konzultalni, de tobbet haladnek, mikkel haladjak?
 	-Konyv ajanlas?
 	
@@ -57,7 +57,9 @@ Kerdesek:
 	
 Terv:
 - Frustum Culling - KEEEESZ
-- Animacio csak gombnyomasra? - 
+
+- Animacio csak gombnyomasra.
+- TODO Arnyekok mindennel.
 - TODO Add namespace
 - TODO Add defs.h -> sok typedef
 - TODO Lecserel tamas wrapperjere!! 

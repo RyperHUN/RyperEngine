@@ -351,7 +351,7 @@ void CMyApp::FrustumCulling (FPSCameraPtr camera)
 	for(GameObj* obj : gameObjs)
 	{
 		Geom::Box box = obj->GetModelBox();
-		auto result = camera->frustum.boxInFrustum(box);
+		auto result = camera->GetFrustum()->boxInFrustum(box);
 		if (result == FrustumG::INSIDE || result == FrustumG::INTERSECT)
 			obj->isInsideFrustum = true;
 		else

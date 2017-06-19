@@ -6,11 +6,40 @@
 #include "glmIncluder.h"
 #include "FrustumG.h"
 
-class FPSCamera
+class Camera
+{
+protected:
+	FrustumG frustum;
+	glm::vec3 eyePos;
+	/// Matrices
+	glm::mat4	viewMatrix;
+	glm::mat4	projMatrix;
+	glm::mat4	projViewMatrix;
+	glm::mat4   rayDirMatrix; //viewDir = rayDirMtx * pos_ndc;
+public:
+	virtual void UpdateViewMatrix(float yaw = 0.0f, float pitch = 0.0f) = 0;
+	virtual void UpdateProjMatrix() = 0;
+	virtual void Resize(int w, int h) = 0;
+	virtual void Update(float deltaTime) = 0;
+
+	FrustumG* GetFrustum() {return &frustum;}
+	glm::mat4 GetViewMatrix() { return viewMatrix; }
+	glm::mat4 GetProj() { return projMatrix; }
+	glm::mat4 GetProjView() { return projViewMatrix; }
+	glm::mat4 GetRayDirMtx() { return rayDirMatrix; }
+	glm::vec3 GetEye() { return eyePos; }
+	virtual glm::vec3 GetDir() = 0;
+
+	virtual void KeyboardDown(SDL_KeyboardEvent& key) {}
+	virtual void KeyboardUp(SDL_KeyboardEvent& key) {}
+	virtual void MouseMove(SDL_MouseMotionEvent& mouse) {}
+};
+
+class FPSCamera : public Camera
 {
 	//For lookAt
 	glm::vec3 forwardDir;
-	glm::vec3 eyePos;
+	//glm::vec3 eyePos; in parent
 	//For Projection
 	float aspectRatio;
 	float zNear, zFar;
@@ -20,24 +49,19 @@ class FPSCamera
 	float cameraSpeed = 10.0f;
 	const glm::vec3 globalUp;
 
-	/// Matrices
-	glm::mat4	viewMatrix;
-	glm::mat4	projMatrix;
-	glm::mat4	projViewMatrix;
-	glm::mat4   rayDirMatrix; //viewDir = rayDirMtx * pos_ndc;
 public:
-	FrustumG frustum;
 	FPSCamera(float zNear, float zFar, float width, float height,
 			  glm::vec3 eyePos, glm::vec3 forwardDir = glm::vec3(0,0,-1))
 		:zNear(zNear), zFar(zFar), globalUp(0, 1, 0)
-		,forwardDir(forwardDir), eyePos(eyePos)
+		,forwardDir(forwardDir)
 	{
+		this->eyePos = eyePos;
 		Resize(width, height);
 
 		UpdateViewMatrix();
 	}
 
-	void UpdateViewMatrix(float yaw = 0.0f, float pitch = 0.0f)
+	void UpdateViewMatrix(float yaw = 0.0f, float pitch = 0.0f) override
 	{
 		PreventShaking(yaw, pitch);
 		glm::vec3 right = GetRightVec(forwardDir);
@@ -48,18 +72,18 @@ public:
 		viewMatrix = glm::lookAt(eyePos, eyePos + forwardDir, globalUp);
 		frustum.setCamDef(eyePos, eyePos + forwardDir, globalUp);
 	}
-	void UpdateProjMatrix()
+	void UpdateProjMatrix() override
 	{
 		projMatrix = glm::perspective(glm::radians(fovDegree), aspectRatio, zNear, zFar);
 		frustum.setCamInternals(fovDegree, aspectRatio, zNear, zFar);
 	}
-	void Resize(int w, int h)
+	void Resize(int w, int h) override
 	{
 		aspectRatio = w / (float)h;
 		UpdateProjMatrix();
 	}
 
-	void Update(float deltaTime)
+	void Update(float deltaTime) override
 	{
 		glm::vec3 right = GetRightVec(forwardDir);
 		glm::vec3 up    = GetUpVec (forwardDir, right);
@@ -91,10 +115,10 @@ public:
 	glm::mat4 GetProjView()	{return projViewMatrix;	}
 	glm::mat4 GetRayDirMtx() {return rayDirMatrix; }
 	glm::vec3 GetEye() {return eyePos; }
-	glm::vec3 GetDir() {return forwardDir; }
+	glm::vec3 GetDir() override {return forwardDir; }
 
 
-	void KeyboardDown(SDL_KeyboardEvent& key)
+	void KeyboardDown(SDL_KeyboardEvent& key) override
 	{
 		switch (key.keysym.sym)
 		{
@@ -126,7 +150,7 @@ public:
 			break;
 		}
 	}
-	void KeyboardUp(SDL_KeyboardEvent& key)
+	void KeyboardUp(SDL_KeyboardEvent& key) override
 	{
 		switch (key.keysym.sym)
 		{
@@ -152,7 +176,7 @@ public:
 			break;
 		}
 	}
-	void MouseMove(SDL_MouseMotionEvent& mouse)
+	void MouseMove(SDL_MouseMotionEvent& mouse) override
 	{
 		if (mouse.state & SDL_BUTTON_LMASK)
 		{

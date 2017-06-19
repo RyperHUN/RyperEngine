@@ -13,7 +13,7 @@ public:
 	{}
 	void Render(glm::mat4 VP, std::shared_ptr<FPSCamera> camera)
 	{
-		FrustumG* frustum = &camera->frustum;
+		FrustumG* frustum = camera->GetFrustum ();
 		shader->On();
 		shader->SetUniform ("PVM", VP);
 		shader->SetUniform ("isSelected", true);
