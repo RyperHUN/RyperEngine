@@ -4,6 +4,8 @@
 #include "glmIncluder.h"
 #include <oglwrap\oglwrap.h>
 
+#include "Defs.h"
+
 class CameraRenderer
 {
 	gShaderProgram * shader;
@@ -11,7 +13,7 @@ public:
 	CameraRenderer (gShaderProgram * shader)
 		:shader(shader)
 	{}
-	void Render(glm::mat4 VP, std::shared_ptr<FPSCamera> camera)
+	void Render(glm::mat4 VP, CameraPtr camera)
 	{
 		FrustumG* frustum = camera->GetFrustum ();
 		shader->On();

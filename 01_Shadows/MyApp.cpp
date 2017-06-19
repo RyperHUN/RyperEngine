@@ -346,7 +346,7 @@ void CMyApp::Render()
 	}
 }
 
-void CMyApp::FrustumCulling (FPSCameraPtr camera)
+void CMyApp::FrustumCulling (CameraPtr camera)
 {
 	for(GameObj* obj : gameObjs)
 	{

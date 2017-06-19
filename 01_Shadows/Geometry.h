@@ -8,6 +8,7 @@
 #include "Material.h"
 
 #include "glmIncluder.h"
+#include "Defs.h"
 
 enum LOCATION {
 	POSITION = 0,

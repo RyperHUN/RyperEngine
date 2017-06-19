@@ -64,6 +64,3 @@ struct Material
 		}
 	}
 };
-
-
-using MaterialPtr = std::shared_ptr<Material>;

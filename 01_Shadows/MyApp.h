@@ -21,7 +21,7 @@
 #include "fpsCamera.h"
 #include "CameraRenderer.h"
 
-using FPSCameraPtr = std::shared_ptr<FPSCamera>;
+#include "Defs.h"
 
 class CMyApp
 {
@@ -34,7 +34,7 @@ public:
 
 	void Update();
 	void Render();
-	void FrustumCulling(FPSCameraPtr );
+	void FrustumCulling(CameraPtr );
 
 	void KeyboardDown(SDL_KeyboardEvent&);
 	void KeyboardUp(SDL_KeyboardEvent&);
@@ -54,9 +54,9 @@ protected:
 	GLuint texture_Map; // textúra erõforrás azonosító
 	GLuint m_fbo; //Frame Buffer Object
 
-	FPSCameraPtr	activeCamera;
+	CameraPtr	activeCamera;
 	//TODO Camera manager
-	FPSCameraPtr	secondaryCamera; //TODO receive resize events also
+	CameraPtr secondaryCamera; //TODO receive resize events also
 	CameraRenderer cameraRenderer;
 
 	// melysegi puffer kirajzolasa

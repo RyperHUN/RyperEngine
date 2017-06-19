@@ -138,6 +138,9 @@
     <ClInclude Include="CameraRenderer.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">
