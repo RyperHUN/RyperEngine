@@ -419,7 +419,9 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 		glm::vec4 world4 = PVInv * clipping;
 		glm::vec3 world = glm::vec3(world4) / world4.w;
 
-		boundingBoxRenderer.FindObject(activeCamera->GetEye(), world);
+		int index = boundingBoxRenderer.FindObject(activeCamera->GetEye(), world);
+		if(index >= 0)
+			activeCamera->SetSelected (gameObjs[index]->pos); //TODo better solution, what if the selected moves?
 	}
 }
 
@@ -429,6 +431,7 @@ void CMyApp::MouseUp(SDL_MouseButtonEvent& mouse)
 
 void CMyApp::MouseWheel(SDL_MouseWheelEvent& wheel)
 {
+	activeCamera->MouseWheel (wheel);
 }
 
 // a két paraméterbe az új ablakméret szélessége (_w) és magassága (_h) található

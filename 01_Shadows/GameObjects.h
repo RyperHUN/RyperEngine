@@ -4,7 +4,6 @@
 #include "Geometry.h"
 #include "glmIncluder.h"
 #include "Light.h"
-#include "gCamera.h"
 #include  "Material.h"
 #include <memory>
 #include <functional>
@@ -133,27 +132,6 @@ struct AnimatedCharacter : public GameObj
 	}
 };
 
-struct FrustumRenderer : public GameObj
-{
-	gCamera * camera;
-	FrustumRenderer (gShaderProgram * shader, gCamera * camera)
-		: camera(camera)
-	{
-		this->shader = shader;
-	}
-	void Draw(RenderState state, gShaderProgram * shaderParam = nullptr) override
-	{
-		if (shaderParam == nullptr)
-			shaderParam = shader;
-
-		shaderParam->On();
-			shaderParam->SetUniform ("MVP", state.PV);
-
-		shaderParam->Off();
-	}
-	///TODO Frustum data upload
-};
-
 struct BoundingBoxRenderer
 {
 	static Geometry * geom_box;
@@ -204,7 +182,7 @@ struct BoundingBoxRenderer
 
 		return -1.0;
 	}
-	void FindObject(glm::vec3 eye, glm::vec3 world)
+	int FindObject(glm::vec3 eye, glm::vec3 world)
 	{
 		Ray ray = createRay(eye, world - eye);
 		float smallest = -1.0f;
@@ -223,6 +201,8 @@ struct BoundingBoxRenderer
 		}
 		if(savedIndex >= 0)
 			gameObjs[savedIndex]->isSelected = true;
+
+		return savedIndex;
 	}
 private:
 	void DrawBox(RenderState state, GameObj* obj)

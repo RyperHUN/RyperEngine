@@ -22,6 +22,8 @@ public:
 	virtual void Resize(int w, int h) = 0;
 	virtual void Update(float deltaTime) = 0;
 
+	virtual void SetSelected (glm::vec3 pos) {}
+
 	FrustumG* GetFrustum() {return &frustum;}
 	glm::mat4 GetViewMatrix() { return viewMatrix; }
 	glm::mat4 GetProj() { return projMatrix; }
@@ -33,6 +35,7 @@ public:
 	virtual void KeyboardDown(SDL_KeyboardEvent& key) {}
 	virtual void KeyboardUp(SDL_KeyboardEvent& key) {}
 	virtual void MouseMove(SDL_MouseMotionEvent& mouse) {}
+	virtual void MouseWheel(SDL_MouseWheelEvent& wheel) {}
 };
 
 class FPSCamera : public Camera
@@ -186,6 +189,10 @@ public:
 			UpdateViewMatrix(mouseDelta.x, -mouseDelta.y);
 		}
 	}
+	void MouseWheel(SDL_MouseWheelEvent& wheel) override
+	{
+		fovDegree += -wheel.y;
+	}
 private:
 	void PreventShaking (float &yaw, float &pitch)
 	{
@@ -211,9 +218,10 @@ class TPSCamera : public Camera
 	const glm::vec3 globalUp, globalRight, globalBack;
 
 	float yaw = 0.0f, pitch = 0.0f;
-
-public:
+	float radius = 15.0f;
 	glm::vec3 selectedPos;
+public:
+	
 	TPSCamera(float zNear, float zFar, float width, float height,
 			  glm::vec3 selectedPos = glm::vec3(0))
 		:zNear(zNear), zFar(zFar), selectedPos(selectedPos)
@@ -224,12 +232,16 @@ public:
 		UpdateViewMatrix();
 	}
 
+	virtual void SetSelected(glm::vec3 pos) 
+	{
+		selectedPos = pos;
+	}
+
+
 	void UpdateViewMatrix(float yawDt = 0.0f, float pitchDt = 0.0f) override
 	{
 		yaw += yawDt;
 		pitch += pitchDt;
-
-		float radius = 15.0f;
 
 		glm::vec3 horizontalCircle = (radius * cos(yaw)) * -globalBack +
 									 (radius * sin(yaw)) * globalRight;
@@ -293,8 +305,12 @@ public:
 			//TODO Sensitivity
 			glm::vec2 mouseDelta(mouse.xrel / 200.0f, -mouse.yrel / 200.0f);
 
-			UpdateViewMatrix(mouseDelta.x, -mouseDelta.y);
+			UpdateViewMatrix(mouseDelta.x, mouseDelta.y);
 		}
+	}
+	void MouseWheel(SDL_MouseWheelEvent& wheel) override
+	{
+		radius += -wheel.y;
 	}
 private:
 };
