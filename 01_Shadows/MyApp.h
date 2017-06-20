@@ -49,7 +49,6 @@ public:
 protected:
 	// belsõ eljárások
 	GLuint GenTexture();
-	void CreateFBO(int, int);
 
 	// OpenGL-es dolgok
 	GLuint texture_Map; // textúra erõforrás azonosító
@@ -81,9 +80,8 @@ protected:
 	int			m_width = 640, m_height = 480;
 	const bool IsFrameBufferRendering = false;
 	glFrameBuffer fbo_Rendered;
+	glFrameBuffer fbo_Shadow;
 	
-	GLuint frameBuffer;
-	GLuint texture_ShadowMap;
 	GLuint texture_HeightMap;
 	const GLuint SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
 

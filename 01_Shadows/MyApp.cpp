@@ -128,7 +128,7 @@ bool CMyApp::Init()
 	}
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
 	//
-	CreateFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
+	fbo_Shadow.CreateShadowAttachment (SHADOW_WIDTH, SHADOW_HEIGHT);
 
 ///////////////////////////////////////////////////////////
 	// egyéb inicializálás
@@ -274,14 +274,14 @@ void CMyApp::Render()
 	glDisable(GL_CULL_FACE);
 
 	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	fbo_Shadow.On();
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		for (auto& obj : gameObjs)
 			obj->Draw(state,obj->shader->GetShadowShader());
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	fbo_Shadow.Off();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	///////////////////////////Normal rendering
@@ -296,7 +296,7 @@ void CMyApp::Render()
 
 		shader_Simple.On();
 		shader_EnvMap.SetCubeTexture("skyBox", 12, textureCube_id);
-		shader_Simple.SetTexture ("shadowMap",15,texture_ShadowMap);
+		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 		state.PV = activeCamera->GetProjView();
 		for(auto& obj : gameObjs)
@@ -323,7 +323,7 @@ void CMyApp::Render()
 		{
 			buffer_Quad.On();
 			
-				shader_DebugQuadTexturer.SetTexture("loadedTex", 15, texture_ShadowMap);
+				shader_DebugQuadTexturer.SetTexture("loadedTex", 15, fbo_Shadow.textureId);
 				shader_DebugQuadTexturer.SetUniform("M",
 					glm::translate(glm::vec3(0.5,0.5,0))*glm::scale(glm::vec3(0.5,0.5,1)));
 				shader_DebugQuadTexturer.SetUniform("isInvertY", false);
@@ -455,40 +455,6 @@ void CMyApp::Resize(int _w, int _h)
 
 	activeCamera->Resize(_w, _h);
 	fbo_Rendered.CreateAttachments(m_width, m_height);
-}
-
-void CMyApp::CreateFBO(int w, int h)
-{
-	static bool was_created = false;
-	if (was_created)
-	{
-		glDeleteFramebuffers(1, &frameBuffer);
-		glDeleteTextures(1, &texture_ShadowMap);
-	}
-	glGenFramebuffers(1, &frameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-
-	glGenTextures(1, &texture_ShadowMap);
-	glBindTexture(GL_TEXTURE_2D, texture_ShadowMap);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture_ShadowMap, 0);
-
-	glDrawBuffer(GL_NONE);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		std::cout << "baj van :( \n";
-		return;
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	was_created = true;
 }
 
 GLuint CMyApp::LoadCubeMap(std::string prefix)
