@@ -211,11 +211,6 @@ bool CMyApp::Init()
 	cowboyObj->rotAxis = glm::vec3{1,0,0};
 	cowboyObj->rotAngle = -M_PI / 2; //For cowboy animated man
 	cowboyObj->pos = glm::vec3(0,10,10);
-	cowboyObj->animateChar = [cowboyObj](float time){
-		AssimpModel* geom = (AssimpModel*)cowboyObj->geometry;
-		//geom->isAnimated = false;
-		geom->UpdateAnimation(time);
-	};
 	
 	fbo_Rendered.CreateAttachments(m_width, m_height);
 
@@ -372,6 +367,8 @@ void CMyApp::FrustumCulling (CameraPtr camera)
 void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 {
 	activeCamera->KeyboardDown(key);
+	for(auto& obj : gameObjs)
+		obj->KeyboardDown(key);
 
 	static bool isWireFrame = false;
 	switch (key.keysym.sym)
@@ -392,6 +389,8 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 void CMyApp::KeyboardUp(SDL_KeyboardEvent& key)
 {
 	activeCamera->KeyboardUp(key);
+	for (auto& obj : gameObjs)
+		obj->KeyboardUp(key);
 }
 
 void CMyApp::MouseMove(SDL_MouseMotionEvent& mouse)

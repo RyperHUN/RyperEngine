@@ -7,6 +7,8 @@
 #include  "Material.h"
 #include <memory>
 #include <functional>
+#include "AssimpModel.h"
+
 
 struct RenderState
 {
@@ -99,6 +101,8 @@ public:
 		assert(geometry != nullptr);
 		return geometry->getModelBox(pos, scale, quaternion);
 	}
+	virtual void KeyboardDown(SDL_KeyboardEvent& key) {}
+	virtual void KeyboardUp(SDL_KeyboardEvent& key) {}
 };
 
 struct Quadobj : public GameObj
@@ -122,13 +126,38 @@ struct Quadobj : public GameObj
 
 struct AnimatedCharacter : public GameObj
 {
-	std::function<void(float)> animateChar;
 	using GameObj::GameObj;
+	virtual void KeyboardDown(SDL_KeyboardEvent& key) 
+	{
+		switch(key.keysym.sym)
+		{
+			case SDLK_w:
+			{
+				AssimpModel* geom = (AssimpModel*)this->geometry;
+				geom->isAnimated = true;
+				break;
+			}
+		}
+	}
+	virtual void KeyboardUp(SDL_KeyboardEvent& key)
+	{
+		switch (key.keysym.sym)
+		{
+		case SDLK_w:
+		{
+			AssimpModel* geom = (AssimpModel*)this->geometry;
+			geom->isAnimated = false;
+			break;
+		}
+		}
+	}
 	virtual void Animate(float time, float dt) override
 	{
 		GameObj::Animate(time, dt);
-		assert(animateChar);
-		animateChar(time);
+
+		AssimpModel* geom = (AssimpModel*)this->geometry;
+		geom->UpdateAnimation(time);
+		//animateChar(time);
 	}
 };
 

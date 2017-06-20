@@ -170,11 +170,12 @@ void main()
 	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	
 	vec3 color = ka * texture(texture_diffuse1, FS.texCoord).xyz;
-	//float isShadow = ShadowCalculation(FS.fragPosLightSpace4);
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
 		color += calcPointLight(pointlight[i],normal,viewDir, FS.wFragPos);
 	color += calcSpotLight (spotlight, FS.wFragPos);
+
+	//float lightValue = ShadowCalculation(FS.fragPosLightSpace4);
 	float lightValue = ShadowCalcWithPcf (FS.fragPosLightSpace4);
 	color += calcDirLight (dirlight, normal, viewDir) * lightValue;
 	
