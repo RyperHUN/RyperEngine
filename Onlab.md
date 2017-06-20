@@ -16,6 +16,11 @@ Arnyekok:
 	- Shadow mapping -> Errol lehetne nagyon rizsazni, tobbfele softshadow megoldasrol foleg
 	-http://developer.download.nvidia.com/shaderlibrary/docs/shadow_PCSS.pdf
 	-http://developer.download.nvidia.com/presentations/2008/GDC/GDC08_SoftShadowMapping.pdf
+Minecraft:
+	Procedural Gen:
+		-http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/
+		-https://notch.tumblr.com/post/3746989361/terrain-generation-part-1
+	-Array Texture -> Utananez textura feltolteshez
 	
 	
 Kerdesek:
