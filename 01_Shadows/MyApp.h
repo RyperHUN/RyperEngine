@@ -22,6 +22,7 @@
 #include "CameraRenderer.h"
 
 #include "Defs.h"
+#include "ChunkManager.h"
 
 class CMyApp
 {
@@ -100,6 +101,7 @@ protected:
 	gShaderProgram  shader_BoundingBox;
 	gShaderProgram  shader_Frustum;
 
+	ChunkManager chunkManager;
 
 	LightRenderer lightRenderer;
 	BoundingBoxRenderer boundingBoxRenderer;

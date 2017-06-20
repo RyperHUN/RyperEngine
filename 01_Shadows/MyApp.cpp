@@ -15,7 +15,8 @@ CMyApp::CMyApp(void)
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
 	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
-	cameraRenderer (&shader_BoundingBox)
+	cameraRenderer (&shader_BoundingBox),
+	chunkManager(&geom_Box,&shader_LightRender)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -158,7 +159,7 @@ bool CMyApp::Init()
 	geom_Cow = TriangleMeshLoaded(m_cow_mesh);
 	geom_Bezier.Create (10,10);
 
-	GameObj *sphere = new GameObj(shaderLights,&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
+	GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
 	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
 	shaderLights.push_back(ShaderLight{&dirLight, "dirlight"});
 	for(int i = 0; i < pointLight.size(); i++)
@@ -170,7 +171,7 @@ bool CMyApp::Init()
 	GameObj * sphere2 = new GameObj (*sphere);
 	sphere2->pos = glm::vec3(2,0,-3);
 	gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ shaderLights, &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0)};
+	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0)};
 	quadObj->rotAngle = M_PI / 2.0;
 	gameObjs.push_back(quadObj);
 
@@ -203,7 +204,7 @@ bool CMyApp::Init()
 
 	//gameObjs.clear();
 
-	AnimatedCharacter* cowboyObj = new AnimatedCharacter(shaderLights, &shader_Simple,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
+	AnimatedCharacter* cowboyObj = new AnimatedCharacter( &shader_Simple,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
 	for(auto& mesh : geom_Man.meshes)
 		mesh.textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
 	gameObjs.push_back(cowboyObj);
@@ -254,6 +255,7 @@ void CMyApp::Render()
 {
 	RenderState state;
 	state.wEye = activeCamera->GetEye ();
+	state.shaderLights = &shaderLights;
 	FrustumCulling (secondaryCamera);
 
 	//////////////////////////////First render to depth map

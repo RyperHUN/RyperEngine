@@ -103,6 +103,7 @@
     <ClInclude Include="AssimpModel.h" />
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="CameraRenderer.h" />
+    <ClInclude Include="ChunkManager.h" />
     <ClInclude Include="Defs.h" />
     <ClInclude Include="fpsCamera.h" />
     <ClInclude Include="FrustumG.h" />

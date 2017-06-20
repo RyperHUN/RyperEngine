@@ -15,6 +15,7 @@ struct RenderState
 	glm::vec3 wEye;
 	glm::mat4 M, PV, Minv;
 	glm::mat4 LightSpaceMtx;
+	std::vector<ShaderLight> *shaderLights;
 
 	//Texture* texture;
 	//Vector<light> lights;
@@ -27,19 +28,17 @@ public:
 	gShaderProgram *   shader;
 	std::shared_ptr<Material> material;
 	Geometry * geometry;
-	std::vector<ShaderLight>& shaderLights;
 	glm::vec3 scale, pos, rotAxis;
 
 	glm::quat quaternion;
 	float rotAngle = 0.0f;
 	bool isSelected = false;
 public:
-	GameObj ():shaderLights(std::vector<ShaderLight>()){}
-	GameObj(std::vector<ShaderLight>& shaderLights,gShaderProgram* shader, Geometry * geom, std::shared_ptr<Material> material,glm::vec3 pos,
+	GameObj (){}
+	GameObj(gShaderProgram* shader, Geometry * geom, std::shared_ptr<Material> material,glm::vec3 pos,
 		glm::vec3 scale = glm::vec3{1,1,1},
 		glm::vec3 rotAxis = glm::vec3{0,1,0})
-		:shader(shader), geometry(geom), pos(pos), scale(scale), rotAxis(glm::normalize(rotAxis)), material(material),
-		shaderLights(shaderLights)
+		:shader(shader), geometry(geom), pos(pos), scale(scale), rotAxis(glm::normalize(rotAxis)), material(material)
 	{
 		quaternion = glm::angleAxis((float)M_PI / 2.0f, this->rotAxis);
 	}
@@ -66,7 +65,7 @@ public:
 			shaderParam->SetUniform("isAnimated", false);
 
 			///TODO
-			for(auto& light : shaderLights)
+			for(auto& light : *(state.shaderLights))
 				light.uploadToGPU(*shaderParam);
 			material->uploadToGpu (*shaderParam);
 

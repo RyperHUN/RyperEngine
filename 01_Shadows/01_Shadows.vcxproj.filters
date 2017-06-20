@@ -141,6 +141,9 @@
     <ClInclude Include="glFrameBuffer.h">
       <Filter>Utils\GL_Wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="ChunkManager.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">
