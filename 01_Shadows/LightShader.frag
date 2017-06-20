@@ -11,6 +11,6 @@ out vec4 fs_out_col;
 void main()
 {   
 	//fs_out_col = vec4(1.0);
-	//fs_out_col = vec4(abs(normal), 1.0);
-	fs_out_col = vec4(color, 1.0);
+	fs_out_col = vec4(abs(normal), 1.0);
+	//fs_out_col = vec4(color, 1.0);
 }  

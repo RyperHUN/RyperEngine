@@ -124,7 +124,7 @@ float ShadowCalcWithPcf(vec4 fragPosLightSpace)
 	//Percentage Closer Filtering
 	float shadowMapSizePixel = 4096.0;
 	float texelSize = 1.0 / shadowMapSizePixel;
-	int pcfSize = 5; //TODO Uniform
+	int pcfSize = 3; //TODO Uniform
 
 	float bias = 0.005;
 	int sumShadowPixels = (pcfSize * 2 + 1) * (pcfSize * 2 + 1);

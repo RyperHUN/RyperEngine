@@ -175,6 +175,8 @@ bool CMyApp::Init()
 	quadObj->rotAngle = M_PI / 2.0;
 	gameObjs.push_back(quadObj);
 
+	//chunkManager.GenerateBoxes(gameObjs);
+
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
 	//suzanne->scale = glm::vec3(5,5,5);
 	//gameObjs.push_back (suzanne);
