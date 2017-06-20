@@ -127,6 +127,9 @@ struct Quadobj : public GameObj
 struct AnimatedCharacter : public GameObj
 {
 	using GameObj::GameObj;
+
+	bool turnLeft = false;
+	bool turnRight = false;
 	virtual void KeyboardDown(SDL_KeyboardEvent& key) 
 	{
 		switch(key.keysym.sym)
@@ -137,23 +140,46 @@ struct AnimatedCharacter : public GameObj
 				geom->isAnimated = true;
 				break;
 			}
+			case SDLK_a:
+				turnLeft = true;
+				break;
+			case SDLK_d:
+				turnRight = true;
+				break;
 		}
 	}
 	virtual void KeyboardUp(SDL_KeyboardEvent& key)
 	{
 		switch (key.keysym.sym)
 		{
-		case SDLK_w:
-		{
-			AssimpModel* geom = (AssimpModel*)this->geometry;
-			geom->isAnimated = false;
-			break;
-		}
+			case SDLK_w:
+			{
+				AssimpModel* geom = (AssimpModel*)this->geometry;
+				geom->isAnimated = false;
+				break;
+			}
+			case SDLK_a:
+				turnLeft = false;
+				break;
+			case SDLK_d:
+				turnRight = false;
+				break;
 		}
 	}
 	virtual void Animate(float time, float dt) override
 	{
-		GameObj::Animate(time, dt);
+		static bool first = true;
+		if(first)
+		{
+			quaternion = glm::angleAxis(rotAngle, rotAxis); //TODO This should be at CTOR
+			first = false;
+		}
+		if(turnLeft)
+			quaternion *= glm::angleAxis((float)M_PI * dt, glm::vec3(0,0,1));
+		if(turnRight)
+			quaternion *= glm::angleAxis((float)M_PI * -dt, glm::vec3(0, 0, 1));
+
+		quaternion = glm::normalize(quaternion);
 
 		AssimpModel* geom = (AssimpModel*)this->geometry;
 		geom->UpdateAnimation(time);
