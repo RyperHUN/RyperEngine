@@ -243,11 +243,10 @@ public:
 		yaw += yawDt;
 		pitch += pitchDt;
 
-		glm::vec3 horizontalCircle = (radius * cos(yaw)) * -globalBack +
-									 (radius * sin(yaw)) * globalRight;
-
-		glm::vec3 finalVec = cos(pitch) * horizontalCircle + 
-							(sin(pitch) * radius) * globalUp;
+		glm::vec3 horizontalCircle = cos(yaw) * -globalBack + sin(yaw) * globalRight;
+		glm::vec3 finalVec = cos(pitch) * horizontalCircle + sin(pitch)  * globalUp;
+		
+		finalVec = glm::normalize(finalVec) * radius;
 
 		eyePos = selectedPos + finalVec;
 		forwardDir = glm::normalize(selectedPos - eyePos);
