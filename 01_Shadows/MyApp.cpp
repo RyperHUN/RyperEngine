@@ -92,6 +92,11 @@ bool CMyApp::Init()
 	shader_Simple.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
 	shader_Simple.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
 	shader_Simple.LinkProgram ();
+
+	shader_NormalVecDraw.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
+	shader_NormalVecDraw.AttachShader(GL_GEOMETRY_SHADER, "normalDrawer.geom");
+	shader_NormalVecDraw.AttachShader(GL_FRAGMENT_SHADER, "normalDrawer.frag");
+	shader_NormalVecDraw.LinkProgram ();
 	// skybox shader
 	shader_EnvMap.CreateShadowShader();
 	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
@@ -302,9 +307,11 @@ void CMyApp::Render()
 		for(auto& obj : gameObjs)
 				obj->Draw (state);
 
+		gameObjs[0]->Draw(state, &shader_NormalVecDraw);
+
 		//Draw lights
 		lightRenderer.Draw(activeCamera->GetProjView());
-		boundingBoxRenderer.Draw(state);
+		//boundingBoxRenderer.Draw(state);
 
 		//////////////////////////////Environment map drawing!!!
 		shader_EnvMap.On();

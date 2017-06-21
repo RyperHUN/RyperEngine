@@ -27,6 +27,12 @@ Kerdesek:
 	-Forgatasnal (csak balra jobbra karaktert) miert a 0,0,1 vektor korul kell elforgatnom hogy jo legyen??? 
 		-Azert mert masik oldalrol kell szorozni :)
 	-Valahogy kinyerheto egy quaterniobol hogy egy adott tengely menten mennyire van elforgatva?
+		- Karakterhez kene pl Y tengely menten mennyire fordult el
+	-Texture Buffer mire jo?
+	-Hogyan kell Transparent renderinget csinalni?
+		-Minecraftba ottvan egy virag az 2 quad X alakba, ezt hogyan lehetne szepen? Sehogy? Csak discardal? Az nem lassu?
+	-Uniform buffer object mikor jo pl? 
+	
 	
 Kerdesek:
 	-Miert lenghet ki egy kicsit a jobb (szembol bal) laba a karatkernek?

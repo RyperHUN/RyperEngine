@@ -134,6 +134,8 @@
     <None Include="frustumVisualizer.vert" />
     <None Include="LightShader.frag" />
     <None Include="LightShader.vert" />
+    <None Include="normalDrawer.frag" />
+    <None Include="normalDrawer.geom" />
     <None Include="quadTexturer.frag" />
     <None Include="quadTexturer.vert" />
     <None Include="shadowShader.frag" />

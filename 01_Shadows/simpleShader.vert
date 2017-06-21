@@ -18,11 +18,11 @@ uniform mat4 boneTransformations[MAX_BONES];
 //Interface Block
 out VS_OUT 
 {
-	out vec3 wFragPos;
-	out vec3 normal;
-	out vec2 texCoord;
-	out vec4 fragPosLightSpace4;
-	out vec4 testColor;
+	vec3 wFragPos;
+	vec3 normal;
+	vec2 texCoord;
+	vec4 fragPosLightSpace4;
+	vec4 testColor;
 } VS;
 
 mat4 getBoneTransform ()

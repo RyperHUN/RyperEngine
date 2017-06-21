@@ -195,5 +195,11 @@
     <None Include="frustumVisualizer.vert">
       <Filter>Shaders\Debug</Filter>
     </None>
+    <None Include="normalDrawer.geom">
+      <Filter>Shaders\Debug</Filter>
+    </None>
+    <None Include="normalDrawer.frag">
+      <Filter>Shaders\Debug</Filter>
+    </None>
   </ItemGroup>
 </Project>

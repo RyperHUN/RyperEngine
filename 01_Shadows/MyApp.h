@@ -98,6 +98,7 @@ protected:
 	gShaderProgram  shader_DebugQuadTexturer;
 	gShaderProgram  shader_BoundingBox;
 	gShaderProgram  shader_Frustum;
+	gShaderProgram  shader_NormalVecDraw;
 
 	ChunkManager chunkManager;
 
