@@ -34,8 +34,8 @@ struct Chunk
 				for(int j = 0; j < cubeSize; j++)
 				{
 					ChunkData &data = chunkInfo[i][j][k];
-					data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i,j,k) * BlockSize;
-					data.isExist = rand() % 3 == 0;
+					data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i,j,k) * BlockSize * 2.0f;
+					data.isExist = rand() % 4 == 0;
 				}
 			}
 		}
