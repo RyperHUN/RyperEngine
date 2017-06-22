@@ -99,6 +99,7 @@ protected:
 	gShaderProgram  shader_BoundingBox;
 	gShaderProgram  shader_Frustum;
 	gShaderProgram  shader_NormalVecDraw;
+	gShaderProgram  shader_Instanced;
 
 	ChunkManager chunkManager;
 

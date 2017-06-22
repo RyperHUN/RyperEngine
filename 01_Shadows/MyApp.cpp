@@ -97,6 +97,12 @@ bool CMyApp::Init()
 	shader_NormalVecDraw.AttachShader(GL_GEOMETRY_SHADER, "normalDrawer.geom");
 	shader_NormalVecDraw.AttachShader(GL_FRAGMENT_SHADER, "normalDrawer.frag");
 	shader_NormalVecDraw.LinkProgram ();
+
+	shader_Instanced.AttachShader(GL_VERTEX_SHADER, "InstancedDrawer.vert");
+	shader_Instanced.AttachShader(GL_FRAGMENT_SHADER, "InstancedDrawer.frag");
+	shader_Instanced.LinkProgram ();
+
+
 	// skybox shader
 	shader_EnvMap.CreateShadowShader();
 	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");

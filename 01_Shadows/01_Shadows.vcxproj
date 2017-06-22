@@ -132,6 +132,8 @@
     <None Include="envmap.vert" />
     <None Include="frustumVisualizer.frag" />
     <None Include="frustumVisualizer.vert" />
+    <None Include="InstancedDrawer.frag" />
+    <None Include="InstancedDrawer.vert" />
     <None Include="LightShader.frag" />
     <None Include="LightShader.vert" />
     <None Include="normalDrawer.frag" />

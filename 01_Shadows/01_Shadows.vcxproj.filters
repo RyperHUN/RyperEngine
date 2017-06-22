@@ -201,5 +201,11 @@
     <None Include="normalDrawer.frag">
       <Filter>Shaders\Debug</Filter>
     </None>
+    <None Include="InstancedDrawer.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="InstancedDrawer.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
