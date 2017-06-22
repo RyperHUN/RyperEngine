@@ -8,9 +8,8 @@ layout (location = 4) in vec4 boneId;
 
 uniform mat4 PV;
 uniform mat4 LightSpaceMtx;
-uniform bool isAnimated;
 
-#define MAX_INSTANCED 50
+#define MAX_INSTANCED 125
 uniform vec3 positions[MAX_INSTANCED];
 uniform float instancedAmount;
 

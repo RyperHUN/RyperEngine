@@ -16,7 +16,8 @@ CMyApp::CMyApp(void)
 	geom_AnimatedMan{"Model/model.dae"},
 	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
 	cameraRenderer (&shader_BoundingBox),
-	chunkManager(&geom_Box,&shader_LightRender)
+	chunkManager(&geom_Box,&shader_LightRender),
+	chunk(&geom_Box, &shader_Instanced)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -318,6 +319,7 @@ void CMyApp::Render()
 		//Draw lights
 		lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
+		chunk.Draw(state);
 
 		//////////////////////////////Environment map drawing!!!
 		shader_EnvMap.On();

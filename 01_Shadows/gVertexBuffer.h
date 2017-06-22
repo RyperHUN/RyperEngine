@@ -61,6 +61,17 @@ public:
 		}
 	}
 
+	void DrawInstanced(GLenum mode, size_t amount)
+	{
+		//if (indices.size() > 0)
+		//	DrawIndexed(mode);
+		//else
+		{
+			int triangleNum = values[0].size() / 3; //3 float/ vec3
+			glDrawArraysInstanced(mode, 0, triangleNum, amount);
+		}
+	}
+
 	void InitBuffers();
 
 	void On();
