@@ -16,8 +16,8 @@ CMyApp::CMyApp(void)
 	geom_AnimatedMan{"Model/model.dae"},
 	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
 	cameraRenderer (&shader_BoundingBox),
-	chunkManager(&geom_Box,&shader_LightRender),
-	chunk(&geom_Box, &shader_Instanced)
+	chunkManager(&geom_Box,&shader_Instanced),
+	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20))
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -187,7 +187,7 @@ bool CMyApp::Init()
 	quadObj->rotAngle = M_PI / 2.0;
 	gameObjs.push_back(quadObj);
 
-	//chunkManager.GenerateBoxes(gameObjs);
+	chunkManager.GenerateBoxes();
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
 	//suzanne->scale = glm::vec3(5,5,5);
@@ -229,7 +229,7 @@ bool CMyApp::Init()
 	
 	fbo_Rendered.CreateAttachments(m_width, m_height);
 
-	activeCamera = std::make_shared<TPSCamera>(0.1, 100, m_width, m_height, chunk.pos);
+	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, chunk.pos);
 
 	return true;
 }
@@ -319,7 +319,8 @@ void CMyApp::Render()
 		//Draw lights
 		lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
-		chunk.Draw(state);
+		//chunk.Draw(state);
+		chunkManager.Draw(state);
 
 		//////////////////////////////Environment map drawing!!!
 		shader_EnvMap.On();

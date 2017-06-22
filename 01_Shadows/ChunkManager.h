@@ -23,8 +23,8 @@ struct Chunk
 
 	ChunkData chunkInfo[3][3][3];
 
-	Chunk(Geometry* geom, gShaderProgram * shader)
-		:geom_Box(geom), shader(shader)
+	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 pos)
+		:geom_Box(geom), shader(shader), pos(pos)
 	{
 		const size_t cubeSize = GetCubeSize();
 		for(int k = 0; k < cubeSize; k++)
@@ -92,20 +92,32 @@ struct ChunkManager
 {
 	Geometry* geom_Box;
 	gShaderProgram * shader;
+
+	std::vector<Chunk> chunks;
 	ChunkManager(Geometry* geom_Box, gShaderProgram * shader)
 		:geom_Box(geom_Box), shader(shader)
 	{
 		//Random creation
 	}
-	void GenerateBoxes (std::vector<GameObj*> &gameObjs)
+	void GenerateBoxes ()
 	{
-		MaterialPtr material = std::make_shared<Material>(glm::vec3(0.1), glm::vec3(0.9), glm::vec3(0),0);
-		for(int i = 0 ; i < 100; i++)
+		glm::ivec3 startPos(15, 20, 5);
+		Chunk testChunk = Chunk(geom_Box, shader, startPos);
+		chunks.push_back(testChunk);
+		float size = testChunk.GetCubeSize() * testChunk.BlockSize * 2;
+		for(int j = -5 ; j < 6; j++)
 		{
-			glm::ivec3 pos = glm::linearRand(glm::ivec3(-10), glm::ivec3(10));
-			GameObj * obj = new GameObj(shader, geom_Box,material,pos);
-		
-			gameObjs.push_back (obj);
+			for(int i = -5; i < 6; i++)
+			{
+				chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,0,j) * size));
+			}
+		}
+	}
+	void Draw (RenderState state)
+	{
+		for(int i = 0; i < chunks.size(); i++)
+		{
+			chunks[i].Draw(state);
 		}
 	}
 };
