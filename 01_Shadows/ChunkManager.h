@@ -16,12 +16,12 @@ struct Chunk
 {
 	glm::ivec3 pos = glm::ivec3(15,20,5);
 
-	const float BlockSize = 5.0f;
+	const float BlockSize = 4.0f;
 	const size_t size = 1; //size * 2 + 1 = cube size
 	Geometry* geom_Box;
 	gShaderProgram * shader;
 
-	glm::vec3 positions[3][3][3];
+	ChunkData chunkInfo[3][3][3];
 
 	Chunk(Geometry* geom, gShaderProgram * shader)
 		:geom_Box(geom), shader(shader)
@@ -33,7 +33,9 @@ struct Chunk
 			{
 				for(int j = 0; j < cubeSize; j++)
 				{
-					positions[k][i][j] = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i,j,k) * BlockSize;
+					ChunkData &data = chunkInfo[i][j][k];
+					data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i,j,k) * BlockSize;
+					data.isExist = rand() % 3 == 0;
 				}
 			}
 		}
@@ -45,16 +47,17 @@ struct Chunk
 		{
 			shader->SetUniform("PV", state.PV);
 			shader->SetUniform("uScale", BlockSize);
-			UploadInstanceData ();
+			int amountOfCubes = UploadInstanceData ();
 
 			geom_Box->buffer.On();
-			geom_Box->buffer.DrawInstanced(GL_TRIANGLES, pow(GetCubeSize(), 3));
+			geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
 			geom_Box->buffer.Off();
 		}
 		shader->Off();
 	}
-	void UploadInstanceData ()
+	int UploadInstanceData ()
 	{
+		int numberOfExistingCubes = 0;
 		int index = 0;
 		const size_t cubeSize = GetCubeSize();
 		for (int k = 0; k < cubeSize; k++)
@@ -63,13 +66,20 @@ struct Chunk
 			{
 				for (int j = 0; j < cubeSize; j++)
 				{
-					//positions[MAX_INSTANCED];
-					std::string name("positions[" + std::to_string(index) + "]");
-					shader->SetUniform (name.c_str(), glm::vec3(positions[i][j][k]));
-					index++;
+					ChunkData & data = chunkInfo[i][j][k];
+					if(data.isExist)
+					{
+						//positions[MAX_INSTANCED];
+						std::string name("positions[" + std::to_string(index) + "]");
+						shader->SetUniform (name.c_str(), glm::vec3(data.pos));
+
+						index++;
+						numberOfExistingCubes++;
+					}
 				}
 			}
 		}
+		return numberOfExistingCubes;
 	}
 
 	size_t GetCubeSize()

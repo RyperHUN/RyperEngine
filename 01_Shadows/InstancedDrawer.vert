@@ -13,7 +13,6 @@ uniform float uScale;
 #define MAX_INSTANCED 125
 uniform vec3 positions[MAX_INSTANCED];
 
-
 //Interface Block
 out VS_OUT 
 {
