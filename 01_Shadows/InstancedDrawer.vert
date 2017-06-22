@@ -8,10 +8,10 @@ layout (location = 4) in vec4 boneId;
 
 uniform mat4 PV;
 uniform mat4 LightSpaceMtx;
+uniform float uScale;
 
 #define MAX_INSTANCED 125
 uniform vec3 positions[MAX_INSTANCED];
-uniform float instancedAmount;
 
 
 //Interface Block
@@ -31,11 +31,18 @@ mat4 Translate (vec3 pos)
 	return matrix;
 }
 
+mat4 GetModel(vec3 pos, float scale)
+{
+	mat4 matrix = mat4(scale);
+	matrix[3][3] = 1;
+	return Translate(pos) * matrix;
+}
+
 void main()
 {
 	vec3 wPosition = positions[gl_InstanceID];
-	mat4 M = Translate(wPosition);
-	mat4 Minv = Translate(-wPosition);
+	mat4 M = GetModel(wPosition, uScale);
+	mat4 Minv = GetModel (-wPosition, 1 / uScale);
 	mat4 PVM = PV * M;
 
 	vec4 objSpacePos    = vec4(vs_in_pos, 1 );

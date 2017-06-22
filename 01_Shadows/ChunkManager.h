@@ -5,14 +5,23 @@
 #include <glm/gtc/random.hpp>
 #include "UtilityFuncs.h"
 
+///TODO Better speed if these are all uniforms
+struct ChunkData
+{
+	glm::vec3 pos; ///TODO Can be ivec3
+	bool isExist;
+};
+
 struct Chunk
 {
-	glm::ivec3 pos = glm::ivec3(10,10,5);
-	size_t size = 2; //size * 2 + 1 = cube size
+	glm::ivec3 pos = glm::ivec3(15,20,5);
+
+	const float BlockSize = 5.0f;
+	const size_t size = 1; //size * 2 + 1 = cube size
 	Geometry* geom_Box;
 	gShaderProgram * shader;
 
-	glm::ivec3 positions[5][5][5];
+	glm::vec3 positions[3][3][3];
 
 	Chunk(Geometry* geom, gShaderProgram * shader)
 		:geom_Box(geom), shader(shader)
@@ -24,7 +33,7 @@ struct Chunk
 			{
 				for(int j = 0; j < cubeSize; j++)
 				{
-					positions[k][i][j] = pos + glm::ivec3(size + 1) - glm::ivec3(i,j,k);
+					positions[k][i][j] = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i,j,k) * BlockSize;
 				}
 			}
 		}
@@ -35,6 +44,7 @@ struct Chunk
 		shader->On();
 		{
 			shader->SetUniform("PV", state.PV);
+			shader->SetUniform("uScale", BlockSize);
 			UploadInstanceData ();
 
 			geom_Box->buffer.On();

@@ -16,5 +16,5 @@ void main()
 {
 	vec3 normal = normalize (FS.normal);
 
-	fs_out_col = vec4(FS.texCoord, 0, 1);
+	fs_out_col = vec4(abs(normal), 1);
 }
