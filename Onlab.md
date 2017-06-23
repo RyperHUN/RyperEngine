@@ -32,7 +32,11 @@ Kerdesek:
 	-Hogyan kell Transparent renderinget csinalni?
 		-Minecraftba ottvan egy virag az 2 quad X alakba, ezt hogyan lehetne szepen? Sehogy? Csak discardal? Az nem lassu?
 	-Uniform buffer object mikor jo pl? 
-	
+	-Texturat hogyan kene feltolteni Blockokhoz? 
+		-Itt az a zavaro hogy van olyan block amihez tobb texture tartozik pl Fu
+	- Hogyan hasznalj profilert? 
+		-Van ez az NSight de a kimenetet nem nagyon tudom ertelmezni
+		-Hogyan talalom meg hol a bottleneck
 	
 Kerdesek:
 	-Miert lenghet ki egy kicsit a jobb (szembol bal) laba a karatkernek?

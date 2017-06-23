@@ -90,7 +90,8 @@ int main( int argc, char* args[] )
     }	
 
 	// megjelenítés: várjuk be a vsync-et
-	SDL_GL_SetSwapInterval(1);
+	SDL_GL_SetSwapInterval(0); //No VSYNC
+	//SDL_GL_SetSwapInterval(1); //VSYNC ON
 
 	// indítsuk el a GLEW-t
 	GLenum error = glewInit();
@@ -139,6 +140,8 @@ int main( int argc, char* args[] )
 		return 1;
 	}
 
+	size_t frameCount = 0;
+	size_t lastTime = SDL_GetTicks ();
 	while (!quit)
 	{
 		// amíg van feldolgozandó üzenet dolgozzuk fel mindet:
@@ -180,6 +183,19 @@ int main( int argc, char* args[] )
 
 		app.Update();
 		app.Render();
+
+		//Show Fps
+		frameCount++;
+		size_t timeDiff = SDL_GetTicks() - lastTime;
+		if (timeDiff >= 1000) // 1 Sec elapsed
+		{
+			window_title.str(std::string());
+			window_title << timeDiff / (float)frameCount << " ms/Frame, " << frameCount << " FPS";
+			SDL_SetWindowTitle(win, window_title.str().c_str());
+
+			lastTime = SDL_GetTicks();
+			frameCount = 0;
+		}
 
 		SDL_GL_SwapWindow(win);
 	}
