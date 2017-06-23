@@ -140,6 +140,10 @@ int main( int argc, char* args[] )
 		return 1;
 	}
 
+	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
+	//glEnable(GL_MULTISAMPLE);
+
 	size_t frameCount = 0;
 	size_t lastTime = SDL_GetTicks ();
 	while (!quit)

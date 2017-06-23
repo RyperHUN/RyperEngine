@@ -72,6 +72,7 @@ bool CMyApp::Init()
 
 	glEnable(GL_CULL_FACE);		// kapcsoljuk be a hatrafele nezo lapok eldobasat
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
+	glEnable(GL_MULTISAMPLE);
 
 	geom_Sphere = Sphere (1.0f);
 	geom_Sphere.Create (30,30);
@@ -283,7 +284,6 @@ void CMyApp::Render()
 
 	state.PV = lightProjection * lightView;
 	state.LightSpaceMtx = lightSpaceMatrix;
-	glDisable(GL_CULL_FACE);
 
 	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT);
 	fbo_Shadow.On();
@@ -295,15 +295,20 @@ void CMyApp::Render()
 	}
 	fbo_Shadow.Off();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 
 	///////////////////////////Normal rendering
-	if(IsFrameBufferRendering)
+	//if(IsFrameBufferRendering)
 	{
 		fbo_Rendered.CreateAttachments(m_width, m_height);
 		fbo_Rendered.On();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	{
+		fbo_RenderedMSAA.CreateMultisampleAttachments(m_width, m_height);
+		fbo_RenderedMSAA.On();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
 		glViewport(0, 0, m_width, m_height);
 
 		shader_Simple.On();
@@ -311,10 +316,10 @@ void CMyApp::Render()
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 		state.PV = activeCamera->GetProjView();
-		for(auto& obj : gameObjs)
-				obj->Draw (state);
+		//for(auto& obj : gameObjs)
+		//		obj->Draw (state);
 
-		gameObjs[0]->Draw(state, &shader_NormalVecDraw);
+		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 
 		//Draw lights
 		lightRenderer.Draw(activeCamera->GetProjView());
@@ -323,7 +328,7 @@ void CMyApp::Render()
 		chunkManager.Draw(state);
 
 		//////////////////////////////Environment map drawing!!!
-		shader_EnvMap.On();
+		/*shader_EnvMap.On();
 		{
 			buffer_Quad.On ();
 
@@ -333,7 +338,7 @@ void CMyApp::Render()
 			
 			buffer_Quad.Off ();
 		}
-		shader_EnvMap.Off();
+		shader_EnvMap.Off();*/
 		//////////////////////////////Shadow map debug texture drawing
 		shader_DebugQuadTexturer.On();
 		{
@@ -351,10 +356,16 @@ void CMyApp::Render()
 
 		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 	}
-	if(IsFrameBufferRendering)
+	//if(IsFrameBufferRendering)
 	{
 		fbo_Rendered.Off();
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_Rendered.FBO);
+		glBlitFramebuffer(0,0,m_width, m_height, 0,0,m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		shader_DebugQuadTexturer.On();
 		{
 			buffer_Quad.On();

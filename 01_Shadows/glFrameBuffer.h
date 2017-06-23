@@ -5,10 +5,10 @@
 
 class glFrameBuffer
 {
-	GLuint FBO = -1;
 	GLuint rboId = -1;
 public:
 	GLuint textureId = -1;
+	GLuint FBO = -1;
 	glFrameBuffer()
 	{
 		glGenFramebuffers(1, &FBO);
@@ -62,6 +62,42 @@ public:
 
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 				std::cout << "ERROR::FRAMEBUFFER:: ShadowFramebuffer is not complete!" << std::endl;
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void CreateMultisampleAttachments(int width, int height)
+	{
+		if (textureId != -1)
+			glDeleteTextures(1, &textureId);
+		if (rboId != -1)
+			glDeleteRenderbuffers(1, &rboId);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+		{
+			static const int samples = 4;
+			glGenTextures(1, &textureId);
+			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureId);
+			{
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB, width, height, GL_TRUE);
+			}
+			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+
+			//Attach to FBO
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, textureId, 0);
+
+			//CReate DEPTH render buffer object
+			//RBO faster > texture but write only
+			glGenRenderbuffers(1, &rboId);
+			glBindRenderbuffer(GL_RENDERBUFFER, rboId);
+			glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
+			glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+			//Attach
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rboId);
+
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}

@@ -81,6 +81,7 @@ protected:
 	const bool IsFrameBufferRendering = false;
 	glFrameBuffer fbo_Rendered;
 	glFrameBuffer fbo_Shadow;
+	glFrameBuffer fbo_RenderedMSAA;
 	
 	GLuint texture_HeightMap;
 	const GLuint SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;

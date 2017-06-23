@@ -87,9 +87,10 @@ void main()
 	if(isInvertY)
 		tex = vec2(fragTex.x, 1.0 - fragTex.y);
 
+	//fs_out_col = vec4(tex, 0, 1);
 	//fs_out_col = KernelProcess(tex, EdgeDetectKernel);
 	//fs_out_col = InvertColor (tex);
 	//fs_out_col = Grayscale(tex);
-	fs_out_col = ToneMapping(tex, 1.0);
-	//fs_out_col = texture(loadedTex, tex);
+	//fs_out_col = ToneMapping(tex, 1.0);
+	fs_out_col = texture(loadedTex, tex);
 }  
