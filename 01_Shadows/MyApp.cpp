@@ -416,6 +416,14 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			isWireFrame = !isWireFrame;
 			break;
+		case SDLK_9:
+			IsFrameBufferRendering = !IsFrameBufferRendering;
+			std::cout << "PostProcessing " << IsFrameBufferRendering << std::endl; //Log
+			break;
+		case SDLK_8:
+			IsMSAAOn = !IsMSAAOn;
+			std::cout << "MSAAOn " << IsMSAAOn << std::endl;//Log
+			break;
 		case SDLK_c:
 			std::swap(activeCamera, secondaryCamera);
 			break;

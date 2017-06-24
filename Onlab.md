@@ -24,6 +24,7 @@ Minecraft:
 	
 	
 Kerdesek:
+	-Megoldottam az ObjectPickingest ahogy emlitetted, nem olvasok readPixelt, viszont ez nem ertem miert mukodik??
 	-Forgatasnal (csak balra jobbra karaktert) miert a 0,0,1 vektor korul kell elforgatnom hogy jo legyen??? 
 		-Azert mert masik oldalrol kell szorozni :)
 	-Valahogy kinyerheto egy quaterniobol hogy egy adott tengely menten mennyire van elforgatva?
