@@ -17,7 +17,8 @@ CMyApp::CMyApp(void)
 	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
 	cameraRenderer (&shader_BoundingBox),
 	chunkManager(&geom_Box,&shader_Instanced),
-	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20))
+	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20)),
+	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -315,6 +316,7 @@ void CMyApp::Render()
 		//chunk.Draw(state);
 		chunkManager.Draw(state);
 
+		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 		//////////////////////////////Environment map drawing!!!
 		shader_EnvMap.On();
 		{
@@ -328,21 +330,9 @@ void CMyApp::Render()
 		}
 		shader_EnvMap.Off();
 		//////////////////////////////Shadow map debug texture drawing
-		shader_DebugQuadTexturer.On();
-		{
-			buffer_Quad.On();
-			
-				shader_DebugQuadTexturer.SetTexture("loadedTex", 15, fbo_Shadow.textureId);
-				shader_DebugQuadTexturer.SetUniform("M",
-					glm::translate(glm::vec3(0.5,0.5,0))*glm::scale(glm::vec3(0.5,0.5,1)));
-				shader_DebugQuadTexturer.SetUniform("isInvertY", false);
-				//shader_DebugQuadTexturer.SetUniform("M", glm::mat4(1.0));
-				//buffer_Quad.DrawIndexed(GL_TRIANGLES);
-			buffer_Quad.Off();
-		}
-		shader_DebugQuadTexturer.Off();
+		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1));
+		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
 
-		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 	}
 	HandleFrameBufferRendering();
 }
@@ -380,19 +370,7 @@ void CMyApp::HandleFrameBufferRendering ()
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		shader_DebugQuadTexturer.On();
-		{
-			buffer_Quad.On();
-			{
-				shader_DebugQuadTexturer.SetTexture("loadedTex", 15, fbo_Rendered.textureId);
-				shader_DebugQuadTexturer.SetUniform("M", glm::mat4(1.0));
-				shader_DebugQuadTexturer.SetUniform("isInvertY", true);
-
-				buffer_Quad.DrawIndexed(GL_TRIANGLES);
-			}
-			buffer_Quad.Off();
-		}
-		shader_DebugQuadTexturer.Off();
+		quadTexturer.Draw(fbo_Rendered.textureId, true);
 	}
 	else if (IsMSAAOn)
 	{

@@ -23,6 +23,7 @@
 
 #include "Defs.h"
 #include "ChunkManager.h"
+#include "Drawer.h"
 
 class CMyApp
 {
@@ -110,6 +111,7 @@ protected:
 
 	LightRenderer lightRenderer;
 	BoundingBoxRenderer boundingBoxRenderer;
+	QuadTexturer quadTexturer;
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete
 };

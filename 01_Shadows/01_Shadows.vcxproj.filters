@@ -144,6 +144,9 @@
     <ClInclude Include="ChunkManager.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Drawer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">
