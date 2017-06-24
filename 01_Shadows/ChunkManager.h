@@ -41,12 +41,13 @@ struct Chunk
 		}
 	}
 
-	void Draw(RenderState state)
+	void Draw(RenderState state, GLuint texId)
 	{
 		shader->On();
 		{
 			shader->SetUniform("PV", state.PV);
 			shader->SetUniform("uScale", BlockSize);
+			shader->SetTexture("diffuseTex", 0,  texId);
 			int amountOfCubes = UploadInstanceData ();
 
 			geom_Box->buffer.On();
@@ -113,11 +114,11 @@ struct ChunkManager
 			}
 		}
 	}
-	void Draw (RenderState state)
+	void Draw (RenderState state, GLuint texId)
 	{
 		for(int i = 0; i < chunks.size(); i++)
 		{
-			chunks[i].Draw(state);
+			chunks[i].Draw(state, texId);
 		}
 	}
 };

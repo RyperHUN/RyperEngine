@@ -157,6 +157,7 @@ bool CMyApp::Init()
 	texture_Map		  = Util::TextureFromFile("texture.png");
 	texture_HeightMap = Util::TextureFromFile("HeightMap.png");
 	textureCube_id    = LoadCubeMap("pictures/skybox/");
+	tex_dirt = Util::TextureFromFile ("pictures/blocks/dirt.png");
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("suzanne.obj");
@@ -310,16 +311,16 @@ void CMyApp::Render()
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 		state.PV = activeCamera->GetProjView();
-		for(auto& obj : gameObjs)
+		/*for(auto& obj : gameObjs)
 				obj->Draw (state);
 
-		gameObjs[0]->Draw(state, &shader_NormalVecDraw);
+		gameObjs[0]->Draw(state, &shader_NormalVecDraw);*/
 
 		//Draw lights
 		lightRenderer.Draw(activeCamera->GetProjView());
-		boundingBoxRenderer.Draw(state);
-		//chunk.Draw(state);
-		//chunkManager.Draw(state);
+		//boundingBoxRenderer.Draw(state);
+		//chunk.Draw(state, tex_dirt);
+		chunkManager.Draw(state, tex_dirt);
 
 		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 		//////////////////////////////Environment map drawing!!!

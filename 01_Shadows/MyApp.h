@@ -59,6 +59,7 @@ protected:
 	// OpenGL-es dolgok
 	GLuint texture_Map; // textúra erõforrás azonosító
 	GLuint m_fbo; //Frame Buffer Object
+	GLuint tex_dirt;
 
 	CameraPtr	activeCamera;
 	//TODO Camera manager
