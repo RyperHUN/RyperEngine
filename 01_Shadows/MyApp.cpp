@@ -295,22 +295,7 @@ void CMyApp::Render()
 	}
 	fbo_Shadow.Off();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
-
-	///////////////////////////Normal rendering
-	if(IsFrameBufferRendering)
-	{
-		fbo_Rendered.CreateAttachments(m_width, m_height);
-		fbo_Rendered.On();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	if(IsMSAAOn)
-	{
-		fbo_RenderedMSAA.CreateMultisampleAttachments(m_width, m_height);
-		fbo_RenderedMSAA.On(); //IF offscreen rendering and msaa is too on, this should be the second;
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
+	BindFrameBuffersForRender ();
 	{
 		glViewport(0, 0, m_width, m_height);
 
@@ -319,10 +304,10 @@ void CMyApp::Render()
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 		state.PV = activeCamera->GetProjView();
-		//for(auto& obj : gameObjs)
-		//		obj->Draw (state);
+		for(auto& obj : gameObjs)
+				obj->Draw (state);
 
-		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
+		gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 
 		//Draw lights
 		lightRenderer.Draw(activeCamera->GetProjView());
@@ -331,7 +316,7 @@ void CMyApp::Render()
 		chunkManager.Draw(state);
 
 		//////////////////////////////Environment map drawing!!!
-		/*shader_EnvMap.On();
+		shader_EnvMap.On();
 		{
 			buffer_Quad.On ();
 
@@ -341,7 +326,7 @@ void CMyApp::Render()
 			
 			buffer_Quad.Off ();
 		}
-		shader_EnvMap.Off();*/
+		shader_EnvMap.Off();
 		//////////////////////////////Shadow map debug texture drawing
 		shader_DebugQuadTexturer.On();
 		{
@@ -359,9 +344,34 @@ void CMyApp::Render()
 
 		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 	}
-	if(IsFrameBufferRendering)
+	HandleFrameBufferRendering();
+}
+
+void CMyApp::BindFrameBuffersForRender ()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
+
+														///////////////////////////Normal rendering
+	if (IsFrameBufferRendering)
 	{
-		if(IsMSAAOn)
+		fbo_Rendered.CreateAttachments(m_width, m_height);
+		fbo_Rendered.On();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	if (IsMSAAOn)
+	{
+		fbo_RenderedMSAA.CreateMultisampleAttachments(m_width, m_height);
+		fbo_RenderedMSAA.On(); //IF offscreen rendering and msaa is too on, this should be the second;
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+}
+
+void CMyApp::HandleFrameBufferRendering ()
+{
+	if (IsFrameBufferRendering)
+	{
+		if (IsMSAAOn)
 		{
 			fbo_Rendered.Off();
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
@@ -384,7 +394,7 @@ void CMyApp::Render()
 		}
 		shader_DebugQuadTexturer.Off();
 	}
-	else if(IsMSAAOn)
+	else if (IsMSAAOn)
 	{
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

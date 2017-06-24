@@ -35,6 +35,8 @@ public:
 
 	void Update();
 	void Render();
+	void HandleFrameBufferRendering();
+	void BindFrameBuffersForRender ();
 	void FrustumCulling(CameraPtr );
 
 	void KeyboardDown(SDL_KeyboardEvent&);
