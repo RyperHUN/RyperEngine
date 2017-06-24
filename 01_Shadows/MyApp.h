@@ -50,6 +50,8 @@ public:
 	void Resize(int, int);
 
 	GLuint LoadCubeMap (std::string prefix);
+private:
+	float ReadDepthValueNdc(float pX, float pY);
 protected:
 	// belsõ eljárások
 	GLuint GenTexture();

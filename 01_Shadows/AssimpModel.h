@@ -366,7 +366,7 @@ struct Loader
 			if (!skip)
 			{   // if texture hasn't been loaded already, load it
 				Texture texture;
-				texture.id = Util::TextureFromFileA(str.C_Str(), directory);
+				texture.id = Util::TextureFromFile(str.C_Str(), directory);
 				texture.type = typeName;
 				texture.path = str;
 				textures.push_back(texture);

@@ -95,7 +95,6 @@
     <ClCompile Include="MyApp.cpp" />
     <ClCompile Include="ObjParser_OGL3.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="UtilityFuncs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssimpMesh.h" />

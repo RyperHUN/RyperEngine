@@ -43,9 +43,6 @@
     <ClCompile Include="gCamera.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="UtilityFuncs.cpp">
-      <Filter>Utils\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

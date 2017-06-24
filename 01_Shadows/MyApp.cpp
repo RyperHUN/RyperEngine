@@ -139,9 +139,8 @@ bool CMyApp::Init()
 	buffer_Quad.InitBuffers ();
 
 	geom_Quad = TriangleMesh(buffer_Quad);
-	//
-	// shaderek betöltése
-	//
+	//////////////////////////////////////////////////////////
+	// shaderek loading
 	if(!LoadShaders ())
 		return false;
 
@@ -318,9 +317,9 @@ void CMyApp::Render()
 
 		//Draw lights
 		lightRenderer.Draw(activeCamera->GetProjView());
-		//boundingBoxRenderer.Draw(state);
+		boundingBoxRenderer.Draw(state);
 		//chunk.Draw(state);
-		chunkManager.Draw(state);
+		//chunkManager.Draw(state);
 
 		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 		//////////////////////////////Environment map drawing!!!
@@ -442,24 +441,16 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 	{
 		int pX = mouse.x; //Pixel X
 		int pY = mouse.y;
-		///c? - Clipping Space koordinatak - Ekkor vagyunk az egysegnegyzetbe
+		///c? - Clipping Space == NDC koordinatak - Ekkor vagyunk az egysegnegyzetbe
 		float cX = 2.0f * pX / m_width - 1;	// flip y axis
 		float cY = 1.0f - 2.0f * pY / m_height;
 
-		float depth;
-		pY = m_height- pY; // Igy az origo a bal also sarokba lesz.
-		if(IsFrameBufferRendering)	
-			fbo_Rendered.On();
-		{
-			glReadPixels(pX, pY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-		}
-		if (IsFrameBufferRendering) 
-			fbo_Rendered.Off();
+		///Reading from Depth buffer, not the fastest
+		//float cZ = ReadDepthValueNdc (pX, pY);
 
-		float cZ = depth * 2 - 1;
-
-		glm::vec4 clipping(cX, cY, cZ, 1.0);
-		glm::mat4 PVInv =  glm::inverse(activeCamera->GetViewMatrix()) * glm::inverse(activeCamera->GetProj());
+		//glm::vec4 clipping(cX, cY, cZ, 1.0);
+		glm::vec4 clipping(cX, cY, 0, 1.0);
+		glm::mat4 PVInv =  glm::inverse(activeCamera->GetViewMatrix()) * glm::inverse(activeCamera->GetProj()); //RayDirMatrix can be added here
 		glm::vec4 world4 = PVInv * clipping;
 		glm::vec3 world = glm::vec3(world4) / world4.w;
 
@@ -514,4 +505,20 @@ GLuint CMyApp::LoadCubeMap(std::string prefix)
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	return textureId;
+}
+
+float CMyApp::ReadDepthValueNdc (float pX, float pY)
+{
+	float depth;
+	pY = m_height- pY; // Igy az origo a bal also sarokba lesz.
+	if(IsFrameBufferRendering)	
+		fbo_Rendered.On();
+	{
+		glReadPixels(pX, pY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	}
+	if (IsFrameBufferRendering) 
+		fbo_Rendered.Off();
+
+	float cZ = depth * 2 - 1;
+	return cZ;
 }

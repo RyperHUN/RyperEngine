@@ -75,7 +75,7 @@ namespace Util
 
 		return textureID;
 	}
-	static inline unsigned int TextureFromFileA(const char *path, const std::string &directory, bool gamma = false)
+	static inline unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false)
 	{
 		std::string filename = std::string(path);
 		filename = directory + '/' + filename;
