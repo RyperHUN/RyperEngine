@@ -31,6 +31,7 @@ public:
 	CMyApp(void);
 	~CMyApp(void);
 
+	bool LoadShaders ();
 	bool Init();
 	void Clean();
 

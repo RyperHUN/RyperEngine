@@ -66,6 +66,57 @@ GLuint CMyApp::GenTexture()
 	return tmpID;
 }
 
+bool CMyApp::LoadShaders ()
+{
+	shader_Simple.CreateShadowShader();
+	shader_Simple.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
+	shader_Simple.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
+	if(!shader_Simple.LinkProgram()) return false;
+
+	shader_NormalVecDraw.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
+	shader_NormalVecDraw.AttachShader(GL_GEOMETRY_SHADER, "normalDrawer.geom");
+	shader_NormalVecDraw.AttachShader(GL_FRAGMENT_SHADER, "normalDrawer.frag");
+	if(!shader_NormalVecDraw.LinkProgram()) return false;
+
+	shader_Instanced.AttachShader(GL_VERTEX_SHADER, "InstancedDrawer.vert");
+	shader_Instanced.AttachShader(GL_FRAGMENT_SHADER, "InstancedDrawer.frag");
+	if(!shader_Instanced.LinkProgram()) return false;
+
+
+	// skybox shader
+	shader_EnvMap.CreateShadowShader();
+	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
+	shader_EnvMap.AttachShader(GL_FRAGMENT_SHADER, "envmap.frag");
+	if (!shader_EnvMap.LinkProgram())  return false;
+
+	///TODO Delete shadow shader
+	shader_Shadow.AttachShader(GL_VERTEX_SHADER, "shadowShader.vert");
+	shader_Shadow.AttachShader(GL_FRAGMENT_SHADER, "shadowShader.frag");
+	if (!shader_Shadow.LinkProgram()) return false;
+
+	shader_DebugQuadTexturer.CreateShadowShader();
+	shader_DebugQuadTexturer.AttachShader(GL_VERTEX_SHADER, "quadTexturer.vert");
+	shader_DebugQuadTexturer.AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
+	if (!shader_DebugQuadTexturer.LinkProgram()) return false;
+
+	shader_LightRender.CreateShadowShader();
+	shader_LightRender.AttachShader(GL_VERTEX_SHADER, "LightShader.vert");
+	shader_LightRender.AttachShader(GL_FRAGMENT_SHADER, "LightShader.frag");
+	if (!shader_LightRender.LinkProgram()) return false;
+
+	shader_BoundingBox.CreateShadowShader();
+	shader_BoundingBox.AttachShader(GL_VERTEX_SHADER, "boundingBoxShader.vert");
+	shader_BoundingBox.AttachShader(GL_FRAGMENT_SHADER, "boundingBoxShader.frag");
+	if (!shader_BoundingBox.LinkProgram()) return false;
+
+	shader_Frustum.CreateShadowShader();
+	shader_Frustum.AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
+	shader_Frustum.AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
+	if (!shader_Frustum.LinkProgram()) return false;
+
+	return true;
+}
+
 bool CMyApp::Init()
 {
 	// törlési szín legyen kékes
@@ -91,55 +142,10 @@ bool CMyApp::Init()
 	//
 	// shaderek betöltése
 	//
-	shader_Simple.CreateShadowShader();
-	shader_Simple.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
-	shader_Simple.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
-	shader_Simple.LinkProgram ();
-
-	shader_NormalVecDraw.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
-	shader_NormalVecDraw.AttachShader(GL_GEOMETRY_SHADER, "normalDrawer.geom");
-	shader_NormalVecDraw.AttachShader(GL_FRAGMENT_SHADER, "normalDrawer.frag");
-	shader_NormalVecDraw.LinkProgram ();
-
-	shader_Instanced.AttachShader(GL_VERTEX_SHADER, "InstancedDrawer.vert");
-	shader_Instanced.AttachShader(GL_FRAGMENT_SHADER, "InstancedDrawer.frag");
-	shader_Instanced.LinkProgram ();
-
-
-	// skybox shader
-	shader_EnvMap.CreateShadowShader();
-	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
-	shader_EnvMap.AttachShader(GL_FRAGMENT_SHADER, "envmap.frag");
-
-	///TODO Delete shadow shader
-	shader_Shadow.AttachShader(GL_VERTEX_SHADER, "shadowShader.vert");
-	shader_Shadow.AttachShader(GL_FRAGMENT_SHADER, "shadowShader.frag");
-	shader_Shadow.LinkProgram ();
-
-	shader_DebugQuadTexturer.CreateShadowShader();
-	shader_DebugQuadTexturer.AttachShader (GL_VERTEX_SHADER, "quadTexturer.vert");
-	shader_DebugQuadTexturer.AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
-	shader_DebugQuadTexturer.LinkProgram ();
-
-	shader_LightRender.CreateShadowShader();
-	shader_LightRender.AttachShader(GL_VERTEX_SHADER, "LightShader.vert");
-	shader_LightRender.AttachShader(GL_FRAGMENT_SHADER, "LightShader.frag");
-	shader_LightRender.LinkProgram();
-
-	shader_BoundingBox.CreateShadowShader();
-	shader_BoundingBox.AttachShader(GL_VERTEX_SHADER, "boundingBoxShader.vert");
-	shader_BoundingBox.AttachShader(GL_FRAGMENT_SHADER, "boundingBoxShader.frag");
-	shader_BoundingBox.LinkProgram();
-
-	shader_Frustum.CreateShadowShader();
-	shader_Frustum.AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
-	shader_Frustum.AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
-	shader_Frustum.LinkProgram();
-
-	if (!shader_EnvMap.LinkProgram())
-	{
+	if(!LoadShaders ())
 		return false;
-	}
+
+	
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
 	//
 	fbo_Shadow.CreateShadowAttachment (SHADOW_WIDTH, SHADOW_HEIGHT);
