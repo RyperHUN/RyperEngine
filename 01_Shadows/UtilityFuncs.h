@@ -7,7 +7,8 @@
 #include <string>
 #include <iostream>
 
-struct Util {
+namespace Util 
+{
 	//Returns [lowerBound, upperBound]
 	inline static int randomPointI(int lowerBound, int upperBound)
 	{
@@ -23,15 +24,23 @@ struct Util {
 		return vector;
 	}
 	//[0, 1]
-	static float randomPoint();
-	//returns random vec [-1,1]
-	static glm::vec3 randomVec();
-
-	static inline unsigned int TextureFromFileA(const char *path, const std::string &directory, bool gamma = false)
+	inline static float randomPoint()
 	{
-		std::string filename = std::string(path);
-		filename = directory + '/' + filename;
+		int modulus = 20000;
+		float random = rand() % modulus;
+		random = random / (modulus / 2.0f) - 1.0f;
+		return random;
+	}
+	//returns random vec [-1,1]
+	inline static glm::vec3 randomVec()
+	{
+		return glm::vec3(randomPoint(), randomPoint(), randomPoint());
+	}
 
+	//TODO Add gamma support
+	static inline unsigned int TextureFromFile(const char *path, bool gamma = false)
+	{
+		std::string filename (path);
 		unsigned int textureID;
 		glGenTextures(1, &textureID);
 
@@ -66,4 +75,42 @@ struct Util {
 
 		return textureID;
 	}
-};
+	static inline unsigned int TextureFromFileA(const char *path, const std::string &directory, bool gamma = false)
+	{
+		std::string filename = std::string(path);
+		filename = directory + '/' + filename;
+
+		return Util::TextureFromFile(filename.c_str(), gamma);
+	}
+
+	static inline void TextureFromFileAttach(const char * path, GLuint role)
+	{
+		std::string filename(path);
+		unsigned int textureID;
+		glGenTextures(1, &textureID);
+
+		int width, height, nrComponents;
+		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+		if (data)
+		{
+			GLenum format;
+			if (nrComponents == 1)
+				format = GL_RED;
+			else if (nrComponents == 3)
+				format = GL_RGB;
+			else if (nrComponents == 4)
+				format = GL_RGBA;
+
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			glTexImage2D(role, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Texture failed to load at path: " << path << std::endl;
+			stbi_image_free(data);
+		}
+	}
+
+}; //NS Util
