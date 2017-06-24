@@ -22,8 +22,6 @@
 #include <vector>
 using namespace std;
 
-unsigned int TextureFromFileA(const char *path, const string &directory, bool gamma = false);
-
 struct Geometry;
 
 //struct Mesh
@@ -368,7 +366,7 @@ struct Loader
 			if (!skip)
 			{   // if texture hasn't been loaded already, load it
 				Texture texture;
-				texture.id = TextureFromFileA(str.C_Str(), directory);
+				texture.id = Util::TextureFromFileA(str.C_Str(), directory);
 				texture.type = typeName;
 				texture.path = str;
 				textures.push_back(texture);

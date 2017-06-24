@@ -55,9 +55,6 @@
     <ClCompile Include="FrustumG.cpp">
       <Filter>Utils\Helpers\Math</Filter>
     </ClCompile>
-    <ClCompile Include="AssimpModel.cpp">
-      <Filter>Utils\Helpers\Loader</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh_OGL3.cpp">
       <Filter>Utils\Helpers\Loader</Filter>
     </ClCompile>

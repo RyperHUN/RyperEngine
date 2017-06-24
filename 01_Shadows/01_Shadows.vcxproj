@@ -85,7 +85,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AssimpModel.cpp" />
     <ClCompile Include="Bezier.cpp" />
     <ClCompile Include="FrustumG.cpp" />
     <ClCompile Include="gCamera.cpp" />
