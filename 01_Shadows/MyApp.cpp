@@ -294,21 +294,24 @@ void CMyApp::Render()
 			obj->Draw(state,obj->shader->GetShadowShader());
 	}
 	fbo_Shadow.Off();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
 
 	///////////////////////////Normal rendering
-	//if(IsFrameBufferRendering)
+	if(IsFrameBufferRendering)
 	{
 		fbo_Rendered.CreateAttachments(m_width, m_height);
 		fbo_Rendered.On();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+	if(IsMSAAOn)
 	{
 		fbo_RenderedMSAA.CreateMultisampleAttachments(m_width, m_height);
-		fbo_RenderedMSAA.On();
+		fbo_RenderedMSAA.On(); //IF offscreen rendering and msaa is too on, this should be the second;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
+	}
+	{
 		glViewport(0, 0, m_width, m_height);
 
 		shader_Simple.On();
@@ -356,15 +359,16 @@ void CMyApp::Render()
 
 		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 	}
-	//if(IsFrameBufferRendering)
+	if(IsFrameBufferRendering)
 	{
-		fbo_Rendered.Off();
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_Rendered.FBO);
-		glBlitFramebuffer(0,0,m_width, m_height, 0,0,m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		if(IsMSAAOn)
+		{
+			fbo_Rendered.Off();
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_Rendered.FBO);
+			glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		}
 
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		shader_DebugQuadTexturer.On();
 		{
@@ -379,6 +383,14 @@ void CMyApp::Render()
 			buffer_Quad.Off();
 		}
 		shader_DebugQuadTexturer.Off();
+	}
+	else if(IsMSAAOn)
+	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 }
 

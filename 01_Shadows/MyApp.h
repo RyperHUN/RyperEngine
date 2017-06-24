@@ -79,6 +79,7 @@ protected:
 
 	int			m_width = 640, m_height = 480;
 	const bool IsFrameBufferRendering = false;
+	const bool IsMSAAOn = true;
 	glFrameBuffer fbo_Rendered;
 	glFrameBuffer fbo_Shadow;
 	glFrameBuffer fbo_RenderedMSAA;
