@@ -24,21 +24,63 @@ Minecraft:
 	
 	
 Kerdesek:
+	-Megkerdez hogy mihez vegyem fel a szakdogat, mit irjak, mi legyen a tema cime?
+		-[Rendering Engine] vs Minecraft Jatek.
+		- IIT-s szakdoga de ehhez kell papirmunka hogy feltudjam venni.
+		
+	-Szakdogaba ehhez vigan irhatok dolgokat?
+		-Itt pl a Frustum Culling, Karakter Animcio, Arnyekok(Shadow Map, PCFG), Anti Aliasing amik igy eszembe jutottak hogy irni lehetne
+		roluk.
+		-Gondolom ugy kozelitsem meg ezeket hogy valamihez kepest osszehasonlitom, hogy ez ennel jobb de pl ennel rosszabb, es akar egy
+		 tablazatot is belerakhatok ilyen sebessegekkel stb.
+		 
+-Elozo modszer, Sajat resz mit csinaltam, utana a felhasznalt technologia, ertekeles osszehasonlitas.		 
+	
+
+	- Hogyan hasznalj profilert? 
+		[-Masik program]
+		-Hogyan talalom meg hol a bottleneck
 	-Megoldottam az ObjectPickingest ahogy emlitetted, nem olvasok readPixelt, viszont ez nem ertem miert mukodik??
-	-Forgatasnal (csak balra jobbra karaktert) miert a 0,0,1 vektor korul kell elforgatnom hogy jo legyen??? 
-		-Azert mert masik oldalrol kell szorozni :)
-	-Valahogy kinyerheto egy quaterniobol hogy egy adott tengely menten mennyire van elforgatva?
-		- Karakterhez kene pl Y tengely menten mennyire fordult el
+		-  A z koordinata csak a hosszat befojasolja.
 	-Texture Buffer mire jo?
+		- TBuffer -> 2 fajta memoria, ez az egyik. Az a kulonbseg milyen modon eri el a grafikus kartya, olyan mintha shader
+			constans. Textura memoria olvasas, nem globalis. Tobb adat elfer benne. Milyen eleres hatekony. Ha ossze vissza kell
+			belole adat akkor ez jobb (Random eleres hatekonyabb)
+			PL:[Mesh RayTrace]
+		- CBuffer -> Uniform -> GLobal memoria olvasas. -> Ide azt erdemes rakni ami mindig kell. Pl Matrix. (Random eleres nem hatekony)
 	-Hogyan kell Transparent renderinget csinalni?
 		-Minecraftba ottvan egy virag az 2 quad X alakba, ezt hogyan lehetne szepen? Sehogy? Csak discardal? Az nem lassu?
-	-Uniform buffer object mikor jo pl? 
+		-PL X quad es mit csinaljak, legyen 4 quad.
+			-> shader nem adja ki a szint, hanem fogjuk a fragmenseket, es gyujtsok ossze mindegyiket.
+			Order Independent Transparency.
+			-> Lancolt lista
+			-> Pixelenkent rendezes
+			De ze nem ultimate modszer -> Ossze vissza helyezkednek el. (Cache nem jo)
+	[- Uniform buffer object mikor jo pl? (PL kozos kamera mindegyik shaderbe)]
+	- Utkozes detektalas hogyan?
+		-Valami kozelito geometria kell:
+			-Befoglalo gomb, Befoglalo doboz, 
+			Nagyon pontosan konvex polieder minden egyes csontra.
+			-> Rigging body -> Ebbol akkor lehetne rongybaba
+			-PhysX, Bullet.
+		-Ha detektalom utana jon gondolom ez a rugos dolog amit beszeltunk, de ezt minden utkozesnel?
+			-PhysX be nem kell ilyen.
+			-PhysX nelkul meg meg konnyu lekodolni.
+			[Minel jobban osszeer annal jobban elugranak + Csillapitas]
+			-Fal utkozesnel ki szoktak dobni a fizikat!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			-Karakter mozgasat kulon kod irja, Ha mesz a hordo felborul, de a hordo nem hat vissza rad.
 	-Texturat hogyan kene feltolteni Blockokhoz? 
 		-Itt az a zavaro hogy van olyan block amihez tobb texture tartozik pl Fu
-	- Hogyan hasznalj profilert? 
-		-Van ez az NSight de a kimenetet nem nagyon tudom ertelmezni
-		-Hogyan talalom meg hol a bottleneck
-	
+		-[Tudni kell hogy melyik szelet kell: uniform vagy atribute. Instance -> 6 db lapra melyiket kell rakni]
+	-Valahogy kinyerheto egy quaterniobol hogy egy adott tengely menten mennyire van elforgatva?
+		- Karakterhez kene pl Y tengely menten mennyire fordult el
+	-Particle System?
+		->Grafikus Jatekok fejlesztese -> Hogyan lehet reszecskeket kirajzolni rendezni stb.
+		->Ne legyen konstans a reszecskek szama, fel is robbanhassanak ilyenek.
+	-Valamilyen konyv amit tudnal ajanlani?
+		->Game Engine Architectures. [Inkabb altalanosabb]
+		
+	[OpenGL Konyv, NSight helyett masik]
 Kerdesek:
 	-Miert lenghet ki egy kicsit a jobb (szembol bal) laba a karatkernek?
 		-Nyers adat bongesz. -> Megnez az elforgatasokat az ellentetes labra.

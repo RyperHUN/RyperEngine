@@ -1,6 +1,8 @@
 #include "MyApp.h"
 #include "GLUtils.hpp"
 
+
+
 #include <GL/GLU.h>
 #include <math.h>
 
@@ -128,6 +130,12 @@ bool CMyApp::Init()
 
 	geom_Sphere = Sphere (1.0f);
 	geom_Sphere.Create (30,30);
+
+	TTF_Init();
+	font = TTF_OpenFont("calibri.ttf", 32);
+	if (!font) {
+		std::cout << "Calibri loading failed" <<std::endl;
+	}
 
 	// skybox kocka
 	GeomCreator::CreateBoxGeom(buffer_Box);
@@ -311,18 +319,18 @@ void CMyApp::Render()
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 		state.PV = activeCamera->GetProjView();
-		/*for(auto& obj : gameObjs)
+		for(auto& obj : gameObjs)
 				obj->Draw (state);
 
-		gameObjs[0]->Draw(state, &shader_NormalVecDraw);*/
+		gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 
 		//Draw lights
 		lightRenderer.Draw(activeCamera->GetProjView());
-		//boundingBoxRenderer.Draw(state);
+		boundingBoxRenderer.Draw(state);
 		//chunk.Draw(state, tex_dirt);
 		chunkManager.Draw(state, tex_dirt);
 
-		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
+		cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 		//////////////////////////////Environment map drawing!!!
 		shader_EnvMap.On();
 		{

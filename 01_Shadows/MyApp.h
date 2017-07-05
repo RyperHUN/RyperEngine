@@ -8,6 +8,7 @@
 // SDL
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include <SDL_ttf.h>
 
 // GLM
 #include "glmIncluder.h"
@@ -110,6 +111,8 @@ protected:
 	gShaderProgram  shader_Frustum;
 	gShaderProgram  shader_NormalVecDraw;
 	gShaderProgram  shader_Instanced;
+
+	TTF_Font * font;
 
 	ChunkManager chunkManager;
 

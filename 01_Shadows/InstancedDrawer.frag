@@ -19,6 +19,6 @@ void main()
 	vec3 normal = normalize (FS.normal);
 	vec3 color = mix(normal, vec3(FS.texCoord, 0), 0.5);
 
-	//fs_out_col = vec4(color, 1);
-	fs_out_col = texture(diffuseTex, FS.texCoord);
+	fs_out_col = vec4(color, 1);
+	//fs_out_col = texture(diffuseTex, FS.texCoord);
 }
