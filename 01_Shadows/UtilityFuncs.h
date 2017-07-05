@@ -125,7 +125,7 @@ namespace Util
 		int h = surface->h;
 
 		SDL_Surface* newSurface =
-			SDL_CreateRGBSurface(0, w, w, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x00'00'00'ff);
+			SDL_CreateRGBSurface(0, w, h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x00'00'00'ff);
 		SDL_BlitSurface(surface, 0, newSurface, 0);
 
 		GLuint texture;

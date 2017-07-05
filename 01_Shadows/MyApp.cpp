@@ -21,8 +21,9 @@ CMyApp::CMyApp(void)
 	chunkManager(&geom_Box,&shader_Instanced),
 	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20)),
 	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer),
-	button(glm::ivec2(10,60), glm::ivec2(20,20),"Text"),
-	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn)
+	button(glm::ivec2(10,60), glm::ivec2(20,20),"T"),
+	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn),
+	textRenderer (quadTexturer)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);

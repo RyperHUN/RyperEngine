@@ -68,13 +68,20 @@ struct ButtonA : public Widget
 	}
 	virtual void Draw (glm::ivec2 screenSize, QuadTexturer &texturer, TextRenderer &textRenderer) override
 	{
+		glDisable(GL_DEPTH_TEST);
 		glm::mat4 model = Widget::GetModelTransform(pos, size, screenSize);
 
 		//TODO Render texture
 		if(isClicked)
-			texturer.Draw(glm::vec4(1,0,0,1), model);
+			texturer.Draw(glm::vec4(0,1,0,1), model);
 		else
-			texturer.Draw(glm::vec4(240 / 255.0f, 232 / 255.0f, 217 / 255.0f, 1.0), model);
+			texturer.Draw(glm::vec4(1, 0, 0, 1), model);
+
+		TextData data = textRenderer.RenderStrToTexture (text);
+		//data.size     = size;
+		if(data.texCoord != -1)
+			textRenderer.RenderStr (std::move(data), model);
+		glEnable(GL_DEPTH_TEST);
 	}
 };
 
@@ -82,12 +89,20 @@ struct Checkbox : public Widget
 {
 	ButtonA button;
 	bool * value;
+	std::string text;
 	Checkbox(glm::ivec2 pos, glm::ivec2 size, std::string text, bool * value)
 		:Widget(pos, size),
 		button(pos, glm::ivec2(size.y,size.y), ""),
+		text(text),
 		value(value)
 	{
-		button.callback  = [value](){*value = !(*value);};
+		button.callback  = [value, this](){
+			*value = !(*value);
+			if (*value)
+				button.text = "X"; //Checkbox like text
+			else
+				button.text = "";
+		};
 		button.isClicked = *value;
 	}
 	virtual void MouseDown(SDL_MouseButtonEvent& mouse) override
@@ -99,7 +114,7 @@ struct Checkbox : public Widget
 		button.Draw (screenSize, texturer, textRenderer);
 
 		//TODO Render text
-		TextData data = textRenderer.RenderText (" MSAA");
+		TextData data = textRenderer.RenderStrToTexture (text);
 		size.x = size.y + data.size.x;
 
 		glm::ivec2 textPos = glm::ivec2(pos.x + size.y, pos.y);

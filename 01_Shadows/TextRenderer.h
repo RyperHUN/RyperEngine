@@ -7,7 +7,7 @@
 #include <iostream>
 #include "glmIncluder.h"
 #include "UtilityFuncs.h"
-
+#include "Drawer.h"
 
 struct TextData
 {
@@ -18,8 +18,10 @@ struct TextData
 struct TextRenderer
 {
 	TTF_Font * font;
+	QuadTexturer &quadTexturer;
 
-	TextRenderer()
+	TextRenderer(QuadTexturer &quadTexturer)
+		:quadTexturer(quadTexturer)
 	{
 		Init();
 	}
@@ -32,10 +34,13 @@ struct TextRenderer
 			std::cout << "Calibri loading failed" << std::endl;
 		}
 	}
-	TextData RenderText(std::string const& str)
+	TextData RenderStrToTexture(std::string const& str)
 	{
-		SDL_Color red = { 255, 0, 0, 255 };
+		SDL_Color red = { 255, 255, 255, 255 };
 		SDL_Surface * felirat = TTF_RenderText_Blended(font, str.c_str(), red);
+		if (!felirat) // no str given
+			return TextData {glm::ivec2{0}, GLuint(-1)};
+
 		//SDL_Surface * felirat = TTF_RenderUTF8_Solid(font, "Opengl Text", red);
 
 		GLuint tex = Util::TextureFromSdlSurface(felirat);
@@ -45,5 +50,19 @@ struct TextRenderer
 		SDL_FreeSurface(felirat);
 
 		return textData;
+	}
+
+	void RenderStr (std::string const& str, glm::mat4 const& model)
+	{
+		RenderStr(RenderStrToTexture(str), model);
+	}
+
+	void RenderStr (TextData &&data, glm::mat4 const& model)
+	{
+		glEnable(GL_BLEND);
+		quadTexturer.Draw (data.texCoord, false, model);
+		glDisable(GL_BLEND);
+
+		glDeleteTextures (1, &data.texCoord);
 	}
 };
