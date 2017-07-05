@@ -124,6 +124,7 @@ protected:
 
 	ButtonA button;
 	Checkbox checkbox;
+	Container container;
 
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete

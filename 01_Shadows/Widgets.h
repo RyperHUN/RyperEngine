@@ -129,3 +129,74 @@ struct Checkbox : public Widget
 	}
 };
 
+struct Container : public Widget
+{
+	glm::ivec2 padding;
+	glm::ivec2 offset;
+	std::vector<Widget*> children;
+	Container (glm::ivec2 pos)
+		:Widget(pos, glm::ivec2(0)), padding(2), offset(2)
+	{
+	}
+	void AddWidget (Widget * widget)
+	{
+		glm::ivec2 newPos = padding;
+		if (children.size() > 0)
+		{	
+			Widget * lastWidget = children.back (); ///TODO We need relative pos for the parent for moving etc -> Or call update pos after every move
+			//TODO add getSize method
+			newPos.y += lastWidget->size.y + lastWidget->pos.y;
+			newPos.x += lastWidget->pos.x;
+			newPos.y += padding.y; //Separate each widget
+		}
+		else
+		{
+			newPos += pos;
+		}
+		widget->pos = newPos;
+
+		size += widget->size + padding * 2;
+
+		children.push_back(widget);
+	}
+	void UpdatePos ()
+	{
+		std::vector<Widget*> childrenOld = children;
+		children.clear();
+		for(auto& widget : childrenOld)
+			AddWidget(widget);
+	}
+	void Draw(glm::ivec2 screenSize, QuadTexturer &texturer, TextRenderer &textRenderer) override
+	{
+		glDisable(GL_DEPTH_TEST);
+
+		glEnable(GL_BLEND);
+		texturer.Draw (glm::vec4(0.9, 0.9,0.9, 0.3), Widget::GetModelTransform (pos, size, screenSize));
+		glDisable(GL_BLEND);
+
+		for(auto& widget : children)
+			widget->Draw (screenSize, texturer, textRenderer);
+
+		glEnable(GL_DEPTH_TEST);
+	}
+	virtual void MouseMove(SDL_MouseMotionEvent& mouse) 
+	{
+		for(auto& widget : children)
+			widget->MouseMove(mouse);
+	};
+	virtual void MouseDown(SDL_MouseButtonEvent& mouse) 
+	{
+		for (auto& widget : children)
+			widget->MouseDown(mouse);
+	};
+	virtual void MouseUp(SDL_MouseButtonEvent& mouse) 
+	{
+		for (auto& widget : children)
+			widget->MouseUp(mouse);
+	};
+	virtual void MouseWheel(SDL_MouseWheelEvent& mouse) 
+	{
+		for (auto& widget : children)
+			widget->MouseWheel(mouse);
+	};
+};

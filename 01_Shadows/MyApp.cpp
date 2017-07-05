@@ -23,7 +23,8 @@ CMyApp::CMyApp(void)
 	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer),
 	button(glm::ivec2(10,60), glm::ivec2(20,20),"T"),
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn),
-	textRenderer (quadTexturer)
+	textRenderer (quadTexturer),
+	container (glm::ivec2(50, 50))
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -31,6 +32,9 @@ CMyApp::CMyApp(void)
 	mesh_Suzanne = 0;
 	activeCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(5, 22, 24));
 	secondaryCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(10, 35, 24), glm::vec3(-0.5,-0.9, -0.5));
+
+	container.AddWidget (&button);
+	container.AddWidget (&checkbox);
 }
 
 
@@ -344,8 +348,9 @@ void CMyApp::Render()
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1));
 		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
 
-		button.Draw (glm::ivec2(m_width, m_height),quadTexturer, textRenderer);
-		checkbox.Draw(glm::ivec2(m_width, m_height), quadTexturer, textRenderer);
+		container.Draw(glm::ivec2(m_width, m_height), quadTexturer, textRenderer);
+		//button.Draw (glm::ivec2(m_width, m_height),quadTexturer, textRenderer);
+		//checkbox.Draw(glm::ivec2(m_width, m_height), quadTexturer, textRenderer);
 	}
 	HandleFrameBufferRendering();
 }
@@ -452,8 +457,9 @@ void CMyApp::MouseMove(SDL_MouseMotionEvent& mouse)
 
 void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 {
-	button.MouseDown (mouse);
-	checkbox.MouseDown (mouse);
+	/*button.MouseDown (mouse);
+	checkbox.MouseDown (mouse);*/
+	container.MouseDown (mouse);
 	if (mouse.button == SDL_BUTTON_RIGHT) //right Click
 	{
 		int pX = mouse.x; //Pixel X
