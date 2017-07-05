@@ -21,7 +21,7 @@ CMyApp::CMyApp(void)
 	chunkManager(&geom_Box,&shader_Instanced),
 	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20)),
 	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer),
-	button(glm::ivec2(10,50), glm::ivec2(20,30),"Text")
+	button(glm::ivec2(10,60), glm::ivec2(20,20),"Text")
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -449,7 +449,7 @@ void CMyApp::MouseMove(SDL_MouseMotionEvent& mouse)
 
 void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 {
-	
+	button.MouseDown (mouse);
 	if (mouse.button == SDL_BUTTON_RIGHT) //right Click
 	{
 		int pX = mouse.x; //Pixel X

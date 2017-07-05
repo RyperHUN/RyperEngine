@@ -39,11 +39,14 @@ struct ButtonA : public Widget
 	ButtonA (glm::ivec2 pos, glm::ivec2 size, std::string text, std::function<void()> fv = [](){})
 		:Widget(pos, size), text(text), callback(fv)
 	{}
+
+	bool isClicked;
 	virtual void MouseDown(SDL_MouseButtonEvent& mouse) override
 	{
 		if (mouse.button == SDL_BUTTON_LEFT && isInsideMouse (mouse.x, mouse.y))
 		{
 			callback();
+			isClicked = !isClicked;
 		}
 	}
 	virtual void Draw (glm::ivec2 screenSize, QuadTexturer &texturer) override
@@ -51,7 +54,7 @@ struct ButtonA : public Widget
 		//Full screen quad to local size
 		glm::vec3 scale = glm::vec3(glm::vec2(size) / glm::vec2(screenSize), 1);
 		//Origo to the top left corner
-		glm::vec3 translateOrigo = glm::vec3(scale.x, scale.y, 0);
+		glm::vec3 translateOrigo = glm::vec3(scale.x, -scale.y, 0);
 		glm::vec3 translatePos   = glm::vec3(Util::pixelToNdc (pos, screenSize), 0);
 
 		glm::mat4 model = glm::translate(translatePos)*
@@ -59,7 +62,10 @@ struct ButtonA : public Widget
 			              glm::scale(scale);
 
 		//TODO Render texture
-		texturer.Draw (glm::vec4(1,0,0,1),model);
+		if(isClicked)
+			texturer.Draw(glm::vec4(1,0,0,1), model);
+		else
+			texturer.Draw(glm::vec4(240 / 255.0f, 232 / 255.0f, 217 / 255.0f, 1.0), model);
 	}
 };
 
