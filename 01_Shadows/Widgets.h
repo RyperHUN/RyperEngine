@@ -5,6 +5,7 @@
 
 #include "glmIncluder.h"
 #include "UtilityFuncs.h"
+#include "Drawer.h"
 #include <string>
 #include <functional>
 
@@ -28,7 +29,7 @@ struct Widget {
 	virtual void MouseDown(SDL_MouseButtonEvent&) {};
 	virtual void MouseUp(SDL_MouseButtonEvent&) {};
 	virtual void MouseWheel(SDL_MouseWheelEvent&) {};
-	virtual void Draw(glm::ivec2 screenSize) {}
+	virtual void Draw(glm::ivec2 screenSize, QuadTexturer &texturer) {}
 };
 
 struct ButtonA : public Widget
@@ -45,13 +46,20 @@ struct ButtonA : public Widget
 			callback();
 		}
 	}
-	virtual void Draw (glm::ivec2 screenSize) override
+	virtual void Draw (glm::ivec2 screenSize, QuadTexturer &texturer) override
 	{
 		//Full screen quad to local size
-		glm::vec2 scale = glm::vec2(size) / glm::vec2(screenSize);
+		glm::vec3 scale = glm::vec3(glm::vec2(size) / glm::vec2(screenSize), 1);
 		//Origo to the top left corner
-		glm::vec3 translate = glm::vec3(scale.x, scale.y, 0);
+		glm::vec3 translateOrigo = glm::vec3(scale.x, scale.y, 0);
+		glm::vec3 translatePos   = glm::vec3(Util::pixelToNdc (pos, screenSize), 0);
 
+		glm::mat4 model = glm::translate(translatePos)*
+						  glm::translate(translateOrigo)* 
+			              glm::scale(scale);
+
+		//TODO Render texture
+		texturer.Draw (glm::vec4(1,0,0,1),model);
 	}
 };
 

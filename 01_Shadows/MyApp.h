@@ -26,6 +26,8 @@
 #include "ChunkManager.h"
 #include "Drawer.h"
 
+#include "Widgets.h"
+
 class CMyApp
 {
 public:
@@ -117,6 +119,9 @@ protected:
 	LightRenderer lightRenderer;
 	BoundingBoxRenderer boundingBoxRenderer;
 	QuadTexturer quadTexturer;
+
+	ButtonA button;
+
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete
 };

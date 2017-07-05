@@ -4,6 +4,8 @@ in vec2 fragTex;
 
 uniform sampler2D loadedTex;
 uniform bool isInvertY;
+uniform bool isTexture;
+uniform vec4 uColor;
 
 out vec4 fs_out_col;
 
@@ -83,6 +85,11 @@ vec4 ToneMapping (vec2 tex, float exposure)
 
 void main()
 {   
+	if(!isTexture)
+	{
+		fs_out_col = uColor;
+		return;
+	}
 	vec2 tex = fragTex;
 	if(isInvertY)
 		tex = vec2(fragTex.x, 1.0 - fragTex.y);

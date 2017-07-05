@@ -20,7 +20,8 @@ CMyApp::CMyApp(void)
 	cameraRenderer (&shader_BoundingBox),
 	chunkManager(&geom_Box,&shader_Instanced),
 	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20)),
-	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer)
+	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer),
+	button(glm::ivec2(10,50), glm::ivec2(20,30),"Text")
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -341,7 +342,7 @@ void CMyApp::Render()
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1));
 		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
 
-		
+		button.Draw (glm::ivec2(m_width, m_height),quadTexturer);
 	}
 	HandleFrameBufferRendering();
 }
