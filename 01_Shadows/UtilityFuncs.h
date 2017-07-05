@@ -118,7 +118,11 @@ namespace Util
 
 	static inline GLuint TextureFromSdlSurface(SDL_Surface * surface)
 	{
-		int w = pow(2, ceil(log(surface->w) / log(2))); // Round up to the nearest power of two
+		//w = pow(2, ceil(log(surface->w) / log(2))); // Round up to the nearest power of two
+		//int h = w;
+
+		int w = surface->w;
+		int h = surface->h;
 
 		SDL_Surface* newSurface =
 			SDL_CreateRGBSurface(0, w, w, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x00'00'00'ff);

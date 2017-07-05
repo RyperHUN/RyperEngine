@@ -27,6 +27,7 @@
 #include "Drawer.h"
 
 #include "Widgets.h"
+#include "TextRenderer.h"
 
 class CMyApp
 {
@@ -119,8 +120,10 @@ protected:
 	LightRenderer lightRenderer;
 	BoundingBoxRenderer boundingBoxRenderer;
 	QuadTexturer quadTexturer;
+	TextRenderer textRenderer;
 
 	ButtonA button;
+	Checkbox checkbox;
 
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete

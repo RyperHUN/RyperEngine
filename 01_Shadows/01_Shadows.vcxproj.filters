@@ -150,6 +150,9 @@
     <ClInclude Include="Widgets.h">
       <Filter>Widgets</Filter>
     </ClInclude>
+    <ClInclude Include="TextRenderer.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">

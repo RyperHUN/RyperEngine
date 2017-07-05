@@ -121,6 +121,7 @@
     <ClInclude Include="Mesh_OGL3.h" />
     <ClInclude Include="MyApp.h" />
     <ClInclude Include="ObjParser_OGL3.h" />
+    <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="UtilityFuncs.h" />
     <ClInclude Include="Widgets.h" />
