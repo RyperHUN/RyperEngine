@@ -1,4 +1,6 @@
 #pragma once
+
+#include <SDL.h>
 #include <glm/glm.hpp>
 #include <cstdio>
 
@@ -111,6 +113,39 @@ namespace Util
 			std::cout << "Texture failed to load at path: " << path << std::endl;
 			stbi_image_free(data);
 		}
+	}
+
+
+	static inline GLuint TextureFromSdlSurface(SDL_Surface * surface)
+	{
+		int w = pow(2, ceil(log(surface->w) / log(2))); // Round up to the nearest power of two
+
+		SDL_Surface* newSurface =
+			SDL_CreateRGBSurface(0, w, w, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x00'00'00'ff);
+		SDL_BlitSurface(surface, 0, newSurface, 0);
+
+		GLuint texture;
+		{
+			SDL_Surface * surface = newSurface;
+			Uint8 colors = surface->format->BytesPerPixel;
+			GLenum texture_format;
+			texture_format = GL_RGBA;
+
+			
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D (GL_TEXTURE_2D, 0, colors, surface->w, surface->h,
+				0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+			SDL_FreeSurface(surface);
+		}
+
+		return texture;
 	}
 
 }; //NS Util

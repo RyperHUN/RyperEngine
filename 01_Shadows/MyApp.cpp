@@ -347,6 +347,21 @@ void CMyApp::Render()
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1));
 		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
 
+		SDL_Color red;
+		red.b = 255;
+		red.g = 255;
+		red.r = 255;
+		red.a = 255;
+		SDL_Surface * felirat = TTF_RenderText_Blended(font, "OpenGL Text", red);
+		//SDL_Surface * felirat = TTF_RenderUTF8_Solid(font, "Opengl Text", red);
+
+		GLuint tex = Util::TextureFromSdlSurface (felirat); //TODO Free
+
+		glEnable(GL_BLEND);
+		quadTexturer.Draw(tex, false, Model);
+		glDisable(GL_BLEND);
+
+		SDL_FreeSurface (felirat);
 	}
 	HandleFrameBufferRendering();
 }
