@@ -131,12 +131,6 @@ bool CMyApp::Init()
 	geom_Sphere = Sphere (1.0f);
 	geom_Sphere.Create (30,30);
 
-	TTF_Init();
-	font = TTF_OpenFont("calibri.ttf", 32);
-	if (!font) {
-		std::cout << "Calibri loading failed" <<std::endl;
-	}
-
 	// skybox kocka
 	GeomCreator::CreateBoxGeom(buffer_Box);
 	buffer_Box.InitBuffers();
@@ -347,21 +341,7 @@ void CMyApp::Render()
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1));
 		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
 
-		SDL_Color red;
-		red.b = 255;
-		red.g = 255;
-		red.r = 255;
-		red.a = 255;
-		SDL_Surface * felirat = TTF_RenderText_Blended(font, "OpenGL Text", red);
-		//SDL_Surface * felirat = TTF_RenderUTF8_Solid(font, "Opengl Text", red);
-
-		GLuint tex = Util::TextureFromSdlSurface (felirat); //TODO Free
-
-		glEnable(GL_BLEND);
-		quadTexturer.Draw(tex, false, Model);
-		glDisable(GL_BLEND);
-
-		SDL_FreeSurface (felirat);
+		
 	}
 	HandleFrameBufferRendering();
 }
@@ -473,15 +453,12 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 	{
 		int pX = mouse.x; //Pixel X
 		int pY = mouse.y;
-		///c? - Clipping Space == NDC koordinatak - Ekkor vagyunk az egysegnegyzetbe
-		float cX = 2.0f * pX / m_width - 1;	// flip y axis
-		float cY = 1.0f - 2.0f * pY / m_height;
+		glm::vec2 clip = Util::pixelToNdc (glm::ivec2(pX,pY), glm::ivec2(m_width, m_height));
 
 		///Reading from Depth buffer, not the fastest
 		//float cZ = ReadDepthValueNdc (pX, pY);
 
-		//glm::vec4 clipping(cX, cY, cZ, 1.0);
-		glm::vec4 clipping(cX, cY, 0, 1.0);
+		glm::vec4 clipping(clip.x, clip.y, 0, 1.0);
 		glm::mat4 PVInv =  glm::inverse(activeCamera->GetViewMatrix()) * glm::inverse(activeCamera->GetProj()); //RayDirMatrix can be added here
 		glm::vec4 world4 = PVInv * clipping;
 		glm::vec3 world = glm::vec3(world4) / world4.w;

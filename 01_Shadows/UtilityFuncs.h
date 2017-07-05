@@ -148,4 +148,13 @@ namespace Util
 		return texture;
 	}
 
+	static inline glm::vec2 pixelToNdc(glm::ivec2 pixel,glm::ivec2 screenSize)
+	{
+		///c? - Clipping Space == NDC koordinatak - Ekkor vagyunk az egysegnegyzetbe
+		float cX = 2.0f * pixel.x / screenSize.x - 1;	
+		float cY = 1.0f - 2.0f * pixel.y / screenSize.y; // flip y axis
+
+		return glm::vec2(cX, cY);
+	}
+
 }; //NS Util

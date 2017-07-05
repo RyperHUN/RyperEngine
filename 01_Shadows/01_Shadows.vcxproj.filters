@@ -34,6 +34,9 @@
     <Filter Include="Utils\GL_Wrapper">
       <UniqueIdentifier>{1b6bc438-24b4-42ab-a842-c7981880100c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Widgets">
+      <UniqueIdentifier>{29cbe037-82c4-4b16-9ab4-220d94294a6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -140,6 +143,12 @@
     </ClInclude>
     <ClInclude Include="Drawer.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRenderer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Widgets.h">
+      <Filter>Widgets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

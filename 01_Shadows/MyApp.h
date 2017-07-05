@@ -112,8 +112,6 @@ protected:
 	gShaderProgram  shader_NormalVecDraw;
 	gShaderProgram  shader_Instanced;
 
-	TTF_Font * font;
-
 	ChunkManager chunkManager;
 
 	LightRenderer lightRenderer;
