@@ -34,6 +34,15 @@ struct TextRenderer
 			std::cout << "Calibri loading failed" << std::endl;
 		}
 	}
+	glm::ivec2 TextSize (std::string const& str)
+	{
+		glm::ivec2 result(0);
+		if (str == "") return result;
+
+		if(TTF_SizeText (font, str.c_str(), &result.x, &result.y) != 0)
+			assert(false); //Error, text size not succeded
+		return result;
+	}
 	TextData RenderStrToTexture(std::string const& str)
 	{
 		SDL_Color red = { 255, 255, 255, 255 };

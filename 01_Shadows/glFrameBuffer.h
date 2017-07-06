@@ -8,7 +8,7 @@ class glFrameBuffer
 	GLuint rboId = -1;
 public:
 	GLuint textureId = -1;
-	GLuint FBO = -1;
+	GLuint FBO = -1; //TODO Delete resources
 	glFrameBuffer()
 	{
 		glGenFramebuffers(1, &FBO);

@@ -21,8 +21,7 @@ CMyApp::CMyApp(void)
 	chunkManager(&geom_Box,&shader_Instanced),
 	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20)),
 	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer),
-	button(glm::ivec2(10,60), glm::ivec2(20,20),"T"),
-	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn),
+	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50))
 {
@@ -33,8 +32,9 @@ CMyApp::CMyApp(void)
 	activeCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(5, 22, 24));
 	secondaryCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(10, 35, 24), glm::vec3(-0.5,-0.9, -0.5));
 
-	container.AddWidget (&button);
 	container.AddWidget (&checkbox);
+	container.AddWidget (new Checkbox(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer)); //TODO Delete
+
 }
 
 
@@ -255,7 +255,6 @@ void CMyApp::Clean()
 {
 	glDeleteTextures(1, &textureCube_id);
 	glDeleteTextures(1, &texture_Map);
-	glDeleteFramebuffers(1, &m_fbo);
 
 	shader_EnvMap.Clean(); 
 

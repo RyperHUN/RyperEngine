@@ -21,6 +21,11 @@ struct Widget {
 	bool isSelected = false;
 	bool isVisible  = true;
 
+	virtual void SetPos(glm::ivec2 newPos)
+	{
+		pos = newPos;
+	}
+	virtual glm::ivec2 GetSize() {return size; }
 	virtual bool isInsideMouse(int x, int y) 
 	{
 		return pos.x <= x && pos.x + size.x >= x &&
@@ -87,14 +92,16 @@ struct ButtonA : public Widget
 
 struct Checkbox : public Widget
 {
+	TextRenderer& textRenderer;
 	ButtonA button;
 	bool * value;
 	std::string text;
-	Checkbox(glm::ivec2 pos, glm::ivec2 size, std::string text, bool * value)
+	Checkbox(glm::ivec2 pos, glm::ivec2 size, std::string text, bool * value, TextRenderer& textRenderer)
 		:Widget(pos, size),
 		button(pos, glm::ivec2(size.y,size.y), ""),
 		text(text),
-		value(value)
+		value(value),
+		textRenderer(textRenderer)
 	{
 		button.callback  = [value, this](){
 			*value = !(*value);
@@ -108,6 +115,17 @@ struct Checkbox : public Widget
 	virtual void MouseDown(SDL_MouseButtonEvent& mouse) override
 	{
 		button.MouseDown (mouse);
+	}
+	virtual void SetPos(glm::ivec2 newPos) override
+	{
+		pos = newPos;
+		button.SetPos (newPos);
+	}
+	virtual glm::ivec2  GetSize() override
+	{
+		glm::ivec2 buttonSize(size.y, size.y);
+		buttonSize.x += textRenderer.TextSize(text).x;
+		return  buttonSize;
 	}
 	virtual void Draw(glm::ivec2 screenSize, QuadTexturer &texturer, TextRenderer &textRenderer) override
 	{
@@ -135,27 +153,30 @@ struct Container : public Widget
 	glm::ivec2 offset;
 	std::vector<Widget*> children;
 	Container (glm::ivec2 pos)
-		:Widget(pos, glm::ivec2(0)), padding(2), offset(2)
+		:Widget(pos, glm::ivec2(0)), padding(3), offset(4)
 	{
 	}
 	void AddWidget (Widget * widget)
 	{
-		glm::ivec2 newPos = padding;
+		glm::ivec2 newPos(0);
 		if (children.size() > 0)
 		{	
 			Widget * lastWidget = children.back (); ///TODO We need relative pos for the parent for moving etc -> Or call update pos after every move
 			//TODO add getSize method
 			newPos.y += lastWidget->size.y + lastWidget->pos.y;
 			newPos.x += lastWidget->pos.x;
-			newPos.y += padding.y; //Separate each widget
+			newPos.y += offset.y; //Separate each widget
 		}
 		else
 		{
+			newPos += padding;
 			newPos += pos;
-		}
-		widget->pos = newPos;
 
-		size += widget->size + padding * 2;
+			size += padding;
+		}
+		widget->SetPos(newPos);
+
+		size += widget->GetSize () + offset.y;
 
 		children.push_back(widget);
 	}
