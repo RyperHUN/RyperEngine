@@ -115,6 +115,40 @@ namespace Util
 		}
 	}
 
+	struct TextureData 
+	{
+		GLenum format;
+		glm::ivec2 size;
+		unsigned char * data; //stbi_image_free
+	};
+
+	static inline TextureData TextureDataFromFile(std::string path)
+	{
+		std::string filename(path);
+		unsigned int textureID;
+		glGenTextures(1, &textureID);
+
+		int width, height, nrComponents;
+		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+		if (data)
+		{
+			GLenum format;
+			if (nrComponents == 1)
+				format = GL_RED;
+			else if (nrComponents == 3)
+				format = GL_RGB;
+			else if (nrComponents == 4)
+				format = GL_RGBA;
+
+			return TextureData {format, glm::ivec2{width, height}, data};
+		}
+		else
+		{
+			throw "Error loading texture";
+			stbi_image_free(data);
+		}
+		TextureData {};
+	}
 
 	static inline GLuint TextureFromSdlSurface(SDL_Surface * surface)
 	{

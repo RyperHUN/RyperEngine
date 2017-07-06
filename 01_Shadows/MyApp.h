@@ -55,12 +55,42 @@ private:
 	void HandleFrameBufferRendering();
 	void BindFrameBuffersForRender();
 	void FrustumCulling(CameraPtr);
+
+	GLuint TextureArray ()
+	{
+		std::string prefix = "Pictures/blocks/";
+		
+		unsigned int layers = 2;
+		Util::TextureData data = Util::TextureDataFromFile (prefix + "dirt.png");
+		Util::TextureData data2 = Util::TextureDataFromFile(prefix + "ice.png");
+		unsigned int texturewidth  = data.size.x;
+		unsigned int textureheight = data.size.y;
+
+		GLuint texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		// allocate memory for all layers:
+		
+		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texturewidth, textureheight, layers);
+		// set each 2D texture layer separately:
+		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, texturewidth, textureheight, 1, GL_RGBA, GL_UNSIGNED_BYTE, data.data);
+		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, texturewidth, textureheight, 1, GL_RGBA, GL_UNSIGNED_BYTE, data2.data);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+
+		return texture;
+	}
 protected:
 
 	// Textures
 	GLuint texture_Map; 
 	GLuint tex_dirt;
 	GLuint textureCube_id; // env map
+	GLuint textureArray_blocks;
 
 	//TODO Camera manager
 	CameraPtr activeCamera;

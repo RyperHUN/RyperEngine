@@ -44,6 +44,7 @@ public:
 	void SetSubroutine(GLenum shadertype, const char* subroutine_variable, const char* routine_instance);
 	void SetTexture(const char* uniform, int sampler, GLuint textureID);
 	void SetCubeTexture(const char* uniform, int sampler, GLuint textureID);
+	void SetTexture(const char* uniform, int sampler, GLuint textureID, GLenum type);
 
 	gShaderProgram* GetShadowShader (){return shadowShader.get();}
 	void CreateShadowShader ()

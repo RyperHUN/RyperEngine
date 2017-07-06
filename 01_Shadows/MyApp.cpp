@@ -133,6 +133,7 @@ bool CMyApp::Init()
 	textureCube_id    = Util::LoadCubeMap("pictures/skybox/");
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
+	textureArray_blocks = TextureArray ();
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("suzanne.obj");
@@ -294,7 +295,7 @@ void CMyApp::Render()
 		lightRenderer.Draw(activeCamera->GetProjView());
 		boundingBoxRenderer.Draw(state);
 		//chunk.Draw(state, tex_dirt);
-		chunkManager.Draw(state, tex_dirt);
+		chunkManager.Draw(state, textureArray_blocks);
 
 		cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 		//////////////////////////////Environment map drawing!!!

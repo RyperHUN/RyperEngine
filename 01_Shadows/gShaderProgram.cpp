@@ -308,6 +308,13 @@ void gShaderProgram::SetCubeTexture(const char* uniform, int sampler, GLuint tex
 	SetUniform(uniform, sampler);
 }
 
+void gShaderProgram::SetTexture(const char* uniform, int sampler, GLuint textureID, GLenum type)
+{
+	glActiveTexture(GL_TEXTURE0 + sampler);
+	glBindTexture(type, textureID);
+	SetUniform(uniform, sampler);
+}
+
 void gShaderProgram::SetSubroutine(GLenum shadertype, const char* subroutine_variable, const char* routine_instance)
 {
 	auto sub_idx = m_subroutine_uniform_indices[shadertype].find(subroutine_variable);

@@ -47,7 +47,7 @@ struct Chunk
 		{
 			shader->SetUniform("PV", state.PV);
 			shader->SetUniform("uScale", BlockSize);
-			shader->SetTexture("diffuseTex", 0,  texId);
+			shader->SetTexture("tex1", 0,  texId, GL_TEXTURE_2D_ARRAY);
 			int amountOfCubes = UploadInstanceData ();
 
 			geom_Box->buffer.On();
