@@ -41,10 +41,8 @@ public:
 
 	void Update();
 	void Render();
-	void HandleFrameBufferRendering();
-	void BindFrameBuffersForRender ();
-	void FrustumCulling(CameraPtr );
 
+//Event handlers
 	void KeyboardDown(SDL_KeyboardEvent&);
 	void KeyboardUp(SDL_KeyboardEvent&);
 	void MouseMove(SDL_MouseMotionEvent&);
@@ -52,21 +50,20 @@ public:
 	void MouseUp(SDL_MouseButtonEvent&);
 	void MouseWheel(SDL_MouseWheelEvent&);
 	void Resize(int, int);
-
-	GLuint LoadCubeMap (std::string prefix);
 private:
 	float ReadDepthValueNdc(float pX, float pY);
+	void HandleFrameBufferRendering();
+	void BindFrameBuffersForRender();
+	void FrustumCulling(CameraPtr);
 protected:
-	// belsõ eljárások
-	GLuint GenTexture();
 
-	// OpenGL-es dolgok
-	GLuint texture_Map; // textúra erõforrás azonosító
+	// Textures
+	GLuint texture_Map; 
 	GLuint tex_dirt;
 	GLuint textureCube_id; // env map
 
-	CameraPtr	activeCamera;
 	//TODO Camera manager
+	CameraPtr activeCamera;
 	CameraPtr secondaryCamera; //TODO receive resize events also
 	CameraRenderer cameraRenderer;
 
@@ -82,20 +79,17 @@ protected:
 	AssimpModel		geom_Man;
 	AssimpModel		geom_AnimatedMan;
 
-	OGL_Mesh			*mesh_Suzanne;
-	OGL_Mesh			*m_cow_mesh;
+	OGL_Mesh *mesh_Suzanne;
+	OGL_Mesh *m_cow_mesh;
 
-	int			m_width = 640, m_height = 480;
+	int	 m_width = 640, m_height = 480;
 	bool IsFrameBufferRendering = false;
 	bool IsMSAAOn = true;
 	glFrameBuffer fbo_Rendered;
 	glFrameBuffer fbo_Shadow;
 	glFrameBuffer fbo_RenderedMSAA;
 	
-	GLuint texture_HeightMap;
 	const GLuint SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
-
-	Chunk chunk;
 
 	//Lights
 	SpotLight spotLight;
@@ -112,6 +106,7 @@ protected:
 	gShaderProgram  shader_NormalVecDraw;
 	gShaderProgram  shader_Instanced;
 
+	Chunk chunk;
 	ChunkManager chunkManager;
 
 	LightRenderer lightRenderer;
@@ -119,6 +114,7 @@ protected:
 	QuadTexturer quadTexturer;
 	TextRenderer textRenderer;
 
+	//Widgets
 	Checkbox checkbox;
 	Container container;
 

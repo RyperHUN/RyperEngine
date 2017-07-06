@@ -161,4 +161,62 @@ namespace Util
 		return glm::vec2(cX, cY);
 	}
 
+	static inline GLuint LoadCubeMap(std::string prefix)
+	{
+		GLuint textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		Util::TextureFromFileAttach((prefix + "xpos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_X);
+		Util::TextureFromFileAttach((prefix + "xneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
+		Util::TextureFromFileAttach((prefix + "ypos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
+		Util::TextureFromFileAttach((prefix + "yneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
+		Util::TextureFromFileAttach((prefix + "zpos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
+		Util::TextureFromFileAttach((prefix + "zneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+		return textureId;
+	}
+
+	static inline GLuint GenRandomTexture()
+	{
+		unsigned char tex[256][256][3];
+
+		for (int i = 0; i<256; ++i)
+			for (int j = 0; j<256; ++j)
+			{
+				tex[i][j][0] = rand() % 256;
+				tex[i][j][1] = rand() % 256;
+				tex[i][j][2] = rand() % 256;
+			}
+
+		GLuint tmpID;
+
+		// generáljunk egy textúra erõforrás nevet
+		glGenTextures(1, &tmpID);
+		// aktiváljuk a most generált nevû textúrát
+		glBindTexture(GL_TEXTURE_2D, tmpID);
+		// töltsük fel adatokkal az...
+		gluBuild2DMipmaps(GL_TEXTURE_2D,	// aktív 2D textúrát
+			GL_RGB8,		// a vörös, zöld és kék csatornákat 8-8 biten tárolja a textúra
+			256, 256,		// 256x256 méretû legyen
+			GL_RGB,				// a textúra forrása RGB értékeket tárol, ilyen sorrendben
+			GL_UNSIGNED_BYTE,	// egy-egy színkopmonenst egy unsigned byte-ról kell olvasni
+			tex);				// és a textúra adatait a rendszermemória ezen szegletébõl töltsük fel
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	// bilineáris szûrés kicsinyítéskor
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// és nagyításkor is
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return tmpID;
+	}
+
 }; //NS Util

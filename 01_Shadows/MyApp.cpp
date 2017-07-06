@@ -42,39 +42,6 @@ CMyApp::~CMyApp(void)
 {
 }
 
-
-GLuint CMyApp::GenTexture()
-{
-    unsigned char tex[256][256][3];
- 
-    for (int i=0; i<256; ++i)
-        for (int j=0; j<256; ++j)
-        {
-			tex[i][j][0] = rand()%256;
-			tex[i][j][1] = rand()%256;
-			tex[i][j][2] = rand()%256;
-        }
- 
-	GLuint tmpID;
-
-	// generáljunk egy textúra erõforrás nevet
-    glGenTextures(1, &tmpID);
-	// aktiváljuk a most generált nevû textúrát
-    glBindTexture(GL_TEXTURE_2D, tmpID);
-	// töltsük fel adatokkal az...
-    gluBuild2DMipmaps(  GL_TEXTURE_2D,	// aktív 2D textúrát
-						GL_RGB8,		// a vörös, zöld és kék csatornákat 8-8 biten tárolja a textúra
-						256, 256,		// 256x256 méretû legyen
-						GL_RGB,				// a textúra forrása RGB értékeket tárol, ilyen sorrendben
-						GL_UNSIGNED_BYTE,	// egy-egy színkopmonenst egy unsigned byte-ról kell olvasni
-						tex);				// és a textúra adatait a rendszermemória ezen szegletébõl töltsük fel
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	// bilineáris szûrés kicsinyítéskor
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// és nagyításkor is
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	return tmpID;
-}
-
 bool CMyApp::LoadShaders ()
 {
 	shader_Simple.CreateShadowShader();
@@ -155,7 +122,6 @@ bool CMyApp::Init()
 
 	
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
-	//
 	fbo_Shadow.CreateShadowAttachment (SHADOW_WIDTH, SHADOW_HEIGHT);
 
 ///////////////////////////////////////////////////////////
@@ -164,9 +130,9 @@ bool CMyApp::Init()
 
 	// textúra betöltése
 	texture_Map		  = Util::TextureFromFile("texture.png");
-	texture_HeightMap = Util::TextureFromFile("HeightMap.png");
-	textureCube_id    = LoadCubeMap("pictures/skybox/");
-	tex_dirt = Util::TextureFromFile ("pictures/blocks/dirt.png");
+	textureCube_id    = Util::LoadCubeMap("pictures/skybox/");
+	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
+	//tex_dirt		  = Util::GenRandomTexture ();
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("suzanne.obj");
@@ -354,51 +320,6 @@ void CMyApp::Render()
 	HandleFrameBufferRendering();
 }
 
-void CMyApp::BindFrameBuffersForRender ()
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
-
-														///////////////////////////Normal rendering
-	if (IsFrameBufferRendering)
-	{
-		fbo_Rendered.CreateAttachments(m_width, m_height);
-		fbo_Rendered.On();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	if (IsMSAAOn)
-	{
-		fbo_RenderedMSAA.CreateMultisampleAttachments(m_width, m_height);
-		fbo_RenderedMSAA.On(); //IF offscreen rendering and msaa is too on, this should be the second;
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-}
-
-void CMyApp::HandleFrameBufferRendering ()
-{
-	if (IsFrameBufferRendering)
-	{
-		if (IsMSAAOn)
-		{
-			fbo_Rendered.Off();
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_Rendered.FBO);
-			glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		}
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		quadTexturer.Draw(fbo_Rendered.textureId, true);
-	}
-	else if (IsMSAAOn)
-	{
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-}
-
 void CMyApp::FrustumCulling (CameraPtr camera)
 {
 	for(GameObj* obj : gameObjs)
@@ -500,32 +421,6 @@ void CMyApp::Resize(int _w, int _h)
 	fbo_Rendered.CreateAttachments(m_width, m_height);
 }
 
-GLuint CMyApp::LoadCubeMap(std::string prefix)
-{
-	GLuint textureId;
-	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-	Util::TextureFromFileAttach((prefix + "xpos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_X);
-	Util::TextureFromFileAttach((prefix + "xneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
-	Util::TextureFromFileAttach((prefix + "ypos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
-	Util::TextureFromFileAttach((prefix + "yneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
-	Util::TextureFromFileAttach((prefix + "zpos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
-	Util::TextureFromFileAttach((prefix + "zneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
-
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-	return textureId;
-}
-
 float CMyApp::ReadDepthValueNdc (float pX, float pY)
 {
 	float depth;
@@ -540,4 +435,49 @@ float CMyApp::ReadDepthValueNdc (float pX, float pY)
 
 	float cZ = depth * 2 - 1;
 	return cZ;
+}
+
+void CMyApp::BindFrameBuffersForRender()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
+
+														///////////////////////////Normal rendering
+	if (IsFrameBufferRendering)
+	{
+		fbo_Rendered.CreateAttachments(m_width, m_height);
+		fbo_Rendered.On();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	if (IsMSAAOn)
+	{
+		fbo_RenderedMSAA.CreateMultisampleAttachments(m_width, m_height);
+		fbo_RenderedMSAA.On(); //IF offscreen rendering and msaa is too on, this should be the second;
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+}
+
+void CMyApp::HandleFrameBufferRendering()
+{
+	if (IsFrameBufferRendering)
+	{
+		if (IsMSAAOn)
+		{
+			fbo_Rendered.Off();
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_Rendered.FBO);
+			glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		quadTexturer.Draw(fbo_Rendered.textureId, true);
+	}
+	else if (IsMSAAOn)
+	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 }
