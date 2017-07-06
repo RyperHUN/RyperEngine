@@ -10,6 +10,13 @@
 #include <functional>
 #include "TextRenderer.h"
 
+struct WidgetRenderState
+{
+	glm::ivec2 screenSize;
+	QuadTexturer& texturer;
+	TextRenderer& textRenderer;
+};
+
 struct Widget {
 	glm::ivec2 pos;
 	glm::ivec2 size;
@@ -35,7 +42,7 @@ struct Widget {
 	virtual void MouseDown(SDL_MouseButtonEvent&) {};
 	virtual void MouseUp(SDL_MouseButtonEvent&) {};
 	virtual void MouseWheel(SDL_MouseWheelEvent&) {};
-	virtual void Draw(glm::ivec2 screenSize, QuadTexturer &texturer, TextRenderer &textRenderer) {}
+	virtual void Draw(WidgetRenderState &state) {}
 
 	static glm::mat4 GetModelTransform(glm::ivec2 const& pos, 
 		glm::ivec2 const& size, glm::ivec2 const& screenSize)
@@ -71,21 +78,21 @@ struct ButtonA : public Widget
 			isClicked = !isClicked;
 		}
 	}
-	virtual void Draw (glm::ivec2 screenSize, QuadTexturer &texturer, TextRenderer &textRenderer) override
+	virtual void Draw (WidgetRenderState &state) override
 	{
 		glDisable(GL_DEPTH_TEST);
-		glm::mat4 model = Widget::GetModelTransform(pos, size, screenSize);
+		glm::mat4 model = Widget::GetModelTransform(pos, size, state.screenSize);
 
 		//TODO Render texture
 		if(isClicked)
-			texturer.Draw(glm::vec4(0,1,0,1), model);
+			state.texturer.Draw(glm::vec4(0,1,0,1), model);
 		else
-			texturer.Draw(glm::vec4(1, 0, 0, 1), model);
+			state.texturer.Draw(glm::vec4(1, 0, 0, 1), model);
 
-		TextData data = textRenderer.RenderStrToTexture (text);
+		TextData data = state.textRenderer.RenderStrToTexture (text);
 		//data.size     = size;
 		if(data.texCoord != -1)
-			textRenderer.RenderStr (std::move(data), model);
+			state.textRenderer.RenderStr (std::move(data), model);
 		glEnable(GL_DEPTH_TEST);
 	}
 };
@@ -127,9 +134,9 @@ struct Checkbox : public Widget
 		buttonSize.x += textRenderer.TextSize(text).x;
 		return  buttonSize;
 	}
-	virtual void Draw(glm::ivec2 screenSize, QuadTexturer &texturer, TextRenderer &textRenderer) override
+	virtual void Draw(WidgetRenderState &state) override
 	{
-		button.Draw (screenSize, texturer, textRenderer);
+		button.Draw (state);
 
 		//TODO Render text
 		TextData data = textRenderer.RenderStrToTexture (text);
@@ -137,10 +144,10 @@ struct Checkbox : public Widget
 
 		glm::ivec2 textPos = glm::ivec2(pos.x + size.y, pos.y);
 		glm::ivec2 textSize = glm::ivec2(size.x - size.y, size.y);
-		glm::mat4 model = Widget::GetModelTransform(textPos, textSize, screenSize);
+		glm::mat4 model = Widget::GetModelTransform(textPos, textSize, state.screenSize);
 
 		glEnable(GL_BLEND);
-		texturer.Draw (data.texCoord,false, model);
+		state.texturer.Draw (data.texCoord,false, model);
 		glDisable(GL_BLEND);
 
 		glDeleteTextures (1,&data.texCoord);
@@ -187,16 +194,16 @@ struct Container : public Widget
 		for(auto& widget : childrenOld)
 			AddWidget(widget);
 	}
-	void Draw(glm::ivec2 screenSize, QuadTexturer &texturer, TextRenderer &textRenderer) override
+	void Draw(WidgetRenderState &state) override
 	{
 		glDisable(GL_DEPTH_TEST);
 
 		glEnable(GL_BLEND);
-		texturer.Draw (glm::vec4(0.9, 0.9,0.9, 0.3), Widget::GetModelTransform (pos, size, screenSize));
+		state.texturer.Draw (glm::vec4(0.9, 0.9,0.9, 0.3), Widget::GetModelTransform (pos, size, state.screenSize));
 		glDisable(GL_BLEND);
 
 		for(auto& widget : children)
-			widget->Draw (screenSize, texturer, textRenderer);
+			widget->Draw (state);
 
 		glEnable(GL_DEPTH_TEST);
 	}

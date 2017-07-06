@@ -314,9 +314,10 @@ void CMyApp::Render()
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1));
 		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
 
-		container.Draw(glm::ivec2(m_width, m_height), quadTexturer, textRenderer);
-		//button.Draw (glm::ivec2(m_width, m_height),quadTexturer, textRenderer);
-		//checkbox.Draw(glm::ivec2(m_width, m_height), quadTexturer, textRenderer);
+		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
+		container.Draw(state);
+		//button.Draw (state);
+		//checkbox.Draw(state);
 	}
 	HandleFrameBufferRendering();
 }
