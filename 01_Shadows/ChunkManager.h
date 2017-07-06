@@ -9,6 +9,7 @@
 struct ChunkData
 {
 	glm::vec3 pos; ///TODO Can be ivec3
+	int type;
 	bool isExist;
 };
 
@@ -36,6 +37,7 @@ struct Chunk
 					ChunkData &data = chunkInfo[i][j][k];
 					data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i,j,k) * BlockSize * 2.0f;
 					data.isExist = rand() % 4 == 0;
+					data.type = Util::randomPointI(0,1);
 				}
 			}
 		}
@@ -48,6 +50,7 @@ struct Chunk
 			shader->SetUniform("PV", state.PV);
 			shader->SetUniform("uScale", BlockSize);
 			shader->SetTexture("tex1", 0,  texId, GL_TEXTURE_2D_ARRAY);
+			shader->SetUniform("uLayer", 1);
 			int amountOfCubes = UploadInstanceData ();
 
 			geom_Box->buffer.On();
@@ -73,6 +76,8 @@ struct Chunk
 						//positions[MAX_INSTANCED];
 						std::string name("positions[" + std::to_string(index) + "]");
 						shader->SetUniform (name.c_str(), glm::vec3(data.pos));
+						std::string name2("uLayer[" + std::to_string(index) + "]");
+						shader->SetUniform (name2.c_str(), (int)data.type);
 
 						index++;
 						numberOfExistingCubes++;

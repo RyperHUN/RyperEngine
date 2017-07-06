@@ -21,6 +21,7 @@ out VS_OUT
 	vec2 texCoord;
 	vec4 fragPosLightSpace4;
 	vec4 testColor;
+	flat int instanceId;
 } VS;
 
 mat4 Translate (vec3 pos)
@@ -54,4 +55,5 @@ void main()
 	VS.texCoord = vs_in_tex;
 	VS.fragPosLightSpace4 = (LightSpaceMtx * vec4(VS.wFragPos, 1.0));
 	VS.testColor = weights;
+	VS.instanceId = gl_InstanceID;
 }
