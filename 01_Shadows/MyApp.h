@@ -65,6 +65,9 @@ private:
 		Util::TextureData data = Util::TextureDataFromFile (prefix + "dirt.png");
 		datas.push_back(data);
 		datas.push_back(Util::TextureDataFromFile(prefix + "ice.png"));
+		datas.push_back(Util::TextureDataFromFile(prefix + "lapis_ore.png"));
+		datas.push_back(Util::TextureDataFromFile(prefix + "trapdoor.png"));
+		datas.push_back(Util::TextureDataFromFile(prefix + "glass_red.png"));
 		unsigned int texturewidth  = data.size.x;
 		unsigned int textureheight = data.size.y;
 
@@ -77,12 +80,15 @@ private:
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		// allocate memory for all layers:
 		
-		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texturewidth, textureheight, layers);
+		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texturewidth, textureheight, datas.size());
 		// set each 2D texture layer separately:
-		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, texturewidth, textureheight, 1, GL_RGBA, GL_UNSIGNED_BYTE, datas[0].data);
-		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, texturewidth, textureheight, 1, GL_RGBA, GL_UNSIGNED_BYTE, datas[1].data);
+		for(int i = 0 ; i < datas.size(); i++)
+			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texturewidth, textureheight, 1, GL_RGBA, GL_UNSIGNED_BYTE, datas[i].data);
+
 		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
+		for(auto& data : datas)
+			stbi_image_free(data.data);
 
 		return texture;
 	}

@@ -37,7 +37,7 @@ struct Chunk
 					ChunkData &data = chunkInfo[i][j][k];
 					data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i,j,k) * BlockSize * 2.0f;
 					data.isExist = rand() % 4 == 0;
-					data.type = Util::randomPointI(0,1);
+					data.type = Util::randomPointI(0,4);
 				}
 			}
 		}
