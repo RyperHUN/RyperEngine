@@ -29,6 +29,9 @@
 #include "Widgets.h"
 #include "TextRenderer.h"
 
+//PhysX
+#include <PxPhysicsAPI.h>
+
 class CMyApp
 {
 public:

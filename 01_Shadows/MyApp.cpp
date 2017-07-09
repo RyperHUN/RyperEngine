@@ -165,11 +165,11 @@ bool CMyApp::Init()
 
 	gameObjs.push_back(sphere);
 	GameObj * sphere2 = new GameObj (*sphere);
-	sphere2->pos = glm::vec3(2,0,-3);
+	sphere2->pos = glm::vec3(2,50,-3);
 	gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,-3,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0)};
+	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,20,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0)};
 	quadObj->rotAngle = M_PI / 2.0;
-	gameObjs.push_back(quadObj);
+	//gameObjs.push_back(quadObj);
 
 	chunkManager.GenerateBoxes();
 
@@ -190,7 +190,7 @@ bool CMyApp::Init()
 		glm::vec3 random = Util::randomVec();
 		float randomY = random.y * 3;
 		random *= scaleFactor;
-		random.y = 10 + randomY;
+		random.y = 40 + randomY;
 		obj->pos = random;
 	}
 	quadObj->pos = glm::vec3(0,0,0);

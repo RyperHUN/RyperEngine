@@ -21,6 +21,14 @@ Minecraft:
 		-http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/
 		-https://notch.tumblr.com/post/3746989361/terrain-generation-part-1
 	-Array Texture -> Utananez textura feltolteshez
+		https://sites.google.com/site/john87connor/texture-object/tutorial-09-6-array-texture
+
+Kerdesek:
+	-Mi az a scenequery? ezt nyomja a PhysX be a shapeknel. Egy shape lehet intersect test, trigger volume vagy ez.
+	Profiler tamas tipp: ApiTrace
+	- Milyen az a kinematic triangle mesh miben kulonbozik RigidDynamictol?
+	- Azt beszeltuk konzultacion hogy kis spherekkel kene kozeliteni az egyes csontokat,
+	  nem lenne eleg ha az egesz mest kozelitem egy Konvex Burokkal?
 	
 	
 Kerdesek:
