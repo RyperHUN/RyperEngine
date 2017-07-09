@@ -29,8 +29,8 @@
 #include "Widgets.h"
 #include "TextRenderer.h"
 
-//PhysX
-#include <PxPhysicsAPI.h>
+// PhysX
+#include "PhysX.h"
 
 class CMyApp
 {
@@ -158,6 +158,8 @@ protected:
 	//Widgets
 	Checkbox checkbox;
 	Container container;
+
+	PhysX physX;
 
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete

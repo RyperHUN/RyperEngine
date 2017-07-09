@@ -44,11 +44,15 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(IncludePath);T:\OGLPack\include;T:\PhysX-3.4\PhysX_3.4\Include;T:\PhysX-3.4\PxShared\include</IncludePath>
     <LibraryPath>t:\OGLPack\lib\x86;T:\PhysX-3.4\PhysX_3.4\Lib\vc14win32;T:\PhysX-3.4\PxShared\lib\vc14win32;$(LibraryPath)</LibraryPath>
+    <ReferencePath>
+    </ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(IncludePath);T:\OGLPack\include;T:\PhysX-3.4\PhysX_3.4\Include;T:\PhysX-3.4\PxShared\include</IncludePath>
     <LibraryPath>t:\OGLPack\lib\x86;T:\PhysX-3.4\PhysX_3.4\Lib\vc14win32;T:\PhysX-3.4\PxShared\lib\vc14win32;$(LibraryPath)</LibraryPath>
+    <ReferencePath>
+    </ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -58,11 +62,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4005;4018;4244;4305;4800</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;glew32.lib;glu32.lib;opengl32.lib;PhysX3_x86.lib;PhysX3Common_x86.lib;PxPvdSDK_x86.lib;PxFoundation_x86.lib;PhysX3Extensions.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -75,13 +80,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4005;4018;4244;4305;4800</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;glew32.lib;glu32.lib;opengl32.lib;PhysX3_x86.lib;PhysX3Common_x86.lib;PxPvdSDK_x86.lib;PxFoundation_x86.lib;PhysX3Extensions.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -121,6 +127,7 @@
     <ClInclude Include="Mesh_OGL3.h" />
     <ClInclude Include="MyApp.h" />
     <ClInclude Include="ObjParser_OGL3.h" />
+    <ClInclude Include="PhysX.h" />
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="UtilityFuncs.h" />

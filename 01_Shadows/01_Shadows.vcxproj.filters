@@ -37,6 +37,9 @@
     <Filter Include="Widgets">
       <UniqueIdentifier>{29cbe037-82c4-4b16-9ab4-220d94294a6d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PhysX">
+      <UniqueIdentifier>{2afc7b65-a91f-416c-b7e9-b5f2d7ff4df2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -152,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="TextRenderer.h">
       <Filter>Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX.h">
+      <Filter>PhysX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

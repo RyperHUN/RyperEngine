@@ -34,7 +34,8 @@ CMyApp::CMyApp(void)
 
 	container.AddWidget (&checkbox);
 	container.AddWidget (new Checkbox(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer)); //TODO Delete
-
+	
+	physX.initPhysics (false);
 }
 
 
@@ -224,6 +225,7 @@ void CMyApp::Clean()
 	glDeleteTextures(1, &texture_Map);
 
 	shader_EnvMap.Clean(); 
+	physX.cleanupPhysics(false);
 
 	delete mesh_Suzanne;
 	delete m_cow_mesh;
