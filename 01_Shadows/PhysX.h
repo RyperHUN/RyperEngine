@@ -29,7 +29,8 @@ public:
 		//ProfileZoneManager???
 		gPvd = physx::PxCreatePvd(*gFoundation);
 		physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
-		gPvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
+		if(!gPvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL))
+			std::cout << "Physx::PVD - Failed to connect to PhysX Visual Debugger" << std::endl;
 
 		//PxToleranceScale atallithato ha masfajta unitokat akarunk!
 		bool recordMemoryAllocations = true;
@@ -56,7 +57,7 @@ public:
 		gScene->addActor(*groundPlane);
 
 		//for (physx::PxU32 i = 0; i<5; i++)
-		//	physx::createStack(physx::PxTransform(physx::PxVec3(0, 0, stackZ -= 10.0f)), 10, 2.0f);
+			createStack(physx::PxTransform(physx::PxVec3(0, 0, 10)), 10, 2.0f);
 
 		//if (!interactive)
 		//	createDynamic(PxTransform(PxVec3(0, 40, 100)), PxSphereGeometry(10), PxVec3(0, -50, -100));
@@ -80,5 +81,21 @@ public:
 		gFoundation->release();
 
 		printf("SnippetHelloWorld done.\n");
+	}
+	void createStack(const physx::PxTransform& t, physx::PxU32 size, physx::PxReal halfExtent)
+	{
+		physx::PxShape* shape = gPhysics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *gMaterial);
+		for (physx::PxU32 i = 0; i<size; i++)
+		{
+			for (physx::PxU32 j = 0; j<size - i; j++)
+			{
+				physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i), physx::PxReal(i * 2 + 1), 0) * halfExtent);
+				physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
+				body->attachShape(*shape);
+				physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+				gScene->addActor(*body);
+			}
+		}
+		shape->release();
 	}
 };

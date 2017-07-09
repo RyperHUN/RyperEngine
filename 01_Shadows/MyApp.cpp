@@ -248,6 +248,8 @@ void CMyApp::Update()
 		obj->Animate (t, delta_time);
 	for(auto& light : shaderLights)
 		light.light->Animate(t, delta_time);
+
+	physX.stepPhysics (false);
 }
 
 void CMyApp::Render()
