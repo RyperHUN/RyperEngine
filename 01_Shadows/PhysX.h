@@ -156,8 +156,14 @@ public:
 			physx::PxTransform localRotate (quat);
 
 			physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm).transform(localRotate));
+			
 			body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
+			body->setAngularVelocity (physx::PxVec3(0,0,0));
 			physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+			body->setMass(100);
+			body->setCMassLocalPose(physx::PxTransform(physx::PxVec3(0, 0, 0)));
+			body->setMassSpaceInertiaTensor(physx::PxVec3(0, 0, 0));
+
 			physx::PxShape* shape = body->createShape (physx::PxConvexMeshGeometry(convexMesh), *gMaterial);
 
 			gScene->addActor (*body);
