@@ -98,4 +98,14 @@ public:
 		}
 		shape->release();
 	}
+	void createChunk(const physx::PxTransform& t, physx::PxReal halfExtent)
+	{
+		physx::PxShape* shape = gPhysics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *gMaterial);
+		//physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i), physx::PxReal(i * 2 + 1), 0) * halfExtent);
+		//physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
+		//body->attachShape(*shape);
+		//physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+		//gScene->addActor(*body);
+		shape->release();
+	}
 };

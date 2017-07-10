@@ -111,13 +111,15 @@ struct ChunkManager
 		Chunk testChunk = Chunk(geom_Box, shader, startPos);
 		chunks.push_back(testChunk);
 		float size = testChunk.GetCubeSize() * testChunk.BlockSize * 2;
-		for(int j = -5 ; j < 6; j++)
+		/*for(int j = -5 ; j < 6; j++)
 		{
 			for(int i = -5; i < 6; i++)
 			{
 				chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,0,j) * size));
 			}
-		}
+		}*/
+
+		chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(0, 0, 0) * size));
 	}
 	void Draw (RenderState state, GLuint texId)
 	{

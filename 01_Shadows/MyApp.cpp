@@ -290,18 +290,18 @@ void CMyApp::Render()
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 		state.PV = activeCamera->GetProjView();
-		for(auto& obj : gameObjs)
-				obj->Draw (state);
+		//for(auto& obj : gameObjs)
+		//		obj->Draw (state);
 
-		gameObjs[0]->Draw(state, &shader_NormalVecDraw);
+		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 
 		//Draw lights
-		lightRenderer.Draw(activeCamera->GetProjView());
-		boundingBoxRenderer.Draw(state);
+		//lightRenderer.Draw(activeCamera->GetProjView());
+		//boundingBoxRenderer.Draw(state);
 		//chunk.Draw(state, tex_dirt);
 		chunkManager.Draw(state, textureArray_blocks);
 
-		cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
+		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 		//////////////////////////////Environment map drawing!!!
 		shader_EnvMap.On();
 		{
@@ -319,7 +319,7 @@ void CMyApp::Render()
 		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
 
 		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
-		container.Draw(state);
+		//container.Draw(state);
 		//button.Draw (state);
 		//checkbox.Draw(state);
 	}
