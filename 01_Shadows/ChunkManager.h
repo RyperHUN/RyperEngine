@@ -70,7 +70,7 @@ struct Chunk
 			{
 				for (int j = 0; j < cubeSize; j++)
 				{
-					ChunkData & data = chunkInfo[i][j][k];
+					ChunkData const& data = chunkInfo[i][j][k];
 					if(data.isExist)
 					{
 						//positions[MAX_INSTANCED];
@@ -78,6 +78,7 @@ struct Chunk
 						shader->SetUniform (name.c_str(), glm::vec3(data.pos));
 						std::string name2("uLayer[" + std::to_string(index) + "]");
 						shader->SetUniform (name2.c_str(), (int)data.type);
+						//shader->SetUniform(name2.c_str(), (int)0);
 
 						index++;
 						numberOfExistingCubes++;
@@ -88,7 +89,7 @@ struct Chunk
 		return numberOfExistingCubes;
 	}
 
-	size_t GetCubeSize()
+	size_t GetCubeSize() const
 	{
 		return size * 2 + 1;
 	}
@@ -109,7 +110,6 @@ struct ChunkManager
 	{
 		glm::ivec3 startPos(15, 20, 5);
 		Chunk testChunk = Chunk(geom_Box, shader, startPos);
-		chunks.push_back(testChunk);
 		float size = testChunk.GetCubeSize() * testChunk.BlockSize * 2;
 		/*for(int j = -5 ; j < 6; j++)
 		{

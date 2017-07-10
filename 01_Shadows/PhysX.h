@@ -3,6 +3,7 @@
 //PhysX
 #include <PxPhysicsAPI.h>
 
+#include "ChunkManager.h"
 
 
 #define PVD_HOST "127.0.0.1"
@@ -57,7 +58,7 @@ public:
 		gScene->addActor(*groundPlane);
 
 		//for (physx::PxU32 i = 0; i<5; i++)
-			createStack(physx::PxTransform(physx::PxVec3(0, 0, 10)), 10, 2.0f);
+			//createStack(physx::PxTransform(physx::PxVec3(0, 0, 10)), 10, 2.0f);
 
 		//if (!interactive)
 		//	createDynamic(PxTransform(PxVec3(0, 40, 100)), PxSphereGeometry(10), PxVec3(0, -50, -100));
@@ -98,14 +99,35 @@ public:
 		}
 		shape->release();
 	}
-	void createChunk(const physx::PxTransform& t, physx::PxReal halfExtent)
+	void createChunk(Chunk const& chunk)
 	{
-		physx::PxShape* shape = gPhysics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *gMaterial);
-		//physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i), physx::PxReal(i * 2 + 1), 0) * halfExtent);
-		//physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
-		//body->attachShape(*shape);
-		//physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
-		//gScene->addActor(*body);
+		const float HalfExtent = chunk.BlockSize * 0.99998;
+		physx::PxShape* shape = gPhysics->createShape(physx::PxBoxGeometry(HalfExtent, HalfExtent, HalfExtent), *gMaterial);
+		const size_t cubeSize = chunk.GetCubeSize ();
+		int drawedShaped = 0;
+		for (int k = 0; k < cubeSize; k++)
+		{
+			for (int i = 0; i < cubeSize; i++) //row
+			{
+				for (int j = 0; j < cubeSize; j++)
+				{
+					physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
+					ChunkData const& data = chunk.chunkInfo[i][j][k];
+					if(data.isExist)
+					{
+						physx::PxTransform localTm(physx::PxVec3(data.pos.x, data.pos.z, data.pos.y));
+						//physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
+						physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
+						body->attachShape(*shape);
+						body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
+						//physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+						gScene->addActor(*body);
+						drawedShaped++;
+					}
+				}
+			}
+		}
+
 		shape->release();
 	}
 };

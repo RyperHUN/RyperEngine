@@ -173,6 +173,7 @@ bool CMyApp::Init()
 	//gameObjs.push_back(quadObj);
 
 	chunkManager.GenerateBoxes();
+	physX.createChunk(chunkManager.chunks.front());
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
 	//suzanne->scale = glm::vec3(5,5,5);
@@ -214,7 +215,7 @@ bool CMyApp::Init()
 	
 	fbo_Rendered.CreateAttachments(m_width, m_height);
 
-	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, chunk.pos);
+	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
 
 	return true;
 }
