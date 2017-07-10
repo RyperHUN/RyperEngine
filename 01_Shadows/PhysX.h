@@ -111,7 +111,6 @@ public:
 		const float HalfExtent = chunk.BlockSize * 0.99998;
 		physx::PxShape* shape = gPhysics->createShape(physx::PxBoxGeometry(HalfExtent, HalfExtent, HalfExtent), *gMaterial);
 		const size_t cubeSize = chunk.GetCubeSize ();
-		int drawedShaped = 0;
 		for (int k = 0; k < cubeSize; k++)
 		{
 			for (int i = 0; i < cubeSize; i++) //row
@@ -122,19 +121,47 @@ public:
 					ChunkData const& data = chunk.chunkInfo[i][j][k];
 					if(data.isExist)
 					{
-						physx::PxTransform localTm(physx::PxVec3(data.pos.x, data.pos.z, data.pos.y));
+						physx::PxTransform localTm(physx::PxVec3(data.pos.x, data.pos.y, data.pos.z));
 						//physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
 						physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
 						body->attachShape(*shape);
 						body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
 						//physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
 						gScene->addActor(*body);
-						drawedShaped++;
 					}
 				}
 			}
 		}
 
 		shape->release();
+	}
+	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel)
+	{
+		const std::vector<glm::vec3> vertexes = assimpModel->meshes[0].buffer.GetPositionData();
+		physx::PxConvexMeshDesc convexDesc;
+		convexDesc.points.count = vertexes.size();
+		convexDesc.points.stride = sizeof(glm::vec3); //Vertexek mérete (4*3=12 bájt)
+		convexDesc.points.data = &(vertexes[0]); //Egy float tömb amely a vertexeket tartalmazza
+		convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
+
+		physx::PxDefaultMemoryOutputStream buf;
+		if (mCooking->cookConvexMesh(convexDesc, buf))
+		{
+			physx::PxDefaultMemoryInputData input(buf.getData(), buf.getSize());
+			physx::PxConvexMesh* convexMesh = gPhysics->createConvexMesh(input);
+
+			physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
+			physx::PxTransform localTm(physx::PxVec3(pos.x, pos.y, pos.z));
+			physx::PxQuat quat{ rot.x, rot.y, rot.z, rot.w };
+			physx::PxTransform localRotate (quat);
+
+			physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm).transform(localRotate));
+			body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
+			physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+			physx::PxShape* shape = body->createShape (physx::PxConvexMeshGeometry(convexMesh), *gMaterial);
+
+			gScene->addActor (*body);
+		}
+
 	}
 };

@@ -172,8 +172,6 @@ bool CMyApp::Init()
 	quadObj->rotAngle = M_PI / 2.0;
 	//gameObjs.push_back(quadObj);
 
-	chunkManager.GenerateBoxes();
-	physX.createChunk(chunkManager.chunks.front());
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
 	//suzanne->scale = glm::vec3(5,5,5);
@@ -211,11 +209,15 @@ bool CMyApp::Init()
 	//gameObjs.push_back(quadObj);
 	cowboyObj->rotAxis = glm::vec3{1,0,0};
 	cowboyObj->rotAngle = -M_PI / 2; //For cowboy animated man
-	cowboyObj->pos = glm::vec3(0,30,5);
+	cowboyObj->pos = glm::vec3(0,40, 6);
 	
 	fbo_Rendered.CreateAttachments(m_width, m_height);
 
 	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
+
+	chunkManager.GenerateBoxes();
+	physX.createChunk(chunkManager.chunks.front());
+	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry);
 
 	return true;
 }
