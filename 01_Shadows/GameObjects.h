@@ -24,7 +24,7 @@ struct RenderState
 
 class GameObj {
 public:
-	bool isInsideFrustum = false;
+	bool isInsideFrustum = true;
 	gShaderProgram *   shader;
 	std::shared_ptr<Material> material;
 	Geometry * geometry;

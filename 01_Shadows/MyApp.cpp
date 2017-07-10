@@ -209,11 +209,12 @@ bool CMyApp::Init()
 	//gameObjs.push_back(quadObj);
 	cowboyObj->rotAxis = glm::vec3{1,0,0};
 	cowboyObj->rotAngle = -M_PI / 2; //For cowboy animated man
-	cowboyObj->pos = glm::vec3(0,40, 6);
+	cowboyObj->pos = glm::vec3(0,45, 6);
 	
 	fbo_Rendered.CreateAttachments(m_width, m_height);
 
-	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
+	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
+	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, cowboyObj->pos);
 
 	chunkManager.GenerateBoxes();
 	physX.createChunk(chunkManager.chunks.front());
@@ -252,7 +253,7 @@ void CMyApp::Update()
 	for(auto& light : shaderLights)
 		light.light->Animate(t, delta_time);
 
-	physX.stepPhysics (false);
+	physX.stepPhysics (false, gameObjs.front()->pos);
 }
 
 void CMyApp::Render()
@@ -260,7 +261,7 @@ void CMyApp::Render()
 	RenderState state;
 	state.wEye = activeCamera->GetEye ();
 	state.shaderLights = &shaderLights;
-	FrustumCulling (secondaryCamera);
+	//FrustumCulling (secondaryCamera);
 
 	//////////////////////////////First render to depth map
 	GLfloat near_plane = 0.1f, far_plane = 100.0f;

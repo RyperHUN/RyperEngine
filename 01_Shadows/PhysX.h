@@ -69,8 +69,10 @@ public:
 
 		//if (!interactive)
 		//	createDynamic(PxTransform(PxVec3(0, 40, 100)), PxSphereGeometry(10), PxVec3(0, -50, -100));
+
+		gScene->setFlag(physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS, true);
 	}
-	void stepPhysics(bool interactive)
+	void stepPhysics(bool interactive, glm::vec3& cowboyPos)
 	{
 		gScene->simulate(1.0f / 60.0f);
 		gScene->fetchResults(true);
@@ -81,7 +83,9 @@ public:
 		if (numberOfTransforms > 0)
 		{
 			physx::PxActiveTransform transform = transforms[0];
-			transform.actor2World;
+			glm::vec3 pos = Util::PhysXVec3ToglmVec3(transform.actor2World.p);
+			glm::quat quat = Util::PhysXQuatToglmQuat(transform.actor2World.q);
+			cowboyPos = pos;
 		}
 	}
 
@@ -160,7 +164,7 @@ public:
 			physx::PxConvexMesh* convexMesh = gPhysics->createConvexMesh(input);
 
 			physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
-			physx::PxTransform localTm(physx::PxVec3(pos.x, pos.y, pos.z));
+			physx::PxTransform localTm(Util::glmVec3ToPhysXVec3(pos));
 			physx::PxQuat quat{ rot.x, rot.y, rot.z, rot.w };
 			physx::PxTransform localRotate (quat);
 
