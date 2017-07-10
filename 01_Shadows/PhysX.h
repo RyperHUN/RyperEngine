@@ -74,6 +74,15 @@ public:
 	{
 		gScene->simulate(1.0f / 60.0f);
 		gScene->fetchResults(true);
+
+		size_t numberOfTransforms;
+		const physx::PxActiveTransform* transforms = gScene->getActiveTransforms(numberOfTransforms);
+		
+		if (numberOfTransforms > 0)
+		{
+			physx::PxActiveTransform transform = transforms[0];
+			transform.actor2World;
+		}
 	}
 
 	void cleanupPhysics(bool interactive)

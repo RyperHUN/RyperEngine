@@ -128,7 +128,7 @@ struct Animator
 		if (!scene->HasAnimations())
 			return;
 
-		glm::mat4 globalTransform = assimpToGlm(scene->mRootNode->mTransformation);
+		glm::mat4 globalTransform = Util::assimpToGlm(scene->mRootNode->mTransformation);
 		globalTransformInverse = glm::inverse(globalTransform);
 
 		aiAnimation* anim = scene->mAnimations[0]; //TODO load all animations
@@ -153,7 +153,7 @@ struct Animator
 			else
 				boneIndex = boneMapping[boneName]; //Already have id
 
-			boneTransforms[boneIndex].offsetMatrix = assimpToGlm(bone->mOffsetMatrix);
+			boneTransforms[boneIndex].offsetMatrix = Util::assimpToGlm(bone->mOffsetMatrix);
 
 			for (int j = 0; j < bone->mNumWeights; j++)
 			{
@@ -181,14 +181,14 @@ struct Animator
 
 		const aiAnimation* pAnimation = scene->mAnimations[0];
 
-		glm::mat4 NodeTransformation(assimpToGlm(node->mTransformation));
+		glm::mat4 NodeTransformation(Util::assimpToGlm(node->mTransformation));
 
 		const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
 
 		if (pNodeAnim) {
 			// Interpolate scaling and generate scaling transformation matrix
 			aiVector3D Scaling = pNodeAnim->mScalingKeys[0].mValue;
-			glm::vec3 scale = assimpToGlm(Scaling);
+			glm::vec3 scale = Util::assimpToGlm(Scaling);
 
 			glm::quat quaternion = interpolateRotation(animationTime, pNodeAnim);
 
@@ -238,8 +238,8 @@ struct Animator
 		assert(keyIndex >= 0);
 		auto& key1 = nodeAnim->mPositionKeys[keyIndex];
 		auto& key2 = nodeAnim->mPositionKeys[keyIndex + 1];
-		glm::vec3 pos1 = assimpToGlm(key1.mValue);
-		glm::vec3 pos2 = assimpToGlm(key2.mValue);
+		glm::vec3 pos1 = Util::assimpToGlm(key1.mValue);
+		glm::vec3 pos2 = Util::assimpToGlm(key2.mValue);
 		float timeDiff = key2.mTime - key1.mTime;
 		float mixTime = (animationTime - key1.mTime) / timeDiff;
 		return glm::mix(pos1, pos2, mixTime);
@@ -258,8 +258,8 @@ struct Animator
 		assert(keyIndex >= 0);
 		auto& key1 = nodeAnim->mRotationKeys[keyIndex];
 		auto& key2 = nodeAnim->mRotationKeys[keyIndex + 1];
-		glm::quat pos1 = assimpToGlm(key1.mValue);
-		glm::quat pos2 = assimpToGlm(key2.mValue);
+		glm::quat pos1 = Util::assimpToGlm(key1.mValue);
+		glm::quat pos2 = Util::assimpToGlm(key2.mValue);
 
 		float timeDiff = key2.mTime - key1.mTime;
 		float mixTime = (animationTime - key1.mTime) / timeDiff; //[0,1]
