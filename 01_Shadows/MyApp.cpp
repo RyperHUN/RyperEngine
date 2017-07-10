@@ -202,7 +202,7 @@ bool CMyApp::Init()
 		lightRenderer.AddLight(&light);
 	lightRenderer.AddLight(&dirLight);
 
-	//gameObjs.clear();
+	gameObjs.clear();
 
 	AnimatedCharacter* cowboyObj = new AnimatedCharacter( &shader_Simple,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
 	for(auto& mesh : geom_Man.meshes)
@@ -211,7 +211,7 @@ bool CMyApp::Init()
 	//gameObjs.push_back(quadObj);
 	cowboyObj->rotAxis = glm::vec3{1,0,0};
 	cowboyObj->rotAngle = -M_PI / 2; //For cowboy animated man
-	cowboyObj->pos = glm::vec3(0,10,10);
+	cowboyObj->pos = glm::vec3(0,30,5);
 	
 	fbo_Rendered.CreateAttachments(m_width, m_height);
 
@@ -291,8 +291,8 @@ void CMyApp::Render()
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 		state.PV = activeCamera->GetProjView();
-		//for(auto& obj : gameObjs)
-		//		obj->Draw (state);
+		for(auto& obj : gameObjs)
+				obj->Draw (state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 

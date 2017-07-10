@@ -22,6 +22,7 @@ class PhysX
 	physx::PxMaterial*				gMaterial = NULL;
 
 	physx::PxPvd*                   gPvd = NULL;
+	physx::PxCooking*				mCooking = NULL;
 public:
 	void initPhysics(bool interactive)
 	{
@@ -35,7 +36,13 @@ public:
 
 		//PxToleranceScale atallithato ha masfajta unitokat akarunk!
 		bool recordMemoryAllocations = true;
-		gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, physx::PxTolerancesScale(), recordMemoryAllocations, gPvd);
+		physx::PxTolerancesScale scale = physx::PxTolerancesScale();
+		gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, scale , recordMemoryAllocations, gPvd);
+		mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, physx::PxCookingParams(scale));
+		if (!mCooking) {
+			std::cout << "Physx::PVD - Failed to init cooking library" << std::endl;
+			assert(false);
+		}
 
 		//Fontos hogy ennek a Desc nek meg kell egyeznie a PxTolerancesScale-el
 		physx::PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
