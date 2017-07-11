@@ -9,7 +9,7 @@ void FrustumG::setCamInternals(float angle, float ratio, float nearD, float farD
 	this->farD = farD;
 
 	// compute width and height of the near and far plane sections
-	tang = (float)tan(ANG2RAD * angle * 0.5);
+	float tang = (float)tan(ANG2RAD * angle * 0.5);
 	nh = nearD * tang;
 	nw = nh * ratio;
 	fh = farD  * tang;

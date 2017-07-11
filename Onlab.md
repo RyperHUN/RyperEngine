@@ -1,11 +1,14 @@
+%TODO Felhasznalt technologiak belerakni Szakdogaba
+Technologiak: GLM, OpenGL, PhysX, Assimp, SDL, Vmi image loader
+
 Sourcek eddig:
-	-Learn OpenGL
+	-Learn OpenGL [Bennevan]
 	-Thinmatrix Youtube https://www.youtube.com/channel/UCUkRj4qoT1bsWpE_C8lZYoQ
 Karakter animacio:
-	-Assimp Scene struct: http://assimp.sourceforge.net/lib_html/structai_scene.html
-	-Assimp reszletes leiras adatokrol: http://assimp.sourceforge.net/lib_html/data.html
-	-Kar Animacio D3D ben elmagyarazva: http://mathinfo.univ-reims.fr/image/dxMesh/extra/d3dx_skinnedmesh.pdf
-	-OpenGL Animacio elmagyarazva[Eleg hulyen, de megis jol]: http://ogldev.atspace.co.uk/www/tutorial38/tutorial38.html 
+	-Assimp Scene struct: http://assimp.sourceforge.net/lib_html/structai_scene.html [BENNE]
+	-Assimp reszletes leiras adatokrol: http://assimp.sourceforge.net/lib_html/data.html [BENNEVAN]
+	-Kar Animacio D3D ben elmagyarazva: http://mathinfo.univ-reims.fr/image/dxMesh/extra/d3dx_skinnedmesh.pdf [NINCS BENNE]
+	-OpenGL Animacio elmagyarazva[Eleg hulyen, de megis jol]: http://ogldev.atspace.co.uk/www/tutorial38/tutorial38.html  [BENNEVAN]
 Component Based:
 	-RandyGaul [Tul optimalizalt] - http://www.randygaul.net/2013/05/20/component-based-engine-design/
 	-GameProg patterns - http://gameprogrammingpatterns.com/component.html
@@ -13,9 +16,9 @@ Frustum Culling:
 	-http://www.lighthouse3d.com/tutorials/view-frustum-culling/view-frustums-shape/
 	- TODO Separating Axis Theorem ( By Tamas )
 Arnyekok:
-	- Shadow mapping -> Errol lehetne nagyon rizsazni, tobbfele softshadow megoldasrol foleg
-	-http://developer.download.nvidia.com/shaderlibrary/docs/shadow_PCSS.pdf
-	-http://developer.download.nvidia.com/presentations/2008/GDC/GDC08_SoftShadowMapping.pdf
+	-Shadow mapping -> Errol lehetne nagyon rizsazni, tobbfele softshadow megoldasrol foleg
+	-http://developer.download.nvidia.com/shaderlibrary/docs/shadow_PCSS.pdf [Nincs Benne]
+	-http://developer.download.nvidia.com/presentations/2008/GDC/GDC08_SoftShadowMapping.pdf 
 Minecraft:
 	Procedural Gen:
 		-http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/

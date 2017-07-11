@@ -17,10 +17,13 @@ private:
 public:
 
 	enum FRUSTUM_POS { OUTSIDE, INTERSECT, INSIDE };
-	Geom::Plane pl[6];
-	glm::vec3 ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr;
-	float nearD, farD, ratio, angle, tang;
-	float nw, nh, fw, fh;
+	Geom::Plane pl[6]; //Must have for calculations
+	float nw, nh; //Near planes half height and width
+	float fw, fh; //Far planes half height and widght
+
+	//Not neccesary infos
+	glm::vec3 ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr; // Not neccesary info for storing
+	float nearD, farD, ratio, angle; //Not neccesary info storing for culling
 
 	void setCamInternals(float angle, float ratio, float nearD, float farD);
 	void setCamDef(glm::vec3 const&eyePos, glm::vec3 const&lookDir, glm::vec3 const&upVec);
