@@ -46,9 +46,6 @@
     <ClCompile Include="MyApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gCamera.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,9 +69,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="gCamera.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
@@ -114,9 +108,6 @@
     <ClInclude Include="MyApp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="fpsCamera.h">
-      <Filter>Utils\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="glmIncluder.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
@@ -133,9 +124,6 @@
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="Drawer.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="UIRenderer.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Widgets.h">
@@ -157,6 +145,12 @@
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="UtilEngine.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRenderer.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
   </ItemGroup>

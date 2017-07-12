@@ -93,7 +93,6 @@
   <ItemGroup>
     <ClCompile Include="Bezier.cpp" />
     <ClCompile Include="FrustumG.cpp" />
-    <ClCompile Include="gCamera.cpp" />
     <ClCompile Include="gShaderProgram.cpp" />
     <ClCompile Include="gVertexBuffer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -111,10 +110,9 @@
     <ClInclude Include="Controller.h" />
     <ClInclude Include="Defs.h" />
     <ClInclude Include="Drawer.h" />
-    <ClInclude Include="fpsCamera.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="FrustumG.h" />
     <ClInclude Include="GameObjects.h" />
-    <ClInclude Include="gCamera.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GeometryCreator.h" />
     <ClInclude Include="glFrameBuffer.h" />

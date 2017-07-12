@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fpsCamera.h"
+#include "Camera.h"
 #include "glmIncluder.h"
 #include <oglwrap\oglwrap.h>
 

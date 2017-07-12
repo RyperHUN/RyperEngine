@@ -13,13 +13,12 @@
 // GLM
 #include "glmIncluder.h"
 
-#include "gCamera.h"
 #include "gShaderProgram.h"
 #include "gVertexBuffer.h"
 #include "Mesh_OGL3.h"
 #include "GameObjects.h"
 #include "AssimpModel.h"
-#include "fpsCamera.h"
+#include "Camera.h"
 #include "CameraRenderer.h"
 
 #include "Defs.h"
