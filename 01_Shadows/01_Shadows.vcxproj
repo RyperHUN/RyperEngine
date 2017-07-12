@@ -135,14 +135,14 @@
     <None Include="boundingBoxShader.frag" />
     <None Include="boundingBoxShader.vert" />
     <None Include="ClassDiagram.cd" />
-    <None Include="envmap.frag" />
-    <None Include="envmap.vert" />
+    <None Include="skybox.frag" />
+    <None Include="skybox.vert" />
     <None Include="frustumVisualizer.frag" />
     <None Include="frustumVisualizer.vert" />
     <None Include="InstancedDrawer.frag" />
     <None Include="InstancedDrawer.vert" />
-    <None Include="LightShader.frag" />
-    <None Include="LightShader.vert" />
+    <None Include="LightVisualizer.frag" />
+    <None Include="LightVisualizer.vert" />
     <None Include="normalDrawer.frag" />
     <None Include="normalDrawer.geom" />
     <None Include="quadTexturer.frag" />
@@ -151,8 +151,6 @@
     <None Include="shadowShader.vert" />
     <None Include="simpleShader.frag" />
     <None Include="simpleShader.vert" />
-    <None Include="skybox.frag" />
-    <None Include="skybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

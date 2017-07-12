@@ -1,12 +1,13 @@
-#version 430
+#version 130
 
-in vec3 vs_out_tex;
-
+// kimenõ érték - a fragment színe
 out vec4 fs_out_col;
+in vec4 viewDir;
 
-uniform samplerCube cubeTexture;
+uniform samplerCube skyBox;
 
 void main()
 {
-	fs_out_col = texture( cubeTexture, vs_out_tex );
+	//fs_out_col = vec4(normalize(viewDir.xyz),1);
+	fs_out_col = texture(skyBox, normalize(viewDir.xyz));
 }

@@ -59,12 +59,11 @@ bool CMyApp::LoadShaders ()
 	shader_Instanced.AttachShader(GL_FRAGMENT_SHADER, "InstancedDrawer.frag");
 	if(!shader_Instanced.LinkProgram()) return false;
 
-
 	// skybox shader
-	shader_EnvMap.CreateShadowShader();
-	shader_EnvMap.AttachShader(GL_VERTEX_SHADER, "envmap.vert");
-	shader_EnvMap.AttachShader(GL_FRAGMENT_SHADER, "envmap.frag");
-	if (!shader_EnvMap.LinkProgram())  return false;
+	shader_SkyBox.CreateShadowShader();
+	shader_SkyBox.AttachShader(GL_VERTEX_SHADER, "skybox.vert");
+	shader_SkyBox.AttachShader(GL_FRAGMENT_SHADER, "skybox.frag");
+	if (!shader_SkyBox.LinkProgram())  return false;
 
 	///TODO Delete shadow shader
 	shader_Shadow.AttachShader(GL_VERTEX_SHADER, "shadowShader.vert");
@@ -77,8 +76,8 @@ bool CMyApp::LoadShaders ()
 	if (!shader_DebugQuadTexturer.LinkProgram()) return false;
 
 	shader_LightRender.CreateShadowShader();
-	shader_LightRender.AttachShader(GL_VERTEX_SHADER, "LightShader.vert");
-	shader_LightRender.AttachShader(GL_FRAGMENT_SHADER, "LightShader.frag");
+	shader_LightRender.AttachShader(GL_VERTEX_SHADER, "LightVisualizer.vert");
+	shader_LightRender.AttachShader(GL_FRAGMENT_SHADER, "LightVisualizer.frag");
 	if (!shader_LightRender.LinkProgram()) return false;
 
 	shader_BoundingBox.CreateShadowShader();
@@ -231,7 +230,7 @@ void CMyApp::Clean()
 	glDeleteTextures(1, &textureCube_id);
 	glDeleteTextures(1, &texture_Map);
 
-	shader_EnvMap.Clean(); 
+	shader_SkyBox.Clean(); 
 	physX.cleanupPhysics(false);
 
 	delete mesh_Suzanne;
@@ -297,7 +296,7 @@ void CMyApp::Render()
 		glViewport(0, 0, m_width, m_height);
 
 		shader_Simple.On();
-		shader_EnvMap.SetCubeTexture("skyBox", 12, textureCube_id);
+		shader_SkyBox.SetCubeTexture("skyBox", 12, textureCube_id);
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
 		state.PV = activeCamera->GetProjView();
@@ -314,17 +313,17 @@ void CMyApp::Render()
 
 		//cameraRenderer.Render(activeCamera->GetProjView (), secondaryCamera);
 		//////////////////////////////Environment map drawing!!!
-		shader_EnvMap.On();
+		shader_SkyBox.On();
 		{
 			buffer_Quad.On ();
 
-				shader_EnvMap.SetUniform("rayDirMatrix", activeCamera->GetRayDirMtx ());
-				shader_EnvMap.SetCubeTexture ("skyBox",14, textureCube_id);
+				shader_SkyBox.SetUniform("rayDirMatrix", activeCamera->GetRayDirMtx ());
+				shader_SkyBox.SetCubeTexture ("skyBox",14, textureCube_id);
 				buffer_Quad.DrawIndexed(GL_TRIANGLES);
 			
 			buffer_Quad.Off ();
 		}
-		shader_EnvMap.Off();
+		shader_SkyBox.Off();
 		//////////////////////////////Shadow map debug texture drawing
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1));
 		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);

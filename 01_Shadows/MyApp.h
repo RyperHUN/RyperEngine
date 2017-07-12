@@ -142,7 +142,7 @@ protected:
 	gShaderProgram  shader_LightRender;
 	gShaderProgram  shader_Simple;
 	gShaderProgram  shader_Shadow;
-	gShaderProgram	shader_EnvMap;
+	gShaderProgram	shader_SkyBox;
 	gShaderProgram  shader_DebugQuadTexturer;
 	gShaderProgram  shader_BoundingBox;
 	gShaderProgram  shader_Frustum;

@@ -40,6 +40,9 @@
     <Filter Include="PhysX">
       <UniqueIdentifier>{2afc7b65-a91f-416c-b7e9-b5f2d7ff4df2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Helper">
+      <UniqueIdentifier>{083eac84-01ae-4ff6-a65d-d07ab01bdd6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -108,9 +111,6 @@
     <ClInclude Include="MyApp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="glmIncluder.h">
-      <Filter>Utils\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="CameraRenderer.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -153,30 +153,15 @@
     <ClInclude Include="Camera.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="glmIncluder.h">
+      <Filter>Utils\Helpers\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="envmap.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="envmap.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="skybox.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="skybox.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="simpleShader.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="simpleShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shadowShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shadowShader.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="quadTexturer.vert">
@@ -185,25 +170,7 @@
     <None Include="quadTexturer.frag">
       <Filter>Shaders\Debug</Filter>
     </None>
-    <None Include="LightShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="LightShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="ClassDiagram.cd" />
-    <None Include="boundingBoxShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="boundingBoxShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="frustumVisualizer.frag">
-      <Filter>Shaders\Debug</Filter>
-    </None>
-    <None Include="frustumVisualizer.vert">
-      <Filter>Shaders\Debug</Filter>
-    </None>
     <None Include="normalDrawer.geom">
       <Filter>Shaders\Debug</Filter>
     </None>
@@ -215,6 +182,36 @@
     </None>
     <None Include="InstancedDrawer.frag">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="frustumVisualizer.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="frustumVisualizer.vert">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="boundingBoxShader.vert">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="boundingBoxShader.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="LightVisualizer.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="LightVisualizer.vert">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="skybox.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="skybox.vert">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="shadowShader.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="shadowShader.vert">
+      <Filter>Shaders\Helper</Filter>
     </None>
   </ItemGroup>
 </Project>
