@@ -26,9 +26,11 @@ class PhysX
 	physx::PxControllerManager*     mControllerManager = NULL;
 
 	physx::PxCapsuleController*		mController = NULL;
+	glm::vec3 forwardVec;
 public:
 	void initPhysics(bool interactive)
 	{
+		forwardVec = glm::vec3(0,0,1);
 		gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
 
 		//ProfileZoneManager???
@@ -96,9 +98,12 @@ public:
 		}
 		//Handle controller movement
 		cowboyPos = Util::PhysXVec3ToglmVec3(mController->getFootPosition ());
+		
 		physx::PxVec3 dispCurStep {0,-1,0};
-		dispCurStep += createDisplacementVector (controller);
+		dispCurStep += createDisplacementVector (controller); //wasd move
+		//dispCurStep += createDisplacementVectorResident (controller, dTime);
 		dispCurStep *= 0.1;
+		
 		const physx::PxU32 flags = mController->move(dispCurStep, 0, dTime, physx::PxControllerFilters());
 	}
 	physx::PxVec3 createDisplacementVector(Engine::Controller const& controller)
@@ -108,6 +113,23 @@ public:
 		vec.z = -controller.isForward + controller.isBack;
 
 		return Util::glmVec3ToPhysXVec3(vec);
+	}
+	physx::PxVec3 createDisplacementVectorResident(Engine::Controller const& controller, float dt)
+	{
+		modifyForwardVec(controller, dt);
+		
+		glm::vec3 vec(0);
+		vec = forwardVec * (float)controller.isForward - forwardVec * (float)controller.isBack;
+
+		return Util::glmVec3ToPhysXVec3(vec);
+	}
+	void modifyForwardVec (Engine::Controller const& controller, float dt)
+	{
+		//TODO Not working
+		if (controller.isLeft)
+			forwardVec = glm::rotate(glm::angleAxis((float)M_PI * dt, glm::vec3(0, 0, 1)), forwardVec);
+		if (controller.isRight)
+			forwardVec = glm::rotate(glm::angleAxis((float)M_PI * -dt, glm::vec3(0, 0, 1)), forwardVec);
 	}
 
 	void cleanupPhysics(bool interactive)
