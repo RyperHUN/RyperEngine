@@ -119,8 +119,7 @@
     <ClInclude Include="GeometryCreator.h" />
     <ClInclude Include="glFrameBuffer.h" />
     <ClInclude Include="glmIncluder.h" />
-    <ClInclude Include="glmUtils.h" />
-    <ClInclude Include="GLUtils.hpp" />
+    <ClInclude Include="UtilConverters.h" />
     <ClInclude Include="gShaderProgram.h" />
     <ClInclude Include="gVertexBuffer.h" />
     <ClInclude Include="Light.h" />
@@ -131,7 +130,7 @@
     <ClInclude Include="PhysX.h" />
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="UIRenderer.h" />
-    <ClInclude Include="UtilityFuncs.h" />
+    <ClInclude Include="UtilEngine.h" />
     <ClInclude Include="Widgets.h" />
   </ItemGroup>
   <ItemGroup>

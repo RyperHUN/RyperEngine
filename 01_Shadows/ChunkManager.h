@@ -3,7 +3,7 @@
 #include "GameObjects.h"
 #include "glmIncluder.h"
 #include <glm/gtc/random.hpp>
-#include "UtilityFuncs.h"
+#include "UtilEngine.h"
 
 ///TODO Better speed if these are all uniforms
 struct ChunkData

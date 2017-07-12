@@ -4,7 +4,7 @@
 #include <cassert>
 #include <vector>
 #include <glm/glm.hpp>
-#include "UtilityFuncs.h"
+#include "UtilEngine.h"
 
 using Vec = glm::vec3;
 using FloatVec = std::vector<float>;

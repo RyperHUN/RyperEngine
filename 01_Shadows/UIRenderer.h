@@ -2,7 +2,7 @@
 
 #include <GL\glew.h>
 
-#include "UtilityFuncs.h"
+#include "UtilEngine.h"
 
 struct UIRenderer 
 {

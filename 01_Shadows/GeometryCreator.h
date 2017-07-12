@@ -2,7 +2,7 @@
 
 #include "gVertexBuffer.h"
 
-namespace GeomCreator
+namespace Geom
 {
 	void CreateBoxGeom(gVertexBuffer &buffer_Box)
 	{

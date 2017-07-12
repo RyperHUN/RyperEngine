@@ -1,5 +1,5 @@
 #include "MyApp.h"
-#include "GLUtils.hpp"
+#include "UtilEngine.h"
 
 
 
@@ -7,7 +7,7 @@
 #include <math.h>
 
 #include "ObjParser_OGL3.h"
-#include "UtilityFuncs.h"
+#include "UtilEngine.h"
 #include "GeometryCreator.h"
 
 Geometry * BoundingBoxRenderer::geom_box = nullptr;
@@ -107,12 +107,12 @@ bool CMyApp::Init()
 	geom_Sphere.Create (30,30);
 
 	// skybox kocka
-	GeomCreator::CreateBoxGeom(buffer_Box);
+	Geom::CreateBoxGeom(buffer_Box);
 	buffer_Box.InitBuffers();
 
 	geom_Box = TriangleMesh(buffer_Box);
 //////////////////////////////
-	GeomCreator::CreateQuadGeom(buffer_Quad);
+	Geom::CreateQuadGeom(buffer_Quad);
 	buffer_Quad.InitBuffers ();
 
 	geom_Quad = TriangleMesh(buffer_Quad);

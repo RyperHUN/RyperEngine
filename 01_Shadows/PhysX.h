@@ -109,8 +109,8 @@ public:
 	physx::PxVec3 createDisplacementVector(Engine::Controller const& controller)
 	{
 		glm::vec3 vec(0);
-		vec.x = -controller.isLeft + controller.isRight;
-		vec.z = -controller.isForward + controller.isBack;
+		vec.x = -(float)controller.isLeft + controller.isRight;
+		vec.z = -(float)controller.isForward + controller.isBack;
 
 		return Util::glmVec3ToPhysXVec3(vec);
 	}

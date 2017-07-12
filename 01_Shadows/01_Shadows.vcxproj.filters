@@ -87,17 +87,11 @@
     <ClInclude Include="Material.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="UtilityFuncs.h">
-      <Filter>Utils\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="Bezier.h">
       <Filter>Utils\Helpers\Math</Filter>
     </ClInclude>
     <ClInclude Include="FrustumG.h">
       <Filter>Utils\Helpers\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="glmUtils.h">
-      <Filter>Utils\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="AssimpMesh.h">
       <Filter>Utils\Helpers\Loader</Filter>
@@ -119,9 +113,6 @@
     </ClInclude>
     <ClInclude Include="MyApp.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GLUtils.hpp">
-      <Filter>Utils\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="fpsCamera.h">
       <Filter>Utils\Helpers</Filter>
@@ -161,6 +152,12 @@
     </ClInclude>
     <ClInclude Include="GeometryCreator.h">
       <Filter>Utils\Helpers\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilConverters.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilEngine.h">
+      <Filter>Utils\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

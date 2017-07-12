@@ -4,7 +4,7 @@
 #include <SDL.h>
 
 #include "glmIncluder.h"
-#include "UtilityFuncs.h"
+#include "UtilEngine.h"
 #include "Drawer.h"
 #include <string>
 #include <functional>
