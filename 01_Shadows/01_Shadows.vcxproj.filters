@@ -120,9 +120,6 @@
     <ClInclude Include="MyApp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeometryCreator.h">
-      <Filter>Utils\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="GLUtils.hpp">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
@@ -161,6 +158,9 @@
     </ClInclude>
     <ClInclude Include="Controller.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryCreator.h">
+      <Filter>Utils\Helpers\Loader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -26,13 +26,13 @@ namespace GeomCreator
 		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
 		
-		//Bal oldal //TODO Tex
+		//Bal oldal
 		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0); buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
 		
 		//Jobb oldal
 		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);	buffer_Box.AddData(2, 1.0f, 0.0f);
