@@ -1,5 +1,5 @@
-%TODO Felhasznalt technologiak belerakni Szakdogaba
-Technologiak: GLM, OpenGL, PhysX, Assimp, SDL, Vmi image loader
+%TODO Irni PhysX ről.
+%TODO Irni viz renderelesről
 
 Sourcek eddig:
 	-Learn OpenGL [Bennevan]
@@ -13,18 +13,18 @@ Component Based:
 	-RandyGaul [Tul optimalizalt] - http://www.randygaul.net/2013/05/20/component-based-engine-design/
 	-GameProg patterns - http://gameprogrammingpatterns.com/component.html
 Frustum Culling:
-	-http://www.lighthouse3d.com/tutorials/view-frustum-culling/view-frustums-shape/
+	-http://www.lighthouse3d.com/tutorials/view-frustum-culling/view-frustums-shape/ [BENNEVAN]
 	- TODO Separating Axis Theorem ( By Tamas )
 Arnyekok:
 	-Shadow mapping -> Errol lehetne nagyon rizsazni, tobbfele softshadow megoldasrol foleg
 	-http://developer.download.nvidia.com/shaderlibrary/docs/shadow_PCSS.pdf [Nincs Benne]
-	-http://developer.download.nvidia.com/presentations/2008/GDC/GDC08_SoftShadowMapping.pdf 
+	-http://developer.download.nvidia.com/presentations/2008/GDC/GDC08_SoftShadowMapping.pdf [BENNEVAN]
 Minecraft:
 	Procedural Gen:
-		-http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/
+		-http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/ [BENNEVAN]
 		-https://notch.tumblr.com/post/3746989361/terrain-generation-part-1
-	-Array Texture -> Utananez textura feltolteshez
-		https://sites.google.com/site/john87connor/texture-object/tutorial-09-6-array-texture
+	-Array Texture -> Utananez textura feltolteshez [BENNEVAN]
+		https://sites.google.com/site/john87connor/texture-object/tutorial-09-6-array-texture [BENNEVAN]
 
 Kerdesek:
 	-Mi az a scenequery? ezt nyomja a PhysX be a shapeknel. Egy shape lehet intersect test, trigger volume vagy ez.
@@ -32,6 +32,10 @@ Kerdesek:
 	- Milyen az a kinematic triangle mesh miben kulonbozik RigidDynamictol?
 	- Azt beszeltuk konzultacion hogy kis spherekkel kene kozeliteni az egyes csontokat,
 	  nem lenne eleg ha az egesz mest kozelitem egy Konvex Burokkal?
+	- Kinematic Controllerbe azt olvastam hogy nekem kell megoldani a gravitációt, de azt hogyan?
+	- Miért nem konzisztens a kép a PhysX es cuccal?
+	- Vélemény az eddig irtakról? Mikor célszerű kódrészletet beszúrni?
+	- Miért lassú a textúra váltás? Nem csak egy uniform feltöltése az egész hogy melyik textúrát használja?
 	
 	
 Kerdesek:

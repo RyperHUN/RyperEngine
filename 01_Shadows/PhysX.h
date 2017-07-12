@@ -5,7 +5,6 @@
 
 #include "ChunkManager.h"
 
-
 #define PVD_HOST "127.0.0.1"
 
 class PhysX 
@@ -79,7 +78,7 @@ public:
 
 		size_t numberOfTransforms;
 		const physx::PxActiveTransform* transforms = gScene->getActiveTransforms(numberOfTransforms);
-		
+
 		if (numberOfTransforms > 0)
 		{
 			physx::PxActiveTransform transform = transforms[0];
@@ -100,8 +99,6 @@ public:
 		transport->release();
 
 		gFoundation->release();
-
-		printf("SnippetHelloWorld done.\n");
 	}
 	void createStack(const physx::PxTransform& t, physx::PxU32 size, physx::PxReal halfExtent)
 	{

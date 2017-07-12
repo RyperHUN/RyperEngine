@@ -217,6 +217,7 @@ bool CMyApp::Init()
 	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, cowboyObj->pos);
 
 	chunkManager.GenerateBoxes();
+	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	physX.createChunk(chunkManager.chunks.front());
 	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry);
 
