@@ -4,6 +4,7 @@
 #include <PxPhysicsAPI.h>
 
 #include "ChunkManager.h"
+#include "Controller.h"
 
 #define PVD_HOST "127.0.0.1"
 
@@ -76,9 +77,10 @@ public:
 
 		mControllerManager = PxCreateControllerManager(*gScene);
 	}
-	void stepPhysics(bool interactive, glm::vec3& cowboyPos)
+	void stepPhysics(float deltaTime, bool interactive, glm::vec3& cowboyPos, Engine::Controller const& controller)
 	{
-		const double dTime = 1.0f / 60.0f;
+		//const double dTime = 1.0f / 60.0f;
+		const double dTime = deltaTime; //TODO Fix timestepping algorithm
 		gScene->simulate(dTime);
 		gScene->fetchResults(true);
 
@@ -95,7 +97,17 @@ public:
 		//Handle controller movement
 		cowboyPos = Util::PhysXVec3ToglmVec3(mController->getFootPosition ());
 		physx::PxVec3 dispCurStep {0,-1,0};
+		dispCurStep += createDisplacementVector (controller);
+		dispCurStep *= 0.1;
 		const physx::PxU32 flags = mController->move(dispCurStep, 0, dTime, physx::PxControllerFilters());
+	}
+	physx::PxVec3 createDisplacementVector(Engine::Controller const& controller)
+	{
+		glm::vec3 vec(0);
+		vec.x = -controller.isLeft + controller.isRight;
+		vec.z = -controller.isForward + controller.isBack;
+
+		return Util::glmVec3ToPhysXVec3(vec);
 	}
 
 	void cleanupPhysics(bool interactive)

@@ -254,7 +254,7 @@ void CMyApp::Update()
 	for(auto& light : shaderLights)
 		light.light->Animate(t, delta_time);
 
-	physX.stepPhysics (false, gameObjs.front()->pos);
+	physX.stepPhysics (delta_time, false, gameObjs.front()->pos, controller);
 }
 
 void CMyApp::Render()
@@ -346,6 +346,7 @@ void CMyApp::FrustumCulling (CameraPtr camera)
 
 void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 {
+	controller.KeyboardDown(key);
 	activeCamera->KeyboardDown(key);
 	for(auto& obj : gameObjs)
 		obj->KeyboardDown(key);
@@ -376,6 +377,7 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 
 void CMyApp::KeyboardUp(SDL_KeyboardEvent& key)
 {
+	controller.KeyboardUp(key);
 	activeCamera->KeyboardUp(key);
 	for (auto& obj : gameObjs)
 		obj->KeyboardUp(key);

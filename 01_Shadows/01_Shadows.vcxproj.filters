@@ -159,6 +159,9 @@
     <ClInclude Include="PhysX.h">
       <Filter>PhysX</Filter>
     </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="envmap.vert">

@@ -2,6 +2,7 @@
 %TODO Irni font renderingrol????
 %TODO Irni viz renderelesről [https://www.youtube.com/watch?v=HusvGeEDU_U&list=PLRIWtICgwaX23jiqVByUs0bqhnalNTNZh]
 %TODO Irni Extra OpenGL Effektek megvalositva: Anti Aliasing, Post Processing(Tone Mapping, gamma korrekcio) 
+%TODO Irni kamerarol?
 	%TODO Megold: Lens Flare effect, Render to cube map texture (For dynamic environment mapping)
 	%TODO PostProcess more effekt: Bloom effekt, Gaussian Blur.
 	%TODO Rendes nap megjelnites texturabol stb, es rarajzol skyboxra.

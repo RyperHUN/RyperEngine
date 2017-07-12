@@ -29,6 +29,8 @@
 #include "Widgets.h"
 #include "TextRenderer.h"
 
+#include "Controller.h"
+
 // PhysX
 #include "PhysX.h"
 
@@ -160,6 +162,7 @@ protected:
 	Container container;
 
 	PhysX physX;
+	Engine::Controller controller;
 
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete
