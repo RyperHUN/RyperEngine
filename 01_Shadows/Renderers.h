@@ -8,11 +8,11 @@
 
 #include "Defs.h"
 
-class CameraRenderer
+class FrustumRenderer
 {
 	gShaderProgram * shader;
 public:
-	CameraRenderer (gShaderProgram * shader)
+	FrustumRenderer (gShaderProgram * shader)
 		:shader(shader)
 	{}
 	void Render(glm::mat4 VP, CameraPtr camera)
