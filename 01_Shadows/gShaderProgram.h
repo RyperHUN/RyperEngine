@@ -32,10 +32,10 @@ public:
 
 	void Clean();
 
-	void SetUniform(const char* uniform, glm::vec2& vec);
-	void SetUniform(const char* uniform, glm::vec3& vec);
-	void SetUniform(const char* uniform, glm::vec4& vec);
-	void SetUniform(const char* uniform, glm::mat4& mat);
+	void SetUniform(const char* uniform, glm::vec2 const& vec);
+	void SetUniform(const char* uniform, glm::vec3 const& vec);
+	void SetUniform(const char* uniform, glm::vec4 const& vec);
+	void SetUniform(const char* uniform, glm::mat4 const& mat);
 	void SetUniform(const char* uniform, int i);
 	void SetUniform(const char* uniform, float f);
 	void SetUniform(const char* uniform, float a, float b);

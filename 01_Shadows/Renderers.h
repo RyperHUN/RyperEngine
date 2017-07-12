@@ -221,3 +221,57 @@ struct QuadTexturer
 		shader->Off();
 	}
 };
+
+struct SkyboxRenderer
+{
+private:
+	gShaderProgram* shader;
+	Geometry * geom;
+	GLuint textureCube;
+public:
+	SkyboxRenderer(Geometry * geom, gShaderProgram* shader, GLuint textureCube)
+		:shader(shader), geom(geom), textureCube(textureCube)
+	{}
+	void Draw(glm::mat4 const& rayDirMatrix)
+	{
+		shader->On();
+		{
+			shader->SetUniform("rayDirMatrix", rayDirMatrix);
+			shader->SetCubeTexture("skyBox", 14, textureCube);
+			geom->Draw();
+		}
+		shader->Off();
+	}
+	void SetTexture(GLuint textureCubeID) {textureCube = textureCubeID;}
+};
+
+struct LightRenderer
+{
+	std::vector<Light*> lights;
+	Geometry* geom;
+	gShaderProgram * shader;
+	LightRenderer() {}
+	LightRenderer(Geometry * geom, gShaderProgram * shader)
+		: geom(geom), shader(shader)
+	{
+	}
+	void AddLight(Light * light)
+	{
+		lights.push_back(light);
+	}
+
+	void Draw(glm::mat4 VP)
+	{
+		shader->On();
+		{
+			for (auto& light : lights)
+			{
+				glm::mat4 PVM = VP * glm::translate(light->position) * glm::scale(glm::vec3(0.5));
+				shader->SetUniform("PVM", PVM);
+				shader->SetUniform("color", light->color);
+				geom->Draw();
+			}
+		}
+		shader->Off();
+	}
+};

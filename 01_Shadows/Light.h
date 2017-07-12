@@ -113,34 +113,3 @@ public:
 		attuentationLinear = glm::clamp(attuentationLinear, 0.2f, 1.0f);
 	}
 };
-
-struct LightRenderer
-{
-	std::vector<Light*> lights;
-	Geometry* geom;
-	gShaderProgram * shader;
-	LightRenderer(){}
-	LightRenderer (Geometry * geom, gShaderProgram * shader)
-		: geom(geom), shader(shader)
-	{
-	}
-	void AddLight(Light * light)
-	{
-		lights.push_back(light);
-	}
-
-	void Draw(glm::mat4 VP)
-	{
-		shader->On();
-		{
-			for(auto& light : lights)
-			{
-				glm::mat4 PVM = VP * glm::translate(light->position) * glm::scale(glm::vec3(0.5));
-				shader->SetUniform("PVM",PVM);
-				shader->SetUniform("color", light->color);
-				geom->Draw();
-			}
-		}
-		shader->Off();
-	}
-};

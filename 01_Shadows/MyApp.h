@@ -119,6 +119,7 @@ protected:
 	BoundingBoxRenderer boundingBoxRenderer;
 	QuadTexturer quadTexturer;
 	TextRenderer textRenderer;
+	SkyboxRenderer skyboxRenderer;
 
 	//Widgets
 	Checkbox checkbox;

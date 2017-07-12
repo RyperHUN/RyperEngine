@@ -23,7 +23,8 @@ CMyApp::CMyApp(void)
 	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer),
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
-	container (glm::ivec2(50, 50))
+	container (glm::ivec2(50, 50)),
+	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -134,6 +135,7 @@ bool CMyApp::Init()
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
 	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
+	skyboxRenderer.SetTexture(textureCube_id);
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("suzanne.obj");
@@ -288,6 +290,7 @@ void CMyApp::Render()
 
 		for (auto& obj : gameObjs)
 			obj->Draw(state,obj->shader->GetShadowShader());
+		//TODO Shadows for the chunks
 	}
 	fbo_Shadow.Off();
 
@@ -303,27 +306,15 @@ void CMyApp::Render()
 		for(auto& obj : gameObjs)
 				obj->Draw (state);
 
-		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
-
-		//Draw lights
-		//lightRenderer.Draw(activeCamera->GetProjView());
-		//boundingBoxRenderer.Draw(state);
-		//chunk.Draw(state, tex_dirt);
 		chunkManager.Draw(state, textureArray_blocks);
 
+		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
+		//lightRenderer.Draw(activeCamera->GetProjView());
+		//boundingBoxRenderer.Draw(state);
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 		//////////////////////////////Environment map drawing!!!
-		shader_SkyBox.On();
-		{
-			buffer_Quad.On ();
+		skyboxRenderer.Draw(activeCamera->GetRayDirMtx ());
 
-				shader_SkyBox.SetUniform("rayDirMatrix", activeCamera->GetRayDirMtx ());
-				shader_SkyBox.SetCubeTexture ("skyBox",14, textureCube_id);
-				buffer_Quad.DrawIndexed(GL_TRIANGLES);
-			
-			buffer_Quad.Off ();
-		}
-		shader_SkyBox.Off();
 		//////////////////////////////Shadow map debug texture drawing
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1));
 		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
