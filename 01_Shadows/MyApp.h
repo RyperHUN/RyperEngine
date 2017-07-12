@@ -19,11 +19,10 @@
 #include "GameObjects.h"
 #include "AssimpModel.h"
 #include "Camera.h"
-#include "CameraRenderer.h"
+#include "Renderers.h"
 
 #include "Defs.h"
 #include "ChunkManager.h"
-#include "Drawer.h"
 
 #include "Widgets.h"
 #include "TextRenderer.h"

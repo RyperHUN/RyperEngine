@@ -11,7 +11,6 @@ struct Material;
 using MaterialPtr = std::shared_ptr<Material>;
 
 #include <stdint.h>
-#include <iostream>
 
 typedef uint8_t  u8;
 typedef uint16_t u16;
@@ -29,6 +28,8 @@ typedef int64_t i64;
 #else
 #   define MAssert(Expr, Msg) ;
 #endif
+
+#include <iostream>
 
 static inline void __M_Assert(char* expr_str, bool expr, char* file, int line, char* msg)
 {

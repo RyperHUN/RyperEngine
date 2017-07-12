@@ -111,9 +111,6 @@
     <ClInclude Include="MyApp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="CameraRenderer.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -122,9 +119,6 @@
     </ClInclude>
     <ClInclude Include="ChunkManager.h">
       <Filter>Utils\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Drawer.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Widgets.h">
       <Filter>Widgets</Filter>
@@ -155,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="glmIncluder.h">
       <Filter>Utils\Helpers\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderers.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
