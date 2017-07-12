@@ -359,4 +359,41 @@ namespace Util
 		return program_ID;
 	}
 
+	static inline GLuint TextureArray()
+	{
+		std::string prefix = "Pictures/blocks/";
+
+		unsigned int layers = 2;
+		std::vector<Util::TextureData> datas;
+		Util::TextureData data = Util::TextureDataFromFile(prefix + "dirt.png");
+		datas.push_back(data);
+		datas.push_back(Util::TextureDataFromFile(prefix + "ice.png"));
+		datas.push_back(Util::TextureDataFromFile(prefix + "lapis_ore.png"));
+		datas.push_back(Util::TextureDataFromFile(prefix + "trapdoor.png"));
+		datas.push_back(Util::TextureDataFromFile(prefix + "glass_red.png"));
+		unsigned int texturewidth = data.size.x;
+		unsigned int textureheight = data.size.y;
+
+		GLuint texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		// allocate memory for all layers:
+
+		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texturewidth, textureheight, datas.size());
+		// set each 2D texture layer separately:
+		for (int i = 0; i < datas.size(); i++)
+			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texturewidth, textureheight, 1, GL_RGBA, GL_UNSIGNED_BYTE, datas[i].data);
+
+		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+		for (auto& data : datas)
+			stbi_image_free(data.data);
+
+		return texture;
+	}
+
 }; //NS Util

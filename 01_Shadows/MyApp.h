@@ -59,7 +59,6 @@ private:
 	void BindFrameBuffersForRender();
 	void FrustumCulling(CameraPtr);
 
-	GLuint TextureArray ();
 protected:
 
 	// Textures
