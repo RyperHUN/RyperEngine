@@ -10,6 +10,8 @@
 #include <string>
 #include <iostream>
 
+#include "Defs.h"
+
 namespace Util 
 {
 	//Returns [lowerBound, upperBound]
@@ -359,21 +361,13 @@ namespace Util
 		return program_ID;
 	}
 
-	static inline GLuint TextureArray()
+	static inline GLuint TextureArray(std::vector<std::string> const& textureNames, const std::string prefix = "Pictures/blocks/", const std::string postfix = ".png")
 	{
-		std::string prefix = "Pictures/blocks/";
+		MAssert(textureNames.size() > 0, "Invalid argument given to TextureArray function, textureNames must be bigger than 0");
 
-		unsigned int layers = 2;
-		std::vector<Util::TextureData> datas;
-		Util::TextureData data = Util::TextureDataFromFile(prefix + "dirt.png");
-		datas.push_back(data);
-		datas.push_back(Util::TextureDataFromFile(prefix + "ice.png"));
-		datas.push_back(Util::TextureDataFromFile(prefix + "lapis_ore.png"));
-		datas.push_back(Util::TextureDataFromFile(prefix + "trapdoor.png"));
-		datas.push_back(Util::TextureDataFromFile(prefix + "glass_red.png"));
-		unsigned int texturewidth = data.size.x;
-		unsigned int textureheight = data.size.y;
-
+		const GLuint Layers = textureNames.size();
+		Util::TextureData dataFirst = Util::TextureDataFromFile(prefix + textureNames[0] + postfix);
+		//Create the texture
 		GLuint texture;
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
@@ -381,17 +375,20 @@ namespace Util
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		
+		unsigned int texturewidth = dataFirst.size.x;
+		unsigned int textureheight = dataFirst.size.y;
 		// allocate memory for all layers:
+		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texturewidth, textureheight, Layers);
 
-		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texturewidth, textureheight, datas.size());
-		// set each 2D texture layer separately:
-		for (int i = 0; i < datas.size(); i++)
-			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texturewidth, textureheight, 1, GL_RGBA, GL_UNSIGNED_BYTE, datas[i].data);
+		for(size_t i = 0; i < textureNames.size(); i++)
+		{
+			Util::TextureData data = Util::TextureDataFromFile (prefix + textureNames[i] + postfix);
+			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texturewidth, textureheight, 1, GL_RGBA, GL_UNSIGNED_BYTE, data.data);
+			stbi_image_free(data.data);
+		}
 
 		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-
-		for (auto& data : datas)
-			stbi_image_free(data.data);
 
 		return texture;
 	}

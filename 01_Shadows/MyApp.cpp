@@ -133,7 +133,7 @@ bool CMyApp::Init()
 	textureCube_id    = Util::LoadCubeMap("pictures/skybox/");
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
-	textureArray_blocks = Util::TextureArray ();
+	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("suzanne.obj");
