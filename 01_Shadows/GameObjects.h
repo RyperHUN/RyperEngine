@@ -139,12 +139,12 @@ struct AnimatedCharacter : public GameObj
 				geom->isAnimated = true;
 				break;
 			}
-			case SDLK_a:
-				turnLeft = true;
-				break;
-			case SDLK_d:
-				turnRight = true;
-				break;
+			//case SDLK_a:
+			//	turnLeft = true;
+			//	break;
+			//case SDLK_d:
+			//	turnRight = true;
+			//	break;
 		}
 	}
 	virtual void KeyboardUp(SDL_KeyboardEvent& key)
@@ -157,12 +157,12 @@ struct AnimatedCharacter : public GameObj
 				geom->isAnimated = false;
 				break;
 			}
-			case SDLK_a:
-				turnLeft = false;
-				break;
-			case SDLK_d:
-				turnRight = false;
-				break;
+			//case SDLK_a:
+			//	turnLeft = false;
+			//	break;
+			//case SDLK_d:
+			//	turnRight = false;
+			//	break;
 		}
 	}
 	virtual void Animate(float time, float dt) override

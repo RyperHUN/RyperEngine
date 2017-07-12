@@ -175,9 +175,10 @@ public:
 		//createCharacterDynamic(pos,rot, assimpModel);
 		physx::PxCapsuleControllerDesc desc;
 
+		//TODO Fix gap between ground
 		Geom::Box charBox;
-		desc.height = 5.0f;
-		desc.radius = 3.0f;
+		desc.height = 5.0f; //TODO Little bit smaller capsule
+		desc.radius = 3.0f; 
 		desc.material = gMaterial;
 		desc.position = physx::PxExtendedVec3 (pos.x, pos.y, pos.z);
 		desc.slopeLimit = 0.01f;

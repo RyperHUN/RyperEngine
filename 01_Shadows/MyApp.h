@@ -106,6 +106,7 @@ protected:
 	GLuint textureArray_blocks;
 
 	//TODO Camera manager
+	int cameraFocusIndex = -1; //TODO better if pointer to gameobj
 	CameraPtr activeCamera;
 	CameraPtr secondaryCamera; //TODO receive resize events also
 	CameraRenderer cameraRenderer;

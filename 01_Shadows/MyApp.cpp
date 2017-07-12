@@ -220,6 +220,8 @@ bool CMyApp::Init()
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	physX.createChunk(chunkManager.chunks.front());
 	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry);
+	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
+	cameraFocusIndex = 0;
 
 	return true;
 }
@@ -240,9 +242,13 @@ void CMyApp::Update()
 {
 	static Uint32 last_time = SDL_GetTicks();
 	float delta_time = (SDL_GetTicks() - last_time)/1000.0f;
+	if(delta_time <= 0.0f) 
+		delta_time = 0.00001f; //Fixes in it bug
 	float t = SDL_GetTicks() / 1000.0f;
 
 	activeCamera->Update(delta_time);
+	if (cameraFocusIndex >= 0)
+		activeCamera->SetSelected(gameObjs[cameraFocusIndex]->pos);
 	spotLight.direction = activeCamera->GetDir ();
 	spotLight.position  = activeCamera->GetEye ();
 
@@ -410,6 +416,8 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 		int index = boundingBoxRenderer.FindObject(activeCamera->GetEye(), world);
 		if(index >= 0)
 			activeCamera->SetSelected (gameObjs[index]->pos); //TODo better solution, what if the selected moves?
+
+		cameraFocusIndex = index;
 	}
 }
 
