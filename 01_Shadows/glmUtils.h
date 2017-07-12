@@ -64,6 +64,13 @@ inline glm::vec3 PhysXVec3ToglmVec3(const physx::PxVec3& vec3)
 {
 	return glm::vec3(vec3.x, vec3.y, vec3.z);
 }
+/** Convert Physx::PxExtendedVec3 to glm::vec3
+@param[in] vec3 The Physx::PxVec3
+@return Converted glm::vec3 */
+inline glm::vec3 PhysXVec3ToglmVec3(const physx::PxExtendedVec3& vec3)
+{
+	return glm::vec3(vec3.x, vec3.y, vec3.z);
+}
 /** Convert Physx::PxQuat to glm::quat
 @param[in] quat The Physx::PxQuat
 @return Converted glm::quat */

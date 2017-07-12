@@ -1,5 +1,15 @@
 %TODO Irni PhysX ről.
-%TODO Irni viz renderelesről
+%TODO Irni font renderingrol????
+%TODO Irni viz renderelesről [https://www.youtube.com/watch?v=HusvGeEDU_U&list=PLRIWtICgwaX23jiqVByUs0bqhnalNTNZh]
+%TODO Irni Extra OpenGL Effektek megvalositva: Anti Aliasing, Post Processing(Tone Mapping, gamma korrekcio) 
+	%TODO Megold: Lens Flare effect, Render to cube map texture (For dynamic environment mapping)
+	%TODO PostProcess more effekt: Bloom effekt, Gaussian Blur.
+	%TODO Rendes nap megjelnites texturabol stb, es rarajzol skyboxra.
+	%TODO Particle effects
+	%TODO Normal Mapping
+	%TODO Render GUI
+	%TODO Fog tavoli objektumokhoz, ne legyen eles valtas!!!
+	%TODO Profiler tamas tipp: ApiTrace
 
 Sourcek eddig:
 	-Learn OpenGL [Bennevan]
@@ -21,22 +31,43 @@ Arnyekok:
 	-http://developer.download.nvidia.com/presentations/2008/GDC/GDC08_SoftShadowMapping.pdf [BENNEVAN]
 Minecraft:
 	Procedural Gen:
-		-http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/ [BENNEVAN]
+		-http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/ [BENNEVAN] TODO Procedural gen
 		-https://notch.tumblr.com/post/3746989361/terrain-generation-part-1
 	-Array Texture -> Utananez textura feltolteshez [BENNEVAN]
 		https://sites.google.com/site/john87connor/texture-object/tutorial-09-6-array-texture [BENNEVAN]
 
 Kerdesek:
-	-Mi az a scenequery? ezt nyomja a PhysX be a shapeknel. Egy shape lehet intersect test, trigger volume vagy ez.
-	Profiler tamas tipp: ApiTrace
-	- Milyen az a kinematic triangle mesh miben kulonbozik RigidDynamictol?
+	- PhysX Particle systemje az pontosan mit csinal? Mert ugye en fogom megjeleniteni, o csak a mozgast szimulalja? [Hardcore]
+		/Utkozeseket is szamol a particlek kozott meg a feluletek kozott. (PL a fust ne menjen at a falon)
+		/Leontod vodor vizzel az autot akkor szepen lefolyik.
+	- Mi az a scenequery? ezt nyomja a PhysX be a shapeknel. Egy shape lehet intersect test, trigger volume vagy ez.
+		/??????
+	- Mi a kulonbseg az egyes tipusok kozott: Static (Gondolom ez lenne minecraftba a blokk), Dynamic (Nyilvesszo), Kinematic (Karakter)
+		- Kinematic character: O hat mas objektumokra felre tudja lokni a hordot stb. De hogy o hogyan mozogjon azt le kell kodolni.
+		- Move function: 
 	- Azt beszeltuk konzultacion hogy kis spherekkel kene kozeliteni az egyes csontokat,
 	  nem lenne eleg ha az egesz mest kozelitem egy Konvex Burokkal?
+		- Csontonkent egy capsula. Csont trafok alapjan megtudom mondani hova kell mennie a kapszulaknak. (Ez a rongybabahoz)
+			-> Mayahoz plugin PhysX. ez legeneralja a kapsulakat. (NXU kiterjesztesu fajl.) [Ez egy scene lesz es betudom peldanyositani]
 	- Kinematic Controllerbe azt olvastam hogy nekem kell megoldani a gravitációt, de azt hogyan?
+		/Raycastolni kene es meg kell neznem hogy bele megy-e vagy nem, de valoszinuleg query-t kell hasznalni
+		/Sweep query karakter nekimegy a falnak vagy sem
+	- Mi a kulonbseg a ride & slide kozott es a sima ride kozott?
+		/
+	- Hogyan vizualizaljam az objektumokat en is Grafikaban??? (Mint kb ahogy a PX Visual debugger csinalja)
 	- Miért nem konzisztens a kép a PhysX es cuccal?
+		/
 	- Vélemény az eddig irtakról? Mikor célszerű kódrészletet beszúrni?
 	- Miért lassú a textúra váltás? Nem csak egy uniform feltöltése az egész hogy melyik textúrát használja?
-	
+		Ami a nagyon lassu az a Cntext meg a shader valtas. A textura valtas nem olyan lassu, de ha 1 rajzolashivassal eltudod intezni
+		textura array, akkor ezzel a rajzolas hivason nyersz.
+		(Textura cache - ha egyszer innen egyszer onnan olvasol nemjo, de a textura cache lenyege az hogy a szomszedos pixeleket behuzza)
+		
+	%TODO Allo betukre allitani az also indexeket. \text{} $B_{asd}$
+	%TODO PCF Irni beepitett dologrol
+	%Optimalizaciok helyett egy kulon fejezet.
+		%Optimalizalt megjelenitesi modszerek. (uj cim)
+		
 	
 Kerdesek:
 	-Megkerdez hogy mihez vegyem fel a szakdogat, mit irjak, mi legyen a tema cime?
@@ -44,8 +75,6 @@ Kerdesek:
 		- IIT-s szakdoga de ehhez kell papirmunka hogy feltudjam venni.
 		
 	-Szakdogaba ehhez vigan irhatok dolgokat?
-		-Itt pl a Frustum Culling, Karakter Animcio, Arnyekok(Shadow Map, PCFG), Anti Aliasing amik igy eszembe jutottak hogy irni lehetne
-		roluk.
 		-Gondolom ugy kozelitsem meg ezeket hogy valamihez kepest osszehasonlitom, hogy ez ennel jobb de pl ennel rosszabb, es akar egy
 		 tablazatot is belerakhatok ilyen sebessegekkel stb.
 		 

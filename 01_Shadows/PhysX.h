@@ -22,6 +22,9 @@ class PhysX
 
 	physx::PxPvd*                   gPvd = NULL;
 	physx::PxCooking*				mCooking = NULL;
+	physx::PxControllerManager*     mControllerManager = NULL;
+
+	physx::PxCapsuleController*		mController = NULL;
 public:
 	void initPhysics(bool interactive)
 	{
@@ -70,10 +73,13 @@ public:
 		//	createDynamic(PxTransform(PxVec3(0, 40, 100)), PxSphereGeometry(10), PxVec3(0, -50, -100));
 
 		gScene->setFlag(physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS, true);
+
+		mControllerManager = PxCreateControllerManager(*gScene);
 	}
 	void stepPhysics(bool interactive, glm::vec3& cowboyPos)
 	{
-		gScene->simulate(1.0f / 60.0f);
+		const double dTime = 1.0f / 60.0f;
+		gScene->simulate(dTime);
 		gScene->fetchResults(true);
 
 		size_t numberOfTransforms;
@@ -84,13 +90,20 @@ public:
 			physx::PxActiveTransform transform = transforms[0];
 			glm::vec3 pos = Util::PhysXVec3ToglmVec3(transform.actor2World.p);
 			glm::quat quat = Util::PhysXQuatToglmQuat(transform.actor2World.q);
-			cowboyPos = pos;
+			cowboyPos = pos - glm::vec3(0,9,0);
 		}
+		//Handle controller movement
+		cowboyPos = Util::PhysXVec3ToglmVec3(mController->getFootPosition ());
+		physx::PxVec3 dispCurStep {0,-1,0};
+		const physx::PxU32 flags = mController->move(dispCurStep, 0, dTime, physx::PxControllerFilters());
 	}
 
 	void cleanupPhysics(bool interactive)
 	{
 		PX_UNUSED(interactive);
+		mCooking->release();
+		mControllerManager->release();
+
 		gScene->release();
 		gDispatcher->release();
 		gPhysics->release();
@@ -147,37 +160,56 @@ public:
 	}
 	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel)
 	{
-		const std::vector<glm::vec3> vertexes = assimpModel->meshes[0].buffer.GetPositionData();
-		physx::PxConvexMeshDesc convexDesc;
-		convexDesc.points.count = vertexes.size();
-		convexDesc.points.stride = sizeof(glm::vec3); //Vertexek mérete (4*3=12 bájt)
-		convexDesc.points.data = &(vertexes[0]); //Egy float tömb amely a vertexeket tartalmazza
-		convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
+		//createCharacterDynamic(pos,rot, assimpModel);
+		physx::PxCapsuleControllerDesc desc;
 
-		physx::PxDefaultMemoryOutputStream buf;
-		if (mCooking->cookConvexMesh(convexDesc, buf))
-		{
-			physx::PxDefaultMemoryInputData input(buf.getData(), buf.getSize());
-			physx::PxConvexMesh* convexMesh = gPhysics->createConvexMesh(input);
+		Geom::Box charBox;
+		desc.height = 5.0f;
+		desc.radius = 3.0f;
+		desc.material = gMaterial;
+		desc.position = physx::PxExtendedVec3 (pos.x, pos.y, pos.z);
+		desc.slopeLimit = 0.01f;
+		desc.contactOffset = 0.01f;
+		desc.stepOffset = 0.01f;
+		desc.invisibleWallHeight = 0.01f;
+		desc.maxJumpHeight = 5.0f;
+		desc.reportCallback = NULL; // Meg lehet adni neki osztalyt
 
-			physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
-			physx::PxTransform localTm(Util::glmVec3ToPhysXVec3(pos));
-			physx::PxQuat quat{ rot.x, rot.y, rot.z, rot.w };
-			physx::PxTransform localRotate (quat);
+		mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
+	}
+private:
+	void createCharacterDynamic (glm::vec3 pos, glm::quat rot, AssimpModel * assimpModel)
+	{
+		//const std::vector<glm::vec3> vertexes = assimpModel->meshes[0].buffer.GetPositionData();
+		//physx::PxConvexMeshDesc convexDesc;
+		//convexDesc.points.count = vertexes.size();
+		//convexDesc.points.stride = sizeof(glm::vec3); //Vertexek mérete (4*3=12 bájt)
+		//convexDesc.points.data = &(vertexes[0]); //Egy float tömb amely a vertexeket tartalmazza
+		//convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
 
-			physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm).transform(localRotate));
-			
-			body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
-			body->setAngularVelocity (physx::PxVec3(0,0,0));
-			physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
-			body->setMass(100);
-			body->setCMassLocalPose(physx::PxTransform(physx::PxVec3(0, 0, 0)));
-			body->setMassSpaceInertiaTensor(physx::PxVec3(0, 0, 0));
+		//physx::PxDefaultMemoryOutputStream buf;
+		//if (mCooking->cookConvexMesh(convexDesc, buf))
+		//{
+		//	physx::PxDefaultMemoryInputData input(buf.getData(), buf.getSize());
+		//	physx::PxConvexMesh* convexMesh = gPhysics->createConvexMesh(input);
 
-			physx::PxShape* shape = body->createShape (physx::PxConvexMeshGeometry(convexMesh), *gMaterial);
+		//	physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
+		//	physx::PxTransform localTm(Util::glmVec3ToPhysXVec3(pos));
+		//	physx::PxQuat quat = Util::glmQuatToPhysXQuat(rot);
+		//	physx::PxTransform localRotate (quat);
 
-			gScene->addActor (*body);
-		}
+		//	physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm).transform(localRotate));
+		//	
+		//	body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
+		//	body->setAngularVelocity (physx::PxVec3(0,0,0));
+		//	physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+		//	body->setMass(100);
+		//	body->setCMassLocalPose(physx::PxTransform(physx::PxVec3(0, 0, 0)));
+		//	body->setMassSpaceInertiaTensor(physx::PxVec3(0, 0, 0));
 
+		//	physx::PxShape* shape = body->createShape (physx::PxConvexMeshGeometry(convexMesh), *gMaterial);
+
+		//	gScene->addActor (*body);
+		//}
 	}
 };
