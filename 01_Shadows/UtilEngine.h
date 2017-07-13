@@ -43,9 +43,9 @@ namespace Util
 		return glm::vec3(randomPoint(), randomPoint(), randomPoint());
 	}
 
-	static gl::PixelDataInternalFormat GetTextureInternalFormat (int nrComponents)
+	static gl::PixelDataFormat GetTextureFormat (int nrComponents)
 	{
-		gl::PixelDataInternalFormat format;
+		gl::PixelDataFormat format;
 		if (nrComponents == 1)
 			format = gl::kRed;
 		else if (nrComponents == 3)
@@ -67,10 +67,10 @@ namespace Util
 		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
 		if (data)
 		{
-			gl::PixelDataInternalFormat format = GetTextureInternalFormat (nrComponents);
+			gl::PixelDataFormat format = GetTextureFormat (nrComponents);
 
 			auto bindTexture = gl::MakeTemporaryBind (texture);
-			texture.upload(format, width, height, (gl::PixelDataFormat)format, gl::kUnsignedByte, data);
+			texture.upload(gl::kRgba, width, height, format, gl::kUnsignedByte, data);
 			texture.generateMipmap ();
 
 			texture.wrapS (gl::kRepeat);
@@ -128,7 +128,7 @@ namespace Util
 
 	struct TextureData 
 	{
-		gl::PixelDataInternalFormat format;
+		gl::PixelDataFormat format;
 		glm::ivec2 size;
 		unsigned char * data; //stbi_image_free
 	};
@@ -143,7 +143,7 @@ namespace Util
 		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
 		if (data)
 		{
-			gl::PixelDataInternalFormat format = GetTextureInternalFormat(nrComponents);
+			gl::PixelDataFormat format = GetTextureFormat(nrComponents);
 
 			return TextureData {format, glm::ivec2{width, height}, data};
 		}
@@ -180,7 +180,7 @@ namespace Util
 		for (size_t i = 0; i < textureNames.size(); i++)
 		{
 			Util::TextureData data = Util::TextureDataFromFile(prefix + textureNames[i] + postfix);
-			texture.subUpload (0, 0, i, texturewidth, textureheight, 1, gl::kRgba, gl::kUnsignedByte, data.data);
+			texture.subUpload (0, 0, i, texturewidth, textureheight, 1, data.format, gl::kUnsignedByte, data.data);
 
 			stbi_image_free(data.data);
 		}
