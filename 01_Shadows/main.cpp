@@ -131,87 +131,87 @@ int main( int argc, char* args[] )
 	SDL_Event ev;
 
 	// alkalmazas példánya
-	CMyApp app;
-	GLenum val = glGetError();
-	val = glGetError();
-	if (!app.Init())
 	{
-		SDL_DestroyWindow(win);
-		std::cout << "[app.Init] Az alkalmazás inicializálása közben hibatörtént!" << std::endl;
-		return 1;
-	}
-
-	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
-	//glEnable(GL_MULTISAMPLE);
-
-	size_t frameCount = 0;
-	size_t lastTime = SDL_GetTicks ();
-	while (!quit)
-	{
-		// amíg van feldolgozandó üzenet dolgozzuk fel mindet:
-		while ( SDL_PollEvent(&ev) )
+		CMyApp app;
+		if (!app.Init())
 		{
-			switch (ev.type)
+			SDL_DestroyWindow(win);
+			std::cout << "[app.Init] Az alkalmazás inicializálása közben hibatörtént!" << std::endl;
+			return 1;
+		}
+
+		//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+		//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
+		//glEnable(GL_MULTISAMPLE);
+
+		size_t frameCount = 0;
+		size_t lastTime = SDL_GetTicks ();
+		while (!quit)
+		{
+			// amíg van feldolgozandó üzenet dolgozzuk fel mindet:
+			while ( SDL_PollEvent(&ev) )
 			{
-			case SDL_QUIT:
-				quit = true;
-				break;
-			case SDL_KEYDOWN:
-				if ( ev.key.keysym.sym == SDLK_ESCAPE )
-					quit = true;
-				app.KeyboardDown(ev.key);
-				break;
-			case SDL_KEYUP:
-				app.KeyboardUp(ev.key);
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-				app.MouseDown(ev.button);
-				break;
-			case SDL_MOUSEBUTTONUP:
-				app.MouseUp(ev.button);
-				break;
-			case SDL_MOUSEWHEEL:
-				app.MouseWheel(ev.wheel);
-				break;
-			case SDL_MOUSEMOTION:
-				app.MouseMove(ev.motion);
-				break;
-			case SDL_WINDOWEVENT:
-				if ( ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED )
+				switch (ev.type)
 				{
-					app.Resize(ev.window.data1, ev.window.data2);
+				case SDL_QUIT:
+					quit = true;
+					break;
+				case SDL_KEYDOWN:
+					if ( ev.key.keysym.sym == SDLK_ESCAPE )
+						quit = true;
+					app.KeyboardDown(ev.key);
+					break;
+				case SDL_KEYUP:
+					app.KeyboardUp(ev.key);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					app.MouseDown(ev.button);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					app.MouseUp(ev.button);
+					break;
+				case SDL_MOUSEWHEEL:
+					app.MouseWheel(ev.wheel);
+					break;
+				case SDL_MOUSEMOTION:
+					app.MouseMove(ev.motion);
+					break;
+				case SDL_WINDOWEVENT:
+					if ( ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED )
+					{
+						app.Resize(ev.window.data1, ev.window.data2);
+					}
+					break;
 				}
-				break;
 			}
+
+			app.Update();
+			app.Render();
+
+			//Show Fps
+			frameCount++;
+			size_t timeDiff = SDL_GetTicks() - lastTime;
+			if (timeDiff >= 1000) // 1 Sec elapsed
+			{
+				window_title.str(std::string());
+				window_title << timeDiff / (float)frameCount << " ms/Frame, " << frameCount << " FPS";
+				SDL_SetWindowTitle(win, window_title.str().c_str());
+
+				lastTime = SDL_GetTicks();
+				frameCount = 0;
+			}
+
+			SDL_GL_SwapWindow(win);
 		}
 
-		app.Update();
-		app.Render();
 
-		//Show Fps
-		frameCount++;
-		size_t timeDiff = SDL_GetTicks() - lastTime;
-		if (timeDiff >= 1000) // 1 Sec elapsed
-		{
-			window_title.str(std::string());
-			window_title << timeDiff / (float)frameCount << " ms/Frame, " << frameCount << " FPS";
-			SDL_SetWindowTitle(win, window_title.str().c_str());
+		//
+		// 4. lépés: lépjünk ki
+		// 
 
-			lastTime = SDL_GetTicks();
-			frameCount = 0;
-		}
-
-		SDL_GL_SwapWindow(win);
+		// takarítson el maga után az objektumunk
+		app.Clean();
 	}
-
-
-	//
-	// 4. lépés: lépjünk ki
-	// 
-
-	// takarítson el maga után az objektumunk
-	app.Clean();
 
 	SDL_GL_DeleteContext(context);
 	SDL_DestroyWindow( win );

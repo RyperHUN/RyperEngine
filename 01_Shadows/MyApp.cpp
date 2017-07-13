@@ -88,6 +88,7 @@ bool CMyApp::LoadShaders ()
 	shader_Frustum.AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
 	shader_Frustum.AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
 	if (!shader_Frustum.LinkProgram()) return false;
+	
 
 	return true;
 }
@@ -112,13 +113,13 @@ bool CMyApp::Init()
 //////////////////////////////
 	Geom::CreateQuadGeom(buffer_Quad);
 	buffer_Quad.InitBuffers ();
+	
 
 	geom_Quad = TriangleMesh(buffer_Quad);
 	//////////////////////////////////////////////////////////
 	// shaderek loading
 	if(!LoadShaders ())
 		return false;
-
 	
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
 	fbo_Shadow.CreateShadowAttachment (SHADOW_WIDTH, SHADOW_HEIGHT);

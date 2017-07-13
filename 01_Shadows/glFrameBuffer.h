@@ -22,7 +22,7 @@ public:
 		gl::Unbind (*this);
 	}
 
-	//Returns tex id
+	//Creates FBO with Depth + Color attachement
 	void CreateAttachments(int width, int height)
 	{
 		texture = gl::Texture2D {};
@@ -36,6 +36,7 @@ public:
 				std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 		}
 	}
+	//Creates FBO with only Depth attachement
 	void CreateShadowAttachment (int width, int height)
 	{
 		texture = gl::Texture2D{};
@@ -61,7 +62,7 @@ public:
 				std::cout << "ERROR::FRAMEBUFFER:: ShadowFramebuffer is not complete!" << std::endl;
 		}
 	}
-
+	//Creates FBO with depth + Multisampled color attachement
 	void CreateMultisampleAttachments(int width, int height)
 	{
 		texture = gl::Texture2D{};
