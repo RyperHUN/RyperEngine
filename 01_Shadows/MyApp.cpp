@@ -227,18 +227,6 @@ bool CMyApp::Init()
 	return true;
 }
 
-void CMyApp::Clean()
-{
-	glDeleteTextures(1, &textureCube_id);
-	glDeleteTextures(1, &texture_Map);
-
-	shader_SkyBox.Clean(); 
-	physX.cleanupPhysics(false);
-
-	delete mesh_Suzanne;
-	delete m_cow_mesh;
-}
-
 void CMyApp::Update()
 {
 	static Uint32 last_time = SDL_GetTicks();
@@ -483,4 +471,19 @@ void CMyApp::HandleFrameBufferRendering()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+}
+
+void CMyApp::Clean()
+{
+	glDeleteTextures(1, &textureCube_id);
+	glDeleteTextures(1, &texture_Map);
+
+	shader_SkyBox.Clean(); //TODO Clean all shaders
+	physX.cleanupPhysics(false);
+
+	for(int i = 0; i < gameObjs.size(); i++)
+		delete gameObjs[i];
+
+	delete mesh_Suzanne;
+	delete m_cow_mesh;
 }

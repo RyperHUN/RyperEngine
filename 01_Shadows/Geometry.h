@@ -69,8 +69,7 @@ namespace Geom{
 			assert(false); //Cannot reach this
 			return min;
 		}
-		//TODO Only works with Axis Aligne Bounding Box
-		static bool IsColliding(Geom::Box &lhs, Geom::Box &rhs)
+		static bool IsCollidingAABB(Geom::Box &lhs, Geom::Box &rhs)
 		{
 			return (lhs.min.x <= rhs.max.x && lhs.max.x >= rhs.min.x) &&
 				(lhs.min.y <= rhs.max.y && lhs.max.y >= rhs.min.y) &&
