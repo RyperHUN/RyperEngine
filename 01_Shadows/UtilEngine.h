@@ -15,6 +15,13 @@
 
 namespace Util 
 {
+	struct TextureData
+	{
+		gl::PixelDataFormat format;
+		glm::ivec2 size;
+		unsigned char * data; //stbi_image_free
+	};
+
 	//Returns [lowerBound, upperBound]
 	inline static int randomPointI(int lowerBound, int upperBound)
 	{
@@ -55,6 +62,29 @@ namespace Util
 
 		return format;
 	}
+
+	static inline TextureData TextureDataFromFile(std::string path)
+	{
+		std::string filename(path);
+		unsigned int textureID;
+		glGenTextures(1, &textureID);
+
+		int width, height, nrComponents;
+		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+		if (data)
+		{
+			gl::PixelDataFormat format = GetTextureFormat(nrComponents);
+
+			return TextureData{ format, glm::ivec2{ width, height }, data };
+		}
+		else
+		{
+			throw "Error loading texture";
+			stbi_image_free(data);
+		}
+		TextureData{};
+	}
+
 	//TODO Add gamma support
 	static inline unsigned int TextureFromFile(const char *path, bool gamma = false)
 	{
@@ -96,63 +126,23 @@ namespace Util
 		return Util::TextureFromFile(filename.c_str(), gamma);
 	}
 
-	static inline void TextureFromFileAttach(const char * path, GLuint role)
+	static inline void TextureFromFileAttach(const char * path, gl::enums::TextureCubeTarget role, gl::TextureCube &textureCube)
 	{
 		std::string filename(path);
-		unsigned int textureID;
-		glGenTextures(1, &textureID);
 
-		int width, height, nrComponents;
-		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-		if (data)
+		TextureData texData = TextureDataFromFile (filename);
+		
+		if (texData.data)
 		{
-			GLenum format;
-			if (nrComponents == 1)
-				format = GL_RED;
-			else if (nrComponents == 3)
-				format = GL_RGB;
-			else if (nrComponents == 4)
-				format = GL_RGBA;
+			textureCube.upload(role, gl::kRgba, texData.size.x, texData.size.y, texData.format, gl::kUnsignedByte, texData.data);
 
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			glTexImage2D(role, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-
-			stbi_image_free(data);
+			stbi_image_free(texData.data);
 		}
 		else
 		{
 			std::cout << "Texture failed to load at path: " << path << std::endl;
-			stbi_image_free(data);
+			stbi_image_free(texData.data);
 		}
-	}
-
-	struct TextureData 
-	{
-		gl::PixelDataFormat format;
-		glm::ivec2 size;
-		unsigned char * data; //stbi_image_free
-	};
-
-	static inline TextureData TextureDataFromFile(std::string path)
-	{
-		std::string filename(path);
-		unsigned int textureID;
-		glGenTextures(1, &textureID);
-
-		int width, height, nrComponents;
-		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-		if (data)
-		{
-			gl::PixelDataFormat format = GetTextureFormat(nrComponents);
-
-			return TextureData {format, glm::ivec2{width, height}, data};
-		}
-		else
-		{
-			throw "Error loading texture";
-			stbi_image_free(data);
-		}
-		TextureData {};
 	}
 
 	static inline GLuint TextureArray(std::vector<std::string> const& textureNames, const std::string prefix = "Pictures/blocks/", const std::string postfix = ".png")
@@ -238,26 +228,25 @@ namespace Util
 	{
 		GLuint textureId;
 		glGenTextures(1, &textureId);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
+		gl::TextureCube texture (textureId);
+		auto bindedTexture = gl::MakeTemporaryBind (texture);
 
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		texture.minFilter (gl::kLinear);
+		texture.magFilter (gl::kLinear);
+		texture.wrapS (gl::kClampToEdge);
+		texture.wrapT (gl::kClampToEdge);
+		texture.wrapP (gl::kClampToEdge);
 
-		Util::TextureFromFileAttach((prefix + "xpos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_X);
-		Util::TextureFromFileAttach((prefix + "xneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
-		Util::TextureFromFileAttach((prefix + "ypos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
-		Util::TextureFromFileAttach((prefix + "yneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
-		Util::TextureFromFileAttach((prefix + "zpos.png").c_str(), GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
-		Util::TextureFromFileAttach((prefix + "zneg.png").c_str(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+		Util::TextureFromFileAttach((prefix + "xpos.png").c_str(), gl::kTextureCubeMapPositiveX, texture);
+		Util::TextureFromFileAttach((prefix + "xneg.png").c_str(), gl::kTextureCubeMapNegativeX, texture);
+		Util::TextureFromFileAttach((prefix + "ypos.png").c_str(), gl::kTextureCubeMapPositiveY, texture);
+		Util::TextureFromFileAttach((prefix + "yneg.png").c_str(), gl::kTextureCubeMapNegativeY, texture);
+		Util::TextureFromFileAttach((prefix + "zpos.png").c_str(), gl::kTextureCubeMapPositiveZ, texture);
+		Util::TextureFromFileAttach((prefix + "zneg.png").c_str(), gl::kTextureCubeMapNegativeZ, texture);
 
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		gl::Enable(gl::kTextureCubeMapSeamless); //Interpolating at boundaries
 
-		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-		return textureId;
+		return texture.expose ();
 	}
 
 	static inline GLuint GenRandomTexture()
