@@ -228,7 +228,7 @@ namespace Util
 	{
 		GLuint textureId;
 		glGenTextures(1, &textureId);
-		gl::TextureCube texture (textureId);
+		gl::TextureCube texture (textureId); //TODO add check for every enum, is it valid or not
 		auto bindedTexture = gl::MakeTemporaryBind (texture);
 
 		texture.minFilter (gl::kLinear);

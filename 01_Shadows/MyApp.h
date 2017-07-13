@@ -54,6 +54,7 @@ public:
 	void MouseWheel(SDL_MouseWheelEvent&);
 	void Resize(int, int);
 private:
+	void InitGameObjects();
 	float ReadDepthValueNdc(float pX, float pY);
 	void HandleFrameBufferRendering();
 	void BindFrameBuffersForRender();

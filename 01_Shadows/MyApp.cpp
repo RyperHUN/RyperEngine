@@ -122,10 +122,9 @@ bool CMyApp::Init()
 	
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
 	fbo_Shadow.CreateShadowAttachment (SHADOW_WIDTH, SHADOW_HEIGHT);
+	fbo_Rendered.CreateAttachments(m_width, m_height);
 
 ///////////////////////////////////////////////////////////
-	// egyéb inicializálás
-
 
 	// textúra betöltése
 	texture_Map		  = Util::TextureFromFile("texture.png");
@@ -145,29 +144,40 @@ bool CMyApp::Init()
 	pointLight.push_back(PointLight{glm::vec3(0,2,6)});
 	pointLight.push_back(PointLight{ glm::vec3(-20,5,-10) });
 	pointLight.push_back(PointLight{ glm::vec3(20,10,-30) });
-	
-	MaterialPtr material1 = std::make_shared<Material>(glm::vec3(0.1f,0,0),glm::vec3(0.8f, 0,0),glm::vec3(1,1,1));
-	MaterialPtr material2 = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
-	MaterialPtr material3 = std::make_shared<Material>(glm::vec3(0.0f,0.1f,0.1f), glm::vec3(0,0.7f,0.7f), glm::vec3(1, 1, 1));
-	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1,1,1));
 
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
-	geom_Cow = TriangleMeshLoaded(m_cow_mesh);
+	geom_Cow     = TriangleMeshLoaded(m_cow_mesh);
 	geom_Bezier.Create (10,10);
 
-	GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere,material1,glm::vec3{-7,0,-3}, glm::vec3{3,3,3});
 	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
 	shaderLights.push_back(ShaderLight{&dirLight, "dirlight"});
 	for(int i = 0; i < pointLight.size(); i++)
 	{
 		shaderLights.push_back(ShaderLight{ &pointLight[i], "pointlight[" + std::to_string(i) + "]" });
 	}
+	lightRenderer = LightRenderer(&geom_Box, &shader_LightRender);
+	for (auto& light : pointLight)
+		lightRenderer.AddLight(&light);
+	lightRenderer.AddLight(&dirLight);
 
+	InitGameObjects ();
+
+	return true;
+}
+
+void CMyApp::InitGameObjects ()
+{
+	MaterialPtr material1 = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
+	MaterialPtr material2 = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
+	MaterialPtr material3 = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
+	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
+
+	GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
 	gameObjs.push_back(sphere);
-	GameObj * sphere2 = new GameObj (*sphere);
-	sphere2->pos = glm::vec3(2,50,-3);
+	GameObj * sphere2 = new GameObj(*sphere);
+	sphere2->pos = glm::vec3(2, 50, -3);
 	gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,20,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0)};
+	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,20,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0) };
 	quadObj->rotAngle = M_PI / 2.0;
 	//gameObjs.push_back(quadObj);
 
@@ -184,7 +194,7 @@ bool CMyApp::Init()
 	//}
 
 	float scaleFactor = 50.0f;
-	for(auto &obj : gameObjs)
+	for (auto &obj : gameObjs)
 	{
 		glm::vec3 random = Util::randomVec();
 		float randomY = random.y * 3;
@@ -192,25 +202,18 @@ bool CMyApp::Init()
 		random.y = 40 + randomY;
 		obj->pos = random;
 	}
-	quadObj->pos = glm::vec3(0,0,0);
-	
-	lightRenderer = LightRenderer (&geom_Box, &shader_LightRender);
-	for(auto& light : pointLight)
-		lightRenderer.AddLight(&light);
-	lightRenderer.AddLight(&dirLight);
+	quadObj->pos = glm::vec3(0, 0, 0);
 
 	gameObjs.clear();
 
-	AnimatedCharacter* cowboyObj = new AnimatedCharacter( &shader_Simple,&geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1,0,0));
-	for(auto& mesh : geom_Man.meshes)
-		mesh.textures.push_back(Texture{textureCube_id,"skyBox",aiString{}});
+	AnimatedCharacter* cowboyObj = new AnimatedCharacter(&shader_Simple, &geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1, 0, 0));
+	for (auto& mesh : geom_Man.meshes)
+		mesh.textures.push_back(Texture{ textureCube_id,"skyBox",aiString{} });
 	gameObjs.push_back(cowboyObj);
 	//gameObjs.push_back(quadObj);
-	cowboyObj->rotAxis = glm::vec3{1,0,0};
+	cowboyObj->rotAxis = glm::vec3{ 1,0,0 };
 	cowboyObj->rotAngle = -M_PI / 2; //For cowboy animated man
-	cowboyObj->pos = glm::vec3(0,45, 6);
-	
-	fbo_Rendered.CreateAttachments(m_width, m_height);
+	cowboyObj->pos = glm::vec3(0, 45, 6);
 
 	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
 	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, cowboyObj->pos);
@@ -221,8 +224,6 @@ bool CMyApp::Init()
 	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry);
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
-
-	return true;
 }
 
 void CMyApp::Update()
