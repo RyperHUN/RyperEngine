@@ -43,6 +43,18 @@ namespace Util
 		return glm::vec3(randomPoint(), randomPoint(), randomPoint());
 	}
 
+	static gl::PixelDataInternalFormat GetTextureInternalFormat (int nrComponents)
+	{
+		gl::PixelDataInternalFormat format;
+		if (nrComponents == 1)
+			format = gl::kRed;
+		else if (nrComponents == 3)
+			format = gl::kRgb;
+		else if (nrComponents == 4)
+			format = gl::kRgba;
+
+		return format;
+	}
 	//TODO Add gamma support
 	static inline unsigned int TextureFromFile(const char *path, bool gamma = false)
 	{
@@ -55,13 +67,7 @@ namespace Util
 		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
 		if (data)
 		{
-			gl::PixelDataInternalFormat format;
-			if (nrComponents == 1)
-				format = gl::kRed;
-			else if (nrComponents == 3)
-				format = gl::kRgb;
-			else if (nrComponents == 4)
-				format = gl::kRgba;
+			gl::PixelDataInternalFormat format = GetTextureInternalFormat (nrComponents);
 
 			auto bindTexture = gl::MakeTemporaryBind (texture);
 			texture.upload(format, width, height, (gl::PixelDataFormat)format, gl::kUnsignedByte, data);
@@ -122,7 +128,7 @@ namespace Util
 
 	struct TextureData 
 	{
-		GLenum format;
+		gl::PixelDataInternalFormat format;
 		glm::ivec2 size;
 		unsigned char * data; //stbi_image_free
 	};
@@ -137,13 +143,7 @@ namespace Util
 		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
 		if (data)
 		{
-			GLenum format;
-			if (nrComponents == 1)
-				format = GL_RED;
-			else if (nrComponents == 3)
-				format = GL_RGB;
-			else if (nrComponents == 4)
-				format = GL_RGBA;
+			gl::PixelDataInternalFormat format = GetTextureInternalFormat(nrComponents);
 
 			return TextureData {format, glm::ivec2{width, height}, data};
 		}
@@ -153,6 +153,39 @@ namespace Util
 			stbi_image_free(data);
 		}
 		TextureData {};
+	}
+
+	static inline GLuint TextureArray(std::vector<std::string> const& textureNames, const std::string prefix = "Pictures/blocks/", const std::string postfix = ".png")
+	{
+		MAssert(textureNames.size() > 0, "Invalid argument given to TextureArray function, textureNames must be bigger than 0");
+
+		const GLuint Layers = textureNames.size();
+		Util::TextureData dataFirst = Util::TextureDataFromFile(prefix + textureNames[0] + postfix);
+		//Create the texture
+		GLuint textureID;
+		glGenTextures(1, &textureID);
+		gl::Texture2DArray texture (textureID);
+		auto bind  = gl::MakeTemporaryBind (texture);
+
+		texture.wrapS (gl::kClampToEdge);
+		texture.wrapT (gl::kClampToEdge);
+		texture.minFilter (gl::kNearest);
+		texture.magFilter (gl::kNearest);
+
+		unsigned int texturewidth = dataFirst.size.x;
+		unsigned int textureheight = dataFirst.size.y;
+		// allocate memory for all layers:
+		texture.storage (1, gl::kRgba8, texturewidth, textureheight, Layers);
+
+		for (size_t i = 0; i < textureNames.size(); i++)
+		{
+			Util::TextureData data = Util::TextureDataFromFile(prefix + textureNames[i] + postfix);
+			texture.subUpload (0, 0, i, texturewidth, textureheight, 1, gl::kRgba, gl::kUnsignedByte, data.data);
+
+			stbi_image_free(data.data);
+		}
+
+		return texture.expose();
 	}
 
 	static inline GLuint TextureFromSdlSurface(SDL_Surface * surface)
@@ -361,38 +394,6 @@ namespace Util
 
 		// adjuk vissza a program azonositojat
 		return program_ID;
-	}
-
-	static inline GLuint TextureArray(std::vector<std::string> const& textureNames, const std::string prefix = "Pictures/blocks/", const std::string postfix = ".png")
-	{
-		MAssert(textureNames.size() > 0, "Invalid argument given to TextureArray function, textureNames must be bigger than 0");
-
-		const GLuint Layers = textureNames.size();
-		Util::TextureData dataFirst = Util::TextureDataFromFile(prefix + textureNames[0] + postfix);
-		//Create the texture
-		GLuint texture;
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		
-		unsigned int texturewidth = dataFirst.size.x;
-		unsigned int textureheight = dataFirst.size.y;
-		// allocate memory for all layers:
-		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texturewidth, textureheight, Layers);
-
-		for(size_t i = 0; i < textureNames.size(); i++)
-		{
-			Util::TextureData data = Util::TextureDataFromFile (prefix + textureNames[i] + postfix);
-			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texturewidth, textureheight, 1, GL_RGBA, GL_UNSIGNED_BYTE, data.data);
-			stbi_image_free(data.data);
-		}
-
-		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-
-		return texture;
 	}
 
 }; //NS Util
