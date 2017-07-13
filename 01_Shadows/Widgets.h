@@ -9,13 +9,7 @@
 #include <string>
 #include <functional>
 #include "TextRenderer.h"
-
-struct WidgetRenderState
-{
-	glm::ivec2 screenSize;
-	QuadTexturer& texturer;
-	TextRenderer& textRenderer;
-};
+#include "WrapperStructs.h"
 
 struct Widget {
 	glm::ivec2 pos;

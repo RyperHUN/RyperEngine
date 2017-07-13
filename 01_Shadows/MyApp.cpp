@@ -299,9 +299,9 @@ void CMyApp::Render()
 		glViewport(0, 0, m_width, m_height);
 
 		shader_Simple.On();
-		shader_SkyBox.SetCubeTexture("skyBox", 12, textureCube_id);
+		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
-		//shader_Simple.SetTexture ("texture_diffuse1", 13, texture_HeightMap);
+		
 		state.PV = activeCamera->GetProjView();
 		for(auto& obj : gameObjs)
 				obj->Draw (state);
@@ -316,13 +316,11 @@ void CMyApp::Render()
 		skyboxRenderer.Draw(activeCamera->GetRayDirMtx ());
 
 		//////////////////////////////Shadow map debug texture drawing
-		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1));
+		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1)); //Right top corner
 		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
 
 		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
 		//container.Draw(state);
-		//button.Draw (state);
-		//checkbox.Draw(state);
 	}
 	HandleFrameBufferRendering();
 }

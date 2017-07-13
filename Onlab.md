@@ -1,6 +1,6 @@
+%TODO Irni, megoldani viz renderelest [https://www.youtube.com/watch?v=HusvGeEDU_U&list=PLRIWtICgwaX23jiqVByUs0bqhnalNTNZh]
 %TODO Irni PhysX ről.
-%TODO Irni font renderingrol????
-%TODO Irni viz renderelesről [https://www.youtube.com/watch?v=HusvGeEDU_U&list=PLRIWtICgwaX23jiqVByUs0bqhnalNTNZh]
+%TODO Irni font renderingrol???
 %TODO Irni Extra OpenGL Effektek megvalositva: Anti Aliasing, Post Processing(Tone Mapping, gamma korrekcio) 
 %TODO Irni kamerarol?
 	%TODO Megold: Lens Flare effect, Render to cube map texture (For dynamic environment mapping)

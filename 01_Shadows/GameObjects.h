@@ -8,19 +8,7 @@
 #include <memory>
 #include <functional>
 #include "AssimpModel.h"
-
-
-struct RenderState
-{
-	glm::vec3 wEye;
-	glm::mat4 M, PV, Minv;
-	glm::mat4 LightSpaceMtx;
-	std::vector<ShaderLight> *shaderLights;
-
-	//Texture* texture;
-	//Vector<light> lights;
-	//glm::vec3 lightPos;
-};
+#include "WrapperStructs.h"
 
 class GameObj {
 public:
@@ -42,7 +30,7 @@ public:
 	{
 		quaternion = glm::angleAxis((float)M_PI / 2.0f, this->rotAxis);
 	}
-	virtual void Draw(RenderState state, gShaderProgram * shaderParam = nullptr) {
+	virtual void Draw(RenderState const& state, gShaderProgram * shaderParam = nullptr) {
 		if (!isInsideFrustum)
 			return;
 		if(shaderParam == nullptr)
@@ -108,7 +96,7 @@ struct Quadobj : public GameObj
 {
 	using GameObj::GameObj;
 
-	void Draw(RenderState state, gShaderProgram * shaderParam = nullptr) override
+	void Draw(RenderState const& state, gShaderProgram * shaderParam = nullptr) override
 	{
 		glDisable(GL_CULL_FACE);
 
