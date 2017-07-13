@@ -1,8 +1,6 @@
 #include "MyApp.h"
 #include "UtilEngine.h"
 
-
-
 #include <GL/GLU.h>
 #include <math.h>
 
@@ -281,7 +279,7 @@ void CMyApp::Render()
 		glViewport(0, 0, m_width, m_height);
 
 		shader_Simple.On();
-		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
+		shader_SkyBox.SetCubeTexture("skyBox", 12, textureCube_id);
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		
 		state.PV = activeCamera->GetProjView();

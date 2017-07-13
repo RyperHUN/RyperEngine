@@ -11,6 +11,8 @@
 #include <glm\glm.hpp>
 #include <memory>
 
+#include "Defs.h"
+
 class gShaderProgram
 {
 	std::unique_ptr<gShaderProgram> shadowShader;
@@ -65,5 +67,17 @@ protected:
 	std::map< GLenum, std::vector<GLuint> >			m_subroutine_mappings; // az i-edik sub uni-hoz melyik indexû fv tartozik az enum-nak megfelelõ shader-nél
 
 	bool	m_verbose;
+private:
+	static GLuint BoundShader /*= 0*/;
+	static void ErrorChecking(GLuint otherShaderID)
+	{
+		MAssert (BoundShader == otherShaderID, "Another shader is bound, invalid operation");
+	}
+	static void OnBind (GLuint activeShaderID) 
+	{
+#ifndef NDEBUG
+		BoundShader = activeShaderID; 
+#endif
+	}
 };
 

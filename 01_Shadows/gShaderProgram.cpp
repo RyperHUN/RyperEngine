@@ -4,6 +4,8 @@
 #include <fstream>
 #include <vector>
 
+GLuint gShaderProgram::BoundShader = 0;
+
 gShaderProgram::gShaderProgram(void) : m_map_uniform_locations(), m_list_shaders_attached(), m_id_program(0)
 {
 	BindAttribLoc(0, "vs_in_pos");
@@ -260,6 +262,7 @@ void gShaderProgram::SetUniform(const char* uniform, glm::mat4 const& mat)
 
 inline GLuint	gShaderProgram::getLocation(const char* uniform)
 {
+	gShaderProgram::ErrorChecking(m_id_program);
 	std::map< std::string, int >::iterator loc_it = m_map_uniform_locations.find(uniform);
 	if (loc_it == m_map_uniform_locations.end())
 	{
@@ -273,6 +276,7 @@ inline GLuint	gShaderProgram::getLocation(const char* uniform)
 
 GLuint gShaderProgram::getSubroutineIndex(GLenum shader_type, const char* uniform)
 {
+	gShaderProgram::ErrorChecking(m_id_program);
 	auto loc_it = m_subroutine_function_indices[shader_type].find(uniform);
 	if (loc_it == m_subroutine_function_indices[shader_type].end())
 	{
@@ -286,16 +290,19 @@ GLuint gShaderProgram::getSubroutineIndex(GLenum shader_type, const char* unifor
 
 void gShaderProgram::On()
 {
+	gShaderProgram::OnBind (m_id_program);
 	glUseProgram(m_id_program);
 }
 
 void gShaderProgram::Off()
 {
+	gShaderProgram::OnBind(0);
 	glUseProgram(0);
 }
 
 void gShaderProgram::SetTexture(const char* uniform, int sampler, GLuint textureID)
 {
+	gShaderProgram::ErrorChecking(m_id_program);
 	glActiveTexture(GL_TEXTURE0 + sampler);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	SetUniform(uniform, sampler);
@@ -303,6 +310,7 @@ void gShaderProgram::SetTexture(const char* uniform, int sampler, GLuint texture
 
 void gShaderProgram::SetCubeTexture(const char* uniform, int sampler, GLuint textureID)
 {
+	gShaderProgram::ErrorChecking(m_id_program);
 	glActiveTexture(GL_TEXTURE0 + sampler);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 	SetUniform(uniform, sampler);
@@ -310,6 +318,7 @@ void gShaderProgram::SetCubeTexture(const char* uniform, int sampler, GLuint tex
 
 void gShaderProgram::SetTexture(const char* uniform, int sampler, GLuint textureID, GLenum type)
 {
+	gShaderProgram::ErrorChecking(m_id_program);
 	glActiveTexture(GL_TEXTURE0 + sampler);
 	glBindTexture(type, textureID);
 	SetUniform(uniform, sampler);
@@ -317,6 +326,7 @@ void gShaderProgram::SetTexture(const char* uniform, int sampler, GLuint texture
 
 void gShaderProgram::SetSubroutine(GLenum shadertype, const char* subroutine_variable, const char* routine_instance)
 {
+	gShaderProgram::ErrorChecking (m_id_program);
 	auto sub_idx = m_subroutine_uniform_indices[shadertype].find(subroutine_variable);
 	auto fnc_idx = getSubroutineIndex(shadertype, routine_instance);
 	if (sub_idx != m_subroutine_uniform_indices[shadertype].end() && fnc_idx != -1)
