@@ -100,7 +100,6 @@ int main( int argc, char* args[] )
 		std::cout << "[GLEW] Hiba az inicializálás során!" << std::endl;
 		return 1;
 	}
-	glGetError();
 
 	// kérdezzük le az OpenGL verziót
 	int glVersion[2] = {-1, -1}; 
@@ -130,9 +129,11 @@ int main( int argc, char* args[] )
 	bool quit = false;
 	// feldolgozandó üzenet ide kerül
 	SDL_Event ev;
-	
+
 	// alkalmazas példánya
 	CMyApp app;
+	GLenum val = glGetError();
+	val = glGetError();
 	if (!app.Init())
 	{
 		SDL_DestroyWindow(win);

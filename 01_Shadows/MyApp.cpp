@@ -454,8 +454,8 @@ void CMyApp::HandleFrameBufferRendering()
 		if (IsMSAAOn)
 		{
 			fbo_Rendered.Off();
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_Rendered.FBO);
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.expose ());
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_Rendered.expose());
 			glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 		}
 
@@ -464,7 +464,7 @@ void CMyApp::HandleFrameBufferRendering()
 	}
 	else if (IsMSAAOn)
 	{
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.FBO);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.expose());
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
