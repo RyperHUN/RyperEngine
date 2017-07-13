@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include "Defs.h"
+#include <oglwrap\oglwrap.h>
 
 namespace Util 
 {

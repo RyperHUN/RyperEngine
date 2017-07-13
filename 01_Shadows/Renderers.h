@@ -22,10 +22,10 @@ public:
 		shader->SetUniform ("isSelected", true);
 		{
 			gl::VertexArray VAO;
-			gl::Bind(VAO);
+			auto bindVao = gl::MakeTemporaryBind (VAO);
 			{
 				gl::ArrayBuffer VBO;
-				gl::Bind(VBO);
+				auto bindVBO = gl::MakeTemporaryBind (VBO);
 				{
 					std::vector<glm::vec3> triangles;
 					FillVectorWithFrustumData (triangles, camera->GetFrustum());
@@ -34,20 +34,18 @@ public:
 					attrib.pointer(3, gl::kFloat);
 					attrib.enable();
 					VBO.data (triangles, gl::kDynamicDraw);
-
-			
-					glDisable(GL_CULL_FACE);
-					glEnable(GL_BLEND);
-						gl::DrawArrays(gl::kTriangleFan, 0, triangles.size() * 3);
-					glDisable(GL_BLEND);
-					glEnable(GL_CULL_FACE);
+					
+					gl::TemporaryDisable cullFace(gl::kCullFace);
+					gl::TemporaryEnable blend (gl::kBlend);
+					gl::BlendFunc (gl::kSrcAlpha, gl::kOneMinusSrcAlpha);
+					
+					gl::DrawArrays(gl::kTriangleFan, 0, triangles.size() * 3);
 				}
-				gl::Unbind(VBO);
 			}
-			gl::Unbind(VAO);
 		}
 		shader->Off();
 	}
+	//TODO Fix triangles better visualization
 	static void FillVectorWithFrustumData (std::vector<glm::vec3> &triangles, FrustumG* frustum)
 	{
 		triangles.push_back(frustum->nbr);	//Right side

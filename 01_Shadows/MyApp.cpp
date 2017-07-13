@@ -279,7 +279,7 @@ void CMyApp::Render()
 		glViewport(0, 0, m_width, m_height);
 
 		shader_Simple.On();
-		shader_SkyBox.SetCubeTexture("skyBox", 12, textureCube_id);
+		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
 		
 		state.PV = activeCamera->GetProjView();
@@ -291,7 +291,7 @@ void CMyApp::Render()
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
-		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
+		frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 		//////////////////////////////Environment map drawing!!!
 		skyboxRenderer.Draw(activeCamera->GetRayDirMtx ());
 
