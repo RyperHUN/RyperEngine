@@ -34,8 +34,17 @@ public:
 
 	virtual void KeyboardDown(SDL_KeyboardEvent& key) {}
 	virtual void KeyboardUp(SDL_KeyboardEvent& key) {}
-	virtual void MouseMove(SDL_MouseMotionEvent& mouse) {}
 	virtual void MouseWheel(SDL_MouseWheelEvent& wheel) {}
+	virtual void MouseMove(SDL_MouseMotionEvent& mouse) 
+	{
+		if (mouse.state & SDL_BUTTON_LMASK)
+		{
+			float sensitivity = 1 / 200.0f;
+			glm::vec2 mouseDelta = glm::vec2(mouse.xrel, -mouse.yrel) * sensitivity;
+
+			UpdateViewMatrix(mouseDelta.x, mouseDelta.y);
+		}
+	}
 
 	glm::mat4 GetLightMatrixDirectionLight (glm::vec3 const& lightDir)
 	{
@@ -190,16 +199,6 @@ public:
 			break;
 		}
 	}
-	void MouseMove(SDL_MouseMotionEvent& mouse) override
-	{
-		if (mouse.state & SDL_BUTTON_LMASK)
-		{
-			//TODO Sensitivity
-			glm::vec2 mouseDelta(mouse.xrel / 100.0f, mouse.yrel / 100.0f);
-
-			UpdateViewMatrix(mouseDelta.x, -mouseDelta.y);
-		}
-	}
 	void MouseWheel(SDL_MouseWheelEvent& wheel) override
 	{
 		fovDegree += -wheel.y;
@@ -307,16 +306,6 @@ public:
 	}
 	void KeyboardUp(SDL_KeyboardEvent& key) override
 	{
-	}
-	void MouseMove(SDL_MouseMotionEvent& mouse) override
-	{
-		if (mouse.state & SDL_BUTTON_LMASK)
-		{
-			//TODO Sensitivity
-			glm::vec2 mouseDelta(mouse.xrel / 200.0f, -mouse.yrel / 200.0f);
-
-			UpdateViewMatrix(mouseDelta.x, mouseDelta.y);
-		}
 	}
 	void MouseWheel(SDL_MouseWheelEvent& wheel) override
 	{
