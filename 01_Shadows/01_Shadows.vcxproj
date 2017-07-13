@@ -129,6 +129,7 @@
     <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="UtilEngine.h" />
     <ClInclude Include="Widgets.h" />
+    <ClInclude Include="WrapperStructs.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="boundingBoxShader.frag" />

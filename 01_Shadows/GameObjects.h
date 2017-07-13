@@ -35,19 +35,19 @@ public:
 			return;
 		if(shaderParam == nullptr)
 			shaderParam = shader;
-		state.M = glm::translate(pos) * glm::toMat4(quaternion) * glm::scale(scale);
+		glm::mat4 M = glm::translate(pos) * glm::toMat4(quaternion) * glm::scale(scale);
 		//state.Minv = glm::inverse(state.M);
-		state.Minv = glm::scale(1.0f / scale) *  glm::toMat4(glm::inverse(quaternion))* glm::translate(-pos);
+		glm::mat4 Minv = glm::scale(1.0f / scale) *  glm::toMat4(glm::inverse(quaternion))* glm::translate(-pos);
 		//state.material = material; /*state.texture = texture;*/
 		//shader->Bind(state);
-		auto inverseTest = state.M * state.Minv;
+		auto inverseTest = M * Minv;
 
 		shaderParam->On ();
 		{
-			glm::mat4 PVM = state.PV * state.M;
+			glm::mat4 PVM = state.PV * M;
 			shaderParam->SetUniform("PVM", PVM);
-			shaderParam->SetUniform("M", state.M);
-			shaderParam->SetUniform("Minv", state.Minv);
+			shaderParam->SetUniform("M", M);
+			shaderParam->SetUniform("Minv", Minv);
 			shaderParam->SetUniform("wEye", state.wEye);
 			shaderParam->SetUniform("LightSpaceMtx", state.LightSpaceMtx);
 			shaderParam->SetUniform("isAnimated", false);

@@ -172,14 +172,14 @@ private:
 	void DrawBox(RenderState state, GameObj* obj)
 	{
 		shader->On();
-		state.M = obj->geometry->getModelMatrixForBoxGeom(obj->pos, obj->scale, obj->quaternion);
-		state.Minv = glm::inverse(state.M);
-		glm::mat4 PVM = state.PV * state.M;
+		glm::mat4 M = obj->geometry->getModelMatrixForBoxGeom(obj->pos, obj->scale, obj->quaternion);
+		glm::mat4 Minv = glm::inverse(M);
+		glm::mat4 PVM = state.PV * M;
 		shader->SetUniform("isAnimated", false);
 		shader->SetUniform("isSelected", obj->isSelected);
 		shader->SetUniform("PVM", PVM);
-		shader->SetUniform("M", state.M);
-		shader->SetUniform("Minv", state.Minv);
+		shader->SetUniform("M", M);
+		shader->SetUniform("Minv", Minv);
 
 		geom_box->buffer.On();
 		geom_box->buffer.Draw(GL_TRIANGLES);

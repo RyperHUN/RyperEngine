@@ -271,16 +271,10 @@ void CMyApp::Render()
 	state.shaderLights = &shaderLights;
 	//FrustumCulling (secondaryCamera);
 
-	//////////////////////////////First render to depth map
-	GLfloat near_plane = 0.1f, far_plane = 100.0f;
-	glm::mat4 lightProjection = glm::ortho(-60.0f, 60.0f, 100.0f, -100.0f, -80.0f, 80.0f);
-	glm::vec3 pos = -dirLight.direction * 4.0f;
-	glm::mat4 lightView = glm::lookAt(pos,
-		glm::vec3(0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+	//////////////////////////////Shadow Rendering!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	glm::mat4 lightSpaceMatrix = activeCamera->GetLightMatrixDirectionLight (dirLight.direction);
 
-	state.PV = lightProjection * lightView;
+	state.PV            = lightSpaceMatrix;
 	state.LightSpaceMtx = lightSpaceMatrix;
 
 	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT);

@@ -153,6 +153,9 @@
     <ClInclude Include="Renderers.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="WrapperStructs.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleShader.vert">

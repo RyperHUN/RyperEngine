@@ -7,7 +7,7 @@
 struct RenderState
 {
 	glm::vec3 wEye;
-	glm::mat4 M, PV, Minv;
+	glm::mat4 PV;
 	glm::mat4 LightSpaceMtx;
 	std::vector<ShaderLight> *shaderLights;
 
@@ -15,6 +15,9 @@ struct RenderState
 	//Vector<light> lights;
 	//glm::vec3 lightPos;
 };
+
+struct QuadTexturer;
+struct TextRenderer;
 
 struct WidgetRenderState
 {

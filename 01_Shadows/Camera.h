@@ -36,6 +36,17 @@ public:
 	virtual void KeyboardUp(SDL_KeyboardEvent& key) {}
 	virtual void MouseMove(SDL_MouseMotionEvent& mouse) {}
 	virtual void MouseWheel(SDL_MouseWheelEvent& wheel) {}
+
+	glm::mat4 GetLightMatrixDirectionLight (glm::vec3 const& lightDir)
+	{
+		glm::mat4 lightProjection = glm::ortho(-60.0f, 60.0f, 100.0f, -100.0f, -80.0f, 80.0f); //TODO Parameterized with the actual Camera
+		glm::vec3 pos = -lightDir * 4.0f;
+		glm::mat4 lightView = glm::lookAt(pos,
+			glm::vec3(0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));
+
+		return lightProjection * lightView; //LightSpace matrix
+	}
 };
 
 class FPSCamera : public Camera
