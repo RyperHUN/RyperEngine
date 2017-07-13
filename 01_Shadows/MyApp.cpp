@@ -281,7 +281,7 @@ void CMyApp::Render()
 
 		shader_Simple.On();
 		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
-		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.textureId);
+		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.texture.expose ());
 		
 		state.PV = activeCamera->GetProjView();
 		for(auto& obj : gameObjs)
@@ -460,7 +460,7 @@ void CMyApp::HandleFrameBufferRendering()
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		quadTexturer.Draw(fbo_Rendered.textureId, true);
+		quadTexturer.Draw(fbo_Rendered.texture.expose (), true);
 	}
 	else if (IsMSAAOn)
 	{
