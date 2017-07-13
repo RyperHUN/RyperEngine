@@ -8,9 +8,6 @@ GLuint gShaderProgram::BoundShader = 0;
 
 gShaderProgram::gShaderProgram(void) : m_map_uniform_locations(), m_list_shaders_attached(), m_id_program(0)
 {
-	BindAttribLoc(0, "vs_in_pos");
-	BindAttribLoc(1, "vs_in_normal");
-	BindAttribLoc(2, "vs_in_tex");
 }
 
 
@@ -102,6 +99,13 @@ bool gShaderProgram::LinkProgram()
 		// hozzárendelések nullázása
 		m_subroutine_mappings[shader_type].resize(active_sub_count, 0);
 	}
+	On ();
+	{
+		BindAttribLoc(0, "vs_in_pos");
+		BindAttribLoc(1, "vs_in_normal");
+		BindAttribLoc(2, "vs_in_tex");
+	}
+	Off ();
 
 	return true;
 }
