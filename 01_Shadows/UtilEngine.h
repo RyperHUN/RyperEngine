@@ -47,29 +47,30 @@ namespace Util
 	static inline unsigned int TextureFromFile(const char *path, bool gamma = false)
 	{
 		std::string filename (path);
-		unsigned int textureID;
-		glGenTextures(1, &textureID);
+		GLuint textureId;
+		glGenTextures (1, &textureId);
+		gl::Texture2D texture (textureId);
 
 		int width, height, nrComponents;
 		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
 		if (data)
 		{
-			GLenum format;
+			gl::PixelDataInternalFormat format;
 			if (nrComponents == 1)
-				format = GL_RED;
+				format = gl::kRed;
 			else if (nrComponents == 3)
-				format = GL_RGB;
+				format = gl::kRgb;
 			else if (nrComponents == 4)
-				format = GL_RGBA;
+				format = gl::kRgba;
 
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
+			auto bindTexture = gl::MakeTemporaryBind (texture);
+			texture.upload(format, width, height, (gl::PixelDataFormat)format, gl::kUnsignedByte, data);
+			texture.generateMipmap ();
 
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			texture.wrapS (gl::kRepeat);
+			texture.wrapT (gl::kRepeat);
+			texture.minFilter (gl::kLinearMipmapLinear);
+			texture.magFilter (gl::kLinear);
 
 			stbi_image_free(data);
 		}
@@ -79,7 +80,7 @@ namespace Util
 			stbi_image_free(data);
 		}
 
-		return textureID;
+		return texture.expose ();
 	}
 	static inline unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false)
 	{
