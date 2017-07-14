@@ -66,12 +66,8 @@ Kerdesek:
 		Ami a nagyon lassu az a Cntext meg a shader valtas. A textura valtas nem olyan lassu, de ha 1 rajzolashivassal eltudod intezni
 		textura array, akkor ezzel a rajzolas hivason nyersz.
 		(Textura cache - ha egyszer innen egyszer onnan olvasol nemjo, de a textura cache lenyege az hogy a szomszedos pixeleket behuzza)
-		
-	%TODO Allo betukre allitani az also indexeket. \text{} $B_{asd}$
+	
 	%TODO PCF Irni beepitett dologrol
-	%Optimalizaciok helyett egy kulon fejezet.
-		%Optimalizalt megjelenitesi modszerek. (uj cim)
-		
 	
 Kerdesek:
 	-Megkerdez hogy mihez vegyem fel a szakdogat, mit irjak, mi legyen a tema cime?

@@ -86,9 +86,10 @@ namespace Util
 		}
 		else
 		{
-			throw "Error loading texture";
+			//MAssert (false,"Texture loading failed");
 			stbi_image_free(data);
 		}
+		return TextureData { gl::kRgba, glm::ivec2{0, 0}, nullptr};
 	}
 
 	//TODO Add gamma support
@@ -99,27 +100,21 @@ namespace Util
 		glGenTextures (1, &textureId);
 		gl::Texture2D texture (textureId);
 
-		int width, height, nrComponents;
-		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-		if (data)
+		TextureData data = Util::TextureDataFromFile (filename);
+		if (data.data)
 		{
-			gl::PixelDataFormat format = GetTextureFormat (nrComponents);
-
 			auto bindTexture = gl::MakeTemporaryBind (texture);
-			texture.upload(gl::kRgba, width, height, format, gl::kUnsignedByte, data);
+			texture.upload(gl::kRgba, data.size.x, data.size.y, data.format, gl::kUnsignedByte, data.data);
 			texture.generateMipmap ();
 
 			texture.wrapS (gl::kRepeat);
 			texture.wrapT (gl::kRepeat);
 			texture.minFilter (gl::kLinearMipmapLinear);
 			texture.magFilter (gl::kLinear);
-
-			stbi_image_free(data);
 		}
 		else
 		{
 			std::cout << "Texture failed to load at path: " << path << std::endl;
-			stbi_image_free(data);
 		}
 
 		return texture.expose ();
