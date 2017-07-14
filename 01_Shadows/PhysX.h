@@ -122,7 +122,8 @@ public:
 		
 		glm::vec3 vec(0);
 		vec = forwardVec * (float)controller.isForward - forwardVec * (float)controller.isBack;
-
+		Util::BasisVectors basisVectors = Util::BasisVectors::create (forwardVec);
+		vec += basisVectors.right * (float)controller.isRightStrafe - basisVectors.right * (float)controller.isLeftStrafe;
 
 		return Util::glmVec3ToPhysXVec3(vec);
 	}

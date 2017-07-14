@@ -9,7 +9,7 @@ struct IRenderable {
 	virtual void Draw (RenderState & state) 
 	{
 		MAssert(state.geom != nullptr, "Geometry was nullptr, aborting");
-		MAssert(shader != nullptr, "Shader was nullptr, aborting");
+		MAssert(state.shader != nullptr, "Shader was nullptr, aborting");
 		
 		gShaderProgram * shader = state.shader;
 		shader->On();
