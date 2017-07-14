@@ -4,16 +4,13 @@
 #include "WrapperStructs.h"
 #include "Material.h"
 
-struct Renderable {
+struct IRenderable {
 	bool isInsideFrustum = true;
-	virtual void Draw (RenderState const& state) 
+	virtual void Draw (RenderState & state, gShaderProgram * shader = nullptr) 
 	{
-		if (!isInsideFrustum)
-			return;
-
 		MAssert(state.geom != nullptr, "Geometry was nullptr, aborting");
+		MAssert(shader != nullptr, "Shader was nullptr, aborting");
 		
-		gShaderProgram * shader = state.shader;
 		shader->On();
 		{
 			glm::mat4 PVM = state.PV * state.M;

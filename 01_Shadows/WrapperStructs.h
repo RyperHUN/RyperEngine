@@ -10,7 +10,6 @@ struct RenderState
 	glm::mat4 PV, M, Minv;
 	glm::mat4 LightSpaceMtx;
 	std::vector<ShaderLight> *shaderLights;
-	gShaderProgram * shader;
 	MaterialPtr material = nullptr;
 	Geometry * geom = nullptr;
 

@@ -105,6 +105,7 @@
     <ClInclude Include="AssimpMesh.h" />
     <ClInclude Include="AssimpModel.h" />
     <ClInclude Include="Bezier.h" />
+    <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Renderers.h" />
     <ClInclude Include="ChunkManager.h" />
     <ClInclude Include="Controller.h" />
