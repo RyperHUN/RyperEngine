@@ -20,7 +20,7 @@ struct Chunk
 	const float BlockSize = 4.0f;
 	const size_t size = 1; //size * 2 + 1 = cube size
 	Geometry* geom_Box;
-	gShaderProgram * shader;
+	gShaderProgram * shader; //Can be removed, and box geom also!!
 
 	ChunkData chunkInfo[3][3][3];
 
@@ -45,7 +45,7 @@ struct Chunk
 
 	void Draw(RenderState state, GLuint texId)
 	{
-		shader->On();
+		shader->On(); //TODO Can be refactored to state.shader
 		{
 			shader->SetUniform("PV", state.PV);
 			shader->SetUniform("uScale", BlockSize);
@@ -95,7 +95,7 @@ struct Chunk
 	}
 };
 
-struct ChunkManager
+struct ChunkManager : public IRenderable
 {
 	Geometry* geom_Box;
 	gShaderProgram * shader;
@@ -123,9 +123,25 @@ struct ChunkManager
 
 		chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(0, 0, 0) * size));
 	}
-	void Draw (RenderState state)
+	void Draw(RenderState & state) override
 	{
-		for(int i = 0; i < chunks.size(); i++)
+		//TODO FrustumCulling for each block
+		state.shader = shader;
+		DrawLogic (state);
+	}
+	void DrawShadows(RenderState & state) override
+	{
+		//TODO FrustumCulling
+		if (!shader->HasShadowShader())
+			return;
+
+		state.shader = shader->GetShadowShader();
+		DrawLogic(state);
+	}
+private:
+	void DrawLogic (RenderState& state)
+	{
+		for (int i = 0; i < chunks.size(); i++)
 		{
 			chunks[i].Draw(state, texId);
 		}

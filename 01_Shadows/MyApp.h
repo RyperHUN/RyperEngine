@@ -131,6 +131,7 @@ protected:
 
 	std::vector<ShaderLight> shaderLights;
 	std::vector<GameObj*> gameObjs; ///TODO Delete
+	std::vector<IRenderable*> renderObjs; 
 };
 
 

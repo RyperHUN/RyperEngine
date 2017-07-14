@@ -12,6 +12,7 @@ struct RenderState
 	std::vector<ShaderLight> *shaderLights;
 	MaterialPtr material = nullptr;
 	Geometry * geom = nullptr;
+	gShaderProgram * shader = nullptr;
 
 	//Texture* texture;
 	//Vector<light> lights;

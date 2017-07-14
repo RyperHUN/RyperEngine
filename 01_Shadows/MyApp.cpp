@@ -224,6 +224,9 @@ void CMyApp::InitGameObjects ()
 	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry);
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
+
+	renderObjs.push_back(cowboyObj);
+	renderObjs.push_back(&chunkManager);
 }
 
 void CMyApp::Update()
@@ -269,9 +272,8 @@ void CMyApp::Render()
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		for (auto& obj : gameObjs)
-			obj->Draw(state,obj->shader->GetShadowShader());
-		//TODO Shadows for the chunks
+		for (auto& obj : renderObjs)
+			obj->DrawShadows(state);
 	}
 	fbo_Shadow.Off();
 
@@ -284,10 +286,8 @@ void CMyApp::Render()
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.texture.expose ());
 		
 		state.PV = activeCamera->GetProjView();
-		for(auto& obj : gameObjs)
-				obj->Draw (state);
-
-		chunkManager.Draw(state);
+		for(auto& obj : renderObjs)
+			obj->Draw (state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());

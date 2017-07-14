@@ -31,20 +31,37 @@ public:
 		quaternion = glm::angleAxis((float)M_PI / 2.0f, this->rotAxis);
 	}
 	virtual ~GameObj () {}
-	void Draw(RenderState & state, gShaderProgram * shaderP = nullptr) override{
+	void Draw(RenderState & state) override
+	{
 		if(!isInsideFrustum)
 			return;
-		gShaderProgram *renderShader = shaderP == nullptr ? this->shader : shaderP;
 		
-		state.material = material;
-		state.geom     = geometry;
-		state.M = glm::translate(pos) * glm::toMat4(quaternion) * glm::scale(scale);
-		//state.Minv = glm::inverse(state.M);
-		state.Minv = glm::scale(1.0f / scale) *  glm::toMat4(glm::inverse(quaternion))* glm::translate(-pos);
-		
-		IRenderable::Draw (state, renderShader);
+		state.shader = shader;
+		DrawLogic (state);
 	}
 
+	void DrawShadows (RenderState & state) override 
+	{
+		if (!isInsideFrustum)
+			return;
+		if (!shader->HasShadowShader ())
+			return;
+
+		state.shader = shader->GetShadowShader ();
+		DrawLogic (state);
+	}
+private:
+	void DrawLogic (RenderState &state)
+	{
+		state.material = material;
+		state.geom     = geometry;
+		state.M        = glm::translate(pos) * glm::toMat4(quaternion) * glm::scale(scale);
+		state.Minv     = glm::scale(1.0f / scale) *  glm::toMat4(glm::inverse(quaternion))* glm::translate(-pos);
+		//state.Minv = glm::inverse(state.M);
+
+		IRenderable::Draw(state);
+	}
+public:
 	virtual void Animate(float time, float dt)
 	{
 		quaternion = glm::angleAxis(rotAngle, rotAxis);
@@ -78,12 +95,11 @@ struct Quadobj : public GameObj
 {
 	using GameObj::GameObj;
 
-	void Draw(RenderState & state, gShaderProgram * shaderP = nullptr) override
+	void Draw(RenderState & state) override
 	{
 		glDisable(GL_CULL_FACE);
 
-		gShaderProgram *renderShader = shaderP == nullptr ? this->shader : shaderP;
-		GameObj::Draw (state, renderShader);
+		GameObj::Draw (state);
 
 		glEnable(GL_CULL_FACE);
 	}

@@ -48,6 +48,7 @@ public:
 	void SetCubeTexture(const char* uniform, int sampler, GLuint textureID);
 	void SetTexture(const char* uniform, int sampler, GLuint textureID, GLenum type);
 
+	bool HasShadowShader () {return shadowShader != nullptr;}
 	gShaderProgram* GetShadowShader (){return shadowShader.get();}
 	void CreateShadowShader ()
 	{
