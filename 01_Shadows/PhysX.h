@@ -123,6 +123,7 @@ public:
 		glm::vec3 vec(0);
 		vec = forwardVec * (float)controller.isForward - forwardVec * (float)controller.isBack;
 
+
 		return Util::glmVec3ToPhysXVec3(vec);
 	}
 	void modifyForwardVec (Engine::Controller const& controller, float dt)
