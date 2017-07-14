@@ -16,7 +16,6 @@ CMyApp::CMyApp(void)
 	geom_AnimatedMan{"Model/model.dae"},
 	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
 	frustumRender (&shader_BoundingBox),
-	chunkManager(&geom_Box,&shader_Instanced),
 	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20)),
 	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer),
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
@@ -218,6 +217,7 @@ void CMyApp::InitGameObjects ()
 	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
 	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, cowboyObj->pos);
 
+	chunkManager = ChunkManager(&geom_Box, &shader_Instanced, textureArray_blocks);
 	chunkManager.GenerateBoxes();
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	physX.createChunk(chunkManager.chunks.front());
@@ -287,7 +287,7 @@ void CMyApp::Render()
 		for(auto& obj : gameObjs)
 				obj->Draw (state);
 
-		chunkManager.Draw(state, textureArray_blocks);
+		chunkManager.Draw(state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());

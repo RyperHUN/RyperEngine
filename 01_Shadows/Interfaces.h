@@ -31,4 +31,5 @@ struct IRenderable {
 		}
 		shader->Off();
 	}
+	~IRenderable (){}
 };

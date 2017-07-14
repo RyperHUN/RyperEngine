@@ -99,10 +99,12 @@ struct ChunkManager
 {
 	Geometry* geom_Box;
 	gShaderProgram * shader;
+	GLint texId;
 
 	std::vector<Chunk> chunks;
-	ChunkManager(Geometry* geom_Box, gShaderProgram * shader)
-		:geom_Box(geom_Box), shader(shader)
+	ChunkManager () {}
+	ChunkManager(Geometry* geom_Box, gShaderProgram * shader, GLint texId)
+		:geom_Box(geom_Box), shader(shader), texId(texId)
 	{
 		//Random creation
 	}
@@ -121,7 +123,7 @@ struct ChunkManager
 
 		chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(0, 0, 0) * size));
 	}
-	void Draw (RenderState state, GLuint texId)
+	void Draw (RenderState state)
 	{
 		for(int i = 0; i < chunks.size(); i++)
 		{
