@@ -114,6 +114,8 @@ struct AnimatedCharacter : public GameObj
 {
 	using GameObj::GameObj;
 
+	float yaw = 0;
+
 	bool turnLeft = false;
 	bool turnRight = false;
 	virtual void KeyboardDown(SDL_KeyboardEvent& key) 
@@ -126,12 +128,12 @@ struct AnimatedCharacter : public GameObj
 				geom->isAnimated = true;
 				break;
 			}
-			//case SDLK_a:
-			//	turnLeft = true;
-			//	break;
-			//case SDLK_d:
-			//	turnRight = true;
-			//	break;
+			case SDLK_a:
+				turnLeft = true;
+				break;
+			case SDLK_d:
+				turnRight = true;
+				break;
 		}
 	}
 	virtual void KeyboardUp(SDL_KeyboardEvent& key)
@@ -144,12 +146,12 @@ struct AnimatedCharacter : public GameObj
 				geom->isAnimated = false;
 				break;
 			}
-			//case SDLK_a:
-			//	turnLeft = false;
-			//	break;
-			//case SDLK_d:
-			//	turnRight = false;
-			//	break;
+			case SDLK_a:
+				turnLeft = false;
+				break;
+			case SDLK_d:
+				turnRight = false;
+				break;
 		}
 	}
 	virtual void Animate(float time, float dt) override
@@ -160,10 +162,16 @@ struct AnimatedCharacter : public GameObj
 			quaternion = glm::angleAxis(rotAngle, rotAxis); //TODO This should be at CTOR
 			first = false;
 		}
-		if(turnLeft)
+		if(turnLeft) 
+		{
 			quaternion *= glm::angleAxis((float)M_PI * dt, glm::vec3(0,0,1));
+			yaw += (float)M_PI * dt;
+		}
 		if(turnRight)
+		{
 			quaternion *= glm::angleAxis((float)M_PI * -dt, glm::vec3(0, 0, 1));
+			yaw -= (float)M_PI * dt;
+		}
 
 		quaternion = glm::normalize(quaternion);
 

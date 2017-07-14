@@ -5,6 +5,7 @@
 
 #include "ChunkManager.h"
 #include "Controller.h"
+#include "GameObjects.h"
 
 #define PVD_HOST "127.0.0.1"
 
@@ -27,6 +28,7 @@ class PhysX
 
 	physx::PxCapsuleController*		mController = NULL;
 	glm::vec3 forwardVec;
+	AnimatedCharacter *				player = nullptr;
 public:
 	void initPhysics(bool interactive)
 	{
@@ -100,8 +102,8 @@ public:
 		cowboyPos = Util::PhysXVec3ToglmVec3(mController->getFootPosition ());
 		
 		physx::PxVec3 dispCurStep {0,-1,0};
-		dispCurStep += createDisplacementVector (controller); //wasd move
-		//dispCurStep += createDisplacementVectorResident (controller, dTime);
+		//dispCurStep += createDisplacementVector (controller); //wasd move
+		dispCurStep += createDisplacementVectorResident (controller, dTime);
 		dispCurStep *= 0.1;
 		
 		const physx::PxU32 flags = mController->move(dispCurStep, 0, dTime, physx::PxControllerFilters());
@@ -125,11 +127,9 @@ public:
 	}
 	void modifyForwardVec (Engine::Controller const& controller, float dt)
 	{
-		//TODO Not working
-		if (controller.isLeft)
-			forwardVec = glm::rotate(glm::angleAxis((float)M_PI * dt, glm::vec3(0, 0, 1)), forwardVec);
-		if (controller.isRight)
-			forwardVec = glm::rotate(glm::angleAxis((float)M_PI * -dt, glm::vec3(0, 0, 1)), forwardVec);
+		static const glm::vec3 BeginForwardVec (0, 0, 1);
+		glm::mat4 matrix = glm::rotate (player->yaw, glm::vec3(0,1,0));
+		forwardVec = matrix * glm::vec4(BeginForwardVec, 0);
 	}
 
 	void cleanupPhysics(bool interactive)
@@ -192,8 +192,9 @@ public:
 
 		shape->release();
 	}
-	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel)
+	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel, AnimatedCharacter * player)
 	{
+		this->player = player;
 		//createCharacterDynamic(pos,rot, assimpModel);
 		physx::PxCapsuleControllerDesc desc;
 

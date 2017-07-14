@@ -221,7 +221,7 @@ void CMyApp::InitGameObjects ()
 	chunkManager.GenerateBoxes();
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	physX.createChunk(chunkManager.chunks.front());
-	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry);
+	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry, cowboyObj);
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 
