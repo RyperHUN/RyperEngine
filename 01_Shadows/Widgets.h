@@ -152,17 +152,18 @@ struct Container : public Widget
 {
 	glm::ivec2 padding;
 	glm::ivec2 offset;
-	std::vector<Widget*> children;
+	using WidgetVec = std::vector<WidgetPtr>; 
+	WidgetVec children;
 	Container (glm::ivec2 pos)
 		:Widget(pos, glm::ivec2(0)), padding(3), offset(4)
 	{
 	}
-	void AddWidget (Widget * widget)
+	void AddWidget (WidgetPtr widget)
 	{
 		glm::ivec2 newPos(0);
 		if (children.size() > 0)
 		{	
-			Widget * lastWidget = children.back (); ///TODO We need relative pos for the parent for moving etc -> Or call update pos after every move
+			WidgetPtr lastWidget = children.back (); ///TODO We need relative pos for the parent for moving etc -> Or call update pos after every move
 			//TODO add getSize method
 			newPos.y += lastWidget->size.y + lastWidget->pos.y;
 			newPos.x += lastWidget->pos.x;
@@ -183,7 +184,7 @@ struct Container : public Widget
 	}
 	void UpdatePos ()
 	{
-		std::vector<Widget*> childrenOld = children;
+		WidgetVec childrenOld = children;
 		children.clear();
 		for(auto& widget : childrenOld)
 			AddWidget(widget);

@@ -1,6 +1,9 @@
 // GLEW
 #include <GL/glew.h>
 
+//For mem leak checking
+//#include <vld.h>
+
 // SDL
 #include <SDL.h>
 #include <SDL_opengl.h>

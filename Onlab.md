@@ -11,6 +11,9 @@
 	%TODO Render GUI
 	%TODO Fog tavoli objektumokhoz, ne legyen eles valtas!!!
 	%TODO Profiler tamas tipp: ApiTrace
+%TODO Debug Context OpenGL be
+%TODO gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false);});
+%Meg ugye ezt a hívást nem árt #if OGLWRAP_DEBUG-ba tenni, mert különben nincs DebugOutput osztály
 
 Sourcek eddig:
 	-Learn OpenGL [Bennevan]

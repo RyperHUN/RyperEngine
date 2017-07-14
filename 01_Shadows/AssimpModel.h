@@ -386,7 +386,7 @@ public:
 	Assimp::Importer importer;
 
 	bool isAnimated;
-	Animator * animator = nullptr;
+	std::unique_ptr<Animator> animator = nullptr;
 	
 	AssimpModel(string const &path)
 	{
@@ -439,7 +439,7 @@ private:
 	{
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		if(scene->HasAnimations())
-			animator = new Animator(scene);
+			animator = std::make_unique<Animator>(scene);
 	
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 		{

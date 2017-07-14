@@ -19,7 +19,14 @@ namespace Util
 	{
 		gl::PixelDataFormat format;
 		glm::ivec2 size;
-		unsigned char * data; //stbi_image_free
+		unsigned char * data = nullptr; //stbi_image_free
+		TextureData (gl::PixelDataFormat format, glm::ivec2 const& size, unsigned char * data)
+			: format(format), size(size), data(data)
+		{}
+		~TextureData ()
+		{
+			stbi_image_free (data); //RAII
+		}
 	};
 
 	//Returns [lowerBound, upperBound]
@@ -82,7 +89,6 @@ namespace Util
 			throw "Error loading texture";
 			stbi_image_free(data);
 		}
-		TextureData{};
 	}
 
 	//TODO Add gamma support
@@ -135,13 +141,10 @@ namespace Util
 		if (texData.data)
 		{
 			textureCube.upload(role, gl::kRgba, texData.size.x, texData.size.y, texData.format, gl::kUnsignedByte, texData.data);
-
-			stbi_image_free(texData.data);
 		}
 		else
 		{
 			std::cout << "Texture failed to load at path: " << path << std::endl;
-			stbi_image_free(texData.data);
 		}
 	}
 
@@ -167,12 +170,11 @@ namespace Util
 		// allocate memory for all layers:
 		texture.storage (1, gl::kRgba8, texturewidth, textureheight, Layers);
 
-		for (size_t i = 0; i < textureNames.size(); i++)
+		texture.subUpload(0, 0, 0, texturewidth, textureheight, 1, dataFirst.format, gl::kUnsignedByte, dataFirst.data);
+		for (size_t i = 1; i < textureNames.size(); i++)
 		{
 			Util::TextureData data = Util::TextureDataFromFile(prefix + textureNames[i] + postfix);
 			texture.subUpload (0, 0, i, texturewidth, textureheight, 1, data.format, gl::kUnsignedByte, data.data);
-
-			stbi_image_free(data.data);
 		}
 
 		return texture.expose();

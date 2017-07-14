@@ -98,6 +98,7 @@ namespace Geom{
 struct Geometry {
 	gVertexBuffer buffer;
 	Geometry(){}
+	virtual ~Geometry(){}
 
 	//TODO Idiot shader program is only here for AssimpModel
 	virtual void Draw(gShaderProgram * shader = nullptr) {

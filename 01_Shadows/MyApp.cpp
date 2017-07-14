@@ -31,8 +31,8 @@ CMyApp::CMyApp(void)
 	activeCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(5, 22, 24));
 	secondaryCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(10, 35, 24), glm::vec3(-0.5,-0.9, -0.5));
 
-	container.AddWidget (&checkbox);
-	container.AddWidget (new Checkbox(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer)); //TODO Delete
+	//container.AddWidget (&checkbox);
+	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer)); //TODO Delete
 	
 	physX.initPhysics (false);
 }
@@ -88,7 +88,6 @@ bool CMyApp::LoadShaders ()
 	shader_Frustum.AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
 	shader_Frustum.AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
 	if (!shader_Frustum.LinkProgram()) return false;
-	
 
 	return true;
 }
@@ -173,14 +172,14 @@ void CMyApp::InitGameObjects ()
 	MaterialPtr material3 = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
 	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
 
-	GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
-	gameObjs.push_back(sphere);
-	GameObj * sphere2 = new GameObj(*sphere);
-	sphere2->pos = glm::vec3(2, 50, -3);
-	gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,20,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0) };
-	quadObj->rotAngle = M_PI / 2.0;
-	//gameObjs.push_back(quadObj);
+	//GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
+	//gameObjs.push_back(sphere);
+	//GameObj * sphere2 = new GameObj(*sphere);
+	//sphere2->pos = glm::vec3(2, 50, -3);
+	//gameObjs.push_back(sphere2);
+	//Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,20,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0) };
+	//quadObj->rotAngle = M_PI / 2.0;
+	////gameObjs.push_back(quadObj);
 
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
@@ -203,7 +202,7 @@ void CMyApp::InitGameObjects ()
 		random.y = 40 + randomY;
 		obj->pos = random;
 	}
-	quadObj->pos = glm::vec3(0, 0, 0);
+	//quadObj->pos = glm::vec3(0, 0, 0);
 
 	gameObjs.clear();
 

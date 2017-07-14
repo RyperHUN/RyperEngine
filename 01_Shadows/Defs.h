@@ -10,6 +10,9 @@ using FPSCameraPtr = std::shared_ptr<FPSCamera>;
 struct Material;
 using MaterialPtr = std::shared_ptr<Material>;
 
+struct Widget;
+using WidgetPtr = std::shared_ptr<Widget>;
+
 #include <stdint.h>
 
 typedef uint8_t  u8;

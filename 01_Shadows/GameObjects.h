@@ -30,6 +30,7 @@ public:
 	{
 		quaternion = glm::angleAxis((float)M_PI / 2.0f, this->rotAxis);
 	}
+	virtual ~GameObj () {}
 	virtual void Draw(RenderState const& state, gShaderProgram * shaderParam = nullptr) {
 		if (!isInsideFrustum)
 			return;
