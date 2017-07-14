@@ -206,10 +206,10 @@ public:
 		desc.radius = 3.0f; 
 		desc.material = gMaterial;
 		desc.position = physx::PxExtendedVec3 (pos.x, pos.y, pos.z);
-		desc.slopeLimit = 0.01f;
-		desc.contactOffset = 0.01f;
-		desc.stepOffset = 0.01f;
-		desc.invisibleWallHeight = 0.01f;
+		desc.slopeLimit = 0.00001f;
+		desc.contactOffset = 0.00001f;
+		desc.stepOffset = 0.00001f;
+		desc.invisibleWallHeight = 0.000000001f;
 		desc.maxJumpHeight = 5.0f;
 		desc.reportCallback = NULL; // Meg lehet adni neki osztalyt
 
