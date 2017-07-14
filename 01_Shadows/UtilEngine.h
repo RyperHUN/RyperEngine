@@ -29,6 +29,19 @@ namespace Util
 		}
 	};
 
+	struct BasisVectors
+	{
+		glm::vec3 forward, up, right;
+		static BasisVectors create (glm::vec3 forward, glm::vec3 globalUp = glm::vec3(0,1,0))
+		{
+			forward  = glm::normalize(forward);
+			globalUp = glm::normalize(globalUp);
+			glm::vec3 right = glm::cross(forward,globalUp);
+			glm::vec3 up = glm::cross(right, forward);
+			return BasisVectors {forward, up, right};
+		}
+	};
+
 	//Returns [lowerBound, upperBound]
 	inline static int randomPointI(int lowerBound, int upperBound)
 	{
