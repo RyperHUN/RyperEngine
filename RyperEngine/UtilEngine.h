@@ -12,6 +12,7 @@
 
 #include "Defs.h"
 #include <oglwrap\oglwrap.h>
+#include <noise/noise.h>
 
 namespace Util 
 {
@@ -259,7 +260,7 @@ namespace Util
 		return texture.expose ();
 	}
 
-	static inline GLuint GenRandomTexture()
+	static inline GLint GenRandomTexture()
 	{
 		unsigned char tex[256][256][3];
 
@@ -269,6 +270,46 @@ namespace Util
 				tex[i][j][0] = rand() % 256;
 				tex[i][j][1] = rand() % 256;
 				tex[i][j][2] = rand() % 256;
+			}
+
+		GLuint tmpID;
+
+		// generáljunk egy textúra erõforrás nevet
+		glGenTextures(1, &tmpID);
+		// aktiváljuk a most generált nevû textúrát
+		glBindTexture(GL_TEXTURE_2D, tmpID);
+		// töltsük fel adatokkal az...
+		gluBuild2DMipmaps(GL_TEXTURE_2D,	// aktív 2D textúrát
+			GL_RGB8,		// a vörös, zöld és kék csatornákat 8-8 biten tárolja a textúra
+			256, 256,		// 256x256 méretû legyen
+			GL_RGB,				// a textúra forrása RGB értékeket tárol, ilyen sorrendben
+			GL_UNSIGNED_BYTE,	// egy-egy színkopmonenst egy unsigned byte-ról kell olvasni
+			tex);				// és a textúra adatait a rendszermemória ezen szegletébõl töltsük fel
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	// bilineáris szûrés kicsinyítéskor
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// és nagyításkor is
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return tmpID;
+	}
+
+	static inline GLint GenRandomPerlinTexture()
+	{
+		noise::module::Perlin Generator;
+		Generator.SetFrequency(1.0);
+		Generator.SetLacunarity(2.375);
+		Generator.SetOctaveCount(3);
+		Generator.SetPersistence(0.5);
+		Generator.SetNoiseQuality(noise::QUALITY_STD);
+
+		Generator.SetSeed (10);
+		unsigned char tex[256][256][3];
+
+		for (int i = 0; i<256; ++i)
+			for (int j = 0; j<256; ++j)
+			{
+				tex[i][j][0] = glm::abs(Generator.GetValue(i, j, 0) * 256);
+				tex[i][j][1] = glm::abs(Generator.GetValue(i, j, 1) * 256);;
+				tex[i][j][2] = glm::abs(Generator.GetValue(i, j, 2) * 256);;
 			}
 
 		GLuint tmpID;

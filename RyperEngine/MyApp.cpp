@@ -132,6 +132,7 @@ bool CMyApp::Init()
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
 	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
+	tex_randomPerlin  = Util::GenRandomPerlinTexture ();
 	skyboxRenderer.SetTexture(textureCube_id);
 
 	// mesh betöltés
@@ -171,6 +172,8 @@ void CMyApp::InitGameObjects ()
 	MaterialPtr material2   = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
 	MaterialPtr material3   = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
 	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
+
+	material2->textures.push_back(Texture {tex_randomPerlin, "texture_diffuse1", aiString{}});
 
 	//GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
 	//gameObjs.push_back(sphere);
