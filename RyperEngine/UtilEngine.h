@@ -313,6 +313,7 @@ namespace Util
 		glm::ivec2 TopLeft (-ManagerSideSize * RSize, ManagerSideSize * RSize);
 		glm::ivec2 BottomRight (ManagerSideSize * RSize, -ManagerSideSize * RSize);
 		glm::ivec2 center (0,0);
+		const double MaxDist = glm::length(glm::vec2(TopLeft));
 
 		Generator.SetSeed (10);
 		unsigned char tex[256][256][3];
@@ -320,8 +321,14 @@ namespace Util
 		for (int i = 0; i<256; ++i)
 			for (int j = 0; j<256; ++j)
 			{
-				glm::vec2 ndc = glm::vec2((i / 256.0f) - 0.5f, ((j / 256.0f) - 0.5f) * -1);
-				tex[i][j][0] = glm::clamp(noise(ndc.x, ndc.y,Generator) * 255, 0.0, 255.0);
+				glm::vec2 ndc = glm::vec2((i / 255.0f) - 0.5f, ((j / 255.0f) - 0.5f) * -1);
+				glm::vec2 UV = glm::vec2(i/255.0f,j /255.0f);
+				double val = noise(ndc.x, ndc.y, Generator);
+				glm::vec2 actualCoord = glm::mix(TopLeft, BottomRight, UV);
+				float dist = glm::length(actualCoord) / MaxDist; //[0,1] dist
+				val = val * (1.0 - dist);
+
+				tex[i][j][0] = glm::clamp(val * 255, 0.0, 255.0); //[0,1] to [0,255]
 				
 				tex[i][j][2] = tex[i][j][1] = tex[i][j][0];
 			}
