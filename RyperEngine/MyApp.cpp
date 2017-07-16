@@ -127,16 +127,16 @@ bool CMyApp::Init()
 ///////////////////////////////////////////////////////////
 
 	// textúra betöltése
-	texture_Map		  = Util::TextureFromFile("texture.png");
-	textureCube_id    = Util::LoadCubeMap("pictures/skybox/");
+	texture_Map		  = Util::TextureFromFile("pictures/texture.png");
+	textureCube_id    = Util::LoadCubeMap("pictures/skyboxes/cloud/");
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
 	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
 	skyboxRenderer.SetTexture(textureCube_id);
 
 	// mesh betöltés
-	mesh_Suzanne = ObjParser::parse("suzanne.obj");
-	m_cow_mesh   = ObjParser::parse("cow.obj");
+	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
+	m_cow_mesh   = ObjParser::parse("Model/cow.obj");
 	mesh_Suzanne->initBuffers();
 	m_cow_mesh->initBuffers();
 
