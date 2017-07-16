@@ -7,7 +7,8 @@
 #include "Controller.h"
 #include "GameObjects.h"
 
-#include "PhysXController.h"
+#include "PxController.h"
+#include "PxJump.h"
 
 #define PVD_HOST "127.0.0.1"
 
@@ -28,7 +29,8 @@ class PhysX
 	physx::PxCooking*				mCooking = NULL;
 	physx::PxControllerManager*     mControllerManager = NULL;
 
-	PhysXController					mController;
+	PX::Controller					mController;
+	PX::Jump						mJump;
 public:
 	void initPhysics(bool interactive)
 	{
@@ -176,7 +178,7 @@ public:
 		desc.contactOffset = 0.00001f;
 		desc.stepOffset = 0.00001f;
 		desc.invisibleWallHeight = 0.000000001f;
-		desc.maxJumpHeight = 5.0f;
+		desc.maxJumpHeight = 10.0f;
 		desc.reportCallback = NULL; // Meg lehet adni neki osztalyt
 
 		mController.mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));

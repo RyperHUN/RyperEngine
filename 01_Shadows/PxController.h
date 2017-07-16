@@ -4,7 +4,10 @@
 #include "glmIncluder.h"
 #include "GameObjects.h"
 
-struct PhysXController
+namespace PX
+{
+
+struct Controller
 {
 	glm::vec3 forwardVec;
 	AnimatedCharacter *				player = nullptr;
@@ -58,3 +61,5 @@ private:
 		forwardVec = matrix * glm::vec4(BeginForwardVec, 0);
 	}
 };
+
+}// NS PX
