@@ -4,6 +4,7 @@
 #include "glmIncluder.h"
 #include <glm/gtc/random.hpp>
 #include "UtilEngine.h"
+#include <noise/noise.h>
 
 ///TODO Better speed if these are all uniforms
 struct ChunkData
@@ -18,11 +19,11 @@ struct Chunk
 	glm::ivec3 pos = glm::ivec3(15,20,5);
 
 	const float BlockSize = 4.0f;
-	const size_t size = 1; //size * 2 + 1 = cube size
+	static const size_t size = 2; //size * 2 + 1 = cube size
 	Geometry* geom_Box;
 	gShaderProgram * shader; //Can be removed, and box geom also!!
 
-	ChunkData chunkInfo[3][3][3];
+	ChunkData chunkInfo[size*2 + 1][size * 2 + 1][size * 2 + 1];
 
 	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 pos)
 		:geom_Box(geom), shader(shader), pos(pos)
@@ -95,6 +96,8 @@ struct Chunk
 	}
 };
 
+static noise::module::Perlin RandomGenerator;
+
 struct ChunkManager : public IRenderable
 {
 	Geometry* geom_Box;
@@ -106,6 +109,7 @@ struct ChunkManager : public IRenderable
 	ChunkManager(Geometry* geom_Box, gShaderProgram * shader, GLint texId)
 		:geom_Box(geom_Box), shader(shader), texId(texId)
 	{
+		RandomGenerator.GetValue (1, 2, 3);
 		//Random creation
 	}
 	void GenerateBoxes ()

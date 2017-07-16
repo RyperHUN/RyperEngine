@@ -167,9 +167,9 @@ bool CMyApp::Init()
 
 void CMyApp::InitGameObjects ()
 {
-	MaterialPtr material1 = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
-	MaterialPtr material2 = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
-	MaterialPtr material3 = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
+	MaterialPtr material1   = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
+	MaterialPtr material2   = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
+	MaterialPtr material3   = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
 	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
 
 	//GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
@@ -177,9 +177,9 @@ void CMyApp::InitGameObjects ()
 	//GameObj * sphere2 = new GameObj(*sphere);
 	//sphere2->pos = glm::vec3(2, 50, -3);
 	//gameObjs.push_back(sphere2);
-	//Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,20,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0) };
-	//quadObj->rotAngle = M_PI / 2.0;
-	////gameObjs.push_back(quadObj);
+	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,20,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0) };
+	quadObj->rotAngle = M_PI / 2.0;
+	gameObjs.push_back(quadObj);
 
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
@@ -226,8 +226,9 @@ void CMyApp::InitGameObjects ()
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 
+	renderObjs.push_back(quadObj);
 	renderObjs.push_back(cowboyObj);
-	renderObjs.push_back(&chunkManager);
+	//renderObjs.push_back(&chunkManager);
 	renderObjs.push_back(&skyboxRenderer);
 }
 
@@ -296,7 +297,7 @@ void CMyApp::Render()
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
-		frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
+		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Shadow map debug texture drawing
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1)); //Right top corner
