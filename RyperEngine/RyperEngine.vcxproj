@@ -15,6 +15,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>_01_Shadows</RootNamespace>
     <ProjectName>RyperEngine</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -46,6 +47,8 @@
     <LibraryPath>t:\OGLPack\lib\x86;T:\PhysX-3.4\PhysX_3.4\Lib\vc14win32;T:\PhysX-3.4\PxShared\lib\vc14win32;$(LibraryPath)</LibraryPath>
     <ReferencePath>
     </ReferencePath>
+    <OutDir>$(SolutionDir)\BuildResult\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -53,6 +56,8 @@
     <LibraryPath>t:\OGLPack\lib\x86;T:\PhysX-3.4\PhysX_3.4\Lib\vc14win32;T:\PhysX-3.4\PxShared\lib\vc14win32;$(LibraryPath)</LibraryPath>
     <ReferencePath>
     </ReferencePath>
+    <OutDir>$(SolutionDir)\BuildResult\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
