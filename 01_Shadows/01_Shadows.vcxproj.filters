@@ -159,7 +159,10 @@
     <ClInclude Include="Interfaces.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="PhysXController.h">
+    <ClInclude Include="PxJump.h">
+      <Filter>PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PxController.h">
       <Filter>PhysX</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,7 @@ namespace PX
 {
 using namespace physx; //TODO Check if it leaks anything?!
 
-static PxF32 gJumpGravity = -50.0f;
+static PxF32 gJumpGravity = -80.0f;
 
 class Jump
 {
@@ -29,12 +29,14 @@ public:
 	{
 		if (!mJump)	return;
 		mJump = false;
+		mJumpTime = 0.0f;
+		mV0 = 0.0f;
 	}
 	PxF32 getHeight(PxF32 elapsedTime)
 	{
 		if (!mJump)	return 0.0f;
 		mJumpTime += elapsedTime;
-		const PxF32 h = gJumpGravity*mJumpTime*mJumpTime + mV0*mJumpTime;
+		const PxF32 h = gJumpGravity*mJumpTime*mJumpTime *0.7 + mV0*mJumpTime;
 		return h*elapsedTime;
 	}
 };

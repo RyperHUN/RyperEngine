@@ -106,7 +106,8 @@
     <ClInclude Include="AssimpModel.h" />
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="Interfaces.h" />
-    <ClInclude Include="PhysXController.h" />
+    <ClInclude Include="PxController.h" />
+    <ClInclude Include="PxJump.h" />
     <ClInclude Include="Renderers.h" />
     <ClInclude Include="ChunkManager.h" />
     <ClInclude Include="Controller.h" />

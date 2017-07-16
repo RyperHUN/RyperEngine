@@ -3,6 +3,7 @@
 #include <PxPhysicsAPI.h>
 #include "glmIncluder.h"
 #include "GameObjects.h"
+#include "PxJump.h"
 
 namespace PX
 {
@@ -10,29 +11,47 @@ namespace PX
 struct Controller
 {
 	glm::vec3 forwardVec;
-	AnimatedCharacter *				player = nullptr;
+	AnimatedCharacter *				player      = nullptr;
 	physx::PxCapsuleController*		mController = NULL;
+	float							mGravity    =-9.81f;
+	float							mJumpForce  = 60.0f;
+	PX::Jump						mJump;
 
-	void Step (float dTime, glm::vec3 &cowboyPos, Engine::Controller const& controller)
+	void Step (float dTime, glm::vec3 &cowboyPos, Engine::Controller & controller)
 	{
 		//Handle controller movement
 		cowboyPos = Util::PhysXVec3ToglmVec3(mController->getFootPosition());
 
 		physx::PxVec3 dispCurStep{ 0,0,0 };
+		const PxF32 heightDelta = mJump.getHeight(dTime);
+		float dy;
+		if (heightDelta != 0.0f)
+			dy = heightDelta;
+		else
+			dy = mGravity * dTime;
+
+		dispCurStep.y = dy;
+
 		//dispCurStep += createDisplacementVector (controller); //wasd move
-		dispCurStep += createDisplacementVectorResident(controller, dTime);
+		dispCurStep += createDisplacementVectorResident(controller, dTime) * 0.2;
 
 
 		physx::PxControllerState cctState; //Get controller is on ground or not!
 		mController->getState(cctState);
-		if ((cctState.collisionFlags & physx::PxControllerCollisionFlag::eCOLLISION_DOWN) == 0) //If not on ground
-			dispCurStep.y += -1; //Add gravity
+		//if ((cctState.collisionFlags & physx::PxControllerCollisionFlag::eCOLLISION_DOWN) == 0) //If not on ground
+		//	dispCurStep.y += -1; //Add gravity
 
-		dispCurStep *= 0.1;
+		//dispCurStep *= 0.1;
 		const physx::PxU32 flags = mController->move(dispCurStep, 0, dTime, physx::PxControllerFilters());
 
-		if ((flags & physx::PxControllerCollisionFlag::eCOLLISION_DOWN) == 0) //If not on ground
-			;
+		if ((flags & physx::PxControllerCollisionFlag::eCOLLISION_DOWN) != 0) //If on ground
+			mJump.stopJump();
+
+		if(controller.isJump)
+		{
+			controller.isJump = false;
+			mJump.startJump(mJumpForce);
+		}
 	}
 private:
 	physx::PxVec3 createDisplacementVector(Engine::Controller const& controller)

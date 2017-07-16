@@ -12,6 +12,7 @@ struct Controller
 	bool isBack    = false;
 	bool isRightStrafe = false;
 	bool isLeftStrafe  = false;
+	bool isJump    = false;
 	void KeyboardDown(SDL_KeyboardEvent& key)
 	{
 		HandleButton (key, true);
@@ -41,6 +42,9 @@ struct Controller
 			break;
 		case SDLK_q:
 			isLeftStrafe = val;
+			break;
+		case SDLK_SPACE:
+			isJump = val;
 			break;
 		}
 	}

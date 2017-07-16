@@ -8,7 +8,6 @@
 #include "GameObjects.h"
 
 #include "PxController.h"
-#include "PxJump.h"
 
 #define PVD_HOST "127.0.0.1"
 
@@ -30,7 +29,6 @@ class PhysX
 	physx::PxControllerManager*     mControllerManager = NULL;
 
 	PX::Controller					mController;
-	PX::Jump						mJump;
 public:
 	void initPhysics(bool interactive)
 	{
@@ -82,7 +80,7 @@ public:
 
 		mControllerManager = PxCreateControllerManager(*gScene);
 	}
-	void stepPhysics(float deltaTime, bool interactive, glm::vec3& cowboyPos, Engine::Controller const& controller)
+	void stepPhysics(float deltaTime, bool interactive, glm::vec3& cowboyPos, Engine::Controller & controller)
 	{
 		//const double dTime = 1.0f / 60.0f;
 		const double dTime = deltaTime; //TODO Fix timestepping algorithm
