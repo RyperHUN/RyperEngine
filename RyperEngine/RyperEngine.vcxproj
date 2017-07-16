@@ -14,7 +14,7 @@
     <ProjectGuid>{A09D888C-6E7E-4DEA-A19E-9EBCF289DDD1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>_01_Shadows</RootNamespace>
-    <ProjectName>01_Shadows</ProjectName>
+    <ProjectName>RyperEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
