@@ -45,7 +45,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="MyApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -69,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="gVertexBuffer.cpp">
       <Filter>Utils\GL_Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
