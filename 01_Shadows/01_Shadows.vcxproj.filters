@@ -165,6 +165,9 @@
     <ClInclude Include="PxController.h">
       <Filter>PhysX</Filter>
     </ClInclude>
+    <ClInclude Include="WaterRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleShader.vert">

@@ -131,6 +131,7 @@
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="UtilEngine.h" />
+    <ClInclude Include="WaterRenderer.h" />
     <ClInclude Include="Widgets.h" />
     <ClInclude Include="WrapperStructs.h" />
   </ItemGroup>
