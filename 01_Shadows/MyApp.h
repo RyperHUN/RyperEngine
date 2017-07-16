@@ -62,6 +62,7 @@ private:
 
 protected:
 
+	int EffectHandler;
 	// Textures
 	GLuint texture_Map; 
 	GLuint tex_dirt;

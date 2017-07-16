@@ -7,7 +7,6 @@
 // SDL
 #include <SDL.h>
 #include <SDL_opengl.h>
-#include <glfx.h>
 
 #include <iostream>
 #include <sstream>
@@ -127,8 +126,7 @@ int main( int argc, char* args[] )
 
 	//
 	// 3. lépés: indítsuk el a fõ üzenetfeldolgozó ciklust
-	// 
-	int effect = glfxGenEffect ();
+	//
 
 	// véget kell-e érjen a program futása?
 	bool quit = false;

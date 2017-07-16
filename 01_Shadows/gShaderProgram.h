@@ -17,6 +17,7 @@ class gShaderProgram
 {
 	std::unique_ptr<gShaderProgram> shadowShader;
 public:
+	GLuint							m_id_program;
 	gShaderProgram(void);
 	~gShaderProgram(void);
 
@@ -59,7 +60,7 @@ protected:
 	GLuint	getSubroutineIndex(GLenum shader_type, const char* uniform);
 	GLuint	loadShader(GLenum shaderType, const char* fileName);
 
-	GLuint							m_id_program;
+	
 	std::map< std::string, GLint >	m_map_uniform_locations;
 	std::list< GLuint >				m_list_shaders_attached;
 	std::map< GLenum, std::vector< GLuint >>			m_active_subroutines;
