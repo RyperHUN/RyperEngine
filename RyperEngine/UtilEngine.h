@@ -310,23 +310,26 @@ namespace Util
 
 		const int RSize = 5; //ChunkRealSize
 		const int ManagerSideSize = 2;
-		glm::ivec2 TopLeft (-ManagerSideSize * RSize, ManagerSideSize * RSize);
-		glm::ivec2 BottomRight (ManagerSideSize * RSize, -ManagerSideSize * RSize);
-		glm::ivec2 center (0,0);
+		glm::vec2 TopLeft (-ManagerSideSize * RSize, ManagerSideSize * RSize);
+		glm::vec2 BottomRight (ManagerSideSize * RSize, -ManagerSideSize * RSize);
+		glm::vec2 center (0,0);
 		const double MaxDist = glm::length(glm::vec2(TopLeft));
 
-		Generator.SetSeed (10);
-		unsigned char tex[256][256][3];
+		const int TexSize = 512;
 
-		for (int i = 0; i<256; ++i)
-			for (int j = 0; j<256; ++j)
+		Generator.SetSeed (10);
+		unsigned char tex[TexSize][TexSize][3];
+
+		for (int i = 0; i<TexSize; ++i)
+			for (int j = 0; j<TexSize; ++j)
 			{
-				glm::vec2 ndc = glm::vec2((i / 255.0f) - 0.5f, ((j / 255.0f) - 0.5f) * -1);
-				glm::vec2 UV = glm::vec2(i/255.0f,j /255.0f);
+				static const float MaxValue = float(TexSize - 1);
+				glm::vec2 ndc = glm::vec2((i / MaxValue) - 0.5f, ((j / MaxValue) - 0.5f) * -1);
+				glm::vec2 UV = glm::vec2(i/ MaxValue,j / MaxValue);
 				double val = noise(ndc.x, ndc.y, Generator);
 				glm::vec2 actualCoord = glm::mix(TopLeft, BottomRight, UV);
-				float dist = glm::length(actualCoord) / MaxDist; //[0,1] dist
-				val = val * (1.0 - dist);
+				double dist = glm::length(actualCoord) / MaxDist; //[0,1] dist
+				val = val * (1.0 - 1.7*pow(dist,3.3));
 
 				tex[i][j][0] = glm::clamp(val * 255, 0.0, 255.0); //[0,1] to [0,255]
 				
@@ -342,12 +345,12 @@ namespace Util
 		// töltsük fel adatokkal az...
 		gluBuild2DMipmaps(GL_TEXTURE_2D,	// aktív 2D textúrát
 			GL_RGB8,		// a vörös, zöld és kék csatornákat 8-8 biten tárolja a textúra
-			256, 256,		// 256x256 méretû legyen
+			TexSize, TexSize,		// 256x256 méretû legyen
 			GL_RGB,				// a textúra forrása RGB értékeket tárol, ilyen sorrendben
 			GL_UNSIGNED_BYTE,	// egy-egy színkopmonenst egy unsigned byte-ról kell olvasni
 			tex);				// és a textúra adatait a rendszermemória ezen szegletébõl töltsük fel
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);	// bilineáris szûrés kicsinyítéskor
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);	// és nagyításkor is
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	// bilineáris szûrés kicsinyítéskor
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// és nagyításkor is
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		return tmpID;
