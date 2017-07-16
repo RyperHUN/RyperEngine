@@ -227,6 +227,7 @@ void CMyApp::InitGameObjects ()
 
 	renderObjs.push_back(cowboyObj);
 	renderObjs.push_back(&chunkManager);
+	renderObjs.push_back(&skyboxRenderer);
 }
 
 void CMyApp::Update()
@@ -266,6 +267,7 @@ void CMyApp::Render()
 
 	state.PV            = lightSpaceMatrix;
 	state.LightSpaceMtx = lightSpaceMatrix;
+	state.rayDirMatrix  = activeCamera->GetRayDirMtx ();
 
 	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT);
 	fbo_Shadow.On();
@@ -293,8 +295,6 @@ void CMyApp::Render()
 		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
 		frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
-		//////////////////////////////Environment map drawing!!!
-		skyboxRenderer.Draw(activeCamera->GetRayDirMtx ());
 
 		//////////////////////////////Shadow map debug texture drawing
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1)); //Right top corner

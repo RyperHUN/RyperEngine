@@ -212,7 +212,7 @@ struct QuadTexturer
 	}
 };
 
-struct SkyboxRenderer
+struct SkyboxRenderer : public IRenderable
 {
 private:
 	gShaderProgram* shader;
@@ -222,15 +222,19 @@ public:
 	SkyboxRenderer(Geometry * geom, gShaderProgram* shader, GLuint textureCube)
 		:shader(shader), geom(geom), textureCube(textureCube)
 	{}
-	void Draw(glm::mat4 const& rayDirMatrix)
+	virtual void Draw(RenderState & state) override
 	{
 		shader->On();
 		{
-			shader->SetUniform("rayDirMatrix", rayDirMatrix);
+			shader->SetUniform("rayDirMatrix", state.rayDirMatrix);
 			shader->SetCubeTexture("skyBox", 14, textureCube);
 			geom->Draw();
 		}
 		shader->Off();
+	}
+	void Draw(glm::mat4 const& rayDirMatrix)
+	{
+		
 	}
 	void SetTexture(GLuint textureCubeID) {textureCube = textureCubeID;}
 };
