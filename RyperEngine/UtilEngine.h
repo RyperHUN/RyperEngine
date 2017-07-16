@@ -292,14 +292,27 @@ namespace Util
 		return tmpID;
 	}
 
+	
+	static double noise(double nx, double ny, noise::module::Perlin &Generator) {
+		// Rescale from -1.0:+1.0 to 0.0:1.0
+		return Generator.GetValue(nx, ny, 0) / 2.0 + 0.5;
+	}
+
 	static inline GLint GenRandomPerlinTexture()
 	{
 		noise::module::Perlin Generator;
+		Generator.SetSeed (1);
 		Generator.SetFrequency(1.0);
 		Generator.SetLacunarity(2.375);
-		Generator.SetOctaveCount(3);
+		Generator.SetOctaveCount(5);
 		Generator.SetPersistence(0.5);
 		Generator.SetNoiseQuality(noise::QUALITY_STD);
+
+		const int RSize = 5; //ChunkRealSize
+		const int ManagerSideSize = 2;
+		glm::ivec2 TopLeft (-ManagerSideSize * RSize, ManagerSideSize * RSize);
+		glm::ivec2 BottomRight (ManagerSideSize * RSize, -ManagerSideSize * RSize);
+		glm::ivec2 center (0,0);
 
 		Generator.SetSeed (10);
 		unsigned char tex[256][256][3];
@@ -307,9 +320,10 @@ namespace Util
 		for (int i = 0; i<256; ++i)
 			for (int j = 0; j<256; ++j)
 			{
-				tex[i][j][0] = glm::abs(Generator.GetValue(i, j, 0) * 256);
-				tex[i][j][1] = glm::abs(Generator.GetValue(i, j, 1) * 256);;
-				tex[i][j][2] = glm::abs(Generator.GetValue(i, j, 2) * 256);;
+				glm::vec2 ndc = glm::vec2((i / 256.0f) - 0.5f, ((j / 256.0f) - 0.5f) * -1);
+				tex[i][j][0] = glm::clamp(noise(ndc.x, ndc.y,Generator) * 255, 0.0, 255.0);
+				
+				tex[i][j][2] = tex[i][j][1] = tex[i][j][0];
 			}
 
 		GLuint tmpID;
@@ -325,8 +339,8 @@ namespace Util
 			GL_RGB,				// a textúra forrása RGB értékeket tárol, ilyen sorrendben
 			GL_UNSIGNED_BYTE,	// egy-egy színkopmonenst egy unsigned byte-ról kell olvasni
 			tex);				// és a textúra adatait a rendszermemória ezen szegletébõl töltsük fel
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	// bilineáris szûrés kicsinyítéskor
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// és nagyításkor is
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);	// bilineáris szûrés kicsinyítéskor
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);	// és nagyításkor is
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		return tmpID;
