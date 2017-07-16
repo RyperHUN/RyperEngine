@@ -252,7 +252,8 @@ void CMyApp::Update()
 	for(auto& light : shaderLights)
 		light.light->Animate(t, delta_time);
 
-	physX.stepPhysics (delta_time, false, gameObjs.front()->pos, controller);
+	physX.stepPhysics (delta_time, false, gameObjs.front()->pos, controller); //TODO Save player ref
+	activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
 }
 
 void CMyApp::Render()

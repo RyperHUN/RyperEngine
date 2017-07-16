@@ -32,6 +32,7 @@ public:
 	glm::vec3 GetEye() { return eyePos; }
 	virtual glm::vec3 GetDir() = 0;
 
+	virtual void AddYawFromSelected (float yawDt) {}
 	virtual void KeyboardDown(SDL_KeyboardEvent& key) {}
 	virtual void KeyboardUp(SDL_KeyboardEvent& key) {}
 	virtual void MouseWheel(SDL_MouseWheelEvent& wheel) {}
@@ -227,7 +228,8 @@ class TPSCamera : public Camera
 							 //For Movement
 	const glm::vec3 globalUp, globalRight, globalBack;
 
-	float yaw = 0.0f, pitch = 0.0f;
+	float yaw = M_PI, pitch = M_PI / 4.0f;
+	float selectedYaw = 0.0f;
 	float radius = 15.0f;
 	glm::vec3 selectedPos;
 public:
@@ -246,22 +248,27 @@ public:
 	{
 		selectedPos = pos;
 	}
-
+	virtual void AddYawFromSelected(float yaw) override
+	{
+		selectedYaw = yaw;
+	}
 
 	void UpdateViewMatrix(float yawDt = 0.0f, float pitchDt = 0.0f) override
 	{
 		yaw += yawDt;
 		pitch += pitchDt;
-
-		glm::vec3 horizontalCircle = cos(yaw) * -globalBack + sin(yaw) * globalRight;
-		glm::vec3 finalVec = cos(pitch) * horizontalCircle + sin(pitch)  * globalUp;
+		{
+			float yaw = this->yaw + selectedYaw;
+			glm::vec3 horizontalCircle = cos(yaw) * -globalBack + sin(yaw) * globalRight;
+			glm::vec3 finalVec = cos(pitch) * horizontalCircle + sin(pitch)  * globalUp;
 		
-		finalVec = glm::normalize(finalVec) * radius;
+			finalVec = glm::normalize(finalVec) * radius;
 
-		eyePos = selectedPos + finalVec;
-		forwardDir = glm::normalize(selectedPos - eyePos);
-		viewMatrix = glm::lookAt(eyePos, eyePos + forwardDir, globalUp);
-		frustum.setCamDef(eyePos, eyePos + forwardDir, globalUp);
+			eyePos = selectedPos + finalVec;
+			forwardDir = glm::normalize(selectedPos - eyePos);
+			viewMatrix = glm::lookAt(eyePos, eyePos + forwardDir, globalUp);
+			frustum.setCamDef(eyePos, eyePos + forwardDir, globalUp);
+		}
 	}
 	void UpdateProjMatrix() override
 	{
