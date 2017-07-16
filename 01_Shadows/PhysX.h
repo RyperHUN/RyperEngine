@@ -7,6 +7,8 @@
 #include "Controller.h"
 #include "GameObjects.h"
 
+#include "PhysXController.h"
+
 #define PVD_HOST "127.0.0.1"
 
 class PhysX 
@@ -26,13 +28,10 @@ class PhysX
 	physx::PxCooking*				mCooking = NULL;
 	physx::PxControllerManager*     mControllerManager = NULL;
 
-	physx::PxCapsuleController*		mController = NULL;
-	glm::vec3 forwardVec;
-	AnimatedCharacter *				player = nullptr;
+	PhysXController					mController;
 public:
 	void initPhysics(bool interactive)
 	{
-		forwardVec = glm::vec3(0,0,1);
 		gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
 
 		//ProfileZoneManager???
@@ -98,40 +97,7 @@ public:
 			glm::quat quat = Util::PhysXQuatToglmQuat(transform.actor2World.q);
 			cowboyPos = pos - glm::vec3(0,9,0);
 		}
-		//Handle controller movement
-		cowboyPos = Util::PhysXVec3ToglmVec3(mController->getFootPosition ());
-		
-		physx::PxVec3 dispCurStep {0,-1,0};
-		//dispCurStep += createDisplacementVector (controller); //wasd move
-		dispCurStep += createDisplacementVectorResident (controller, dTime);
-		dispCurStep *= 0.1;
-		
-		const physx::PxU32 flags = mController->move(dispCurStep, 0, dTime, physx::PxControllerFilters());
-	}
-	physx::PxVec3 createDisplacementVector(Engine::Controller const& controller)
-	{
-		glm::vec3 vec(0);
-		vec.x = -(float)controller.isLeft + controller.isRight;
-		vec.z = -(float)controller.isForward + controller.isBack;
-
-		return Util::glmVec3ToPhysXVec3(vec);
-	}
-	physx::PxVec3 createDisplacementVectorResident(Engine::Controller const& controller, float dt)
-	{
-		modifyForwardVec(controller, dt);
-		
-		glm::vec3 vec(0);
-		vec = forwardVec * (float)controller.isForward - forwardVec * (float)controller.isBack;
-		Util::BasisVectors basisVectors = Util::BasisVectors::create (forwardVec);
-		vec += basisVectors.right * (float)controller.isRightStrafe - basisVectors.right * (float)controller.isLeftStrafe;
-
-		return Util::glmVec3ToPhysXVec3(vec);
-	}
-	void modifyForwardVec (Engine::Controller const& controller, float dt)
-	{
-		static const glm::vec3 BeginForwardVec (0, 0, 1);
-		glm::mat4 matrix = glm::rotate (player->yaw, glm::vec3(0,1,0));
-		forwardVec = matrix * glm::vec4(BeginForwardVec, 0);
+		mController.Step (deltaTime, cowboyPos, controller);
 	}
 
 	void cleanupPhysics(bool interactive)
@@ -196,7 +162,7 @@ public:
 	}
 	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel, AnimatedCharacter * player)
 	{
-		this->player = player;
+		mController.player = player;
 		//createCharacterDynamic(pos,rot, assimpModel);
 		physx::PxCapsuleControllerDesc desc;
 
@@ -213,7 +179,7 @@ public:
 		desc.maxJumpHeight = 5.0f;
 		desc.reportCallback = NULL; // Meg lehet adni neki osztalyt
 
-		mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
+		mController.mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
 	}
 private:
 	void createCharacterDynamic (glm::vec3 pos, glm::quat rot, AssimpModel * assimpModel)

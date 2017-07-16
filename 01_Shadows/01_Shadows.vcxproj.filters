@@ -159,6 +159,9 @@
     <ClInclude Include="Interfaces.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="PhysXController.h">
+      <Filter>PhysX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleShader.vert">

@@ -14,6 +14,7 @@
 %TODO Debug Context OpenGL be
 %TODO gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false);});
 %Meg ugye ezt a hívást nem árt #if OGLWRAP_DEBUG-ba tenni, mert különben nincs DebugOutput osztály
+%Profiling: https://www.reddit.com/r/opengl/comments/6n7sli/how_to_find_bottleneck_in_opengl_application/
 
 Sourcek eddig:
 	-Learn OpenGL [Bennevan]
