@@ -7,7 +7,7 @@
 #include "ObjParser_OGL3.h"
 #include "UtilEngine.h"
 #include "GeometryCreator.h"
-#include <glfx.h>
+
 
 Geometry * BoundingBoxRenderer::geom_box = nullptr;
 
@@ -35,7 +35,6 @@ CMyApp::CMyApp(void)
 	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer)); //TODO Delete
 	
 	physX.initPhysics (false);
-	EffectHandler = glfxGenEffect();
 }
 
 
@@ -89,17 +88,6 @@ bool CMyApp::LoadShaders ()
 	shader_Frustum.AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
 	shader_Frustum.AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
 	if (!shader_Frustum.LinkProgram()) return false;
-
-	if (!glfxParseEffectFromFile(EffectHandler, "skybox.glsl")) {
-		std::string log = glfxGetEffectLog(EffectHandler);
-		std::cout << "Error parsing effect: " << log << std::endl;
-	}
-	int shaderProg = glfxCompileProgram(EffectHandler, "SkyBox");
-	if (shaderProg < 0) {
-		std::string log = glfxGetEffectLog(EffectHandler);
-		std::cout << "Error parsing effect: " << log << std::endl;
-	}
-	shader_SkyBox.m_id_program = shaderProg;
 
 	return true;
 }
@@ -499,6 +487,4 @@ void CMyApp::Clean()
 
 	delete mesh_Suzanne;
 	delete m_cow_mesh;
-
-	glfxDeleteEffect (EffectHandler);
 }

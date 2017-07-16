@@ -170,6 +170,9 @@
     <ClInclude Include="WaterRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GLFXShaderManager.h">
+      <Filter>Utils\GL_Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleShader.vert">
