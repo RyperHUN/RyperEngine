@@ -61,7 +61,6 @@ private:
 	void FrustumCulling(CameraPtr);
 
 protected:
-
 	// Textures
 	GLuint texture_Map; 
 	GLuint tex_dirt;

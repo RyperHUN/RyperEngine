@@ -126,7 +126,7 @@ int main( int argc, char* args[] )
 
 	//
 	// 3. lépés: indítsuk el a fõ üzenetfeldolgozó ciklust
-	// 
+	//
 
 	// véget kell-e érjen a program futása?
 	bool quit = false;

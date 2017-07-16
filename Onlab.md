@@ -1,4 +1,4 @@
-%TODO Irni, megoldani viz renderelest [https://www.youtube.com/watch?v=HusvGeEDU_U&list=PLRIWtICgwaX23jiqVByUs0bqhnalNTNZh]
+%TODO GLFX https://code.google.com/archive/p/glfx/
 %TODO Irni PhysX ről.
 %TODO Irni font renderingrol???
 %TODO Irni Extra OpenGL Effektek megvalositva: Anti Aliasing, Post Processing(Tone Mapping, gamma korrekcio) 

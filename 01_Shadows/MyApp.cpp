@@ -8,6 +8,7 @@
 #include "UtilEngine.h"
 #include "GeometryCreator.h"
 
+
 Geometry * BoundingBoxRenderer::geom_box = nullptr;
 
 CMyApp::CMyApp(void)
