@@ -22,9 +22,6 @@
     <Filter Include="Utils\Helpers">
       <UniqueIdentifier>{4ea6841d-ce53-4df4-a2c3-aec7ee013f35}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\Debug">
-      <UniqueIdentifier>{460e6e20-8cb3-4acd-a61a-b9265f1af071}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utils\Helpers\Math">
       <UniqueIdentifier>{430eaa2f-a1a3-48d4-a87d-149ca581ce3b}</UniqueIdentifier>
     </Filter>
@@ -40,8 +37,11 @@
     <Filter Include="PhysX">
       <UniqueIdentifier>{2afc7b65-a91f-416c-b7e9-b5f2d7ff4df2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Debug">
+      <UniqueIdentifier>{595114fe-179f-4b34-bb9d-bb8eb728a7c8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Shaders\Helper">
-      <UniqueIdentifier>{083eac84-01ae-4ff6-a65d-d07ab01bdd6b}</UniqueIdentifier>
+      <UniqueIdentifier>{2db0d3cf-8a45-4e51-ae29-0de1704a05b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -175,60 +175,60 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="simpleShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="simpleShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="quadTexturer.vert">
-      <Filter>Shaders\Debug</Filter>
-    </None>
-    <None Include="quadTexturer.frag">
-      <Filter>Shaders\Debug</Filter>
-    </None>
     <None Include="ClassDiagram.cd" />
-    <None Include="normalDrawer.geom">
+    <None Include="Shaders\quadTexturer.vert">
       <Filter>Shaders\Debug</Filter>
     </None>
-    <None Include="normalDrawer.frag">
+    <None Include="Shaders\quadTexturer.frag">
       <Filter>Shaders\Debug</Filter>
     </None>
-    <None Include="InstancedDrawer.vert">
+    <None Include="Shaders\normalDrawer.frag">
+      <Filter>Shaders\Debug</Filter>
+    </None>
+    <None Include="Shaders\normalDrawer.geom">
+      <Filter>Shaders\Debug</Filter>
+    </None>
+    <None Include="Shaders\boundingBoxShader.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\boundingBoxShader.vert">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\frustumVisualizer.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\frustumVisualizer.vert">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\LightVisualizer.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\LightVisualizer.vert">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\shadowShader.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\shadowShader.vert">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\skybox.frag">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\skybox.vert">
+      <Filter>Shaders\Helper</Filter>
+    </None>
+    <None Include="Shaders\InstancedDrawer.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="InstancedDrawer.frag">
+    <None Include="Shaders\InstancedDrawer.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="frustumVisualizer.frag">
-      <Filter>Shaders\Helper</Filter>
+    <None Include="Shaders\simpleShader.vert">
+      <Filter>Shaders</Filter>
     </None>
-    <None Include="frustumVisualizer.vert">
-      <Filter>Shaders\Helper</Filter>
-    </None>
-    <None Include="boundingBoxShader.vert">
-      <Filter>Shaders\Helper</Filter>
-    </None>
-    <None Include="boundingBoxShader.frag">
-      <Filter>Shaders\Helper</Filter>
-    </None>
-    <None Include="LightVisualizer.frag">
-      <Filter>Shaders\Helper</Filter>
-    </None>
-    <None Include="LightVisualizer.vert">
-      <Filter>Shaders\Helper</Filter>
-    </None>
-    <None Include="skybox.frag">
-      <Filter>Shaders\Helper</Filter>
-    </None>
-    <None Include="skybox.vert">
-      <Filter>Shaders\Helper</Filter>
-    </None>
-    <None Include="shadowShader.frag">
-      <Filter>Shaders\Helper</Filter>
-    </None>
-    <None Include="shadowShader.vert">
-      <Filter>Shaders\Helper</Filter>
+    <None Include="Shaders\simpleShader.frag">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

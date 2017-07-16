@@ -15,13 +15,19 @@ gShaderProgram::~gShaderProgram(void)
 {
 }
 
-bool gShaderProgram::AttachShader(GLenum shaderType, const char* filename)
+bool gShaderProgram::AttachShader(GLenum shaderType, std::string filename)
 {
+	if (filename.find("Shaders/") == std::string::npos)
+	{
+		static std::string prefix = "Shaders/";
+		filename = prefix + filename;
+	}
+
 	if(shadowShader)
 		if(shaderType != GL_FRAGMENT_SHADER)
 			shadowShader->AttachShader (shaderType, filename);
 
-	GLuint loaded_shader = loadShader(shaderType, filename);
+	GLuint loaded_shader = loadShader(shaderType, filename.c_str());
 	if (loaded_shader == 0)
 		return false;
 

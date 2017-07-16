@@ -137,25 +137,25 @@
     <ClInclude Include="WrapperStructs.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="boundingBoxShader.frag" />
-    <None Include="boundingBoxShader.vert" />
     <None Include="ClassDiagram.cd" />
-    <None Include="skybox.frag" />
-    <None Include="skybox.vert" />
-    <None Include="frustumVisualizer.frag" />
-    <None Include="frustumVisualizer.vert" />
-    <None Include="InstancedDrawer.frag" />
-    <None Include="InstancedDrawer.vert" />
-    <None Include="LightVisualizer.frag" />
-    <None Include="LightVisualizer.vert" />
-    <None Include="normalDrawer.frag" />
-    <None Include="normalDrawer.geom" />
-    <None Include="quadTexturer.frag" />
-    <None Include="quadTexturer.vert" />
-    <None Include="shadowShader.frag" />
-    <None Include="shadowShader.vert" />
-    <None Include="simpleShader.frag" />
-    <None Include="simpleShader.vert" />
+    <None Include="Shaders\boundingBoxShader.frag" />
+    <None Include="Shaders\boundingBoxShader.vert" />
+    <None Include="Shaders\frustumVisualizer.frag" />
+    <None Include="Shaders\frustumVisualizer.vert" />
+    <None Include="Shaders\InstancedDrawer.frag" />
+    <None Include="Shaders\InstancedDrawer.vert" />
+    <None Include="Shaders\LightVisualizer.frag" />
+    <None Include="Shaders\LightVisualizer.vert" />
+    <None Include="Shaders\normalDrawer.frag" />
+    <None Include="Shaders\normalDrawer.geom" />
+    <None Include="Shaders\quadTexturer.frag" />
+    <None Include="Shaders\quadTexturer.vert" />
+    <None Include="Shaders\shadowShader.frag" />
+    <None Include="Shaders\shadowShader.vert" />
+    <None Include="Shaders\simpleShader.frag" />
+    <None Include="Shaders\simpleShader.vert" />
+    <None Include="Shaders\skybox.frag" />
+    <None Include="Shaders\skybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
