@@ -167,11 +167,11 @@
     <ClInclude Include="PxController.h">
       <Filter>PhysX</Filter>
     </ClInclude>
-    <ClInclude Include="WaterRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GLFXShaderManager.h">
       <Filter>Utils\GL_Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterRenderer.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

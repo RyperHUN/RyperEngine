@@ -313,7 +313,7 @@ namespace Util
 		glm::vec2 TopLeft (-ManagerSideSize * RSize, ManagerSideSize * RSize);
 		glm::vec2 BottomRight (ManagerSideSize * RSize, -ManagerSideSize * RSize);
 		glm::vec2 center (0,0);
-		const double MaxDist = glm::length(glm::vec2(TopLeft));
+		const double MaxDist = glm::length(glm::vec2(TopLeft.x, 0));
 
 		const int TexSize = 512;
 
@@ -324,12 +324,12 @@ namespace Util
 			for (int j = 0; j<TexSize; ++j)
 			{
 				static const float MaxValue = float(TexSize - 1);
-				glm::vec2 ndc = glm::vec2((i / MaxValue) - 0.5f, ((j / MaxValue) - 0.5f) * -1);
-				glm::vec2 UV = glm::vec2(i/ MaxValue,j / MaxValue);
+				Vec2 ndc = glm::vec2((i / MaxValue) * 2.0 - 1.0f, ((j / MaxValue) * 2.0 - 1.0f) * -1);
+				Vec2 UV  = glm::vec2(i/ MaxValue,j / MaxValue);
 				double val = noise(ndc.x, ndc.y, Generator);
-				glm::vec2 actualCoord = glm::mix(TopLeft, BottomRight, UV);
+				Vec2 actualCoord = glm::mix(TopLeft, BottomRight, UV);
 				double dist = glm::length(actualCoord) / MaxDist; //[0,1] dist
-				val = val * (1.0 - 1.7*pow(dist,3.3));
+				val = (val - 0.25) * (1.0 - 1.6*pow(dist,2.5));
 
 				tex[i][j][0] = glm::clamp(val * 255, 0.0, 255.0); //[0,1] to [0,255]
 				
