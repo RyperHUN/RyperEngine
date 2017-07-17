@@ -298,38 +298,55 @@ namespace Util
 		return Generator.GetValue(nx, ny, 0) / 2.0 + 0.5;
 	}
 
-	static inline GLint GenRandomPerlinTexture()
+	class IslandGenerator
 	{
 		noise::module::Perlin Generator;
-		Generator.SetSeed (1);
-		Generator.SetFrequency(1.0);
-		Generator.SetLacunarity(2.375);
-		Generator.SetOctaveCount(5);
-		Generator.SetPersistence(0.5);
-		Generator.SetNoiseQuality(noise::QUALITY_STD);
+		Vec2 TopLeft, BottomRight;
+	public:
+		IslandGenerator (int seed)
+		{
+			Generator.SetSeed(seed);
+			Generator.SetFrequency(1.0);
+			Generator.SetLacunarity(2.375);
+			Generator.SetOctaveCount(5);
+			Generator.SetPersistence(0.5);
+			Generator.SetNoiseQuality(noise::QUALITY_STD);
 
-		const int RSize = 5; //ChunkRealSize
-		const int ManagerSideSize = 2;
-		glm::vec2 TopLeft (-ManagerSideSize * RSize, ManagerSideSize * RSize);
-		glm::vec2 BottomRight (ManagerSideSize * RSize, -ManagerSideSize * RSize);
-		glm::vec2 center (0,0);
-		const double MaxDist = glm::length(glm::vec2(TopLeft.x, 0));
+			const int RSize = 5; //ChunkRealSize
+			const int ManagerSideSize = 2;
+			TopLeft = glm::vec2 (-ManagerSideSize * RSize, ManagerSideSize * RSize);
+			BottomRight = glm::vec2 (ManagerSideSize * RSize, -ManagerSideSize * RSize);
+		}
+		
+		
+		float GetValue (const size_t i,const  size_t j, const size_t TexSize)
+		{
+			const double MaxDist = glm::length(glm::vec2(TopLeft.x, 0));
+			const float MaxValue = float(TexSize - 1);
+
+			Vec2 ndc         = Vec2((i / MaxValue) * 2.0 - 1.0f, ((j / MaxValue) * 2.0 - 1.0f) * -1);
+			Vec2 UV          = Vec2(i / MaxValue, j / MaxValue);
+			double val       = noise(ndc.x, ndc.y, Generator);
+			Vec2 actualCoord = glm::mix(TopLeft, BottomRight, UV);
+			double dist      = glm::length(actualCoord) / MaxDist; //[0,1] dist
+			
+			val = (val - 0.25) * (1.0 - 1.6*pow(dist, 2.5)); //Magic formula for island heightmap
+			return val;
+		}
+
+	};
+
+	static inline GLint GenRandomPerlinTexture()
+	{
+		IslandGenerator Generator (10);
 
 		const int TexSize = 512;
-
-		Generator.SetSeed (10);
 		unsigned char tex[TexSize][TexSize][3];
 
 		for (int i = 0; i<TexSize; ++i)
 			for (int j = 0; j<TexSize; ++j)
 			{
-				static const float MaxValue = float(TexSize - 1);
-				Vec2 ndc = glm::vec2((i / MaxValue) * 2.0 - 1.0f, ((j / MaxValue) * 2.0 - 1.0f) * -1);
-				Vec2 UV  = glm::vec2(i/ MaxValue,j / MaxValue);
-				double val = noise(ndc.x, ndc.y, Generator);
-				Vec2 actualCoord = glm::mix(TopLeft, BottomRight, UV);
-				double dist = glm::length(actualCoord) / MaxDist; //[0,1] dist
-				val = (val - 0.25) * (1.0 - 1.6*pow(dist,2.5));
+				double val = Generator.GetValue (i, j, TexSize);
 
 				tex[i][j][0] = glm::clamp(val * 255, 0.0, 255.0); //[0,1] to [0,255]
 				
