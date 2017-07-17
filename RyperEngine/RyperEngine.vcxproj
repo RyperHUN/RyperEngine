@@ -99,6 +99,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bezier.cpp" />
+    <ClCompile Include="ChunkManager.cpp" />
     <ClCompile Include="FrustumG.cpp" />
     <ClCompile Include="gShaderProgram.cpp" />
     <ClCompile Include="gVertexBuffer.cpp" />

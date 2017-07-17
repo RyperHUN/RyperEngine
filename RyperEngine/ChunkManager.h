@@ -18,7 +18,7 @@ struct Chunk
 {
 	glm::ivec3 pos = glm::ivec3(15,20,5);
 
-	const float BlockSize = 4.0f;
+	static const float BlockSize /*= 4.0f*/;
 	static const size_t size = 2; //size * 2 + 1 = cube size
 	Geometry* geom_Box;
 	gShaderProgram * shader; //Can be removed, and box geom also!!
@@ -90,7 +90,7 @@ struct Chunk
 		return numberOfExistingCubes;
 	}
 
-	size_t GetCubeSize() const
+	static size_t GetCubeSize()
 	{
 		return size * 2 + 1;
 	}
@@ -115,8 +115,7 @@ struct ChunkManager : public IRenderable
 	void GenerateBoxes ()
 	{
 		glm::ivec3 startPos(15, 20, 5);
-		Chunk testChunk = Chunk(geom_Box, shader, startPos);
-		float size = testChunk.GetCubeSize() * testChunk.BlockSize * 2;
+		float size = Chunk::GetCubeSize() * Chunk::BlockSize * 2;
 		/*for(int j = -5 ; j < 6; j++)
 		{
 			for(int i = -5; i < 6; i++)
@@ -126,6 +125,10 @@ struct ChunkManager : public IRenderable
 		}*/
 
 		chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(0, 0, 0) * size));
+	}
+	static glm::ivec2 Index (glm::ivec2 globalIndex)
+	{
+		
 	}
 	void Draw(RenderState & state) override
 	{
