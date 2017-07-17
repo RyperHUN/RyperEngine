@@ -162,7 +162,7 @@ struct ChunkManager : public IRenderable
 			{
 				for (int j = -1; j <= 1; j++)
 				{
-					chunks.push_back(Chunk(*ChunkIter,geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,-layer*Chunk::GetCubeSize(),j) * size));
+					chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,-layer*Chunk::GetCubeSize(),j) * size));
 					ChunkIter++;
 				}
 			}

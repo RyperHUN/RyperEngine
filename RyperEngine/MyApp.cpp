@@ -294,9 +294,11 @@ void CMyApp::Render()
 		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
 		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.texture.expose ());
 		
+		glEnable(GL_CLIP_DISTANCE0);
 		state.PV = activeCamera->GetProjView();
 		for(auto& obj : renderObjs)
 			obj->Draw (state);
+		glDisable(GL_CLIP_DISTANCE0);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());
