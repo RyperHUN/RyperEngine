@@ -132,7 +132,7 @@ bool CMyApp::Init()
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
 	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
-	tex_randomPerlin  = Util::GenRandomPerlinTexture ();
+	//tex_randomPerlin  = Util::GenRandomPerlinTexture ();
 	skyboxRenderer.SetTexture(textureCube_id);
 
 	// mesh betöltés
@@ -305,7 +305,7 @@ void CMyApp::Render()
 
 		//////////////////////////////Shadow map debug texture drawing
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1)); //Right top corner
-		quadTexturer.Draw (tex_randomPerlin,false, Model);
+		//quadTexturer.Draw (tex_randomPerlin,false, Model);
 
 		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
 		//container.Draw(state);

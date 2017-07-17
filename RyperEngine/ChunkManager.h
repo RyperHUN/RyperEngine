@@ -132,7 +132,7 @@ struct ChunkManager : public IRenderable
 	Geometry* geom_Box;
 	gShaderProgram * shader;
 	GLint texId;
-	static const size_t MapSize = Chunk::GetCubeSize() * 3; //Map Size in Chunks MapSize x MapSize
+	static const size_t MapSize = Chunk::GetCubeSize() * 4; //Map Size in Chunks MapSize x MapSize
 	using ChunkArray = Array2D<float, MapSize, MapSize>;
 
 	std::vector<Chunk> chunks;
@@ -149,19 +149,22 @@ struct ChunkManager : public IRenderable
 		glm::ivec3 startPos(15, 20, 5);
 		float size = Chunk::GetCubeSize() * Chunk::BlockSize * 2;
 
-		ChunkArray arr = islandGen.GetArray<float, MapSize>();
-		std::vector<std::vector<size_t>> ChunkHeightInfo;
-		for(int i = 0 ; i < arr.size(); i += Chunk::GetCubeSize())
-			for(int j = 0; j < arr.size(); j += Chunk::GetCubeSize ())
-				ChunkHeightInfo.push_back (TraverseChunk (arr, i, j));
-		
-		auto ChunkIter = ChunkHeightInfo.begin();
-		for (int i = -1; i <= 1; i++)
+		for(int layer = 0; layer < 2; layer++)
 		{
-			for (int j = -1; j <= 1; j++)
+			std::vector<std::vector<size_t>> ChunkHeightInfo;
+			ChunkArray arr = islandGen.GetArray<float, MapSize>();
+			for(int i = 0 ; i < arr.size(); i += Chunk::GetCubeSize())
+				for(int j = 0; j < arr.size(); j += Chunk::GetCubeSize ())
+					ChunkHeightInfo.push_back (TraverseChunk (arr, i, j));
+		
+			auto ChunkIter = ChunkHeightInfo.begin();
+			for (int i = -1; i <= 1; i++)
 			{
-				chunks.push_back(Chunk(*ChunkIter,geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,0,j) * size));
-				ChunkIter++;
+				for (int j = -1; j <= 1; j++)
+				{
+					chunks.push_back(Chunk(*ChunkIter,geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,-layer*Chunk::GetCubeSize(),j) * size));
+					ChunkIter++;
+				}
 			}
 		}
 
@@ -175,7 +178,8 @@ struct ChunkManager : public IRenderable
 		{
 			for (int j = jStart; j < jStart + Chunk::GetCubeSize(); j++)
 			{
-				size_t HeightVal = arr[i][j] * 6.5;
+				size_t HeightVal = arr[i][j] * 9; //TODO Interpolate between neighbours
+				arr[i][j] -= Chunk::GetCubeSize ();
 				heightInfo.push_back(HeightVal);
 			}
 		}
