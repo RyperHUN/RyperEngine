@@ -11,7 +11,7 @@ struct ChunkData
 {
 	glm::vec3 pos; ///TODO Can be ivec3
 	int type;
-	bool isExist;
+	bool isExist = false;
 };
 
 struct Chunk
@@ -41,6 +41,35 @@ struct Chunk
 					data.type = Util::randomPointI(0,4);
 				}
 			}
+		}
+	}
+	Chunk(std::vector<size_t> heightInfo,Geometry* geom, gShaderProgram * shader, glm::vec3 pos)
+		:geom_Box(geom), shader(shader), pos(pos)
+	{
+		const size_t cubeSize = GetCubeSize();
+		MAssert(heightInfo.size() == cubeSize * cubeSize, "Not valid height info given to Chunk, array size is not valid");
+		for (int i = 0; i < cubeSize; i++) //row
+		{
+			for (int j = 0; j < cubeSize; j++)
+			{
+				const size_t index = i * cubeSize + j;
+				PutHeightNumChunks (i, j, heightInfo[index]);				
+			}
+		}
+	}
+	void PutHeightNumChunks (const int i,const int j,const int height)
+	{
+		const size_t cubeSize = GetCubeSize();
+		for (int k = 0; k < cubeSize; k++)
+		{
+			if (k >= height)
+				break;
+			ChunkData &data = chunkInfo[i][j][k];
+			data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i, -k, j) * BlockSize * 2.0f;
+			data.isExist = 1;
+			data.type = 0; //dirt
+			if (k == height - 1)
+				data.type = 1; //TODO Grass
 		}
 	}
 
@@ -90,46 +119,69 @@ struct Chunk
 		return numberOfExistingCubes;
 	}
 
-	static size_t GetCubeSize()
+	static constexpr size_t GetCubeSize()
 	{
 		return size * 2 + 1;
 	}
 };
 
-static noise::module::Perlin RandomGenerator;
+static Util::IslandGenerator islandGen (10);
 
 struct ChunkManager : public IRenderable
 {
 	Geometry* geom_Box;
 	gShaderProgram * shader;
 	GLint texId;
+	static const size_t MapSize = Chunk::GetCubeSize() * 3; //Map Size in Chunks MapSize x MapSize
+	using ChunkArray = Array2D<float, MapSize, MapSize>;
 
 	std::vector<Chunk> chunks;
-	ChunkManager () {}
+	ChunkManager () 
+	{}
 	ChunkManager(Geometry* geom_Box, gShaderProgram * shader, GLint texId)
 		:geom_Box(geom_Box), shader(shader), texId(texId)
 	{
-		RandomGenerator.GetValue (1, 2, 3);
 		//Random creation
 	}
+	~ChunkManager () {}
 	void GenerateBoxes ()
 	{
 		glm::ivec3 startPos(15, 20, 5);
 		float size = Chunk::GetCubeSize() * Chunk::BlockSize * 2;
-		/*for(int j = -5 ; j < 6; j++)
-		{
-			for(int i = -5; i < 6; i++)
-			{
-				chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,0,j) * size));
-			}
-		}*/
 
-		chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(0, 0, 0) * size));
-	}
-	static glm::ivec2 Index (glm::ivec2 globalIndex)
-	{
+		ChunkArray arr = islandGen.GetArray<float, MapSize>();
+		std::vector<std::vector<size_t>> ChunkHeightInfo;
+		for(int i = 0 ; i < arr.size(); i += Chunk::GetCubeSize())
+			for(int j = 0; j < arr.size(); j += Chunk::GetCubeSize ())
+				ChunkHeightInfo.push_back (TraverseChunk (arr, i, j));
 		
+		auto ChunkIter = ChunkHeightInfo.begin();
+		for (int i = -1; i <= 1; i++)
+		{
+			for (int j = -1; j <= 1; j++)
+			{
+				chunks.push_back(Chunk(*ChunkIter,geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,0,j) * size));
+				ChunkIter++;
+			}
+		}
+
+		//chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(0, 0, 0) * size));
 	}
+	//Returns how much is the height for the chunks!
+	std::vector<size_t> TraverseChunk (ChunkArray& arr, int iStart, int jStart) 
+	{
+		std::vector<size_t> heightInfo;
+		for(int i = iStart; i < iStart + Chunk::GetCubeSize(); i++)
+		{
+			for (int j = jStart; j < jStart + Chunk::GetCubeSize(); j++)
+			{
+				size_t HeightVal = arr[i][j] * 6.5;
+				heightInfo.push_back(HeightVal);
+			}
+		}
+		return heightInfo;
+	}
+
 	void Draw(RenderState & state) override
 	{
 		//TODO FrustumCulling for each block

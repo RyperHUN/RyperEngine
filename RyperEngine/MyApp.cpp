@@ -224,14 +224,15 @@ void CMyApp::InitGameObjects ()
 	chunkManager = ChunkManager(&geom_Box, &shader_Instanced, textureArray_blocks);
 	chunkManager.GenerateBoxes();
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
-	physX.createChunk(chunkManager.chunks.front());
+	for(auto& chunk :chunkManager.chunks)
+		physX.createChunk(chunk);
 	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry, cowboyObj);
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 
-	renderObjs.push_back(quadObj);
+	//renderObjs.push_back(quadObj);
 	renderObjs.push_back(cowboyObj);
-	//renderObjs.push_back(&chunkManager);
+	renderObjs.push_back(&chunkManager);
 	renderObjs.push_back(&skyboxRenderer);
 }
 
@@ -304,7 +305,7 @@ void CMyApp::Render()
 
 		//////////////////////////////Shadow map debug texture drawing
 		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1)); //Right top corner
-		quadTexturer.Draw (tex_randomPerlin,false);
+		quadTexturer.Draw (tex_randomPerlin,false, Model);
 
 		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
 		//container.Draw(state);

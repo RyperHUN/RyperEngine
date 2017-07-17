@@ -330,7 +330,7 @@ namespace Util
 			Vec2 actualCoord = glm::mix(TopLeft, BottomRight, UV);
 			double dist      = glm::length(actualCoord) / MaxDist; //[0,1] dist
 			
-			val = (val - 0.25) * (1.0 - 1.6*pow(dist, 2.5)); //Magic formula for island heightmap
+			val = (val - 0.20) * (1.0 - 1.3*pow(dist, 2.0)); //Magic formula for island heightmap
 			return val;
 		}
 
@@ -344,7 +344,7 @@ namespace Util
 				for (int j = 0; j<TexSize; ++j)
 				{
 					double val = GetValue(i, j, TexSize);
-					tex[i][j] = val;
+					tex[i][j] = glm::clamp(val, 0.0, 1.0);
 				}
 			return tex;
 		}
