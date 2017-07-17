@@ -13,6 +13,7 @@ struct RenderState
 	MaterialPtr material = nullptr;
 	Geometry * geom = nullptr;
 	gShaderProgram * shader = nullptr;
+	glm::vec4 planeEquation;
 
 	//Texture* texture;
 	//Vector<light> lights;

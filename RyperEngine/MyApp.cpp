@@ -22,7 +22,8 @@ CMyApp::CMyApp(void)
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50)),
-	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1)
+	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1),
+	waterRenderer (quadTexturer,{m_width, m_height})
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -286,19 +287,26 @@ void CMyApp::Render()
 	}
 	fbo_Shadow.Off();
 
+	glViewport(0, 0, m_width, m_height);
+
+	shader_Simple.On();
+	shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
+	shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.texture.expose());
+	state.PV = activeCamera->GetProjView();
+	glEnable(GL_CLIP_DISTANCE0);
+		waterRenderer.Render(renderObjs, state);
+	glDisable(GL_CLIP_DISTANCE0);
+
 	BindFrameBuffersForRender ();
 	{
 		glViewport(0, 0, m_width, m_height);
 
 		shader_Simple.On();
 		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
-		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.texture.expose ());
-		
-		glEnable(GL_CLIP_DISTANCE0);
+		shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.texture.expose());
 		state.PV = activeCamera->GetProjView();
 		for(auto& obj : renderObjs)
 			obj->Draw (state);
-		glDisable(GL_CLIP_DISTANCE0);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());
@@ -306,8 +314,10 @@ void CMyApp::Render()
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Shadow map debug texture drawing
-		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1)); //Right top corner
-		//quadTexturer.Draw (tex_randomPerlin,false, Model);
+		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Right top corner
+		quadTexturer.Draw (waterRenderer.GetRefractTexture(),false, Model);
+		glm::mat4 ModelLT = glm::translate(glm::vec3(-0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Left Top Corner
+		quadTexturer.Draw(waterRenderer.GetReflectTexture(), true, ModelLT);
 
 		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
 		//container.Draw(state);

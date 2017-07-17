@@ -77,6 +77,7 @@ struct Chunk
 	{
 		shader->On(); //TODO Can be refactored to state.shader
 		{
+			shader->SetUniform("uPlane", state.planeEquation);
 			shader->SetUniform("PV", state.PV);
 			shader->SetUniform("uScale", BlockSize);
 			shader->SetTexture("tex1", 0,  texId, GL_TEXTURE_2D_ARRAY);
@@ -149,7 +150,7 @@ struct ChunkManager : public IRenderable
 		glm::ivec3 startPos(15, 20, 5);
 		float size = Chunk::GetCubeSize() * Chunk::BlockSize * 2;
 
-		for(int layer = 0; layer < 2; layer++)
+		for(int layer = 0; layer < 1; layer++)
 		{
 			std::vector<std::vector<size_t>> ChunkHeightInfo;
 			ChunkArray arr = islandGen.GetArray<float, MapSize>();

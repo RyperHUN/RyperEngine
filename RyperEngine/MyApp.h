@@ -28,6 +28,7 @@
 #include "TextRenderer.h"
 
 #include "Controller.h"
+#include "WaterRenderer.h"
 
 // PhysX
 #include "PhysX.h"
@@ -121,6 +122,7 @@ protected:
 	QuadTexturer quadTexturer;
 	TextRenderer textRenderer;
 	SkyboxRenderer skyboxRenderer;
+	WaterRenderer waterRenderer;
 
 	//Widgets
 	Checkbox checkbox;
