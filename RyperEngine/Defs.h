@@ -30,6 +30,11 @@ using Vec2 = glm::vec2;
 using Vec3 = glm::vec3;
 using Vec4 = glm::vec4;
 
+#include <array>
+template <class T, size_t ROW, size_t COL>
+using Array2D = std::array<std::array<T, COL>, ROW>;
+
+
 #ifndef NDEBUG
 #   define MAssert(Expr, Msg) \
     __M_Assert(#Expr, Expr, __FILE__, __LINE__, Msg)

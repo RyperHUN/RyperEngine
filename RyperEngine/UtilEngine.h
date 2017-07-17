@@ -334,13 +334,27 @@ namespace Util
 			return val;
 		}
 
+		//Usage : auto arr = Generator.GetArray<float,256>();
+		template <class T, size_t TexSize>
+		Array2D<T, TexSize, TexSize> GetArray ()
+		{
+			Array2D<T, TexSize, TexSize> tex;
+
+			for (int i = 0; i<TexSize; ++i)
+				for (int j = 0; j<TexSize; ++j)
+				{
+					double val = GetValue(i, j, TexSize);
+					tex[i][j] = val;
+				}
+			return tex;
+		}
 	};
 
 	static inline GLint GenRandomPerlinTexture()
 	{
 		IslandGenerator Generator (10);
 
-		const int TexSize = 512;
+		const int TexSize = 256;
 		unsigned char tex[TexSize][TexSize][3];
 
 		for (int i = 0; i<TexSize; ++i)
