@@ -31,8 +31,14 @@ using Vec3 = glm::vec3;
 using Vec4 = glm::vec4;
 
 #include <array>
+template <class T, size_t ROW>
+using Array1D = std::array<T, ROW>;
+
 template <class T, size_t ROW, size_t COL>
 using Array2D = std::array<std::array<T, COL>, ROW>;
+
+template <class T, size_t ROW, size_t COL, size_t HEIGHT>
+using Array3D = std::array<std::array<std::array<T,HEIGHT>, COL>, ROW>;
 
 
 #ifndef NDEBUG
