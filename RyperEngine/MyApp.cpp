@@ -184,6 +184,10 @@ void CMyApp::InitGameObjects ()
 	//gameObjs.push_back(sphere2);
 	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,material2,glm::vec3{ -1,5,-5 },glm::vec3(100,100,60),glm::vec3(-1,0,0) };
 	quadObj->rotAngle = M_PI / 2.0;
+	Quadobj *quadObjWater = new Quadobj{*quadObj};
+	quadObjWater->pos += glm::vec3(0,1,0);
+	quadObjWater->rotAngle = M_PI / 2.0;
+	quadObjWater->geometry = &geom_Quad;
 
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
@@ -233,6 +237,7 @@ void CMyApp::InitGameObjects ()
 	cameraFocusIndex = 0;
 
 	renderObjs.push_back(quadObj);
+	renderObjs.push_back(quadObjWater);
 	renderObjs.push_back(cowboyObj);
 	//renderObjs.push_back(&chunkManager);
 	renderObjs.push_back(&skyboxRenderer);
