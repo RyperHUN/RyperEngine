@@ -230,7 +230,13 @@ struct HeightMap : public ParamSurface
 	virtual VertexData GenVertexData(float u, float v) override
 	{
 		VertexData data;
-		
+		const Vec2 UV   = Vec2{ u,v };
+		float height    = islandGenerator.GetValueUV (UV);
+		const Vec2 ndc2 = Util::CV::UVToNdc (UV);
+
+		data.position = Vec3(ndc2, height);
+		//TODO data.normal;
+		data.uv = UV;
 		return data;
 	}
 };

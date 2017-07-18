@@ -324,7 +324,7 @@ namespace Util
 		{
 			const float MaxValue = float(TexSize - 1);
 
-			Vec2 UV          = Vec2(i / MaxValue, j / MaxValue);
+			Vec2 UV          = Vec2(j / MaxValue, i / MaxValue);
 			Vec2 ndc         = Util::CV::UVToNdc(UV);
 			
 			return GetValueNDC (ndc);

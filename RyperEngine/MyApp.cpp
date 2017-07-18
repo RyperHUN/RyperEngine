@@ -150,6 +150,7 @@ bool CMyApp::Init()
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
 	geom_Cow     = TriangleMeshLoaded(m_cow_mesh);
 	geom_Bezier.Create (10,10);
+	geom_PerlinHeight.Create(30,30);
 
 	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
 	shaderLights.push_back(ShaderLight{&dirLight, "dirlight"});
@@ -181,9 +182,8 @@ void CMyApp::InitGameObjects ()
 	//GameObj * sphere2 = new GameObj(*sphere);
 	//sphere2->pos = glm::vec3(2, 50, -3);
 	//gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,20,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0) };
+	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,material2,glm::vec3{ -1,5,-5 },glm::vec3(100,100,60),glm::vec3(-1,0,0) };
 	quadObj->rotAngle = M_PI / 2.0;
-	gameObjs.push_back(quadObj);
 
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
@@ -221,6 +221,7 @@ void CMyApp::InitGameObjects ()
 
 	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
 	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, cowboyObj->pos);
+	std::swap(activeCamera, secondaryCamera);
 
 	chunkManager = ChunkManager(&geom_Box, &shader_Instanced, textureArray_blocks);
 	chunkManager.GenerateBoxes();
@@ -231,9 +232,9 @@ void CMyApp::InitGameObjects ()
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 
-	//renderObjs.push_back(quadObj);
+	renderObjs.push_back(quadObj);
 	renderObjs.push_back(cowboyObj);
-	renderObjs.push_back(&chunkManager);
+	//renderObjs.push_back(&chunkManager);
 	renderObjs.push_back(&skyboxRenderer);
 }
 
@@ -307,7 +308,7 @@ void CMyApp::Render()
 		if (IsWaterRendering) 
 			waterRenderer.RenderTextures ();
 		glm::mat4 ModelRT = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Right top corner
-		quadTexturer.Draw (tex_randomPerlin,false,ModelRT);
+		//quadTexturer.Draw (tex_randomPerlin,false,ModelRT);
 
 
 		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };

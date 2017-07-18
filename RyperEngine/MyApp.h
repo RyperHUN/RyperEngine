@@ -87,6 +87,7 @@ protected:
 	TriangleMeshLoaded geom_Cow;
 	AssimpModel		geom_Man;
 	AssimpModel		geom_AnimatedMan;
+	HeightMap       geom_PerlinHeight;
 
 	OGL_Mesh *mesh_Suzanne;
 	OGL_Mesh *m_cow_mesh;
