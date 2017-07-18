@@ -19,6 +19,17 @@ inline bool operator>(glm::vec3 const& lhs, glm::vec3 const&rhs)
 
 namespace Util {
 
+namespace CV {
+	inline glm::vec2 NdcToUV (glm::vec2 ndc)
+	{
+		return glm::vec2((ndc.x + 1.0f)/2.0f,(ndc.y - 1.0f)/-2.0f);
+	}
+	inline glm::vec2 UVToNdc (glm::vec2 uv)
+	{
+		return glm::vec2(uv.x * 2 - 1.0f, uv.y * -2.0f + 1.0f);
+	}
+}; //NS CV == CONVERTER
+
 inline glm::mat4 assimpToGlm(const aiMatrix4x4& from)
 {
 	//glm::mat4 m = glm::transpose(glm::make_mat4(&aiM.a1));

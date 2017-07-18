@@ -13,6 +13,7 @@
 #include "Defs.h"
 #include <oglwrap\oglwrap.h>
 #include <noise/noise.h>
+#include "UtilConverters.h"
 
 namespace Util 
 {
@@ -321,18 +322,31 @@ namespace Util
 		
 		float GetValue (const size_t i,const  size_t j, const size_t TexSize)
 		{
-			const double MaxDist = glm::length(glm::vec2(TopLeft.x, 0));
 			const float MaxValue = float(TexSize - 1);
 
-			Vec2 ndc         = Vec2((i / MaxValue) * 2.0 - 1.0f, ((j / MaxValue) * 2.0 - 1.0f) * -1);
 			Vec2 UV          = Vec2(i / MaxValue, j / MaxValue);
-			double val       = noise(ndc.x, ndc.y, Generator);
-			Vec2 actualCoord = glm::mix(TopLeft, BottomRight, UV);
-			double dist      = glm::length(actualCoord) / MaxDist; //[0,1] dist
+			Vec2 ndc         = Util::CV::UVToNdc(UV);
 			
+			return GetValueNDC (ndc);
+		}
+		float GetValueUV(Vec2 UV)
+		{
+			return GetValueNDC(Util::CV::UVToNdc(UV));
+		}
+		float GetValueNDC (Vec2 ndc)
+		{
+			const double MaxDist = glm::length(glm::vec2(TopLeft.x, 0));
+
+			Vec2 UV = Util::CV::NdcToUV (ndc);
+			double val = noise(ndc.x, ndc.y, Generator);
+			Vec2 actualCoord = glm::mix(TopLeft, BottomRight, UV);
+			double dist = glm::length(actualCoord) / MaxDist; //[0,1] dist
+
 			val = (val - 0.20) * (1.0 - 1.3*pow(dist, 2.0)); //Magic formula for island heightmap
+
 			return val;
 		}
+		
 
 		//Usage : auto arr = Generator.GetArray<float,256>();
 		template <class T, size_t TexSize>

@@ -9,6 +9,7 @@
 
 #include "glmIncluder.h"
 #include "Defs.h"
+#include "UtilEngine.h"
 
 enum LOCATION {
 	POSITION = 0,
@@ -222,7 +223,16 @@ struct ParamSurface : public Geometry {
 
 struct HeightMap : public ParamSurface
 {
-	
+	Util::IslandGenerator islandGenerator;
+	HeightMap ()
+		:islandGenerator (10)
+	{}
+	virtual VertexData GenVertexData(float u, float v) override
+	{
+		VertexData data;
+		
+		return data;
+	}
 };
 
 struct HeightMapBezier : public ParamSurface
