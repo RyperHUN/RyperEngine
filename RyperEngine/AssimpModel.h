@@ -106,7 +106,7 @@ struct Animator
 	}
 	void uploadToShader(gShaderProgram * shader)
 	{
-		static const std::string uniformName = "boneTransformations[";
+		static const std::string uniformName = "uBoneTransformations[";
 		for (int i = 0; i < boneTransforms.size(); i++)
 		{
 			shader->SetUniform((uniformName + std::to_string(i) + "]").c_str(), boneTransforms[i].finalTransform);
@@ -431,7 +431,7 @@ private:
 	void UploadFinalTransformations(gShaderProgram * shader)
 	{
 		assert(shader);
-		shader->SetUniform("isAnimated", isAnimated);
+		shader->SetUniform("uIsAnimated", isAnimated);
 		animator->uploadToShader(shader);
 	}
 	

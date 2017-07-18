@@ -10,10 +10,10 @@ uniform mat4 PVM;
 uniform mat4 M;
 uniform mat4 Minv;
 uniform mat4 LightSpaceMtx;
-uniform bool isAnimated;
+uniform bool uIsAnimated;
 
 #define MAX_BONES 41
-uniform mat4 boneTransformations[MAX_BONES];
+uniform mat4 uBoneTransformations[MAX_BONES];
 
 //Interface Block
 out VS_OUT 
@@ -28,16 +28,16 @@ out VS_OUT
 mat4 getBoneTransform (vec4 weights, vec4 boneId)
 {
 	ivec4 BoneIDs	   = ivec4(boneId.x, boneId.y, boneId.z, boneId.w);
-	mat4 boneTransform = boneTransformations[BoneIDs[0]] * weights[0];
+	mat4 boneTransform = uBoneTransformations[BoneIDs[0]] * weights[0];
 	for(int i = 1; i < 4; i++)
-		boneTransform     += boneTransformations[BoneIDs[i]] * weights[i];
+		boneTransform  += uBoneTransformations[BoneIDs[i]] * weights[i];
 	return boneTransform;
 }
 
 void main()
 {
 	mat4 boneTransform = mat4(1.0);
-	if (isAnimated)
+	if (uIsAnimated)
 		boneTransform = getBoneTransform(vs_in_weights, vs_in_boneId);
 	
 	vec4 objSpacePos    = boneTransform * vec4(vs_in_pos, 1 );
