@@ -14,7 +14,8 @@
     <ProjectGuid>{A09D888C-6E7E-4DEA-A19E-9EBCF289DDD1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>_01_Shadows</RootNamespace>
-    <ProjectName>01_Shadows</ProjectName>
+    <ProjectName>RyperEngine</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -46,6 +47,8 @@
     <LibraryPath>t:\OGLPack\lib\x86;T:\PhysX-3.4\PhysX_3.4\Lib\vc14win32;T:\PhysX-3.4\PxShared\lib\vc14win32;$(LibraryPath)</LibraryPath>
     <ReferencePath>
     </ReferencePath>
+    <OutDir>$(SolutionDir)\BuildResult\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -53,6 +56,8 @@
     <LibraryPath>t:\OGLPack\lib\x86;T:\PhysX-3.4\PhysX_3.4\Lib\vc14win32;T:\PhysX-3.4\PxShared\lib\vc14win32;$(LibraryPath)</LibraryPath>
     <ReferencePath>
     </ReferencePath>
+    <OutDir>$(SolutionDir)\BuildResult\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -67,7 +72,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfx.lib;assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;glew32.lib;glu32.lib;opengl32.lib;PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PxPvdSDKDEBUG_x86.lib;PxFoundationDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysX3CookingDEBUG_x86.lib;PhysX3CharacterKinematicDEBUG_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfx.lib;assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;glew32.lib;glu32.lib;opengl32.lib;PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PxPvdSDKDEBUG_x86.lib;PxFoundationDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysX3CookingDEBUG_x86.lib;PhysX3CharacterKinematicDEBUG_x86.lib;%(AdditionalDependencies);libnoise.lib</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -87,11 +93,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies);assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;glew32.lib;glu32.lib;opengl32.lib;PhysX3_x86.lib;PhysX3Common_x86.lib;PxPvdSDK_x86.lib;PxFoundation_x86.lib;PhysX3Extensions.lib;PhysX3Cooking_x86.lib;PhysX3CharacterKinematic_x86.lib;glfx.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;glew32.lib;glu32.lib;opengl32.lib;PhysX3_x86.lib;PhysX3Common_x86.lib;PxPvdSDK_x86.lib;PxFoundation_x86.lib;PhysX3Extensions.lib;PhysX3Cooking_x86.lib;PhysX3CharacterKinematic_x86.lib;glfx.lib;libnoise.lib</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bezier.cpp" />
+    <ClCompile Include="ChunkManager.cpp" />
     <ClCompile Include="FrustumG.cpp" />
     <ClCompile Include="gShaderProgram.cpp" />
     <ClCompile Include="gVertexBuffer.cpp" />
@@ -137,25 +145,25 @@
     <ClInclude Include="WrapperStructs.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="boundingBoxShader.frag" />
-    <None Include="boundingBoxShader.vert" />
     <None Include="ClassDiagram.cd" />
-    <None Include="skybox.frag" />
-    <None Include="skybox.vert" />
-    <None Include="frustumVisualizer.frag" />
-    <None Include="frustumVisualizer.vert" />
-    <None Include="InstancedDrawer.frag" />
-    <None Include="InstancedDrawer.vert" />
-    <None Include="LightVisualizer.frag" />
-    <None Include="LightVisualizer.vert" />
-    <None Include="normalDrawer.frag" />
-    <None Include="normalDrawer.geom" />
-    <None Include="quadTexturer.frag" />
-    <None Include="quadTexturer.vert" />
-    <None Include="shadowShader.frag" />
-    <None Include="shadowShader.vert" />
-    <None Include="simpleShader.frag" />
-    <None Include="simpleShader.vert" />
+    <None Include="Shaders\boundingBoxShader.frag" />
+    <None Include="Shaders\boundingBoxShader.vert" />
+    <None Include="Shaders\frustumVisualizer.frag" />
+    <None Include="Shaders\frustumVisualizer.vert" />
+    <None Include="Shaders\InstancedDrawer.frag" />
+    <None Include="Shaders\InstancedDrawer.vert" />
+    <None Include="Shaders\LightVisualizer.frag" />
+    <None Include="Shaders\LightVisualizer.vert" />
+    <None Include="Shaders\normalDrawer.frag" />
+    <None Include="Shaders\normalDrawer.geom" />
+    <None Include="Shaders\quadTexturer.frag" />
+    <None Include="Shaders\quadTexturer.vert" />
+    <None Include="Shaders\shadowShader.frag" />
+    <None Include="Shaders\shadowShader.vert" />
+    <None Include="Shaders\simpleShader.frag" />
+    <None Include="Shaders\simpleShader.vert" />
+    <None Include="Shaders\skybox.frag" />
+    <None Include="Shaders\skybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

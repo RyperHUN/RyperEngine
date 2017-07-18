@@ -17,7 +17,31 @@ inline bool operator>(glm::vec3 const& lhs, glm::vec3 const&rhs)
 	return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z;
 }
 
-namespace Util {
+namespace Util 
+{
+
+namespace CV //CV == CONVERTER
+{ 
+	//Returns texture coordinates, (0,0) Top Left Corner as in DirectX
+	inline glm::vec2 NdcToUV (glm::vec2 const& ndc)
+	{
+		static const float EPS = 0.1;
+		MAssert ((glm::abs(ndc.x) - EPS) < 1.0f && (glm::abs(ndc.y) - EPS) < 1.0f
+		, "Error NdcToUv -> ndc param is not in NormalizedDeviceCoordinates");
+
+		return glm::vec2((ndc.x + 1.0f)/2.0f,(ndc.y - 1.0f)/-2.0f);
+	}
+	
+	//@param[in] uv Texture coordinates, (0,0) in Top Left corner
+	inline glm::vec2 UVToNdc (glm::vec2 const& uv)
+	{
+		static const float EPS = 0.1;
+		MAssert((uv.x - EPS) < 1.0f && (uv.y - EPS) < 1.0f
+			, "Error NdcToUv -> ndc param is not in NormalizedDeviceCoordinates");
+
+		return glm::vec2(uv.x * 2 - 1.0f, uv.y * -2.0f + 1.0f);
+	}
+}; //NS 
 
 inline glm::mat4 assimpToGlm(const aiMatrix4x4& from)
 {

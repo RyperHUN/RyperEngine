@@ -25,6 +25,22 @@ typedef int16_t i16;
 typedef int32_t i32;
 typedef int64_t i64;
 
+#include <glm/glm.hpp>
+using Vec2 = glm::vec2;
+using Vec3 = glm::vec3;
+using Vec4 = glm::vec4;
+
+#include <array>
+template <class T, size_t ROW>
+using Array1D = std::array<T, ROW>;
+
+template <class T, size_t ROW, size_t COL>
+using Array2D = std::array<std::array<T, COL>, ROW>;
+
+template <class T, size_t ROW, size_t COL, size_t HEIGHT>
+using Array3D = std::array<std::array<std::array<T,HEIGHT>, COL>, ROW>;
+
+
 #ifndef NDEBUG
 #   define MAssert(Expr, Msg) \
     __M_Assert(#Expr, Expr, __FILE__, __LINE__, Msg)

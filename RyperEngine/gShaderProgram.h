@@ -23,7 +23,7 @@ public:
 
 	operator int() const { return m_id_program; }
 
-	bool AttachShader(GLenum shaderType, const char* filename);
+	bool AttachShader(GLenum shaderType, std::string filename);
 	void BindAttribLoc(int index, const char* uniform);
 	void BindFragDataLoc(int index, const char* uniform);
 	bool LinkProgram();

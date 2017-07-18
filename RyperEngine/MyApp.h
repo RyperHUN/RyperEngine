@@ -28,6 +28,7 @@
 #include "TextRenderer.h"
 
 #include "Controller.h"
+#include "WaterRenderer.h"
 
 // PhysX
 #include "PhysX.h"
@@ -54,6 +55,7 @@ public:
 	void MouseWheel(SDL_MouseWheelEvent&);
 	void Resize(int, int);
 private:
+	void PrepareRendering (RenderState& state);
 	void InitGameObjects();
 	float ReadDepthValueNdc(float pX, float pY);
 	void HandleFrameBufferRendering();
@@ -66,6 +68,7 @@ protected:
 	GLuint tex_dirt;
 	GLuint textureCube_id; // env map
 	GLuint textureArray_blocks;
+	GLuint tex_randomPerlin;
 
 	//TODO Camera manager
 	int cameraFocusIndex = -1; //TODO better if pointer to gameobj
@@ -79,11 +82,12 @@ protected:
 	TriangleMesh    geom_Box;
 	TriangleMesh    geom_Quad;
 	Sphere          geom_Sphere;
-	HeightMap		geom_Bezier;
+	HeightMapBezier		geom_Bezier;
 	TriangleMeshLoaded geom_Suzanne;
 	TriangleMeshLoaded geom_Cow;
 	AssimpModel		geom_Man;
 	AssimpModel		geom_AnimatedMan;
+	HeightMap       geom_PerlinHeight;
 
 	OGL_Mesh *mesh_Suzanne;
 	OGL_Mesh *m_cow_mesh;
@@ -91,6 +95,7 @@ protected:
 	int	 m_width = 640, m_height = 480;
 	bool IsFrameBufferRendering = false;
 	bool IsMSAAOn = true;
+	bool IsWaterRendering = false;
 	glFrameBuffer fbo_Rendered;
 	glFrameBuffer fbo_Shadow;
 	glFrameBuffer fbo_RenderedMSAA;
@@ -120,6 +125,7 @@ protected:
 	QuadTexturer quadTexturer;
 	TextRenderer textRenderer;
 	SkyboxRenderer skyboxRenderer;
+	WaterRenderer waterRenderer;
 
 	//Widgets
 	Checkbox checkbox;

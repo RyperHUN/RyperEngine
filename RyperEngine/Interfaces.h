@@ -20,7 +20,7 @@ struct IRenderable {
 			shader->SetUniform("Minv", state.Minv);
 			shader->SetUniform("wEye", state.wEye);
 			shader->SetUniform("LightSpaceMtx", state.LightSpaceMtx);
-			shader->SetUniform("isAnimated", false);
+			shader->SetUniform("uIsAnimated", false);
 
 			///TODO
 			for (auto& light : *(state.shaderLights))

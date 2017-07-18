@@ -22,7 +22,8 @@ CMyApp::CMyApp(void)
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50)),
-	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1)
+	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1),
+	waterRenderer (quadTexturer,{m_width, m_height})
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -127,16 +128,17 @@ bool CMyApp::Init()
 ///////////////////////////////////////////////////////////
 
 	// textúra betöltése
-	texture_Map		  = Util::TextureFromFile("texture.png");
-	textureCube_id    = Util::LoadCubeMap("pictures/skybox/");
+	texture_Map		  = Util::TextureFromFile("pictures/texture.png");
+	textureCube_id    = Util::LoadCubeMap("pictures/skyboxes/cloud/");
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
 	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
+	tex_randomPerlin  = Util::GenRandomPerlinTexture ();
 	skyboxRenderer.SetTexture(textureCube_id);
 
 	// mesh betöltés
-	mesh_Suzanne = ObjParser::parse("suzanne.obj");
-	m_cow_mesh   = ObjParser::parse("cow.obj");
+	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
+	m_cow_mesh   = ObjParser::parse("Model/cow.obj");
 	mesh_Suzanne->initBuffers();
 	m_cow_mesh->initBuffers();
 
@@ -148,6 +150,7 @@ bool CMyApp::Init()
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
 	geom_Cow     = TriangleMeshLoaded(m_cow_mesh);
 	geom_Bezier.Create (10,10);
+	geom_PerlinHeight.Create(30,30);
 
 	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
 	shaderLights.push_back(ShaderLight{&dirLight, "dirlight"});
@@ -167,19 +170,24 @@ bool CMyApp::Init()
 
 void CMyApp::InitGameObjects ()
 {
-	MaterialPtr material1 = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
-	MaterialPtr material2 = std::make_shared<Material>(glm::vec3(0.0f, 0.1, 0), glm::vec3(0, 0.8f, 0), glm::vec3(1, 1, 1));
-	MaterialPtr material3 = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
+	MaterialPtr material1   = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
+	MaterialPtr material2   = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
+	MaterialPtr material3   = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
 	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
+
+	material2->textures.push_back(Texture {tex_randomPerlin, "texture_diffuse1", aiString{}});
 
 	//GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
 	//gameObjs.push_back(sphere);
 	//GameObj * sphere2 = new GameObj(*sphere);
 	//sphere2->pos = glm::vec3(2, 50, -3);
 	//gameObjs.push_back(sphere2);
-	//Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_Quad,material2,glm::vec3{ -1,20,-5 },glm::vec3(100,100,1),glm::vec3(-1,0,0) };
-	//quadObj->rotAngle = M_PI / 2.0;
-	////gameObjs.push_back(quadObj);
+	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,material2,glm::vec3{ -1,5,-5 },glm::vec3(100,100,60),glm::vec3(-1,0,0) };
+	quadObj->rotAngle = M_PI / 2.0;
+	Quadobj *quadObjWater = new Quadobj{*quadObj};
+	quadObjWater->pos += glm::vec3(0,1,0);
+	quadObjWater->rotAngle = M_PI / 2.0;
+	quadObjWater->geometry = &geom_Quad;
 
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
@@ -217,17 +225,21 @@ void CMyApp::InitGameObjects ()
 
 	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
 	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, cowboyObj->pos);
+	std::swap(activeCamera, secondaryCamera);
 
 	chunkManager = ChunkManager(&geom_Box, &shader_Instanced, textureArray_blocks);
 	chunkManager.GenerateBoxes();
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
-	physX.createChunk(chunkManager.chunks.front());
+	for(auto& chunk :chunkManager.chunks)
+		physX.createChunk(chunk);
 	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry, cowboyObj);
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 
+	renderObjs.push_back(quadObj);
+	renderObjs.push_back(quadObjWater);
 	renderObjs.push_back(cowboyObj);
-	renderObjs.push_back(&chunkManager);
+	//renderObjs.push_back(&chunkManager);
 	renderObjs.push_back(&skyboxRenderer);
 }
 
@@ -271,7 +283,7 @@ void CMyApp::Render()
 	state.LightSpaceMtx = lightSpaceMatrix;
 	state.rayDirMatrix  = activeCamera->GetRayDirMtx ();
 
-	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT);
+	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT); //TODO This maybe belongs after fbo_Shadow
 	fbo_Shadow.On();
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -281,31 +293,43 @@ void CMyApp::Render()
 	}
 	fbo_Shadow.Off();
 
+	if (IsWaterRendering)
+	{
+		PrepareRendering (state);
+		waterRenderer.Render(renderObjs, state);
+	}
 	BindFrameBuffersForRender ();
 	{
-		glViewport(0, 0, m_width, m_height);
-
-		shader_Simple.On();
-		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
-		shader_Simple.SetTexture ("shadowMap",15,fbo_Shadow.texture.expose ());
-		
-		state.PV = activeCamera->GetProjView();
+		PrepareRendering (state);
 		for(auto& obj : renderObjs)
 			obj->Draw (state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
-		frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
+		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Shadow map debug texture drawing
-		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.5, 0.5, 1)); //Right top corner
-		//quadTexturer.Draw (fbo_Shadow.textureId,false, Model);
+		if (IsWaterRendering) 
+			waterRenderer.RenderTextures ();
+		glm::mat4 ModelRT = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Right top corner
+		//quadTexturer.Draw (tex_randomPerlin,false,ModelRT);
+
 
 		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
 		//container.Draw(state);
 	}
 	HandleFrameBufferRendering();
+}
+
+void CMyApp::PrepareRendering(RenderState & state)
+{
+	glViewport(0, 0, m_width, m_height);
+	shader_Simple.On ();
+	shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
+	shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.texture.expose());
+	shader_Simple.Off ();
+	state.PV = activeCamera->GetProjView();
 }
 
 void CMyApp::FrustumCulling (CameraPtr camera)

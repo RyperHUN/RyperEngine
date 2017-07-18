@@ -165,7 +165,7 @@ private:
 		glm::mat4 M = obj->geometry->getModelMatrixForBoxGeom(obj->pos, obj->scale, obj->quaternion);
 		glm::mat4 Minv = glm::inverse(M);
 		glm::mat4 PVM = state.PV * M;
-		shader->SetUniform("isAnimated", false);
+		shader->SetUniform("uIsAnimated", false);
 		shader->SetUniform("isSelected", obj->isSelected);
 		shader->SetUniform("PVM", PVM);
 		shader->SetUniform("M", M);

@@ -12,6 +12,8 @@ LibraryCreate/
 Library/
 *.mp4
 Build_Intermediate/
+Intermediate/
+Onlab.md
 
 #############
 
