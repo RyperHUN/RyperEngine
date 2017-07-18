@@ -152,11 +152,11 @@ bool CMyApp::Init()
 	geom_Bezier.Create (10,10);
 	geom_PerlinHeight.Create(30,30);
 
-	shaderLights.push_back(ShaderLight{&spotLight,"spotlight"});
-	shaderLights.push_back(ShaderLight{&dirLight, "dirlight"});
+	shaderLights.push_back(ShaderLight{&spotLight,"uSpotlight"});
+	shaderLights.push_back(ShaderLight{&dirLight, "uDirlight"});
 	for(int i = 0; i < pointLight.size(); i++)
 	{
-		shaderLights.push_back(ShaderLight{ &pointLight[i], "pointlight[" + std::to_string(i) + "]" });
+		shaderLights.push_back(ShaderLight{ &pointLight[i], "uPointlights[" + std::to_string(i) + "]" });
 	}
 	lightRenderer = LightRenderer(&geom_Box, &shader_LightRender);
 	for (auto& light : pointLight)

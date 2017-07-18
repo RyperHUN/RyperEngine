@@ -52,25 +52,25 @@ uniform float shininess = 20.0f;
 //TODO define only for max light, and upload used point light number
 #define POINT_LIGHT_NUM 3
 
-uniform SpotLight spotlight;
-uniform DirLight dirlight;
-uniform PointLight pointlight[POINT_LIGHT_NUM];
+uniform SpotLight uSpotlight;
+uniform DirLight uDirlight;
+uniform PointLight uPointlights[POINT_LIGHT_NUM];
 
 //TODO Specular
 vec3 calcSpotLight (SpotLight light, vec3 wFragPos, vec2 texCoord)
 {
-	vec3 lightDir = normalize(spotlight.position - wFragPos);
-	float theta   = dot(lightDir, normalize(-spotlight.direction));
+	vec3 lightDir = normalize(light.position - wFragPos);
+	float theta   = dot(lightDir, normalize(-light.direction));
 	
 	vec3 color = vec3(0,0,0);
 	vec3 texturedColor = light.color * kd * texture(texture_diffuse1, texCoord).xyz ;
-	if(theta > spotlight.cutOff * 0.96) 
+	if(theta > light.cutOff * 0.96) 
 	{
-		float interp = smoothstep(spotlight.cutOff * 0.96,spotlight.cutOff,theta);
+		float interp = smoothstep(light.cutOff * 0.96,light.cutOff,theta);
 	    color = mix(vec3(0,0,0),texturedColor,interp);// Do lighting calculations
 	}
 	
-	float dist = distance(wFragPos, spotlight.position);
+	float dist = distance(wFragPos, light.position);
 	if (dist > 10.0)
 	{
 		color *= 10.0f / dist; //attenuation with distance
@@ -172,12 +172,12 @@ void main()
 	vec3 color = ka * texture(texture_diffuse1, FS.texCoord).xyz;
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
-		color += calcPointLight(pointlight[i],normal,viewDir, FS.wFragPos, FS.texCoord);
-	color += calcSpotLight (spotlight, FS.wFragPos, FS.texCoord);
+		color += calcPointLight(uPointlights[i],normal,viewDir, FS.wFragPos, FS.texCoord);
+	color += calcSpotLight (uSpotlight, FS.wFragPos, FS.texCoord);
 
 	//float lightValue = ShadowCalculation(FS.fragPosLightSpace4);
 	float lightValue = ShadowCalcWithPcf (FS.fragPosLightSpace4);
-	color += calcDirLight (dirlight, normal, viewDir, FS.texCoord) * lightValue;
+	color += calcDirLight (uDirlight, normal, viewDir, FS.texCoord) * lightValue;
 	
 	vec4 colorWLight    = vec4(color, 1.0);
 	//fs_out_col   = colorWLight;
