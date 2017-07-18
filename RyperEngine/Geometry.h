@@ -220,61 +220,29 @@ struct ParamSurface : public Geometry {
 	}
 };
 
-struct HeightMap : public Geometry
+struct HeightMap : public ParamSurface
 {
-	void Create(int N, int M)
+	
+};
+
+struct HeightMapBezier : public ParamSurface
+{
+	BezierSurface bezier; 
+	BezierSurface bezierU;
+	BezierSurface bezierV;
+	HeightMapBezier()
 	{
-		BezierSurface bezier = BezierSurface::GenRandomSurface (6,6);
-		BezierSurface bezierU = bezier.DerivativeByU ();
-		BezierSurface bezierV = bezier.DerivativeByV ();
-		buffer.AddAttribute(0, 3);  //Vertex Pos
-		buffer.AddAttribute(1, 3); //Normal
-		buffer.AddAttribute(2, 2); //UV
-
-		for (int i = 0; i <= N; ++i)
-			for (int j = 0; j <= M; ++j)
-			{
-				float u = i / (float)N;
-				float v = j / (float)M;
-
-				glm::vec3 pos = bezier.Evaulate (u,v);
-				glm::vec3 normal = glm::normalize(glm::cross(bezierU.Evaulate(u,v), bezierV.Evaulate(u,v)));
-				
-				buffer.AddData(0, pos);
-				buffer.AddData(1, normal);
-				buffer.AddData(2, glm::vec2(u,v));
-			}
-
-		// indexpuffer adatai: NxM négyszög = 2xNxM háromszög = háromszöglista esetén 3x2xNxM index
-		for (int i = 0; i<N; ++i)
-			for (int j = 0; j<M; ++j)
-			{
-				// minden négyszögre csináljunk kettõ háromszöget, amelyek a következõ 
-				// (i,j) indexeknél született (u_i, v_i) paraméterértékekhez tartozó
-				// pontokat kötik össze:
-				//
-				//		(i,j+1)
-				//		  o-----o(i+1,j+1)
-				//		  |\    |			a = p(u_i, v_i)
-				//		  | \   |			b = p(u_{i+1}, v_i)
-				//		  |  \  |			c = p(u_i, v_{i+1})
-				//		  |   \ |			d = p(u_{i+1}, v_{i+1})
-				//		  |	   \|
-				//	(i,j) o-----o(i+1, j)
-				//
-				// - az (i,j)-hez tartózó 1D-s index a VBO-ban: i+j*(N+1)
-				// - az (i,j)-hez tartózó 1D-s index az IB-ben: i*6+j*6*(N+1) 
-				//		(mert minden négyszöghöz 2db háromszög = 6 index tartozik)
-				//
-				buffer.AddIndex((i)+(j)*	(N + 1));
-				buffer.AddIndex((i + 1) + (j)*	(N + 1));
-				buffer.AddIndex((i)+(j + 1)*(N + 1));
-				buffer.AddIndex((i + 1) + (j)*	(N + 1));
-				buffer.AddIndex((i + 1) + (j + 1)*(N + 1));
-				buffer.AddIndex((i)+(j + 1)*(N + 1));
-			}
-
-		buffer.InitBuffers();
+		bezier  = BezierSurface::GenRandomSurface(6, 6);
+		bezierU = bezier.DerivativeByU ();
+		bezierV = bezier.DerivativeByV ();
+	}
+	virtual VertexData GenVertexData(float u, float v) override
+	{
+		VertexData data;
+		data.position = bezier.Evaulate(u, v);
+		data.normal   = glm::normalize(glm::cross(bezierU.Evaulate(u, v), bezierV.Evaulate(u, v)));
+		data.uv       = glm::ivec2 (u,v);
+		return data;
 	}
 };
 
