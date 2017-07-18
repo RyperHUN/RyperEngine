@@ -43,11 +43,15 @@ struct PointLight {
 	vec3 color;
 };  
 
-uniform vec3 ka = vec3(0.2,0,0);
-uniform vec3 kd = vec3(0.6,0,0);
-uniform vec3 ks = vec3(0.8,0.8,0.8);
-uniform vec3 wEye;
-uniform float shininess = 20.0f;
+struct Material {
+	vec3 ka;
+	vec3 kd;
+	vec3 ks;
+	float shininess;
+};
+vec3 wEye;	
+
+uniform Material uMaterial;
 
 //TODO define only for max light, and upload used point light number
 #define POINT_LIGHT_NUM 3
@@ -57,13 +61,13 @@ uniform DirLight uDirlight;
 uniform PointLight uPointlights[POINT_LIGHT_NUM];
 
 //TODO Specular
-vec3 calcSpotLight (SpotLight light, vec3 wFragPos, vec2 texCoord)
+vec3 calcSpotLight (SpotLight light, vec3 wFragPos, vec2 texCoord, Material mat)
 {
 	vec3 lightDir = normalize(light.position - wFragPos);
 	float theta   = dot(lightDir, normalize(-light.direction));
 	
 	vec3 color = vec3(0,0,0);
-	vec3 texturedColor = light.color * kd * texture(texture_diffuse1, texCoord).xyz ;
+	vec3 texturedColor = light.color * mat.kd * texture(texture_diffuse1, texCoord).xyz ;
 	if(theta > light.cutOff * 0.96) 
 	{
 		float interp = smoothstep(light.cutOff * 0.96,light.cutOff,theta);
@@ -79,36 +83,36 @@ vec3 calcSpotLight (SpotLight light, vec3 wFragPos, vec2 texCoord)
 	return color;
 }
 
-vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoord)
+vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoord, Material mat)
 {
 	vec3 toLight = normalize(-light.direction);
 
 	float diff = max(dot(normal, toLight), 0.0);
 
 	vec3 reflectDir = reflect(-toLight, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), mat.shininess);
 
-	vec3 diffuse  = diff * light.color * kd *texture(texture_diffuse1, texCoord).xyz;
-	vec3 specular = spec * light.color * ks *texture(texture_specular1, texCoord).xyz;
+	vec3 diffuse  = diff * light.color * mat.kd *texture(texture_diffuse1, texCoord).xyz;
+	vec3 specular = spec * light.color * mat.ks *texture(texture_specular1, texCoord).xyz;
 
 	return diffuse + specular;
 }
 
-vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir, vec3 wFragPos, vec2 texCoord)
+vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir, vec3 wFragPos, vec2 texCoord, Material mat)
 {
 	vec3 toLight = normalize(light.position - wFragPos);
 	float diff = max(dot(normal, toLight), 0.0);
 	// Specular shading
     vec3 reflectDir = reflect(-toLight, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), mat.shininess);
 
 	float dist = length(light.position - wFragPos);
 	//Lecsenges
 	float attenuation = 1.0f / 
 	(light.constant + light.linear * dist +  light.quadratic * (dist * dist));   
 
-	vec3 diffuse  = light.color * diff * kd * texture(texture_diffuse1, texCoord).xyz;
-	vec3 specular = light.color * spec * ks * texture(texture_specular1, texCoord).xyz;
+	vec3 diffuse  = light.color * diff * mat.kd * texture(texture_diffuse1, texCoord).xyz;
+	vec3 specular = light.color * spec * mat.ks * texture(texture_specular1, texCoord).xyz;
 	diffuse  *= attenuation; 
 	specular *= attenuation;
 
@@ -169,15 +173,15 @@ void main()
 	vec3 reflectedDir   = reflect(-viewDir, normal);
 	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	
-	vec3 color = ka * texture(texture_diffuse1, FS.texCoord).xyz;
+	vec3 color = uMaterial.ka * texture(texture_diffuse1, FS.texCoord).xyz;
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
-		color += calcPointLight(uPointlights[i],normal,viewDir, FS.wFragPos, FS.texCoord);
-	color += calcSpotLight (uSpotlight, FS.wFragPos, FS.texCoord);
+		color += calcPointLight(uPointlights[i],normal,viewDir, FS.wFragPos, FS.texCoord, uMaterial);
+	color += calcSpotLight (uSpotlight, FS.wFragPos, FS.texCoord, uMaterial);
 
 	//float lightValue = ShadowCalculation(FS.fragPosLightSpace4);
 	float lightValue = ShadowCalcWithPcf (FS.fragPosLightSpace4);
-	color += calcDirLight (uDirlight, normal, viewDir, FS.texCoord) * lightValue;
+	color += calcDirLight (uDirlight, normal, viewDir, FS.texCoord, uMaterial) * lightValue;
 	
 	vec4 colorWLight    = vec4(color, 1.0);
 	//fs_out_col   = colorWLight;

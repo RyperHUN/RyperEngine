@@ -27,10 +27,11 @@ struct Material
 	{}
 	virtual void uploadToGpu (gShaderProgram &shader)
 	{
-		shader.SetUniform ("ka", ka);
-		shader.SetUniform ("kd", kd);
-		shader.SetUniform ("ks", ks);
-		shader.SetUniform("shininess", shininess);
+		std::string prefix = "uMaterial.";
+		shader.SetUniform ((prefix + "ka").c_str(), ka);
+		shader.SetUniform ((prefix + "kd").c_str(), kd);
+		shader.SetUniform ((prefix + "ks").c_str(), ks);
+		shader.SetUniform ((prefix + "shininess").c_str(), shininess);
 
 		//Upload textures
 		unsigned int diffuseNr = 1;
