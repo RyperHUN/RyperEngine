@@ -234,7 +234,17 @@ struct HeightMap : public ParamSurface
 		float height    = islandGenerator.GetValueUV (UV);
 		const Vec2 ndc2 = Util::CV::UVToNdc (UV);
 
-		data.position = Vec3(ndc2, height);
+		const Vec3 FinalPos = Vec3(ndc2, height);
+		static float dt = 0.01;
+		Vec2 UVu = UV + Vec2(dt, 0);
+		Vec2 UVv = UV + Vec2(0, dt);
+		float heightU = islandGenerator.GetValueUV(UVu);
+		float heightV = islandGenerator.GetValueUV(UVv);
+		Vec3 DerivatedU = Vec3(UVu, heightU);
+		Vec3 DerivatedV = Vec3(UVv, heightV);
+
+		data.position = FinalPos;
+		data.normal   = glm::normalize(glm::cross(DerivatedU, DerivatedV));;
 		//TODO data.normal;
 		data.uv = UV;
 		return data;
