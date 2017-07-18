@@ -9,16 +9,10 @@ in VS_OUT
 	in vec4 testColor;
 } FS;
 
-
-uniform sampler2D shadowMap;
-uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_specular1;
-uniform sampler2D texture_reflect1;
-
-uniform samplerCube skyBox;
-
 out vec4 fs_out_col;
 
+///////////////////////////////////
+////////--------STRUCTS-----------
 ///TODO Colors for lights
 struct SpotLight {
     vec3  position;
@@ -49,7 +43,16 @@ struct Material {
 	vec3 ks;
 	float shininess;
 };
-vec3 wEye;	
+vec3 uwEye;
+
+///////////////////////////////////
+////////--------UNIFORMS-----------
+
+uniform sampler2D shadowMap;
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_specular1;
+uniform sampler2D texture_reflect1;
+uniform samplerCube skyBox;
 
 uniform Material uMaterial;
 
@@ -59,6 +62,9 @@ uniform Material uMaterial;
 uniform SpotLight uSpotlight;
 uniform DirLight uDirlight;
 uniform PointLight uPointlights[POINT_LIGHT_NUM];
+
+///////////////////////////////////
+////////--------FUNCTIONS-----------
 
 //TODO Specular
 vec3 calcSpotLight (SpotLight light, vec3 wFragPos, vec2 texCoord, Material mat)
@@ -169,7 +175,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 void main()
 {
 	vec3 normal  = normalize (FS.normal);
-	vec3 viewDir = normalize (wEye - FS.wFragPos);
+	vec3 viewDir = normalize (uwEye - FS.wFragPos);
 	vec3 reflectedDir   = reflect(-viewDir, normal);
 	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	

@@ -18,7 +18,7 @@ struct IRenderable {
 			shader->SetUniform("PVM", PVM);
 			shader->SetUniform("M", state.M);
 			shader->SetUniform("Minv", state.Minv);
-			shader->SetUniform("wEye", state.wEye);
+			shader->SetUniform("uwEye", state.wEye);
 			shader->SetUniform("LightSpaceMtx", state.LightSpaceMtx);
 			shader->SetUniform("uIsAnimated", false);
 
