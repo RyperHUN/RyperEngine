@@ -30,7 +30,7 @@ CMyApp::CMyApp(void)
 	texture_Map = 0;
 	mesh_Suzanne = 0;
 	activeCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(5, 22, 24));
-	secondaryCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(10, 35, 24), glm::vec3(-0.5,-0.9, -0.5));
+	secondaryCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(70, 109, 43), glm::vec3(-0.5,-0.9, -0.5));
 
 	//container.AddWidget (&checkbox);
 	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer)); //TODO Delete
@@ -89,6 +89,12 @@ bool CMyApp::LoadShaders ()
 	shader_Frustum.AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
 	shader_Frustum.AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
 	if (!shader_Frustum.LinkProgram()) return false;
+	
+	///TODO Need shadow shader? i think not!
+	//shader_Water.CreateShadowShader();
+	shader_Water.AttachShader(GL_VERTEX_SHADER, "waterRenderer.vert");
+	shader_Water.AttachShader(GL_FRAGMENT_SHADER, "waterRenderer.frag");
+	if (!shader_Water.LinkProgram()) return false;
 
 	return true;
 }
@@ -188,6 +194,7 @@ void CMyApp::InitGameObjects ()
 	quadObjWater->pos += glm::vec3(0,1,0);
 	quadObjWater->rotAngle = M_PI / 2.0;
 	quadObjWater->geometry = &geom_Quad;
+	quadObjWater->shader   = &shader_Water;
 
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));

@@ -116,6 +116,7 @@ protected:
 	gShaderProgram  shader_Frustum;
 	gShaderProgram  shader_NormalVecDraw;
 	gShaderProgram  shader_Instanced;
+	gShaderProgram  shader_Water;
 
 	Chunk chunk;
 	ChunkManager chunkManager;

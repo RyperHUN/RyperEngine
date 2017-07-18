@@ -164,6 +164,8 @@
     <None Include="Shaders\simpleShader.vert" />
     <None Include="Shaders\skybox.frag" />
     <None Include="Shaders\skybox.vert" />
+    <None Include="Shaders\waterRenderer.frag" />
+    <None Include="Shaders\waterRenderer.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

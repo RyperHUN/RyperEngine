@@ -233,5 +233,11 @@
     <None Include="Shaders\simpleShader.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\waterRenderer.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\waterRenderer.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
