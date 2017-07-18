@@ -133,7 +133,7 @@ bool CMyApp::Init()
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
 	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
-	//tex_randomPerlin  = Util::GenRandomPerlinTexture ();
+	tex_randomPerlin  = Util::GenRandomPerlinTexture ();
 	skyboxRenderer.SetTexture(textureCube_id);
 
 	// mesh betöltés
@@ -287,16 +287,15 @@ void CMyApp::Render()
 	}
 	fbo_Shadow.Off();
 
-	glViewport(0, 0, m_width, m_height);
-
-	shader_Simple.On();
-	shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
-	shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.texture.expose());
-	state.PV = activeCamera->GetProjView();
-	glEnable(GL_CLIP_DISTANCE0);
+	if (IsWaterRendering)
+	{
+		glViewport(0, 0, m_width, m_height);
+		shader_Simple.On();
+		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
+		shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.texture.expose());
+		state.PV = activeCamera->GetProjView();
 		waterRenderer.Render(renderObjs, state);
-	glDisable(GL_CLIP_DISTANCE0);
-
+	}
 	BindFrameBuffersForRender ();
 	{
 		glViewport(0, 0, m_width, m_height);
@@ -314,10 +313,11 @@ void CMyApp::Render()
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Shadow map debug texture drawing
-		glm::mat4 Model = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Right top corner
-		quadTexturer.Draw (waterRenderer.GetRefractTexture(),false, Model);
-		glm::mat4 ModelLT = glm::translate(glm::vec3(-0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Left Top Corner
-		quadTexturer.Draw(waterRenderer.GetReflectTexture(), true, ModelLT);
+		if (IsWaterRendering) 
+			waterRenderer.RenderTextures ();
+		glm::mat4 ModelRT = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Right top corner
+		quadTexturer.Draw (tex_randomPerlin,false,ModelRT);
+
 
 		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
 		//container.Draw(state);

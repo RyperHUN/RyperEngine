@@ -19,6 +19,7 @@ public:
 	}
 	void Render (std::vector<IRenderable*> &renderObjs,RenderState &state)
 	{
+		glEnable(GL_CLIP_DISTANCE0);
 		{
 			auto bind = gl::MakeTemporaryBind (reflectFBO);
 			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -34,6 +35,14 @@ public:
 			for (auto& obj : renderObjs)
 				obj->Draw(state);
 		}
+		glDisable(GL_CLIP_DISTANCE0);
+	}
+	void RenderTextures ()
+	{
+		glm::mat4 ModelRT = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Right top corner
+		quadTexturer.Draw (GetRefractTexture(),false, ModelRT);
+		glm::mat4 ModelLT = glm::translate(glm::vec3(-0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Left Top Corner
+		quadTexturer.Draw (GetReflectTexture(), true, ModelLT);
 	}
 	GLint GetReflectTexture ()
 	{
