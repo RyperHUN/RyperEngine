@@ -277,7 +277,7 @@ void CMyApp::Render()
 	state.LightSpaceMtx = lightSpaceMatrix;
 	state.rayDirMatrix  = activeCamera->GetRayDirMtx ();
 
-	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT);
+	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT); //TODO This maybe belongs after fbo_Shadow
 	fbo_Shadow.On();
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -289,21 +289,12 @@ void CMyApp::Render()
 
 	if (IsWaterRendering)
 	{
-		glViewport(0, 0, m_width, m_height);
-		shader_Simple.On();
-		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
-		shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.texture.expose());
-		state.PV = activeCamera->GetProjView();
+		PrepareRendering (state);
 		waterRenderer.Render(renderObjs, state);
 	}
 	BindFrameBuffersForRender ();
 	{
-		glViewport(0, 0, m_width, m_height);
-
-		shader_Simple.On();
-		shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
-		shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.texture.expose());
-		state.PV = activeCamera->GetProjView();
+		PrepareRendering (state);
 		for(auto& obj : renderObjs)
 			obj->Draw (state);
 
@@ -323,6 +314,16 @@ void CMyApp::Render()
 		//container.Draw(state);
 	}
 	HandleFrameBufferRendering();
+}
+
+void CMyApp::PrepareRendering(RenderState & state)
+{
+	glViewport(0, 0, m_width, m_height);
+	shader_Simple.On ();
+	shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
+	shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.texture.expose());
+	shader_Simple.Off ();
+	state.PV = activeCamera->GetProjView();
 }
 
 void CMyApp::FrustumCulling (CameraPtr camera)

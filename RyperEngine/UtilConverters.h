@@ -17,18 +17,20 @@ inline bool operator>(glm::vec3 const& lhs, glm::vec3 const&rhs)
 	return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z;
 }
 
-namespace Util {
+namespace Util 
+{
 
-namespace CV {
-	inline glm::vec2 NdcToUV (glm::vec2 ndc)
+namespace CV //CV == CONVERTER
+{ 
+	inline glm::vec2 NdcToUV (glm::vec2 const& ndc)
 	{
 		return glm::vec2((ndc.x + 1.0f)/2.0f,(ndc.y - 1.0f)/-2.0f);
 	}
-	inline glm::vec2 UVToNdc (glm::vec2 uv)
+	inline glm::vec2 UVToNdc (glm::vec2 const& uv)
 	{
 		return glm::vec2(uv.x * 2 - 1.0f, uv.y * -2.0f + 1.0f);
 	}
-}; //NS CV == CONVERTER
+}; //NS 
 
 inline glm::mat4 assimpToGlm(const aiMatrix4x4& from)
 {
