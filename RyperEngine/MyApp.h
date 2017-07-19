@@ -69,6 +69,7 @@ protected:
 	GLuint textureCube_id; // env map
 	GLuint textureArray_blocks;
 	GLuint tex_randomPerlin;
+	GLuint tex_waterDuDv;
 
 	//TODO Camera manager
 	int cameraFocusIndex = -1; //TODO better if pointer to gameobj

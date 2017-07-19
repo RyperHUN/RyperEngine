@@ -137,6 +137,7 @@ bool CMyApp::Init()
 	texture_Map		  = Util::TextureFromFile("pictures/texture.png");
 	textureCube_id    = Util::LoadCubeMap("pictures/skyboxes/cloud/");
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
+	tex_waterDuDv     = Util::TextureFromFile ("pictures/waterDuDvMap.jpg");
 	//tex_dirt		  = Util::GenRandomTexture ();
 	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
 	tex_randomPerlin  = Util::GenRandomPerlinTexture ();
@@ -186,6 +187,7 @@ void CMyApp::InitGameObjects ()
 	
 	materialWater->textures.push_back(Texture { waterRenderer.GetReflectTexture (), "texture_reflect", aiString{}});
 	materialWater->textures.push_back(Texture { waterRenderer.GetRefractTexture(), "texture_refract" , aiString{}});
+	materialWater->textures.push_back(Texture{ tex_waterDuDv, "texture_dudv", aiString{} });
 
 	//GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
 	//gameObjs.push_back(sphere);
@@ -201,7 +203,6 @@ void CMyApp::InitGameObjects ()
 	quadObjWater->shader   = &shader_Water;
 	quadObjWater->material = materialWater;
 	waterRenderer.SetWaterInfo (quadObjWater, &quadObjWater->pos.y);
-
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
 	//suzanne->scale = glm::vec3(5,5,5);

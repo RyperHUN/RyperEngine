@@ -51,6 +51,7 @@ vec3 uwEye;
 uniform sampler2D shadowMap;
 uniform sampler2D texture_refract;
 uniform sampler2D texture_reflect;
+uniform sampler2D texture_dudv;
 uniform samplerCube skyBox;
 
 uniform Material uMaterial;
@@ -174,11 +175,20 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 ///////////////////////////////////
 ////////--------UTILITY-FUNCTIONS
 
+vec2 UvToNdc (vec2 uv)
+{
+	return vec2(uv.x * 2 - 1.0f, uv.y * -2.0f + 1.0f);
+}
+
+vec2 NdcToUV (vec2 ndc)
+{
+	return vec2((ndc.x + 1.0f)/2.0f,(ndc.y - 1.0f)/-2.0f);
+}
+
 vec2 HomogenToUV (vec4 hPos)
 {
 	vec2 ndc = hPos.xy / hPos.w;
-	vec2 uv = vec2((ndc.x + 1.0f)/2.0f,(ndc.y - 1.0f)/-2.0f);
-	return uv;
+	return NdcToUV (ndc);
 }
 
 void main()
@@ -186,6 +196,8 @@ void main()
 	vec3 normal  = normalize (FS.normal);
 	vec3 viewDir = normalize (uwEye - FS.wFragPos);
 	
+	vec2 distortionUV = UvToNdc(texture(texture_dudv, FS.texCoord).xy);
+
 /////////////////////////////////////////////
 	vec3 finalColor = vec3(0);
 	
