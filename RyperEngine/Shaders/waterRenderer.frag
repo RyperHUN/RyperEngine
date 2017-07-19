@@ -197,11 +197,13 @@ void main()
 	vec3 viewDir = normalize (uwEye - FS.wFragPos);
 	
 	vec2 distortionUV = UvToNdc(texture(texture_dudv, FS.texCoord).xy);
+	distortionUV *= 0.02;
 
 /////////////////////////////////////////////
 	vec3 finalColor = vec3(0);
 	
-	vec2 projectedUV    = HomogenToUV (FS.hPos);
+	vec2 projectedUV    = HomogenToUV (FS.hPos) + distortionUV;
+	projectedUV = clamp(projectedUV, 0.001, 0.999);
 	vec2 invertUV       = vec2(projectedUV.x, 1 - projectedUV.y);
 	vec4 refractedColor = texture(texture_refract, invertUV);
 	vec4 reflectedColor = texture(texture_reflect, projectedUV);

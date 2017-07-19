@@ -198,6 +198,7 @@ void CMyApp::InitGameObjects ()
 	quadObj->rotAngle = M_PI / 2.0;
 	Quadobj *quadObjWater = new Quadobj{*quadObj};
 	quadObjWater->pos += glm::vec3(0,1,0);
+	quadObjWater->scale *= 3.0;
 	quadObjWater->rotAngle = M_PI / 2.0;
 	quadObjWater->geometry = &geom_Quad;
 	quadObjWater->shader   = &shader_Water;

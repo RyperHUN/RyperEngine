@@ -104,8 +104,9 @@ private:
 			texture.upload (gl::kRgb, width, height, gl::kRgb, gl::kUnsignedByte, NULL);
 			texture.minFilter (gl::kLinear);
 			texture.magFilter (gl::kLinear);
-			texture.wrapS (gl::kClampToEdge);
-			texture.wrapT (gl::kClampToEdge);
+			texture.wrapS (gl::kClampToBorder);
+			texture.wrapT (gl::kClampToBorder);
+			texture.borderColor (glm::vec4(1,0,0,1)); 
 			
 		}
 		// attach it to currently bound framebuffer object
