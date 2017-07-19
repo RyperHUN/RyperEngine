@@ -3,7 +3,7 @@
 in VS_OUT 
 {
 	vec3 wFragPos;
-	vec3 ndcPos;
+	vec4 hPos;
 	vec3 normal;
 	vec2 texCoord;
 	vec4 fragPosLightSpace4;
@@ -171,34 +171,31 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 		return 0.0;
 }  
 
+///////////////////////////////////
+////////--------UTILITY-FUNCTIONS
+
+vec2 HomogenToUV (vec4 hPos)
+{
+	vec2 ndc = hPos.xy / hPos.w;
+	vec2 uv = vec2((ndc.x + 1.0f)/2.0f,(ndc.y - 1.0f)/-2.0f);
+	return uv;
+}
+
 void main()
 {
 	vec3 normal  = normalize (FS.normal);
 	vec3 viewDir = normalize (uwEye - FS.wFragPos);
-	vec3 reflectedDir   = reflect(-viewDir, normal);
-	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	
-	vec3 color = uMaterial.ka;
-	
-	for(int i = 0; i < POINT_LIGHT_NUM; i++)
-		color += calcPointLight(uPointlights[i],normal,viewDir, FS.wFragPos, FS.texCoord, uMaterial);
-	color += calcSpotLight (uSpotlight, FS.wFragPos, FS.texCoord, uMaterial);
-
-	//float lightValue = ShadowCalculation(FS.fragPosLightSpace4);
-	float lightValue = ShadowCalcWithPcf (FS.fragPosLightSpace4);
-	color += calcDirLight (uDirlight, normal, viewDir, FS.texCoord, uMaterial) * lightValue;
-	
-	vec4 colorWLight    = vec4(color, 1.0);
-	//fs_out_col   = colorWLight;
 /////////////////////////////////////////////
 	vec3 finalColor = vec3(0);
 	
-	vec4 refractedColor = texture(texture_refract, FS.ndcPos.xy);
-	vec4 reflectedColor = texture(texture_reflect, FS.ndcPos.xy);
+	vec2 projectedUV    = HomogenToUV (FS.hPos);
+	vec4 refractedColor = texture(texture_refract, projectedUV);
+	vec4 reflectedColor = texture(texture_reflect, projectedUV);
 
 	finalColor = mix(refractedColor, reflectedColor, 0.5).xyz;
 
-	fs_out_col = vec4(finalColor, 1);
+	fs_out_col = vec4(reflectedColor.xyz, 1);
 
 	//fs_out_col = texture(texture_reflect1, FS.texCoord);
 	//fs_out_col = vec4(abs(normal), 1.0);
