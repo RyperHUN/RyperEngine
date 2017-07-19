@@ -48,6 +48,7 @@ struct Material {
 ////////--------UNIFORMS-----------
 
 uniform sampler2D shadowMap;
+uniform sampler2D texture_normal;
 uniform sampler2D texture_refract;
 uniform sampler2D texture_reflect;
 uniform sampler2D texture_dudv;
@@ -222,6 +223,7 @@ void main()
 	fs_out_col = vec4(reflectedColor.xyz, 1);
 	fs_out_col = vec4(refractedColor.xyz, 1);
 	fs_out_col = vec4(finalColor, 1);
+	fs_out_col = vec4(texture(texture_normal, FS.texCoord));
 	//fs_out_col = vec4(reflectionValue, 0, 0, 1);
 	//fs_out_col = vec4(-uwCameraDir, 1);
 }

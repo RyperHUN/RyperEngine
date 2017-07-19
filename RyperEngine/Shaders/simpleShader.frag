@@ -48,9 +48,9 @@ struct Material {
 ////////--------UNIFORMS-----------
 
 uniform sampler2D shadowMap;
-uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_specular1;
-uniform sampler2D texture_reflect1;
+uniform sampler2D texture_diffuse;
+uniform sampler2D texture_specular;
+uniform sampler2D texture_reflect;
 uniform samplerCube skyBox;
 
 uniform Material uMaterial;
@@ -73,7 +73,7 @@ vec3 calcSpotLight (SpotLight light, vec3 wFragPos, vec2 texCoord, Material mat)
 	float theta   = dot(lightDir, normalize(-light.direction));
 	
 	vec3 color = vec3(0,0,0);
-	vec3 texturedColor = light.color * mat.kd * texture(texture_diffuse1, texCoord).xyz ;
+	vec3 texturedColor = light.color * mat.kd * texture(texture_diffuse, texCoord).xyz ;
 	if(theta > light.cutOff * 0.96) 
 	{
 		float interp = smoothstep(light.cutOff * 0.96,light.cutOff,theta);
@@ -98,8 +98,8 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoord, Mate
 	vec3 reflectDir = reflect(-toLight, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), mat.shininess);
 
-	vec3 diffuse  = diff * light.color * mat.kd *texture(texture_diffuse1, texCoord).xyz;
-	vec3 specular = spec * light.color * mat.ks *texture(texture_specular1, texCoord).xyz;
+	vec3 diffuse  = diff * light.color * mat.kd *texture(texture_diffuse, texCoord).xyz;
+	vec3 specular = spec * light.color * mat.ks *texture(texture_specular, texCoord).xyz;
 
 	return diffuse + specular;
 }
@@ -117,8 +117,8 @@ vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir, vec3 wFragPos,
 	float attenuation = 1.0f / 
 	(light.constant + light.linear * dist +  light.quadratic * (dist * dist));   
 
-	vec3 diffuse  = light.color * diff * mat.kd * texture(texture_diffuse1, texCoord).xyz;
-	vec3 specular = light.color * spec * mat.ks * texture(texture_specular1, texCoord).xyz;
+	vec3 diffuse  = light.color * diff * mat.kd * texture(texture_diffuse, texCoord).xyz;
+	vec3 specular = light.color * spec * mat.ks * texture(texture_specular, texCoord).xyz;
 	diffuse  *= attenuation; 
 	specular *= attenuation;
 
@@ -179,7 +179,7 @@ void main()
 	vec3 reflectedDir   = reflect(-viewDir, normal);
 	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	
-	vec3 color = uMaterial.ka * texture(texture_diffuse1, FS.texCoord).xyz;
+	vec3 color = uMaterial.ka * texture(texture_diffuse, FS.texCoord).xyz;
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
 		color += calcPointLight(uPointlights[i],normal,viewDir, FS.wFragPos, FS.texCoord, uMaterial);
@@ -196,15 +196,14 @@ void main()
 	vec4 reflectedColor = vec4(texture(skyBox, reflectedDir).xyz, 1.0);
 	vec4 refractedColor = vec4(texture(skyBox, refractedDir).xyz, 1.0);
 	
-	vec4 reflectedWithTex = vec4(reflectedColor * texture(texture_reflect1, FS.texCoord));
+	vec4 reflectedWithTex = vec4(reflectedColor * texture(texture_reflect, FS.texCoord));
 	
 	//fs_out_col = vec4(mix(colorWLight.xyz, reflectedWithTex.xyz, 0.5) ,1.0);
 	fs_out_col = colorWLight + reflectedWithTex;
 	//fs_out_col = vec4(lightValue, 0,0,1);
 
-	//fs_out_col = texture(texture_reflect1, FS.texCoord);
-	fs_out_col = vec4(abs(normal), 1.0);
+	//fs_out_col = texture(texture_reflect, FS.texCoord);
+	//fs_out_col = vec4(abs(normal), 1.0);
 	//fs_out_col = vec4(FS.texCoord.xy, 0, 1);
 	//fs_out_col = vec4(FS.testColor,1);
-	fs_out_col = refractedColor;
 }

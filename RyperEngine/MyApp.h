@@ -70,6 +70,7 @@ protected:
 	GLuint textureArray_blocks;
 	GLuint tex_randomPerlin;
 	GLuint tex_waterDuDv;
+	GLuint tex_waterNormal;
 
 	//TODO Camera manager
 	int cameraFocusIndex = -1; //TODO better if pointer to gameobj
