@@ -190,14 +190,15 @@ void main()
 	vec3 finalColor = vec3(0);
 	
 	vec2 projectedUV    = HomogenToUV (FS.hPos);
-	vec2 invertUV       = vec2(projectedUV.x, projectedUV.y);
-	vec4 refractedColor = texture(texture_refract, projectedUV);
-	vec4 reflectedColor = texture(texture_reflect, invertUV);
+	vec2 invertUV       = vec2(projectedUV.x, 1 - projectedUV.y);
+	vec4 refractedColor = texture(texture_refract, invertUV);
+	vec4 reflectedColor = texture(texture_reflect, projectedUV);
 
 	finalColor = mix(refractedColor, reflectedColor, 0.5).xyz;
 
 	fs_out_col = vec4(reflectedColor.xyz, 1);
-	//fs_out_col = vec4(refractedColor.xyz, 1);
+	fs_out_col = vec4(refractedColor.xyz, 1);
+	fs_out_col = vec4(finalColor, 1);
 
 	//fs_out_col = texture(texture_reflect1, FS.texCoord);
 	//fs_out_col = vec4(abs(normal), 1.0);
