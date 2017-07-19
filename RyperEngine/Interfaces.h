@@ -21,6 +21,7 @@ struct IRenderable {
 			shader->SetUniform("uwEye", state.wEye);
 			shader->SetUniform("LightSpaceMtx", state.LightSpaceMtx);
 			shader->SetUniform("uIsAnimated", false);
+			shader->SetUniform("uPlane", state.planeEquation);
 
 			///TODO
 			for (auto& light : *(state.shaderLights))

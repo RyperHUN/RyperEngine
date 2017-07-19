@@ -11,6 +11,7 @@ uniform mat4 M;
 uniform mat4 Minv;
 uniform mat4 LightSpaceMtx;
 uniform bool uIsAnimated;
+uniform vec4 uPlane;
 
 #define MAX_BONES 41
 uniform mat4 uBoneTransformations[MAX_BONES];
@@ -46,6 +47,8 @@ void main()
 	gl_Position = PVM * objSpacePos;
 
 	vec4 wPos4 = (M * objSpacePos);
+	gl_ClipDistance[0] = dot(wPos4,uPlane);  //Clipping for WaterRendering
+
 	VS.wFragPos = wPos4.xyz / wPos4.w;
 	VS.normal   = (objSpaceNormal * Minv).xyz;
 	VS.texCoord = vs_in_tex;

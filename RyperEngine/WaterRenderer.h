@@ -10,6 +10,7 @@ private:
 	glFrameBuffer reflectFBO;
 	glFrameBuffer refractFBO;
 	QuadTexturer& quadTexturer;
+	float * height = nullptr;
 public:
 	WaterRenderer (QuadTexturer& quadTexturer, glm::ivec2 windowSize)
 		:quadTexturer(quadTexturer)
@@ -17,13 +18,20 @@ public:
 		reflectFBO.CreateAttachments(windowSize.x, windowSize.y);
 		refractFBO.CreateAttachments(windowSize.x, windowSize.y);
 	}
+	void SetPlaneHeightPtr (float * height)
+	{
+		this->height = height;
+	}
 	void Render (std::vector<IRenderable*> &renderObjs,RenderState &state)
 	{
+		MAssert(height != nullptr, "Height pointer is not set for waterRenderer");
+		const float waterHeight = *height;
+
 		glEnable(GL_CLIP_DISTANCE0);
 		{
 			auto bind = gl::MakeTemporaryBind (reflectFBO);
 			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			state.planeEquation = glm::vec4(0, -1, 0, 0);
+			state.planeEquation = glm::vec4(0, 1, 0, -waterHeight);
 			for(auto& obj : renderObjs)
 				obj->Draw (state);
 		}
@@ -31,7 +39,7 @@ public:
 		{
 			auto bind = gl::MakeTemporaryBind (refractFBO);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			state.planeEquation = glm::vec4(0,1,0,0); ///TODO Set valid plane eq
+			state.planeEquation = glm::vec4(0,-1,0, waterHeight); ///TODO Set valid plane eq			
 			for (auto& obj : renderObjs)
 				obj->Draw(state);
 		}

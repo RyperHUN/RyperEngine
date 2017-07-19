@@ -200,6 +200,7 @@ void CMyApp::InitGameObjects ()
 	quadObjWater->geometry = &geom_Quad;
 	quadObjWater->shader   = &shader_Water;
 	quadObjWater->material = materialWater;
+	waterRenderer.SetPlaneHeightPtr (&quadObjWater->pos.y);
 
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
@@ -249,7 +250,7 @@ void CMyApp::InitGameObjects ()
 	cameraFocusIndex = 0;
 
 	renderObjs.push_back(quadObj);
-	renderObjs.push_back(quadObjWater);
+	//renderObjs.push_back(quadObjWater); //TODO Render separately
 	renderObjs.push_back(cowboyObj);
 	//renderObjs.push_back(&chunkManager);
 	renderObjs.push_back(&skyboxRenderer);
