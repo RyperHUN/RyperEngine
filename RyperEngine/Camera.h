@@ -9,6 +9,9 @@
 class Camera
 {
 protected:
+	//For lookAt
+	glm::vec3 forwardDir;
+	////
 	FrustumG frustum;
 	glm::vec3 eyePos;
 	/// Matrices
@@ -30,6 +33,7 @@ public:
 	glm::mat4 GetProjView() { return projViewMatrix; }
 	glm::mat4 GetRayDirMtx() { return rayDirMatrix; }
 	glm::vec3 GetEye() { return eyePos; }
+	glm::vec3 GetForwardDir() { return forwardDir; }
 	void SetEye(glm::vec3 eye) {eyePos = eye;} //For Water rendering
 
 	virtual glm::vec3 GetDir() = 0;
@@ -64,8 +68,6 @@ public:
 
 class FPSCamera : public Camera
 {
-	//For lookAt
-	glm::vec3 forwardDir;
 	//glm::vec3 eyePos; in parent
 	//For Projection
 	float aspectRatio;
@@ -81,9 +83,9 @@ public:
 	FPSCamera(float zNear, float zFar, float width, float height,
 			  glm::vec3 eyePos, glm::vec3 forwardDir = glm::vec3(0,0,-1))
 		:zNear(zNear), zFar(zFar), globalUp(0, 1, 0)
-		,forwardDir(forwardDir)
 	{
-		this->eyePos = eyePos;
+		this->eyePos     = eyePos;
+		this->forwardDir = forwardDir;
 		Resize(width, height);
 
 		UpdateViewMatrix();
@@ -220,8 +222,6 @@ private:
 
 class TPSCamera : public Camera
 {
-	//For lookAt
-	glm::vec3 forwardDir;
 	//For Projection
 	float aspectRatio;
 	float zNear, zFar;
