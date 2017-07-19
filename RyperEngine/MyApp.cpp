@@ -200,7 +200,7 @@ void CMyApp::InitGameObjects ()
 	quadObjWater->geometry = &geom_Quad;
 	quadObjWater->shader   = &shader_Water;
 	quadObjWater->material = materialWater;
-	waterRenderer.SetPlaneHeightPtr (&quadObjWater->pos.y);
+	waterRenderer.SetWaterInfo (quadObjWater, &quadObjWater->pos.y);
 
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
@@ -309,13 +309,14 @@ void CMyApp::Render()
 	if (IsWaterRendering)
 	{
 		PrepareRendering (state);
-		waterRenderer.Render(renderObjs, state);
+		waterRenderer.Render(renderObjs, state, activeCamera);
 	}
 	BindFrameBuffersForRender ();
 	{
 		PrepareRendering (state);
 		for(auto& obj : renderObjs)
 			obj->Draw (state);
+		waterRenderer.Draw(state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());

@@ -30,7 +30,10 @@ public:
 	glm::mat4 GetProjView() { return projViewMatrix; }
 	glm::mat4 GetRayDirMtx() { return rayDirMatrix; }
 	glm::vec3 GetEye() { return eyePos; }
+	void SetEye(glm::vec3 eye) {eyePos = eye;} //For Water rendering
+
 	virtual glm::vec3 GetDir() = 0;
+	virtual void InvertPitch () = 0; //For water rendering
 
 	virtual void AddYawFromSelected (float yawDt) {}
 	virtual void KeyboardDown(SDL_KeyboardEvent& key) {}
@@ -133,14 +136,11 @@ public:
 	{
 		return glm::normalize(glm::cross(right, forward));
 	}
-
-	glm::mat4 GetViewMatrix(){return viewMatrix;}
-	glm::mat4 GetProj()	{return projMatrix;	}
-	glm::mat4 GetProjView()	{return projViewMatrix;	}
-	glm::mat4 GetRayDirMtx() {return rayDirMatrix; }
-	glm::vec3 GetEye() {return eyePos; }
-	glm::vec3 GetDir() override {return forwardDir; }
-
+	glm::vec3 GetDir() override { return forwardDir; }
+	void InvertPitch() override
+	{
+		forwardDir.y = -forwardDir.y;
+	}
 
 	void KeyboardDown(SDL_KeyboardEvent& key) override
 	{
@@ -300,11 +300,10 @@ public:
 		return glm::normalize(glm::cross(right, forward));
 	}
 
-	glm::mat4 GetViewMatrix() { return viewMatrix; }
-	glm::mat4 GetProj() { return projMatrix; }
-	glm::mat4 GetProjView() { return projViewMatrix; }
-	glm::mat4 GetRayDirMtx() { return rayDirMatrix; }
-	glm::vec3 GetEye() { return eyePos; }
+	void InvertPitch() override
+	{
+		pitch = -pitch;
+	}
 	glm::vec3 GetDir() override { return forwardDir; }
 
 
