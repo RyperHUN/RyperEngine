@@ -10,10 +10,11 @@ private:
 	glFrameBuffer reflectFBO;
 	glFrameBuffer refractFBO;
 	QuadTexturer& quadTexturer;
-	IRenderable*   waterObj;
-	float * height = nullptr;
+	GameObj*   waterObj = nullptr;
+	float * height      = nullptr;
 	glm::ivec2 windowSize;
-	MaterialPtr waterMaterial;
+
+	float waterOffset = 0;
 public:
 	WaterRenderer (QuadTexturer& quadTexturer, glm::ivec2 windowSize)
 		:quadTexturer(quadTexturer), windowSize(windowSize)
@@ -27,11 +28,10 @@ public:
 		refractFBO.CreateAttachments(windowSize.x, windowSize.y);
 		ReplaceTextures();
 	}
-	void SetWaterInfo (IRenderable* waterObj,float * height, MaterialPtr water)
+	void SetWaterInfo (GameObj* waterObj,float * height)
 	{
 		this->waterObj		= waterObj;
 		this->height		= height;
-		this->waterMaterial = water;
 		ReplaceTextures ();
 	}
 	void Render (std::vector<IRenderable*> &renderObjs,RenderState &state, CameraPtr camera)
@@ -63,6 +63,14 @@ public:
 		}
 		glDisable(GL_CLIP_DISTANCE0);
 	}
+	void Update (float dt)
+	{
+		static const float WaterWaveSpeed = 0.04;
+		waterOffset += glm::mod(WaterWaveSpeed * dt, 1.0f);
+		waterObj->shader->On ();
+		waterObj->shader->SetUniform ("uWaterOffset", waterOffset);
+		waterObj->shader->Off();
+	}
 	void Draw (RenderState& state)
 	{
 		waterObj->Draw(state);
@@ -85,8 +93,9 @@ public:
 private:
 	void ReplaceTextures ()
 	{
-		if(waterMaterial)
+		if (waterObj)
 		{
+			MaterialPtr waterMaterial = waterObj->material;
 			waterMaterial->replaceTexture ("texture_reflect", GetReflectTexture());
 			waterMaterial->replaceTexture ("texture_refract", GetRefractTexture());
 		}

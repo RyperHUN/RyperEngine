@@ -54,6 +54,7 @@ uniform sampler2D texture_reflect;
 uniform sampler2D texture_dudv;
 uniform samplerCube skyBox;
 
+uniform float uWaterOffset;
 uniform Material uMaterial;
 
 //TODO define only for max light, and upload used point light number
@@ -196,13 +197,16 @@ void main()
 	vec3 normal  = normalize (FS.normal);
 	vec3 viewDir = normalize (uwEye - FS.wFragPos);
 	
-	vec2 distortionUV = UvToNdc(texture(texture_dudv, FS.texCoord).xy);
-	distortionUV *= 0.02;
+	vec2 texCoordForDuDv   = vec2(FS.texCoord.x * uWaterOffset, FS.texCoord.y);
+	vec2 texCoordForDuDv2  = FS.texCoord * vec2(uWaterOffset * 0.5, uWaterOffset * 0.8);
+	vec2 distortionUV1     = UvToNdc(texture(texture_dudv, texCoordForDuDv).xy);
+	vec2 distortionUV2	   = UvToNdc(texture(texture_dudv, texCoordForDuDv2).xy);
+	vec2 totalDistortionUV = (distortionUV1 + distortionUV2) * 0.02 / 2;
 
 /////////////////////////////////////////////
 	vec3 finalColor = vec3(0);
 	
-	vec2 projectedUV    = HomogenToUV (FS.hPos) + distortionUV;
+	vec2 projectedUV    = HomogenToUV (FS.hPos) + totalDistortionUV;
 	projectedUV = clamp(projectedUV, 0.001, 0.999);
 	vec2 invertUV       = vec2(projectedUV.x, 1 - projectedUV.y);
 	vec4 refractedColor = texture(texture_refract, invertUV);

@@ -205,7 +205,7 @@ void CMyApp::InitGameObjects ()
 	quadObjWater->geometry = &geom_Quad;
 	quadObjWater->shader   = &shader_Water;
 	quadObjWater->material = materialWater;
-	waterRenderer.SetWaterInfo (quadObjWater, &quadObjWater->pos.y, materialWater);
+	waterRenderer.SetWaterInfo (quadObjWater, &quadObjWater->pos.y);
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
 	//suzanne->scale = glm::vec3(5,5,5);
@@ -274,7 +274,7 @@ void CMyApp::Update()
 	spotLight.direction = activeCamera->GetDir ();
 	spotLight.position  = activeCamera->GetEye ();
 
-	last_time = SDL_GetTicks();
+	waterRenderer.Update(delta_time);
 
 	// Update gameObj;
 	for(auto& obj : gameObjs)
@@ -284,6 +284,8 @@ void CMyApp::Update()
 
 	physX.stepPhysics (delta_time, false, gameObjs.front()->pos, controller); //TODO Save player ref
 	activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
+
+	last_time = SDL_GetTicks();
 }
 
 void CMyApp::Render()
@@ -328,8 +330,8 @@ void CMyApp::Render()
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Shadow map debug texture drawing
-		if (IsWaterRendering) 
-			waterRenderer.RenderTextures ();
+		//if (IsWaterRendering) 
+		//	waterRenderer.RenderTextures ();
 		glm::mat4 ModelRT = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Right top corner
 		//quadTexturer.Draw (tex_randomPerlin,false,ModelRT);
 
