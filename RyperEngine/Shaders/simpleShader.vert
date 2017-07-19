@@ -45,7 +45,8 @@ void main()
 
 	gl_Position = PVM * objSpacePos;
 
-	VS.wFragPos = (M * objSpacePos).xyz;
+	vec4 wPos4 = (M * objSpacePos);
+	VS.wFragPos = wPos4.xyz / wPos4.w;
 	VS.normal   = (objSpaceNormal * Minv).xyz;
 	VS.texCoord = vs_in_tex;
 	VS.fragPosLightSpace4 = (LightSpaceMtx * vec4(VS.wFragPos, 1.0));

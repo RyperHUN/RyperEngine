@@ -14,6 +14,7 @@ uniform bool uIsAnimated;
 out VS_OUT 
 {
 	vec3 wFragPos;
+	vec3 ndcPos;
 	vec3 normal;
 	vec2 texCoord;
 	vec4 fragPosLightSpace4;
@@ -26,8 +27,11 @@ void main()
 
 	gl_Position = PVM * objSpacePos;
 
-	VS.wFragPos = (M * objSpacePos).xyz;
+	vec4 wPos4  = (M * objSpacePos);
+	VS.wFragPos = wPos4.xyz / wPos4.w;
 	VS.normal   = (objSpaceNormal * Minv).xyz;
 	VS.texCoord = vs_in_tex;
 	VS.fragPosLightSpace4 = (LightSpaceMtx * vec4(VS.wFragPos, 1.0));
+
+	VS.ndcPos = gl_Position.xyz / gl_Position.w;
 }

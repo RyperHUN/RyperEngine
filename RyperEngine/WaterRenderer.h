@@ -31,7 +31,7 @@ public:
 		{
 			auto bind = gl::MakeTemporaryBind (refractFBO);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			state.planeEquation = glm::vec4(0,1,0,0);
+			state.planeEquation = glm::vec4(0,1,0,0); ///TODO Set valid plane eq
 			for (auto& obj : renderObjs)
 				obj->Draw(state);
 		}
@@ -44,11 +44,11 @@ public:
 		glm::mat4 ModelLT = glm::translate(glm::vec3(-0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Left Top Corner
 		quadTexturer.Draw (GetReflectTexture(), true, ModelLT);
 	}
-	GLint GetReflectTexture ()
+	GLuint GetReflectTexture ()
 	{
 		return reflectFBO.texture.expose ();
 	}
-	GLint GetRefractTexture()
+	GLuint GetRefractTexture()
 	{
 		return refractFBO.texture.expose();
 	}

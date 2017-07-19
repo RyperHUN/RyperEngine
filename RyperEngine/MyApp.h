@@ -95,7 +95,7 @@ protected:
 	int	 m_width = 640, m_height = 480;
 	bool IsFrameBufferRendering = false;
 	bool IsMSAAOn = true;
-	bool IsWaterRendering = false;
+	bool IsWaterRendering = true;
 	glFrameBuffer fbo_Rendered;
 	glFrameBuffer fbo_Shadow;
 	glFrameBuffer fbo_RenderedMSAA;

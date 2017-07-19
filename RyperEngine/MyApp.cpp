@@ -180,8 +180,12 @@ void CMyApp::InitGameObjects ()
 	MaterialPtr material2   = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
 	MaterialPtr material3   = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
 	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
+	MaterialPtr materialWater = std::make_shared<Material>(glm::vec3(0,0,0.1f), glm::vec3(0.4,0.4,0.8f), glm::vec3(1));
 
 	material2->textures.push_back(Texture {tex_randomPerlin, "texture_diffuse1", aiString{}});
+	
+	materialWater->textures.push_back(Texture { waterRenderer.GetReflectTexture (), "texture_reflect", aiString{}});
+	materialWater->textures.push_back(Texture { waterRenderer.GetRefractTexture(), "texture_refract" , aiString{}});
 
 	//GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
 	//gameObjs.push_back(sphere);
@@ -195,6 +199,7 @@ void CMyApp::InitGameObjects ()
 	quadObjWater->rotAngle = M_PI / 2.0;
 	quadObjWater->geometry = &geom_Quad;
 	quadObjWater->shader   = &shader_Water;
+	quadObjWater->material = materialWater;
 
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
