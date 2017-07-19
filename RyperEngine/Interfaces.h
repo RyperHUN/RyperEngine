@@ -19,6 +19,7 @@ struct IRenderable {
 			shader->SetUniform("M", state.M);
 			shader->SetUniform("Minv", state.Minv);
 			shader->SetUniform("uwEye", state.wEye);
+			shader->SetUniform("uwCameraDir", state.cameraDir);
 			shader->SetUniform("LightSpaceMtx", state.LightSpaceMtx);
 			shader->SetUniform("uIsAnimated", false);
 			shader->SetUniform("uPlane", state.planeEquation);

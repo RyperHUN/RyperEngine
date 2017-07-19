@@ -14,6 +14,7 @@ struct RenderState
 	Geometry * geom = nullptr;
 	gShaderProgram * shader = nullptr;
 	glm::vec4 planeEquation;
+	glm::vec3 cameraDir;
 
 	//Texture* texture;
 	//Vector<light> lights;

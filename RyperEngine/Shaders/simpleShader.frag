@@ -43,7 +43,6 @@ struct Material {
 	vec3 ks;
 	float shininess;
 };
-vec3 uwEye;
 
 ///////////////////////////////////
 ////////--------UNIFORMS-----------
@@ -55,6 +54,7 @@ uniform sampler2D texture_reflect1;
 uniform samplerCube skyBox;
 
 uniform Material uMaterial;
+uniform vec3 uwEye;
 
 //TODO define only for max light, and upload used point light number
 #define POINT_LIGHT_NUM 3
@@ -206,4 +206,5 @@ void main()
 	fs_out_col = vec4(abs(normal), 1.0);
 	//fs_out_col = vec4(FS.texCoord.xy, 0, 1);
 	//fs_out_col = vec4(FS.testColor,1);
+	fs_out_col = refractedColor;
 }

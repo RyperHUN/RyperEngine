@@ -43,7 +43,6 @@ struct Material {
 	vec3 ks;
 	float shininess;
 };
-vec3 uwEye;
 
 ///////////////////////////////////
 ////////--------UNIFORMS-----------
@@ -56,6 +55,8 @@ uniform samplerCube skyBox;
 
 uniform float uWaterOffset;
 uniform Material uMaterial;
+uniform vec3 uwEye;
+uniform vec3 uwCameraDir;
 
 //TODO define only for max light, and upload used point light number
 #define POINT_LIGHT_NUM 3
@@ -195,7 +196,7 @@ vec2 HomogenToUV (vec4 hPos)
 void main()
 {
 	vec3 normal  = normalize (FS.normal);
-	vec3 viewDir = normalize (uwEye - FS.wFragPos);
+	vec3 viewDir = normalize (uwEye - FS.wFragPos); //TODO Replace it with camera forward vector
 	
 	vec2 texCoordForDuDv   = vec2(FS.texCoord.x * uWaterOffset, FS.texCoord.y);
 	vec2 texCoordForDuDv2  = FS.texCoord * vec2(uWaterOffset * 0.5, uWaterOffset * 0.8);
@@ -203,6 +204,9 @@ void main()
 	vec2 distortionUV2	   = UvToNdc(texture(texture_dudv, texCoordForDuDv2).xy);
 	vec2 totalDistortionUV = (distortionUV1 + distortionUV2) * 0.02 / 2;
 
+	float reflectionValue  = mix(dot(normal, -uwCameraDir), dot(normal, viewDir), 0.3);// Camera dir is more precise, viewdir is little realistic
+	reflectionValue		   = pow(reflectionValue, 8.5);
+	reflectionValue        = clamp(reflectionValue, 0, 1);
 /////////////////////////////////////////////
 	vec3 finalColor = vec3(0);
 	
@@ -212,15 +216,12 @@ void main()
 	vec4 refractedColor = texture(texture_refract, invertUV);
 	vec4 reflectedColor = texture(texture_reflect, projectedUV);
 
-	finalColor = mix(refractedColor, reflectedColor, 0.5).xyz;
+	finalColor = mix(reflectedColor,refractedColor, reflectionValue).xyz;
+	finalColor = mix(finalColor, vec3(0,0.2,0.6), 0.3);
 
 	fs_out_col = vec4(reflectedColor.xyz, 1);
 	fs_out_col = vec4(refractedColor.xyz, 1);
 	fs_out_col = vec4(finalColor, 1);
-
-	//fs_out_col = texture(texture_reflect1, FS.texCoord);
-	//fs_out_col = vec4(abs(normal), 1.0);
-	//fs_out_col = vec4(FS.texCoord.xy, 0, 1);
-	//fs_out_col = vec4(FS.ndcPos.xy, 0, 1);
-	////fs_out_col = vec4(FS.testColor,1);
+	//fs_out_col = vec4(reflectionValue, 0, 0, 1);
+	//fs_out_col = vec4(-uwCameraDir, 1);
 }

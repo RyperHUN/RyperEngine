@@ -301,6 +301,7 @@ void CMyApp::Render()
 	state.PV            = lightSpaceMatrix;
 	state.LightSpaceMtx = lightSpaceMatrix;
 	state.rayDirMatrix  = activeCamera->GetRayDirMtx ();
+	state.cameraDir		= activeCamera->GetForwardDir ();
 
 	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT); //TODO This maybe belongs after fbo_Shadow
 	fbo_Shadow.On();	
