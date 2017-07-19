@@ -12,17 +12,27 @@ private:
 	QuadTexturer& quadTexturer;
 	IRenderable*   waterObj;
 	float * height = nullptr;
+	glm::ivec2 windowSize;
+	MaterialPtr waterMaterial;
 public:
 	WaterRenderer (QuadTexturer& quadTexturer, glm::ivec2 windowSize)
-		:quadTexturer(quadTexturer)
+		:quadTexturer(quadTexturer), windowSize(windowSize)
 	{
+		Resize (windowSize);
+	}
+	void Resize (glm::ivec2 const& windowSize)
+	{
+		this->windowSize = windowSize;
 		reflectFBO.CreateAttachments(windowSize.x, windowSize.y);
 		refractFBO.CreateAttachments(windowSize.x, windowSize.y);
+		ReplaceTextures();
 	}
-	void SetWaterInfo (IRenderable* waterObj,float * height)
+	void SetWaterInfo (IRenderable* waterObj,float * height, MaterialPtr water)
 	{
-		this->waterObj = waterObj;
-		this->height   = height;
+		this->waterObj		= waterObj;
+		this->height		= height;
+		this->waterMaterial = water;
+		ReplaceTextures ();
 	}
 	void Render (std::vector<IRenderable*> &renderObjs,RenderState &state, CameraPtr camera)
 	{
@@ -31,6 +41,7 @@ public:
 
 		glEnable(GL_CLIP_DISTANCE0);
 		{
+			glViewport (0,0,windowSize.x, windowSize.y);
 			auto bind = gl::MakeTemporaryBind (refractFBO);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			state.planeEquation = glm::vec4(0,-1,0, waterHeight); ///TODO Set valid plane eq			
@@ -38,6 +49,7 @@ public:
 				obj->Draw(state);
 		}
 		{
+			glViewport(0, 0, windowSize.x, windowSize.y);
 			ModifyCamera(camera, waterHeight);
 			state.PV = camera->GetProjView ();
 
@@ -71,6 +83,14 @@ public:
 		return refractFBO.texture.expose();
 	}
 private:
+	void ReplaceTextures ()
+	{
+		if(waterMaterial)
+		{
+			waterMaterial->replaceTexture ("texture_reflect", GetReflectTexture());
+			waterMaterial->replaceTexture ("texture_refract", GetRefractTexture());
+		}
+	}
 	void ModifyCamera(CameraPtr camera, float height)
 	{
 		glm::vec3 eye = camera->GetEye();

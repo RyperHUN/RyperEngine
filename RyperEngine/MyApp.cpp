@@ -35,6 +35,8 @@ CMyApp::CMyApp(void)
 	//container.AddWidget (&checkbox);
 	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer)); //TODO Delete
 	
+	//gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false); });
+
 	physX.initPhysics (false);
 }
 
@@ -185,8 +187,8 @@ void CMyApp::InitGameObjects ()
 
 	material2->textures.push_back(Texture {tex_randomPerlin, "texture_diffuse1", aiString{}});
 	
-	materialWater->textures.push_back(Texture { waterRenderer.GetReflectTexture (), "texture_reflect", aiString{}});
-	materialWater->textures.push_back(Texture { waterRenderer.GetRefractTexture(), "texture_refract" , aiString{}});
+	materialWater->textures.push_back(Texture{ waterRenderer.GetReflectTexture(), "texture_reflect", aiString{} });
+	materialWater->textures.push_back(Texture{ waterRenderer.GetRefractTexture(), "texture_refract" , aiString{} });
 	materialWater->textures.push_back(Texture{ tex_waterDuDv, "texture_dudv", aiString{} });
 
 	//GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
@@ -203,7 +205,7 @@ void CMyApp::InitGameObjects ()
 	quadObjWater->geometry = &geom_Quad;
 	quadObjWater->shader   = &shader_Water;
 	quadObjWater->material = materialWater;
-	waterRenderer.SetWaterInfo (quadObjWater, &quadObjWater->pos.y);
+	waterRenderer.SetWaterInfo (quadObjWater, &quadObjWater->pos.y, materialWater);
 
 	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
 	//suzanne->scale = glm::vec3(5,5,5);
@@ -299,7 +301,7 @@ void CMyApp::Render()
 	state.rayDirMatrix  = activeCamera->GetRayDirMtx ();
 
 	glViewport(0,0,SHADOW_WIDTH, SHADOW_HEIGHT); //TODO This maybe belongs after fbo_Shadow
-	fbo_Shadow.On();
+	fbo_Shadow.On();	
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -449,8 +451,11 @@ void CMyApp::Resize(int _w, int _h)
 	m_width = _w;
 	m_height = _h;
 
+	//secondaryCamera->Resize(_w, _h);
 	activeCamera->Resize(_w, _h);
 	fbo_Rendered.CreateAttachments(m_width, m_height);
+
+	waterRenderer.Resize(glm::ivec2(_w, _h));
 }
 
 float CMyApp::ReadDepthValueNdc (float pX, float pY)

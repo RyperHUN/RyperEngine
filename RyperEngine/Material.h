@@ -64,4 +64,15 @@ struct Material
 			shader.SetTexture((name + number).c_str(), i, textures[i].id);
 		}
 	}
+	void replaceTexture (std::string type, GLuint texID)
+	{
+		for(int i = 0; i < textures.size(); i++)
+		{
+			if (textures[i].type == type) {
+				textures[i].id = texID;
+				return;
+			}
+		}
+		MAssert(false, "Replace texture failed, there is no such texture");
+	}
 };
