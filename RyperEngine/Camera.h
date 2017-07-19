@@ -73,7 +73,8 @@ class FPSCamera : public Camera
 	float fovDegree = 90.0f; //In degree
 	//For Movement
 	glm::vec3 moveDir;
-	float cameraSpeed = 10.0f;
+	float cameraSpeed = 30.0f;
+	bool isCameraShiftOn = false;
 	const glm::vec3 globalUp;
 
 public:
@@ -148,11 +149,11 @@ public:
 		{
 		case SDLK_LSHIFT:
 		case SDLK_RSHIFT:
-			//if (!m_slow)
-			//{
-			//	m_slow = true;
-			//	m_speed /= 4.0f;
-			//}
+			if (!isCameraShiftOn)
+			{
+				isCameraShiftOn = true;
+				cameraSpeed *= 4.0f;
+			}
 			break;
 		case SDLK_w:
 			moveDir.z = 1.0f;
@@ -180,11 +181,11 @@ public:
 		{
 		case SDLK_LSHIFT:
 		case SDLK_RSHIFT:
-			//if (!m_slow)
-			//{
-			//	m_slow = true;
-			//	m_speed /= 4.0f;
-			//}
+			if (isCameraShiftOn)
+			{
+				isCameraShiftOn = false;
+				cameraSpeed /= 4.0f;
+			}
 			break;
 		case SDLK_w:
 		case SDLK_s:
