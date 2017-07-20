@@ -16,9 +16,9 @@ public:
 		:topLeft(topLeft), bottomRight(bottomRight)
 	{
 		Generator.SetSeed(seed);
-		Generator.SetFrequency(1.0);
+		Generator.SetFrequency(0.7);
 		Generator.SetLacunarity(2.375);
-		Generator.SetOctaveCount(5);
+		Generator.SetOctaveCount(3);
 		Generator.SetPersistence(0.5);
 		Generator.SetNoiseQuality(noise::QUALITY_STD);
 	}
@@ -36,7 +36,7 @@ public:
 		glm::vec2 coord = glm::mix(topLeft, bottomRight, UV); //Interpolates between two endpoints
 		
 		double height = Generator.GetValue(coord.x, coord.y, 0); //Returns [-1,1]
-		MAssert(height < 1 && height > -1, "Invalid value returned by generator");
+		MAssert(height < 2 && height > -2, "Invalid value returned by generator");
 
 		return HeightValue{coord, height};
 	}

@@ -221,10 +221,40 @@ struct ParamSurface : public Geometry {
 	}
 };
 
-struct HeightMap : public ParamSurface
+struct HeightMapPerlin : public ParamSurface
+{
+	Util::PerlinGenerator perlinGenerator;
+	HeightMapPerlin(Vec2 noiseTopLeft, Vec2 noiseBottomRight)
+		:perlinGenerator(noiseTopLeft, noiseBottomRight, 10)
+	{}
+	virtual VertexData GenVertexData(float u, float v) override
+	{
+		VertexData data;
+		const Vec2 UV = Vec2{ u,v };
+		float height = perlinGenerator.GetValueUV(UV).height;
+		const Vec2 ndc2 = Util::CV::UVToNdc(UV);
+
+		const Vec3 FinalPos = Vec3(ndc2, height);
+		static float dt = 0.01;
+		Vec2 UVu = UV + Vec2(dt, 0);
+		Vec2 UVv = UV + Vec2(0, dt);
+		float heightU = perlinGenerator.GetValueUV(UVu).height;
+		float heightV = perlinGenerator.GetValueUV(UVv).height;
+		Vec3 DerivatedU = Vec3(UVu, heightU);
+		Vec3 DerivatedV = Vec3(UVv, heightV);
+
+		data.position = FinalPos;
+		data.normal = glm::normalize(glm::cross(DerivatedU, DerivatedV));;
+		//TODO data.normal;
+		data.uv = UV;
+		return data;
+	}
+};
+
+struct HeightMapIsland : public ParamSurface
 {
 	Util::IslandGenerator islandGenerator;
-	HeightMap ()
+	HeightMapIsland ()
 		:islandGenerator (10)
 	{}
 	virtual VertexData GenVertexData(float u, float v) override

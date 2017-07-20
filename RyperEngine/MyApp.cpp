@@ -23,7 +23,8 @@ CMyApp::CMyApp(void)
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50)),
 	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1),
-	waterRenderer (quadTexturer,{m_width, m_height})
+	waterRenderer (quadTexturer,{m_width, m_height}),
+	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3))
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -160,7 +161,8 @@ bool CMyApp::Init()
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
 	geom_Cow     = TriangleMeshLoaded(m_cow_mesh);
 	geom_Bezier.Create (10,10);
-	geom_PerlinHeight.Create(30,30);
+	geom_IslandHeight.Create(30,30);
+	geom_PerlinHeight.Create(40,40);
 
 	shaderLights.push_back(ShaderLight{&spotLight,"uSpotlight"});
 	shaderLights.push_back(ShaderLight{&dirLight, "uDirlight"});
@@ -198,7 +200,7 @@ void CMyApp::InitGameObjects ()
 	//GameObj * sphere2 = new GameObj(*sphere);
 	//sphere2->pos = glm::vec3(2, 50, -3);
 	//gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,material2,glm::vec3{ -1,5,-5 },glm::vec3(100,100,60),glm::vec3(-1,0,0) };
+	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,material2,glm::vec3{ -1,5,-5 },glm::vec3(200,200,50),glm::vec3(-1,0,0) };
 	quadObj->rotAngle = M_PI / 2.0;
 	Quadobj *quadObjWater = new Quadobj{*quadObj};
 	quadObjWater->pos += glm::vec3(0,1,0);
