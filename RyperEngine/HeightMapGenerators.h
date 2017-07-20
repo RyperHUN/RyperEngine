@@ -7,6 +7,41 @@
 namespace Util
 {
 
+class PerlinGenerator
+{
+	noise::module::Perlin Generator;
+	glm::vec2 topLeft, bottomRight;
+public:
+	PerlinGenerator (glm::vec2 topLeft, glm::vec2 bottomRight,int seed = 10)
+		:topLeft(topLeft), bottomRight(bottomRight)
+	{
+		Generator.SetSeed(seed);
+		Generator.SetFrequency(1.0);
+		Generator.SetLacunarity(2.375);
+		Generator.SetOctaveCount(5);
+		Generator.SetPersistence(0.5);
+		Generator.SetNoiseQuality(noise::QUALITY_STD);
+	}
+	struct HeightValue
+	{
+		glm::vec2 wPos;
+		double height; //[-1,1]
+	};
+	float GetValueUVheight(Vec2 UV)
+	{
+		return GetValueUV(UV).height;
+	}
+	HeightValue GetValueUV(Vec2 UV)
+	{
+		glm::vec2 coord = glm::mix(topLeft, bottomRight, UV); //Interpolates between two endpoints
+		
+		double height = Generator.GetValue(coord.x, coord.y, 0); //Returns [-1,1]
+		MAssert(height < 1 && height > -1, "Invalid value returned by generator");
+
+		return HeightValue{coord, height};
+	}
+};
+
 class IslandGenerator
 {
 	noise::module::Perlin Generator;
