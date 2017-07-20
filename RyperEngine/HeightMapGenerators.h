@@ -2,7 +2,9 @@
 
 #include "Defs.h"
 #include <noise/noise.h>
+#include "UtilEngine.h"
 #include "UtilConverters.h"
+#include <noise/noiseutils.h>
 
 namespace Util
 {
@@ -11,6 +13,7 @@ class PerlinGenerator
 {
 	noise::module::Perlin Generator;
 	glm::vec2 topLeft, bottomRight;
+	GLuint texId;
 public:
 	PerlinGenerator (glm::vec2 topLeft, glm::vec2 bottomRight,int seed = 10)
 		:topLeft(topLeft), bottomRight(bottomRight)
@@ -21,6 +24,40 @@ public:
 		Generator.SetOctaveCount(3);
 		Generator.SetPersistence(0.5);
 		Generator.SetNoiseQuality(noise::QUALITY_STD);
+		
+		GenTexture ();
+	}
+	void GenTexture ()
+	{
+		noise::utils::NoiseMap heightMap;
+		noise::utils::NoiseMapBuilderPlane heightMapBuilder;
+		heightMapBuilder.SetSourceModule(Generator);
+		heightMapBuilder.SetDestNoiseMap(heightMap);
+		heightMapBuilder.SetDestSize(1024, 1024);
+		heightMapBuilder.SetBounds(topLeft.x, bottomRight.x, bottomRight.y, topLeft.y);
+		heightMapBuilder.Build();
+
+		noise::utils::RendererImage renderer;
+		noise::utils::Image image;
+		renderer.SetSourceNoiseMap(heightMap);
+		renderer.SetDestImage(image);
+		renderer.ClearGradient();
+		renderer.AddGradientPoint(-1.0000, noise::utils::Color(0, 0, 128, 255)); // deeps
+		renderer.AddGradientPoint(-0.2500, noise::utils::Color(0, 0, 255, 255)); // shallow
+		renderer.AddGradientPoint(0.0000, noise::utils::Color(0, 128, 255, 255)); // shore
+		renderer.AddGradientPoint(0.0625, noise::utils::Color(240, 240, 64, 255)); // sand
+		renderer.AddGradientPoint(0.1250, noise::utils::Color(32, 160, 0, 255)); // grass
+		renderer.AddGradientPoint(0.3750, noise::utils::Color(224, 224, 0, 255)); // dirt
+		renderer.AddGradientPoint(0.7500, noise::utils::Color(128, 128, 128, 255)); // rock
+		renderer.AddGradientPoint(1.0000, noise::utils::Color(255, 255, 255, 255)); // snow
+		renderer.Render();
+
+		noise::utils::WriterBMP writer;
+		writer.SetSourceImage(image);
+		writer.SetDestFilename("pictures/heightMapColor_temp.bmp"); //Better conversion from bmp to texture
+		writer.WriteDestFile();
+
+		texId = Util::TextureFromFile("pictures/heightMapColor_temp.bmp");
 	}
 	struct HeightValue
 	{
@@ -106,5 +143,42 @@ public:
 		return tex;
 	}
 };
+
+static inline GLint GenRandomPerlinTexture()
+{
+	IslandGenerator Generator(10);
+
+	const int TexSize = 256;
+	unsigned char tex[TexSize][TexSize][3];
+
+	for (int i = 0; i<TexSize; ++i)
+		for (int j = 0; j<TexSize; ++j)
+		{
+			double val = Generator.GetValue(i, j, TexSize);
+
+			tex[i][j][0] = glm::clamp(val * 255, 0.0, 255.0); //[0,1] to [0,255]
+
+			tex[i][j][2] = tex[i][j][1] = tex[i][j][0];
+		}
+
+	GLuint tmpID;
+
+	// generáljunk egy textúra erõforrás nevet
+	glGenTextures(1, &tmpID);
+	// aktiváljuk a most generált nevû textúrát
+	glBindTexture(GL_TEXTURE_2D, tmpID);
+	// töltsük fel adatokkal az...
+	gluBuild2DMipmaps(GL_TEXTURE_2D,	// aktív 2D textúrát
+		GL_RGB8,		// a vörös, zöld és kék csatornákat 8-8 biten tárolja a textúra
+		TexSize, TexSize,		// 256x256 méretû legyen
+		GL_RGB,				// a textúra forrása RGB értékeket tárol, ilyen sorrendben
+		GL_UNSIGNED_BYTE,	// egy-egy színkopmonenst egy unsigned byte-ról kell olvasni
+		tex);				// és a textúra adatait a rendszermemória ezen szegletébõl töltsük fel
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	// bilineáris szûrés kicsinyítéskor
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// és nagyításkor is
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return tmpID;
+}
 
 } //NS Util

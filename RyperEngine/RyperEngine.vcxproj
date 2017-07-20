@@ -108,6 +108,7 @@
     <ClCompile Include="MyApp.cpp" />
     <ClCompile Include="ObjParser_OGL3.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="T:\OGLPack\include\noise\noiseutils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssimpMesh.h" />

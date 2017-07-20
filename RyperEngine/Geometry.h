@@ -10,6 +10,7 @@
 #include "glmIncluder.h"
 #include "Defs.h"
 #include "UtilEngine.h"
+#include "HeightMapGenerators.h"
 
 enum LOCATION {
 	POSITION = 0,

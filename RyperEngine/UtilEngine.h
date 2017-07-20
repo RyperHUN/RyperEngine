@@ -13,7 +13,6 @@
 #include "Defs.h"
 #include <oglwrap\oglwrap.h>
 #include "UtilConverters.h"
-#include "HeightMapGenerators.h"
 
 namespace Util 
 {
@@ -283,43 +282,6 @@ namespace Util
 		gluBuild2DMipmaps(GL_TEXTURE_2D,	// aktív 2D textúrát
 			GL_RGB8,		// a vörös, zöld és kék csatornákat 8-8 biten tárolja a textúra
 			256, 256,		// 256x256 méretû legyen
-			GL_RGB,				// a textúra forrása RGB értékeket tárol, ilyen sorrendben
-			GL_UNSIGNED_BYTE,	// egy-egy színkopmonenst egy unsigned byte-ról kell olvasni
-			tex);				// és a textúra adatait a rendszermemória ezen szegletébõl töltsük fel
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	// bilineáris szûrés kicsinyítéskor
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// és nagyításkor is
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		return tmpID;
-	}
-
-	static inline GLint GenRandomPerlinTexture()
-	{
-		IslandGenerator Generator (10);
-
-		const int TexSize = 256;
-		unsigned char tex[TexSize][TexSize][3];
-
-		for (int i = 0; i<TexSize; ++i)
-			for (int j = 0; j<TexSize; ++j)
-			{
-				double val = Generator.GetValue (i, j, TexSize);
-
-				tex[i][j][0] = glm::clamp(val * 255, 0.0, 255.0); //[0,1] to [0,255]
-				
-				tex[i][j][2] = tex[i][j][1] = tex[i][j][0];
-			}
-
-		GLuint tmpID;
-
-		// generáljunk egy textúra erõforrás nevet
-		glGenTextures(1, &tmpID);
-		// aktiváljuk a most generált nevû textúrát
-		glBindTexture(GL_TEXTURE_2D, tmpID);
-		// töltsük fel adatokkal az...
-		gluBuild2DMipmaps(GL_TEXTURE_2D,	// aktív 2D textúrát
-			GL_RGB8,		// a vörös, zöld és kék csatornákat 8-8 biten tárolja a textúra
-			TexSize, TexSize,		// 256x256 méretû legyen
 			GL_RGB,				// a textúra forrása RGB értékeket tárol, ilyen sorrendben
 			GL_UNSIGNED_BYTE,	// egy-egy színkopmonenst egy unsigned byte-ról kell olvasni
 			tex);				// és a textúra adatait a rendszermemória ezen szegletébõl töltsük fel
