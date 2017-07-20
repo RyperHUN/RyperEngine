@@ -203,7 +203,7 @@ void main()
 	//fs_out_col = vec4(lightValue, 0,0,1);
 
 	//fs_out_col = texture(texture_reflect, FS.texCoord);
-	//fs_out_col = vec4(abs(normal), 1.0);
+	fs_out_col = vec4(abs(normal), 1.0);
 	//fs_out_col = vec4(FS.texCoord.xy, 0, 1);
 	//fs_out_col = vec4(FS.testColor,1);
 }

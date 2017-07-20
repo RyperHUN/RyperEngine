@@ -69,6 +69,17 @@ uniform PointLight uPointlights[POINT_LIGHT_NUM];
 ///////////////////////////////////
 ////////--------FUNCTIONS-----------
 
+float calcDirLightSpecular(DirLight light, vec3 normal, vec3 viewDir, Material mat)
+{
+	vec3 toLight = normalize(-light.direction);
+
+	vec3 reflectDir = reflect(-toLight, normal);
+	float dotValue = clamp(dot(viewDir, reflectDir), 0, 1);
+    float spec = pow(dotValue, mat.shininess);
+
+	return spec;
+}
+
 //TODO Specular
 vec3 calcSpotLight (SpotLight light, vec3 wFragPos, vec2 texCoord, Material mat)
 {
@@ -90,21 +101,6 @@ vec3 calcSpotLight (SpotLight light, vec3 wFragPos, vec2 texCoord, Material mat)
 	}
 
 	return color;
-}
-
-vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoord, Material mat)
-{
-	vec3 toLight = normalize(-light.direction);
-
-	float diff = max(dot(normal, toLight), 0.0);
-
-	vec3 reflectDir = reflect(-toLight, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), mat.shininess);
-
-	vec3 diffuse  = diff * light.color * mat.kd;
-	vec3 specular = spec * light.color * mat.ks;
-
-	return diffuse + specular;
 }
 
 vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir, vec3 wFragPos, vec2 texCoord, Material mat)
@@ -209,6 +205,12 @@ void main()
 	reflectionValue		   = pow(reflectionValue, 8.5);
 	reflectionValue        = clamp(reflectionValue, 0, 1);
 /////////////////////////////////////////////
+	//Getting realistic normal for water
+	vec4 normalValue  = vec4(texture(texture_normal, totalDistortionUV));
+	vec3 waterNormal  = vec3(normalValue.x, normalValue.z, normalValue.y);
+	waterNormal.xz    = UvToNdc (waterNormal.xz);
+	float specularVal = calcDirLightSpecular (uDirlight, normalize(waterNormal), viewDir, uMaterial);
+/////
 	vec3 finalColor = vec3(0);
 	
 	vec2 projectedUV    = HomogenToUV (FS.hPos) + totalDistortionUV;
@@ -219,11 +221,13 @@ void main()
 
 	finalColor = mix(reflectedColor,refractedColor, reflectionValue).xyz;
 	finalColor = mix(finalColor, vec3(0,0.2,0.6), 0.3);
+	finalColor = mix(finalColor, vec3(1), specularVal * 0.5);
 
 	fs_out_col = vec4(reflectedColor.xyz, 1);
 	fs_out_col = vec4(refractedColor.xyz, 1);
 	fs_out_col = vec4(finalColor, 1);
-	fs_out_col = vec4(texture(texture_normal, FS.texCoord));
+	//fs_out_col = vec4(abs(waterNormal), 1);
+	
 	//fs_out_col = vec4(reflectionValue, 0, 0, 1);
 	//fs_out_col = vec4(-uwCameraDir, 1);
 }
