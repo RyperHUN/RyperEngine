@@ -22,6 +22,11 @@ namespace Util
 
 namespace CV //CV == CONVERTER
 { 
+	template <typename T>
+	inline T NdcToUV (T const& ndc)
+	{
+		return (ndc + 1.0f )/2.0f;
+	}
 	//Returns texture coordinates, (0,0) Top Left Corner as in DirectX
 	inline glm::vec2 NdcToUV (glm::vec2 const& ndc)
 	{
