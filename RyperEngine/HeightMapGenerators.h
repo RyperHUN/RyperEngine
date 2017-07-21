@@ -20,7 +20,8 @@ struct IHeightMapColorer
 	template <size_t TexSize>
 	GLuint CreateTexture(const NoiseGen& randomGenerator)
 	{
-		Array3D<unsigned char, TexSize, TexSize,3> texData;
+		std::vector<glm::tvec3<unsigned char>> texData;
+		texData.resize (TexSize * TexSize);
 		for (int i = 0; i<TexSize; ++i)
 			for (int j = 0; j<TexSize; ++j)
 			{
@@ -29,12 +30,10 @@ struct IHeightMapColorer
 				double height = randomGenerator.GetValue(coord.x, coord.y, 0);
 
 				//Coloring function
-				Vec3 color = GetColor(height);
+				glm::ivec3 color = GetColor(height);
 				//color      = glm::clamp(color * 255, 0.0f, 255.0f); //Convert to GL_UNSIGNED_BYTE
 
-				texData[i][j][0] = color.r;
-				texData[i][j][1] = color.g;
-				texData[i][j][2] = color.b;
+				texData[j + TexSize * i] = color;
 			}
 
 		GLuint textureId;
@@ -43,7 +42,7 @@ struct IHeightMapColorer
 
 		{
 			auto bind = gl::MakeTemporaryBind(texture);
-			texture.upload(gl::kRgb8, TexSize, TexSize, gl::kRgb, gl::kUnsignedByte, &texData[0][0][0]);
+			texture.upload(gl::kRgb8, TexSize, TexSize, gl::kRgb, gl::kUnsignedByte, &texData[0]);
 			texture.generateMipmap();
 			texture.magFilter(gl::kLinear);
 			texture.minFilter(gl::kLinear);
