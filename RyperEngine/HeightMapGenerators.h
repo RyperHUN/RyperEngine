@@ -9,6 +9,75 @@
 namespace Util
 {
 
+struct IHeightMapColorer
+{
+	const Vec2 topLeft;
+	const Vec2 bottomRight;
+	IHeightMapColorer(const Vec2& topLeft, const Vec2& bottomRight)
+		:topLeft(topLeft), bottomRight(bottomRight)
+	{}
+	using NoiseGen = noise::module::Module;
+	template <size_t TexSize>
+	GLuint CreateTexture(const NoiseGen& randomGenerator)
+	{
+		Array3D<unsigned char, TexSize, TexSize,3> texData;
+		for (int i = 0; i<TexSize; ++i)
+			for (int j = 0; j<TexSize; ++j)
+			{
+				Vec2 UV = Vec2(j / float(TexSize - 1), i / float(TexSize - 1));
+				Vec2 coord = glm::mix(topLeft, bottomRight, UV);
+				double height = randomGenerator.GetValue(coord.x, coord.y, 0);
+
+				//Coloring function
+				Vec3 color = GetColor(height);
+				//color      = glm::clamp(color * 255, 0.0f, 255.0f); //Convert to GL_UNSIGNED_BYTE
+
+				texData[i][j][0] = color.r;
+				texData[i][j][1] = color.g;
+				texData[i][j][2] = color.b;
+			}
+
+		GLuint textureId;
+		glGenTextures(1, &textureId);
+		gl::Texture2D texture(textureId);
+
+		{
+			auto bind = gl::MakeTemporaryBind(texture);
+			texture.upload(gl::kRgb8, TexSize, TexSize, gl::kRgb, gl::kUnsignedByte, &texData[0][0][0]);
+			texture.generateMipmap();
+			texture.magFilter(gl::kLinear);
+			texture.minFilter(gl::kLinear);
+		}
+
+		return texture.expose();
+	}
+	virtual glm::ivec3 GetColor(double height) = 0;
+};
+
+struct HeightMapColorImpl : public IHeightMapColorer
+{
+	using IHeightMapColorer::IHeightMapColorer;
+	virtual glm::ivec3 GetColor(double height) override
+	{
+		if (height > 1.0)
+			return glm::ivec3(255, 255, 255); //snow
+		else if (height > 0.75)
+			return{ 128, 128, 128 }; //rock
+		else if (height > 0.375)
+			return{ 224, 224, 0 }; //dirt
+		else if (height > 0.125)
+			return{ 32, 160, 0 }; //Grass
+		else if (height > 0.0)
+			return{ 240, 240, 64 }; //Sand
+		else if (height > -0.25)
+			return{ 0, 128, 255 }; //shore
+		else if (height > -1)
+			return{ 0, 0, 255 }; //shallow
+		else
+			return{ 0, 0, 128, }; //Deeps
+	}
+};
+
 class PerlinGenerator
 {
 	noise::module::Perlin Generator;
@@ -49,35 +118,9 @@ public:
 private:
 	void GenTexture()
 	{
-		noise::utils::NoiseMap heightMap;
-		noise::utils::NoiseMapBuilderPlane heightMapBuilder;
-		heightMapBuilder.SetSourceModule(Generator);
-		heightMapBuilder.SetDestNoiseMap(heightMap);
-		heightMapBuilder.SetDestSize(1024, 1024);
-		heightMapBuilder.SetBounds(topLeft.x, bottomRight.x, bottomRight.y, topLeft.y);
-		heightMapBuilder.Build();
+		HeightMapColorImpl heightMapColorer(topLeft, bottomRight);
 
-		noise::utils::RendererImage renderer;
-		noise::utils::Image image;
-		renderer.SetSourceNoiseMap(heightMap);
-		renderer.SetDestImage(image);
-		renderer.ClearGradient();
-		renderer.AddGradientPoint(-1.0000, noise::utils::Color(0, 0, 128, 255)); // deeps
-		renderer.AddGradientPoint(-0.2500, noise::utils::Color(0, 0, 255, 255)); // shallow
-		renderer.AddGradientPoint(0.0000, noise::utils::Color(0, 128, 255, 255)); // shore
-		renderer.AddGradientPoint(0.0625, noise::utils::Color(240, 240, 64, 255)); // sand
-		renderer.AddGradientPoint(0.1250, noise::utils::Color(32, 160, 0, 255)); // grass
-		renderer.AddGradientPoint(0.3750, noise::utils::Color(224, 224, 0, 255)); // dirt
-		renderer.AddGradientPoint(0.7500, noise::utils::Color(128, 128, 128, 255)); // rock
-		renderer.AddGradientPoint(1.0000, noise::utils::Color(255, 255, 255, 255)); // snow
-		renderer.Render();
-
-		noise::utils::WriterBMP writer;
-		writer.SetSourceImage(image);
-		writer.SetDestFilename("pictures/heightMapColor_temp.bmp"); //Better conversion from bmp to texture
-		writer.WriteDestFile();
-
-		texId = Util::TextureFromFile("pictures/heightMapColor_temp.bmp");
+		texId = heightMapColorer.CreateTexture<512>(Generator);
 	}
 };
 
