@@ -260,7 +260,7 @@ void CMyApp::InitGameObjects ()
 
 	renderObjs.push_back(quadObj);
 	//renderObjs.push_back(quadObjWater); //TODO Render separately
-	renderObjs.push_back(cowboyObj);
+	//renderObjs.push_back(cowboyObj);
 	//renderObjs.push_back(&chunkManager);
 	renderObjs.push_back(&skyboxRenderer);
 }
@@ -398,6 +398,14 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 			break;
 		case SDLK_c:
 			std::swap(activeCamera, secondaryCamera);
+			break;
+		case SDLK_1:
+			activeCamera->SetEye (glm::vec3(33.1, 34, -99));
+			activeCamera->SetForwardDir (glm::vec3(-0.13, -0.33, 0.93));
+			break;
+		case SDLK_2:
+			activeCamera->SetEye(glm::vec3(37.5, 62.36, -104.6));
+			activeCamera->SetForwardDir(glm::vec3(-0.17, -0.9, 0.37));
 			break;
 	}
 }

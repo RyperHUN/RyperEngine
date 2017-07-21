@@ -187,8 +187,8 @@ void main()
 	color += calcSpotLight (uSpotlight, FS.wFragPos, texCoord, uMaterial);
 
 	//float lightValue = ShadowCalculation(FS.fragPosLightSpace4);
-	//float lightValue = ShadowCalcWithPcf (FS.fragPosLightSpace4);
-	float lightValue = 1.0; //TODO comment for shadow
+	float lightValue = ShadowCalcWithPcf (FS.fragPosLightSpace4);
+	//float lightValue = 1.0; //TODO comment for shadow
 	color += calcDirLight (uDirlight, normal, viewDir, texCoord, uMaterial) * lightValue;
 	
 	vec4 colorWLight    = vec4(color, 1.0);

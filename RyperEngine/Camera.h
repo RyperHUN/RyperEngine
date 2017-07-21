@@ -34,6 +34,7 @@ public:
 	glm::mat4 GetRayDirMtx() { return rayDirMatrix; }
 	glm::vec3 GetEye() { return eyePos; }
 	glm::vec3 GetForwardDir() { return forwardDir; }
+	virtual void SetForwardDir (glm::vec3 forwardDir) {this->forwardDir = glm::normalize(forwardDir);} //TODO TPS camera set focus
 	void SetEye(glm::vec3 eye) {eyePos = eye;} //For Water rendering
 
 	virtual glm::vec3 GetDir() = 0;
