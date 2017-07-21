@@ -224,7 +224,9 @@ struct ParamSurface : public Geometry {
 
 struct HeightMapPerlin : public ParamSurface
 {
+private:
 	Util::PerlinGenerator perlinGenerator;
+public:
 	HeightMapPerlin(Vec2 noiseTopLeft, Vec2 noiseBottomRight)
 		:perlinGenerator(noiseTopLeft, noiseBottomRight, 10)
 	{}
@@ -249,6 +251,13 @@ struct HeightMapPerlin : public ParamSurface
 		//TODO data.normal;
 		data.uv = UV;
 		return data;
+	}
+	virtual void Draw(gShaderProgram * shader = nullptr) override
+	{
+		MAssert(shader, "nullptr given to shader in geometry");
+		shader->SetTexture("texture_diffuse", 10, perlinGenerator.GetTexture()); //TODO better solution
+
+		ParamSurface::Draw (shader);
 	}
 };
 

@@ -13,7 +13,7 @@ class PerlinGenerator
 {
 	noise::module::Perlin Generator;
 	glm::vec2 topLeft, bottomRight;
-	GLuint texId;
+	GLuint texId; //TODO Free
 public:
 	PerlinGenerator (glm::vec2 topLeft, glm::vec2 bottomRight,int seed = 10)
 		:topLeft(topLeft), bottomRight(bottomRight)
@@ -27,7 +27,27 @@ public:
 		
 		GenTexture ();
 	}
-	void GenTexture ()
+	GLuint GetTexture () {return texId;}
+	struct HeightValue
+	{
+		glm::vec2 wPos;
+		double height; //[-1,1]
+	};
+	float GetValueUVheight(Vec2 UV)
+	{
+		return GetValueUV(UV).height;
+	}
+	HeightValue GetValueUV(Vec2 UV)
+	{
+		glm::vec2 coord = glm::mix(topLeft, bottomRight, UV); //Interpolates between two endpoints
+		
+		double height = Generator.GetValue(coord.x, coord.y, 0); //Returns [-1,1]
+		MAssert(height < 2 && height > -2, "Invalid value returned by generator");
+
+		return HeightValue{coord, height};
+	}
+private:
+	void GenTexture()
 	{
 		noise::utils::NoiseMap heightMap;
 		noise::utils::NoiseMapBuilderPlane heightMapBuilder;
@@ -58,24 +78,6 @@ public:
 		writer.WriteDestFile();
 
 		texId = Util::TextureFromFile("pictures/heightMapColor_temp.bmp");
-	}
-	struct HeightValue
-	{
-		glm::vec2 wPos;
-		double height; //[-1,1]
-	};
-	float GetValueUVheight(Vec2 UV)
-	{
-		return GetValueUV(UV).height;
-	}
-	HeightValue GetValueUV(Vec2 UV)
-	{
-		glm::vec2 coord = glm::mix(topLeft, bottomRight, UV); //Interpolates between two endpoints
-		
-		double height = Generator.GetValue(coord.x, coord.y, 0); //Returns [-1,1]
-		MAssert(height < 2 && height > -2, "Invalid value returned by generator");
-
-		return HeightValue{coord, height};
 	}
 };
 

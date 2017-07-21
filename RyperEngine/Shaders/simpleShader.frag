@@ -179,18 +179,20 @@ void main()
 	vec3 reflectedDir   = reflect(-viewDir, normal);
 	vec3 refractedDir   = refract(-viewDir, normal, 0.7);
 	
-	vec3 color = uMaterial.ka * texture(texture_diffuse, FS.texCoord).xyz;
+	vec2 texCoord = vec2(FS.texCoord.x, FS.texCoord.y);
+	vec3 color = uMaterial.ka * texture(texture_diffuse, texCoord).xyz;
 	
 	for(int i = 0; i < POINT_LIGHT_NUM; i++)
-		color += calcPointLight(uPointlights[i],normal,viewDir, FS.wFragPos, FS.texCoord, uMaterial);
-	color += calcSpotLight (uSpotlight, FS.wFragPos, FS.texCoord, uMaterial);
+		color += calcPointLight(uPointlights[i],normal,viewDir, FS.wFragPos, texCoord, uMaterial);
+	color += calcSpotLight (uSpotlight, FS.wFragPos, texCoord, uMaterial);
 
 	//float lightValue = ShadowCalculation(FS.fragPosLightSpace4);
-	float lightValue = ShadowCalcWithPcf (FS.fragPosLightSpace4);
-	color += calcDirLight (uDirlight, normal, viewDir, FS.texCoord, uMaterial) * lightValue;
+	//float lightValue = ShadowCalcWithPcf (FS.fragPosLightSpace4);
+	float lightValue = 1.0; //TODO comment for shadow
+	color += calcDirLight (uDirlight, normal, viewDir, texCoord, uMaterial) * lightValue;
 	
 	vec4 colorWLight    = vec4(color, 1.0);
-	//fs_out_col   = colorWLight;
+	fs_out_col   = colorWLight;
 /////////////////////////////////////////////
 //Reflection
 	vec4 reflectedColor = vec4(texture(skyBox, reflectedDir).xyz, 1.0);
@@ -203,7 +205,7 @@ void main()
 	//fs_out_col = vec4(lightValue, 0,0,1);
 
 	//fs_out_col = texture(texture_reflect, FS.texCoord);
-	fs_out_col = vec4(abs(normal), 1.0);
+	//fs_out_col = vec4(abs(normal), 1.0);
 	//fs_out_col = vec4(FS.texCoord.xy, 0, 1);
 	//fs_out_col = vec4(FS.testColor,1);
 }
