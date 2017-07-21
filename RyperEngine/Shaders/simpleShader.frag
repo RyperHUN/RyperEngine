@@ -201,7 +201,7 @@ void main()
 	vec4 reflectedWithTex = vec4(reflectedColor * texture(texture_reflect, FS.texCoord));
 	
 	//fs_out_col = vec4(mix(colorWLight.xyz, reflectedWithTex.xyz, 0.5) ,1.0);
-	fs_out_col = colorWLight + reflectedWithTex;
+	//fs_out_col = colorWLight + reflectedWithTex;
 	//fs_out_col = vec4(lightValue, 0,0,1);
 
 	//fs_out_col = texture(texture_reflect, FS.texCoord);

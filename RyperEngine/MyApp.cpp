@@ -162,7 +162,7 @@ bool CMyApp::Init()
 	geom_Cow     = TriangleMeshLoaded(m_cow_mesh);
 	geom_Bezier.Create (10,10);
 	geom_IslandHeight.Create(30,30);
-	geom_PerlinHeight.Create(40,40);
+	geom_PerlinHeight.Create(100,100);
 
 	shaderLights.push_back(ShaderLight{&spotLight,"uSpotlight"});
 	shaderLights.push_back(ShaderLight{&dirLight, "uDirlight"});
@@ -184,6 +184,7 @@ void CMyApp::InitGameObjects ()
 {
 	MaterialPtr material1     = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
 	MaterialPtr material2     = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
+	MaterialPtr materialheightMap = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.05));
 	MaterialPtr material3     = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
 	MaterialPtr materialMan   = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
 	MaterialPtr materialWater = std::make_shared<Material>(glm::vec3(0,0,0.1f), glm::vec3(0.4,0.4,0.8f), glm::vec3(1), 40);
@@ -200,7 +201,7 @@ void CMyApp::InitGameObjects ()
 	//GameObj * sphere2 = new GameObj(*sphere);
 	//sphere2->pos = glm::vec3(2, 50, -3);
 	//gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,material2,glm::vec3{ -1,5,-5 },glm::vec3(200,200,50),glm::vec3(-1,0,0) };
+	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,materialheightMap,glm::vec3{ -1,5,-5 },glm::vec3(200,200,50),glm::vec3(-1,0,0) };
 	quadObj->rotAngle = M_PI / 2.0;
 	Quadobj *quadObjWater = new Quadobj{*quadObj};
 	quadObjWater->pos += glm::vec3(0,1,0);

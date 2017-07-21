@@ -64,10 +64,8 @@ struct HeightMapColorImpl : public IHeightMapColorer
 			return{ 128, 128, 128 }; //rock
 		else if (height > 0.375)
 			return{ 224, 224, 0 }; //dirt
-		else if (height > 0.125)
+		else if (height > -0.05)
 			return{ 32, 160, 0 }; //Grass
-		else if (height > 0.0)
-			return{ 240, 240, 64 }; //Sand
 		else if (height > -0.25)
 			return{ 0, 128, 255 }; //shore
 		else if (height > -1)
@@ -119,7 +117,7 @@ private:
 	{
 		HeightMapColorImpl heightMapColorer(topLeft, bottomRight);
 
-		texId = heightMapColorer.CreateTexture<512>(Generator);
+		texId = heightMapColorer.CreateTexture<2048>(Generator);
 	}
 };
 
