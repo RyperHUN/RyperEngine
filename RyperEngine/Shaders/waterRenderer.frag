@@ -227,6 +227,7 @@ void main()
 	fs_out_col = vec4(reflectedColor.xyz, 1);
 	fs_out_col = vec4(refractedColor.xyz, 1);
 	fs_out_col = vec4(finalColor, 1);
+	fs_out_col = vec4(texture(texture_refract_depth, invertUV));
 	//fs_out_col = vec4(abs(waterNormal), 1);
 	
 	//fs_out_col = vec4(reflectionValue, 0, 0, 1);

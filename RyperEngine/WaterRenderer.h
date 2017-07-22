@@ -7,8 +7,8 @@
 struct WaterRenderer 
 {
 private:
-	glFrameBuffer reflectFBO;
-	glFrameBuffer refractFBO;
+	ColorDepthFrameBuffer reflectFBO;
+	ColorDepthFrameBuffer refractFBO;
 	QuadTexturer& quadTexturer;
 	GameObj*   waterObj = nullptr;
 	float * height      = nullptr;
@@ -90,6 +90,10 @@ public:
 	{
 		return refractFBO.GetColorAttachment ();
 	}
+	GLuint GetRefractDepth ()
+	{
+		return refractFBO.GetDepthAttachment ();
+	}
 private:
 	void ReplaceTextures ()
 	{
@@ -98,6 +102,7 @@ private:
 			MaterialPtr waterMaterial = waterObj->material;
 			waterMaterial->replaceTexture ("texture_reflect", GetReflectTexture());
 			waterMaterial->replaceTexture ("texture_refract", GetRefractTexture());
+			waterMaterial->replaceTexture ("texture_refract_depth", GetRefractDepth ());
 		}
 	}
 	void ModifyCamera(CameraPtr camera, float height)

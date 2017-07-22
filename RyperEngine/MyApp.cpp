@@ -195,6 +195,8 @@ void CMyApp::InitGameObjects ()
 	materialWater->textures.push_back(Texture{ waterRenderer.GetRefractTexture(), "texture_refract" , aiString{} });
 	materialWater->textures.push_back(Texture{ tex_waterDuDv, "texture_dudv", aiString{} });
 	materialWater->textures.push_back(Texture{ tex_waterNormal, "texture_normal", aiString{} });
+	materialWater->textures.push_back(Texture{ waterRenderer.GetRefractDepth(), "texture_refract_depth", aiString{} });
+
 
 	//GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
 	//gameObjs.push_back(sphere);
