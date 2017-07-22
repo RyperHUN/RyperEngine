@@ -131,8 +131,8 @@ bool CMyApp::Init()
 		return false;
 	
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
-	fbo_Shadow.CreateShadowAttachment (SHADOW_WIDTH, SHADOW_HEIGHT);
-	fbo_Rendered.CreateAttachments(m_width, m_height);
+	fbo_Shadow.Recreate (glm::ivec2(SHADOW_WIDTH, SHADOW_HEIGHT));
+	fbo_Rendered.Recreate(glm::ivec2(m_width, m_height));
 
 ///////////////////////////////////////////////////////////
 
@@ -353,7 +353,7 @@ void CMyApp::PrepareRendering(RenderState & state)
 	glViewport(0, 0, m_width, m_height);
 	shader_Simple.On ();
 	shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
-	shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.texture.expose());
+	shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.GetDepthAttachment ());
 	shader_Simple.Off ();
 	state.PV = activeCamera->GetProjView();
 }
@@ -469,7 +469,7 @@ void CMyApp::Resize(int _w, int _h)
 
 	//secondaryCamera->Resize(_w, _h);
 	activeCamera->Resize(_w, _h);
-	fbo_Rendered.CreateAttachments(m_width, m_height);
+	fbo_Rendered.Recreate(glm::ivec2(m_width, m_height));
 
 	waterRenderer.Resize(glm::ivec2(_w, _h));
 }
@@ -498,13 +498,13 @@ void CMyApp::BindFrameBuffersForRender()
 														///////////////////////////Normal rendering
 	if (IsFrameBufferRendering)
 	{
-		fbo_Rendered.CreateAttachments(m_width, m_height);
+		fbo_Rendered.Recreate(glm::ivec2(m_width, m_height));
 		fbo_Rendered.On();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	if (IsMSAAOn)
 	{
-		fbo_RenderedMSAA.CreateMultisampleAttachments(m_width, m_height);
+		fbo_RenderedMSAA.Recreate(glm::ivec2(m_width, m_height));
 		fbo_RenderedMSAA.On(); //IF offscreen rendering and msaa is too on, this should be the second;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
@@ -523,7 +523,7 @@ void CMyApp::HandleFrameBufferRendering()
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		quadTexturer.Draw(fbo_Rendered.texture.expose (), true);
+		quadTexturer.Draw(fbo_Rendered.GetColorAttachment (), true);
 	}
 	else if (IsMSAAOn)
 	{

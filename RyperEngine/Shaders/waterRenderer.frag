@@ -50,6 +50,7 @@ struct Material {
 uniform sampler2D shadowMap;
 uniform sampler2D texture_normal;
 uniform sampler2D texture_refract;
+uniform sampler2D texture_refract_depth;
 uniform sampler2D texture_reflect;
 uniform sampler2D texture_dudv;
 uniform samplerCube skyBox;

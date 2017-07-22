@@ -101,8 +101,8 @@ protected:
 	bool IsMSAAOn = true;
 	bool IsWaterRendering = true;
 	glFrameBuffer fbo_Rendered;
-	glFrameBuffer fbo_Shadow;
-	glFrameBuffer fbo_RenderedMSAA;
+	ShadowFrameBuffer fbo_Shadow;
+	MultiFrameBuffer fbo_RenderedMSAA;
 	
 	const GLuint SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
 

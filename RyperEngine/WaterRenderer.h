@@ -24,8 +24,8 @@ public:
 	void Resize (glm::ivec2 const& windowSize)
 	{
 		this->windowSize = windowSize;
-		reflectFBO.CreateAttachments(windowSize.x, windowSize.y);
-		refractFBO.CreateAttachments(windowSize.x, windowSize.y);
+		reflectFBO.Recreate(windowSize);
+		refractFBO.Recreate(windowSize);
 		ReplaceTextures();
 	}
 	void SetWaterInfo (GameObj* waterObj,float * height)
@@ -84,11 +84,11 @@ public:
 	}
 	GLuint GetReflectTexture ()
 	{
-		return reflectFBO.texture.expose ();
+		return reflectFBO.GetColorAttachment ();
 	}
 	GLuint GetRefractTexture()
 	{
-		return refractFBO.texture.expose();
+		return refractFBO.GetColorAttachment ();
 	}
 private:
 	void ReplaceTextures ()
