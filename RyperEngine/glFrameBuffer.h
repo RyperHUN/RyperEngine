@@ -40,7 +40,7 @@ public:
 
 		auto val = gl::MakeTemporaryBind(*this);
 		{
-			CreateDepthBufferAndStencil(size);
+			CreateColorAndDepthAttach(size);
 
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 				std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
@@ -57,7 +57,7 @@ public:
 	}
 private:
 	///Have to call on before init
-	void CreateDepthBufferAndStencil(glm::ivec2 size)
+	void CreateColorAndDepthAttach(glm::ivec2 size)
 	{
 		{
 			auto val = gl::MakeTemporaryBind(texture);
@@ -81,6 +81,67 @@ private:
 		}
 		//Attach
 		this->attachBuffer(gl::kDepthStencilAttachment, rbo);
+	}
+};
+
+//Color and depth can be read
+class ColorDepthFrameBuffer : public AFrameBuffer
+{
+	gl::Texture2D    texture;
+	gl::Texture2D texDepth;
+public:
+	//Creates FBO with Depth + Color attachement
+	void Recreate(glm::ivec2 size) override
+	{
+		texture  = gl::Texture2D{};
+		texDepth = gl::Texture2D{};
+
+		auto val = gl::MakeTemporaryBind(*this);
+		{
+			CreateColorAndDepthAttach(size);
+
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+		}
+	}
+	GLuint GetColorAttachment() override
+	{
+		return texture.expose();
+	}
+	GLuint GetDepthAttachment() override
+	{
+		return texDepth.expose();
+	}
+private:
+	///Have to call on before init
+	void CreateColorAndDepthAttach(glm::ivec2 size)
+	{
+		{
+			auto val = gl::MakeTemporaryBind(texture);
+			texture.upload(gl::kRgb, size.x, size.y, gl::kRgb, gl::kUnsignedByte, NULL);
+			texture.minFilter(gl::kLinear);
+			texture.magFilter(gl::kLinear);
+			texture.wrapS(gl::kClampToBorder);
+			texture.wrapT(gl::kClampToBorder);
+			texture.borderColor(glm::vec4(1, 0, 0, 1));
+
+		}
+		// attach it to currently bound framebuffer object
+		this->attachTexture(gl::kColorAttachment0, texture, 0);
+
+		{
+			{
+				auto val = gl::MakeTemporaryBind(texDepth);
+
+				texDepth.upload(gl::kDepthComponent, size.x, size.y, gl::kDepthComponent, gl::kFloat, 0);
+				texDepth.minFilter(gl::kNearest);
+				texDepth.magFilter(gl::kNearest);
+				texDepth.wrapS(gl::kClampToBorder);
+				texDepth.wrapT(gl::kClampToBorder);
+				texDepth.borderColor(glm::vec4(1, 0, 0, 1));
+			}
+		}
+		this->attachTexture(gl::kDepthAttachment, texDepth, 0);
 	}
 };
 
