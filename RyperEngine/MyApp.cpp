@@ -162,7 +162,7 @@ bool CMyApp::Init()
 	geom_Cow     = TriangleMeshLoaded(m_cow_mesh);
 	geom_Bezier.Create (10,10);
 	geom_IslandHeight.Create(30,30);
-	geom_PerlinHeight.Create(100,100);
+	geom_PerlinHeight.Create(40,40);
 
 	shaderLights.push_back(ShaderLight{&spotLight,"uSpotlight"});
 	shaderLights.push_back(ShaderLight{&dirLight, "uDirlight"});

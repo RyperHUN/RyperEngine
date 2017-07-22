@@ -191,6 +191,13 @@ vec2 HomogenToUV (vec4 hPos)
 	return NdcToUV (ndc);
 }
 
+float LinearizeDepth (float depth)
+{
+	float near = 1;
+	float far  = 100;
+	return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+}
+
 void main()
 {
 	vec3 normal  = normalize (FS.normal);
@@ -211,9 +218,12 @@ void main()
 	vec3 waterNormal  = vec3(normalValue.x, normalValue.z, normalValue.y);
 	waterNormal.xz    = UvToNdc (waterNormal.xz);
 	float specularVal = calcDirLightSpecular (uDirlight, normalize(waterNormal), viewDir, uMaterial);
-/////
+//////////////////////////////////////////
+
 	vec3 finalColor = vec3(0);
 	
+	vec2 invertUVNoDistrotion = HomogenToUV (FS.hPos);
+	invertUVNoDistrotion      = vec2(invertUVNoDistrotion.x, 1 - invertUVNoDistrotion.y);
 	vec2 projectedUV    = HomogenToUV (FS.hPos) + totalDistortionUV;
 	projectedUV = clamp(projectedUV, 0.001, 0.999);
 	vec2 invertUV       = vec2(projectedUV.x, 1 - projectedUV.y);
@@ -224,10 +234,17 @@ void main()
 	finalColor = mix(finalColor, vec3(0,0.2,0.6), 0.3);
 	finalColor = mix(finalColor, vec3(1), specularVal * 0.5);
 
+	//Calculating water depth
+	float waterDepthGlobal = texture(texture_refract_depth, invertUVNoDistrotion).x;
+	waterDepthGlobal       = LinearizeDepth(waterDepthGlobal) - LinearizeDepth(gl_FragCoord.z);
+
 	fs_out_col = vec4(reflectedColor.xyz, 1);
 	fs_out_col = vec4(refractedColor.xyz, 1);
-	fs_out_col = vec4(finalColor, 1);
-	fs_out_col = vec4(texture(texture_refract_depth, invertUV));
+	float alphaWater = clamp(waterDepthGlobal / 4.0, 0, 1);
+	fs_out_col = vec4(finalColor, alphaWater);
+
+
+	//fs_out_col = vec4(vec3(waterDepthGlobal / 2.0), 1);
 	//fs_out_col = vec4(abs(waterNormal), 1);
 	
 	//fs_out_col = vec4(reflectionValue, 0, 0, 1);

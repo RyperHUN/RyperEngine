@@ -117,7 +117,7 @@ private:
 	{
 		HeightMapColorImpl heightMapColorer(topLeft, bottomRight);
 
-		texId = heightMapColorer.CreateTexture<2048>(Generator);
+		texId = heightMapColorer.CreateTexture<512>(Generator);
 	}
 };
 

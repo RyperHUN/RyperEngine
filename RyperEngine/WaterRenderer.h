@@ -73,6 +73,8 @@ public:
 	}
 	void Draw (RenderState& state)
 	{
+		auto enabledBind = gl::TemporaryEnable(gl::kBlend);
+		gl::BlendFunc(gl::kSrcAlpha, gl::kOneMinusSrcAlpha);
 		waterObj->Draw(state);
 	}
 	void RenderTextures ()
