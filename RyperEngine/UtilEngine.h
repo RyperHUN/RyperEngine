@@ -57,8 +57,20 @@ namespace Util
 							Util::randomPointI(lowerBound, upperBound));
 		return vector;
 	}
-	//[0, 1]
-	inline static float randomPoint()
+	inline static float randomPoint(float lowerBound = 0.0f, float UpperBounds = 1.0f)
+	{
+		int modulus = 100000;
+		double random = rand() % modulus;
+		random = random / (double)modulus; //[0,1];
+		double scale = UpperBounds - lowerBound;
+		random *= scale;
+		random += lowerBound;
+
+		MAssert(random >= lowerBound && random <= UpperBounds, "Random point funtcion returning out of bounds value");
+		return random;
+	}
+	//[-1, 1]
+	inline static float randomPointNDC()
 	{
 		int modulus = 20000;
 		float random = rand() % modulus;
@@ -68,7 +80,7 @@ namespace Util
 	//returns random vec [-1,1]
 	inline static glm::vec3 randomVec()
 	{
-		return glm::vec3(randomPoint(), randomPoint(), randomPoint());
+		return glm::vec3(randomPointNDC(), randomPointNDC(), randomPointNDC());
 	}
 
 	static gl::PixelDataFormat GetTextureFormat (int nrComponents)
@@ -259,7 +271,10 @@ namespace Util
 
 		return texture.expose ();
 	}
-
+	static inline GLint GenRandom1DTexture ()
+	{
+		
+	}
 	static inline GLint GenRandomTexture()
 	{
 		unsigned char tex[256][256][3];
