@@ -3,6 +3,8 @@
 out vec4 fs_out_col;
 //TODO Coloring
 
+in vec3 color;
+
 ///////////////////////////////////
 ////////--------UTILITY-FUNCTIONS
 
@@ -24,5 +26,5 @@ vec2 HomogenToUV (vec4 hPos)
 
 void main()
 {
-	fs_out_col = vec4(1,0,0,1);
+	fs_out_col = vec4(abs(color),1);
 }

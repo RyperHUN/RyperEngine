@@ -31,7 +31,7 @@ class ParticleSystem
 	float deltaTime = 0;
 	GLuint randomTexture;
 
-	static const size_t MAX_PARTICLES = 100;
+	static const size_t MAX_PARTICLES = 200;
 public:
 	ParticleSystem(gShaderProgram* updateShader, gShaderProgram* renderShader)
 		:updateTechnique(updateShader), billboardTechnique (renderShader)
@@ -42,6 +42,7 @@ public:
 	void Update(float dt)
 	{
 		deltaTime = dt;
+		sumTime += deltaTime;
 	}
 
 	void InitParticleSystem(const glm::vec3& pos)
@@ -50,10 +51,10 @@ public:
 		memset(particles, 0, MAX_PARTICLES * sizeof(Particle));
 
 		Particle& launcher = particles[0];
-		launcher.type = ParticleTypes::LAUNCHER;
+		launcher.type = 0.0f; //Launcher
 		launcher.pos  = pos;
 		launcher.vel  = glm::vec3(0,0.0001, 0);
-		launcher.lifeTimeMilis = 0;
+		launcher.lifeTimeMilis = 50;
 
 		//Init buffers
 		for(size_t i = 0; i < 2; i++) 
@@ -70,8 +71,6 @@ public:
 
 	void Render(RenderState& state)
 	{
-		sumTime += deltaTime;
-
 		UpdateParticles (deltaTime);
 		
 		RenderParticles (state);
@@ -131,9 +130,14 @@ private:
 			glBindBuffer(GL_ARRAY_BUFFER, particleBuffer[currTFB].expose());
 			{
 				glEnableVertexAttribArray(0);
+				glEnableVertexAttribArray(1);
 				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, pos));
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, vel)); // position
 
 				glDrawTransformFeedback(GL_POINTS, transformFeedback[currTFB].expose());
+
+				//Particle feedback[MAX_PARTICLES];
+				//glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(feedback), feedback);
 
 				glDisableVertexAttribArray(0);
 			}

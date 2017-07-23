@@ -295,6 +295,7 @@ namespace Util
 			texture.minFilter (gl::kLinear);
 			texture.magFilter (gl::kLinear);
 			texture.wrapS (gl::kRepeat);
+			texture.wrapT (gl::kRepeat);
 		}
 		return texture.expose();
 	}
