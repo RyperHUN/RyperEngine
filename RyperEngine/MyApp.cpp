@@ -106,7 +106,8 @@ bool CMyApp::LoadShaders ()
 
 	shader_ParticleUpdate.AttachShader(GL_VERTEX_SHADER, "particleUpdate.vert");
 	shader_ParticleUpdate.AttachShader(GL_GEOMETRY_SHADER, "particleUpdate.geom");
-	if(!shader_ParticleUpdate.LinkProgram ()) return false;
+	if(!shader_ParticleUpdate.LinkWithTransformfeedback ())
+		return false;
 
 	return true;
 }
@@ -271,7 +272,7 @@ void CMyApp::InitGameObjects ()
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 
-	renderObjs.push_back(quadObj);
+	//renderObjs.push_back(quadObj);
 	//renderObjs.push_back(quadObjWater); //TODO Render separately
 	//renderObjs.push_back(cowboyObj);
 	//renderObjs.push_back(&chunkManager);
@@ -342,7 +343,7 @@ void CMyApp::Render()
 		PrepareRendering (state);
 		for(auto& obj : renderObjs)
 			obj->Draw (state);
-		waterRenderer.Draw(state);
+		//waterRenderer.Draw(state);
 		particleSystem.Render (state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);

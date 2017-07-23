@@ -24,10 +24,10 @@ class ParticleSystem
 	bool isFirst = true;
 	unsigned int currVB = 0;
 	unsigned int currTFB = 1;
-	GLuint particleBuffer[2];
-	GLuint transformFeedback[2];
+	gl::ArrayBuffer particleBuffer[2];
+	gl::TransformFeedback transformFeedback[2];
 	gShaderProgram* updateTechnique,* billboardTechnique;
-	int sumTime = 0;
+	float sumTime = 0;
 	float deltaTime = 0;
 	GLuint randomTexture;
 
@@ -56,14 +56,14 @@ public:
 		launcher.lifeTimeMilis = 0;
 
 		//Init buffers
-		glGenTransformFeedbacks (2, transformFeedback);
-		glGenBuffers(2, particleBuffer);
 		for(size_t i = 0; i < 2; i++) 
 		{
-			glBindTransformFeedback (GL_TRANSFORM_FEEDBACK, transformFeedback[i]); //Erre a transform feedbackre lesznek igazak a muveletek.
-			glBindBuffer(GL_ARRAY_BUFFER, particleBuffer[i]);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(particles), particles, GL_DYNAMIC_DRAW);
-			glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, particleBuffer[i]); //0-s indexre berakjot a buffert
+			auto bindTransform = gl::MakeTemporaryBind (transformFeedback[i]);
+			auto bindBuffer    = gl::MakeTemporaryBind (particleBuffer[i]);
+			particleBuffer[i].data(sizeof(particles), particles, gl::kDynamicDraw);
+
+			glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, particleBuffer[i].expose()); //0-s indexre berakjot a buffert
+			//TODO OGL form?
 		}
 		randomTexture = Util::GenRandom1DTexture (512);
 	}
@@ -80,7 +80,7 @@ public:
 		currTFB = (currTFB + 1) & 0x1; //[0,1]
 	}
 private:
-	void UpdateParticles (int DeltaTimeMillis)
+	void UpdateParticles (float DeltaTimeMillis)
 	{
 		updateTechnique->On();
 		{
@@ -88,10 +88,10 @@ private:
 			updateTechnique->SetUniform ("gTime", sumTime);
 			updateTechnique->SetUniform("gDeltaTimeMillis", DeltaTimeMillis);
 
-			glEnable(GL_RASTERIZER_DISCARD); //Mielott raszterizalohoz erne, abbahagyja a pipeline
+			auto discardEnable = gl::TemporaryEnable(gl::kRasterizerDiscard);
 			{
-				glBindBuffer(GL_ARRAY_BUFFER, particleBuffer[currVB]);
-				glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transformFeedback[currTFB]);
+				auto bindBuffer    = gl::MakeTemporaryBind(particleBuffer[currVB]);
+				auto bindTransform = gl::MakeTemporaryBind (transformFeedback[currTFB]);
 				glEnableVertexAttribArray(0);
 				glEnableVertexAttribArray(1);
 				glEnableVertexAttribArray(2);
@@ -102,7 +102,7 @@ private:
 				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, vel)); // velocity
 				glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, lifeTimeMilis)); // lifetime
 
-				glBeginTransformFeedback(GL_POINTS);
+				transformFeedback[currTFB].begin(gl::kPoints); //TODO or currVB??
 				{
 					if (isFirst)
 					{
@@ -110,35 +110,36 @@ private:
 						isFirst = false;
 					}
 					else
-						glDrawTransformFeedback(GL_POINTS, transformFeedback[currVB]);
+						glDrawTransformFeedback(GL_POINTS, transformFeedback[currVB].expose());
 				}
-				glEndTransformFeedback();
+				transformFeedback[currTFB].end();
 
 				glDisableVertexAttribArray(0);
 				glDisableVertexAttribArray(1);
 				glDisableVertexAttribArray(2);
 				glDisableVertexAttribArray(3);
 			}
-			glDisable(GL_RASTERIZER_DISCARD);
 		}
 		updateTechnique->Off();
 	}
 	void RenderParticles (RenderState& state)
 	{
+		gl::PointSize (5.0);
 		billboardTechnique->On();
 		{
 			billboardTechnique->SetUniform ("PV", state.PV);
-			glBindBuffer(GL_ARRAY_BUFFER, particleBuffer[currTFB]);
+			glBindBuffer(GL_ARRAY_BUFFER, particleBuffer[currTFB].expose());
 			{
 				glEnableVertexAttribArray(0);
 				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, pos));
 
-				glDrawTransformFeedback(GL_POINTS, transformFeedback[currTFB]);
+				glDrawTransformFeedback(GL_POINTS, transformFeedback[currTFB].expose());
 
 				glDisableVertexAttribArray(0);
 			}
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 		billboardTechnique->Off();
+		gl::PointSize(1.0);
 	}
 };

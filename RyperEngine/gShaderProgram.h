@@ -54,12 +54,23 @@ public:
 	{
 		shadowShader = std::unique_ptr<gShaderProgram>(new gShaderProgram);
 	}
-	template <size_t ArraySize>
+	/*template <size_t ArraySize>
 	bool LinkWithTransformfeedback (Array1D<const GLchar*, ArraySize> varyings)
 	{
-		glTransformFeedbackVaryings(m_id_program,varyings.size(), varyings,GL_INTERLEAVED_ATTRIBS);
+		glTransformFeedbackVaryings(m_id_program,varyings.size(), varyings[0],GL_INTERLEAVED_ATTRIBS);
 
 		return LinkProgram ();
+	}*/
+	bool LinkWithTransformfeedback()
+	{
+		const GLchar* Varyings[4];
+		Varyings[0] = "Type1";
+		Varyings[1] = "Position1";
+		Varyings[2] = "Velocity1";
+		Varyings[3] = "Age1";
+		glTransformFeedbackVaryings(m_id_program, 4, Varyings, GL_INTERLEAVED_ATTRIBS);
+
+		return LinkProgram();
 	}
 protected:
 	GLuint	getLocation(const char* uniform);
