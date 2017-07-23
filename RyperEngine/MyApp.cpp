@@ -106,7 +106,7 @@ bool CMyApp::LoadShaders ()
 
 	shader_ParticleUpdate.AttachShader(GL_VERTEX_SHADER, "particleUpdate.vert");
 	shader_ParticleUpdate.AttachShader(GL_GEOMETRY_SHADER, "particleUpdate.geom");
-	if(!shader_ParticleUpdate.LinkWithTransformfeedback ())
+	if(!shader_ParticleUpdate.LinkWithTransformfeedback <5>({"Type1", "Position1", "Velocity1", "Color1", "Age1"}))
 		return false;
 
 	return true;
