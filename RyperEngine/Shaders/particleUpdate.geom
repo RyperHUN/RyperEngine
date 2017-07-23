@@ -21,8 +21,8 @@ uniform float gTime;
 uniform float gRandom;
 uniform sampler1D gRandomTexture;
 uniform float gLauncherLifetime = 0.8f;
-uniform float gShellLifetime    = 3.0f;
-uniform float gSecondaryShellLifetime = 8.0f;
+uniform float gShellLifetime    = 3.4f;
+uniform float gSecondaryShellLifetime = 5.0f;
 
 #define PARTICLE_TYPE_LAUNCHER 0.0f
 #define PARTICLE_TYPE_SHELL 1.0f
@@ -52,7 +52,7 @@ void main()
             Position1 = Position0[0];                                               
             vec3 Dir = GetRandomDir(gRandom);                                  
             Dir.y = max(Dir.y, 1.0);
-            Velocity1 = normalize(Dir) * 3;
+            Velocity1 = normalize(Dir) * 4;
 			Color1 = GetRandomColor(gRandom);                                
             Age1 = 0.0;                                                       
 			EmitVertex();                                                           
@@ -71,7 +71,7 @@ void main()
     else {                                                                          
         float DeltaTimeSecs = gDeltaTimeMillis;                                                         
         vec3 DeltaP = DeltaTimeSecs * Velocity0[0];                                 
-        vec3 DeltaV = vec3(DeltaTimeSecs) * (0.0, -9.81, 0.0) * 10;                      
+        vec3 DeltaV = vec3(DeltaTimeSecs) * vec3(0.0, -9.81, 0.0) * 0.07;                      
                                                                                     
         if (Type0[0] == PARTICLE_TYPE_SHELL)  {                                     
 	        if (Age < gShellLifetime) {                                             
@@ -88,8 +88,7 @@ void main()
                 for (int i = 0 ; i < 10 ; i++) {                                    
                      Type1 = PARTICLE_TYPE_SECONDARY_SHELL;                         
                      Position1 = Position0[0];                                      
-                     vec3 Dir = GetRandomDir((gTime + i/12.0f));                   
-					 Dir.y = max(Dir.y, 0.5);
+                     vec3 Dir = GetRandomDir((gTime + i/11.0f));                   
                      Velocity1 = normalize(Dir);                             
 					 Color1 = newColor;
                      Age1 = 0.0f;                                       
