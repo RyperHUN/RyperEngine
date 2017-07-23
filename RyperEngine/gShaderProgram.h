@@ -17,7 +17,6 @@ class gShaderProgram
 {
 	std::unique_ptr<gShaderProgram> shadowShader;
 public:
-	GLuint							m_id_program;
 	gShaderProgram(void);
 	~gShaderProgram(void);
 
@@ -55,6 +54,13 @@ public:
 	{
 		shadowShader = std::unique_ptr<gShaderProgram>(new gShaderProgram);
 	}
+	template <size_t ArraySize>
+	bool LinkWithTransformfeedback (Array1D<const GLchar*, ArraySize> varyings)
+	{
+		glTransformFeedbackVaryings(m_id_program,varyings.size(), varyings,GL_INTERLEAVED_ATTRIBS);
+
+		return LinkProgram ();
+	}
 protected:
 	GLuint	getLocation(const char* uniform);
 	GLuint	getSubroutineIndex(GLenum shader_type, const char* uniform);
@@ -69,6 +75,7 @@ protected:
 	std::map< GLenum, std::vector<GLuint> >			m_subroutine_mappings; // az i-edik sub uni-hoz melyik indexû fv tartozik az enum-nak megfelelõ shader-nél
 
 	bool	m_verbose;
+	GLuint  m_id_program;
 private:
 	static GLuint BoundShader /*= 0*/;
 	static void ErrorChecking(GLuint otherShaderID)
