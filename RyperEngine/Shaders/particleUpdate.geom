@@ -16,8 +16,9 @@ out float Age1;
 
 uniform float gDeltaTimeMillis;
 uniform float gTime;
+uniform float gRandom;
 uniform sampler1D gRandomTexture;
-uniform float gLauncherLifetime = 3.1f;
+uniform float gLauncherLifetime = 0.5f;
 uniform float gShellLifetime    = 3.0f;
 uniform float gSecondaryShellLifetime = 8.0f;
 
@@ -28,7 +29,7 @@ uniform float gSecondaryShellLifetime = 8.0f;
 vec3 GetRandomDir(float TexCoord)
 {
     vec3 Dir = texture(gRandomTexture, TexCoord).xyz;
-    Dir = Dir - vec3(0.5, 0.5, 0.5); //[-0.5, 0.5]
+    Dir = Dir - vec3(0.5); //[-0.5, 0.5]
     return Dir;
 }
 
@@ -40,13 +41,13 @@ void main()
         if (Age >= gLauncherLifetime) {                                             
             Type1 = PARTICLE_TYPE_SHELL;                                            
             Position1 = Position0[0];                                               
-            vec3 Dir = GetRandomDir(gTime + gDeltaTimeMillis);                                  
-            Dir.y = max(Dir.y, 0.5);
+            vec3 Dir = GetRandomDir(gRandom);                                  
+            Dir.y = max(Dir.y, 1.0);
             Velocity1 = normalize(Dir) * 3;                                      
-            Age1 = 0.0;                                                             
-            EmitVertex();                                                           
-            EndPrimitive();                                                         
-            Age = 0.0;                                                              
+            Age1 = 0.0;                                                       
+			EmitVertex();                                                           
+			EndPrimitive();                                                         
+			Age = 0.0;                                                              
         }                                                                           
                                                                                     
         Type1 = PARTICLE_TYPE_LAUNCHER;                                             

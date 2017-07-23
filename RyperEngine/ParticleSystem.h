@@ -86,6 +86,7 @@ private:
 			updateTechnique->SetTexture ("gRandomTexture",0,randomTexture, GL_TEXTURE_1D);
 			updateTechnique->SetUniform ("gTime", sumTime);
 			updateTechnique->SetUniform("gDeltaTimeMillis", DeltaTimeMillis);
+			updateTechnique->SetUniform("gRandom", Util::randomPoint(0, 1));
 
 			auto discardEnable = gl::TemporaryEnable(gl::kRasterizerDiscard);
 			{

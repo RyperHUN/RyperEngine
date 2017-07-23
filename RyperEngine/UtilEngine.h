@@ -59,9 +59,9 @@ namespace Util
 	}
 	inline static float randomPoint(float lowerBound = 0.0f, float UpperBounds = 1.0f)
 	{
-		int modulus = 100000;
+		const int modulus = 10000; //Must be smallert then max int
 		double random = rand() % modulus;
-		random = random / (double)modulus; //[0,1];
+		random = random / (double)(modulus - 1); //[0,1];
 		double scale = UpperBounds - lowerBound;
 		random *= scale;
 		random += lowerBound;
@@ -292,8 +292,8 @@ namespace Util
 		{
 			auto val = gl::MakeTemporaryBind (texture);
 			texture.upload (gl::kRgb, Size, gl::kRgb, gl::kFloat, data.get());
-			texture.minFilter (gl::kLinear);
-			texture.magFilter (gl::kLinear);
+			texture.minFilter (gl::kNearest);
+			texture.magFilter (gl::kNearest);
 			texture.wrapS (gl::kRepeat);
 			texture.wrapT (gl::kRepeat);
 		}
