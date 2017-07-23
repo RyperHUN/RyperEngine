@@ -43,6 +43,9 @@
     <Filter Include="Shaders\Helper">
       <UniqueIdentifier>{2db0d3cf-8a45-4e51-ae29-0de1704a05b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Particles">
+      <UniqueIdentifier>{47582643-25d3-4ae3-9aec-dac073bebcc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyApp.cpp">
@@ -247,6 +250,18 @@
     </None>
     <None Include="Shaders\waterRenderer.vert">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\particleUpdate.geom">
+      <Filter>Shaders\Particles</Filter>
+    </None>
+    <None Include="Shaders\particleUpdate.vert">
+      <Filter>Shaders\Particles</Filter>
+    </None>
+    <None Include="Shaders\particleDrawer.vert">
+      <Filter>Shaders\Particles</Filter>
+    </None>
+    <None Include="Shaders\particleDrawer.frag">
+      <Filter>Shaders\Particles</Filter>
     </None>
   </ItemGroup>
 </Project>

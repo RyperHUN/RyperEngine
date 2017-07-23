@@ -121,6 +121,8 @@ protected:
 	gShaderProgram  shader_NormalVecDraw;
 	gShaderProgram  shader_Instanced;
 	gShaderProgram  shader_Water;
+	gShaderProgram  shader_ParticleUpdate;
+	gShaderProgram  shader_ParticleRender;
 
 	Chunk chunk;
 	ChunkManager chunkManager;

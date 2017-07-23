@@ -99,6 +99,14 @@ bool CMyApp::LoadShaders ()
 	shader_Water.AttachShader(GL_FRAGMENT_SHADER, "waterRenderer.frag");
 	if (!shader_Water.LinkProgram()) return false;
 
+	shader_ParticleRender.AttachShader (GL_VERTEX_SHADER, "particleDrawer.vert");
+	shader_ParticleRender.AttachShader(GL_FRAGMENT_SHADER, "particleDrawer.frag");
+	if(!shader_ParticleRender.LinkProgram ()) return false;
+
+	shader_ParticleUpdate.AttachShader(GL_VERTEX_SHADER, "particleUpdate.vert");
+	shader_ParticleUpdate.AttachShader(GL_GEOMETRY_SHADER, "particleUpdate.geom");
+	if(!shader_ParticleUpdate.LinkProgram ()) return false;
+
 	return true;
 }
 

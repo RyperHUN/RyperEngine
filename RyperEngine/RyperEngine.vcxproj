@@ -159,6 +159,10 @@
     <None Include="Shaders\LightVisualizer.vert" />
     <None Include="Shaders\normalDrawer.frag" />
     <None Include="Shaders\normalDrawer.geom" />
+    <None Include="Shaders\particleDrawer.frag" />
+    <None Include="Shaders\particleDrawer.vert" />
+    <None Include="Shaders\particleUpdate.geom" />
+    <None Include="Shaders\particleUpdate.vert" />
     <None Include="Shaders\quadTexturer.frag" />
     <None Include="Shaders\quadTexturer.vert" />
     <None Include="Shaders\shadowShader.frag" />
