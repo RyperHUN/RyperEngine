@@ -121,7 +121,7 @@ bool CMyApp::Init()
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 	glEnable(GL_MULTISAMPLE);
 
-	particleSystem.InitParticleSystem (glm::vec3 (50,50,50));
+	particleSystem.InitParticleSystem (glm::vec3 ({ -31.0326405,67.2910538,44.0244446}));
 
 	geom_Sphere = Sphere (1.0f);
 	geom_Sphere.Create (30,30);
@@ -272,8 +272,7 @@ void CMyApp::InitGameObjects ()
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 
-	//renderObjs.push_back(quadObj);
-	//renderObjs.push_back(quadObjWater); //TODO Render separately
+	renderObjs.push_back(quadObj);
 	//renderObjs.push_back(cowboyObj);
 	//renderObjs.push_back(&chunkManager);
 	renderObjs.push_back(&skyboxRenderer);
@@ -343,7 +342,8 @@ void CMyApp::Render()
 		PrepareRendering (state);
 		for(auto& obj : renderObjs)
 			obj->Draw (state);
-		//waterRenderer.Draw(state);
+		if (IsWaterRendering)
+			waterRenderer.Draw(state);
 		particleSystem.Render (state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);

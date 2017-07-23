@@ -102,17 +102,21 @@ private:
 				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, vel)); // velocity
 				glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, lifeTimeMilis)); // lifetime
 
+				auto error = glGetError();
 				transformFeedback[currTFB].begin(gl::kPoints); //TODO or currVB??
 				{
 					if (isFirst)
 					{
-						glDrawArrays(GL_POINTS, 0, 1);
+						error = glGetError();
+						gl::DrawArrays (gl::kPoints,0, 1);
+						error = glGetError();
 						isFirst = false;
 					}
 					else
 						glDrawTransformFeedback(GL_POINTS, transformFeedback[currVB].expose());
 				}
 				transformFeedback[currTFB].end();
+				error = glGetError();
 
 				glDisableVertexAttribArray(0);
 				glDisableVertexAttribArray(1);
