@@ -82,6 +82,12 @@ namespace Util
 	{
 		return glm::vec3(randomPointNDC(), randomPointNDC(), randomPointNDC());
 	}
+	inline static glm::vec3 randomVec(float lowerBound, float upperBound)
+	{
+		return glm::vec3(randomPoint(lowerBound, upperBound),
+						 randomPoint(lowerBound, upperBound),
+						 randomPoint(lowerBound, upperBound));
+	}
 
 	static gl::PixelDataFormat GetTextureFormat (int nrComponents)
 	{
@@ -271,9 +277,26 @@ namespace Util
 
 		return texture.expose ();
 	}
-	static inline GLint GenRandom1DTexture ()
+	static inline GLint GenRandom1DTexture (const size_t Size)
 	{
-		
+		auto data = std::unique_ptr<glm::vec3[]>(new glm::vec3[Size]);
+
+		for(size_t i = 0; i < Size; i++)
+		{
+			data[i] = randomVec (0,1);
+		}
+
+		GLuint texId = -1;
+		glGenTextures(1, &texId);
+		gl::Texture1D texture(texId);
+		{
+			auto val = gl::MakeTemporaryBind (texture);
+			texture.upload (gl::kRgb, Size, gl::kRgb, gl::kFloat, data.get());
+			texture.minFilter (gl::kLinear);
+			texture.magFilter (gl::kLinear);
+			texture.wrapS (gl::kRepeat);
+		}
+		return texture.expose();
 	}
 	static inline GLint GenRandomTexture()
 	{
