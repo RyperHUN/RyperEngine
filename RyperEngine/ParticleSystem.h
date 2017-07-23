@@ -3,11 +3,12 @@
 #include <gl/glew.h>
 #include "glmIncluder.h"
 #include "WrapperStructs.h"
+#include "UtilEngine.h"
 #include <oglwrap\oglwrap.h>
 
 enum ParticleTypes
 {
-	LAUNCHER
+	LAUNCHER = 0
 };
 
 struct Particle 
@@ -21,22 +22,29 @@ struct Particle
 class ParticleSystem
 {
 	bool isFirst = true;
-	unsigned int currVB;
-	unsigned int currTFB;
+	unsigned int currVB = 0;
+	unsigned int currTFB = 1;
 	GLuint particleBuffer[2];
 	GLuint transformFeedback[2];
 	gShaderProgram* updateTechnique,* billboardTechnique;
 	int sumTime = 0;
+	float deltaTime = 0;
+	GLuint randomTexture;
 
 	static const size_t MAX_PARTICLES = 100;
 public:
-	ParticleSystem()
+	ParticleSystem(gShaderProgram* updateShader, gShaderProgram* renderShader)
+		:updateTechnique(updateShader), billboardTechnique (renderShader)
 	{}
 
 	~ParticleSystem()
 	{}
+	void Update(float dt)
+	{
+		deltaTime = dt;
+	}
 
-	bool InitParticleSystem(const glm::vec3& pos)
+	void InitParticleSystem(const glm::vec3& pos)
 	{
 		Particle particles[MAX_PARTICLES];
 		memset(particles, 0, MAX_PARTICLES * sizeof(Particle));
@@ -57,26 +65,29 @@ public:
 			glBufferData(GL_ARRAY_BUFFER, sizeof(particles), particles, GL_DYNAMIC_DRAW);
 			glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, particleBuffer[i]); //0-s indexre berakjot a buffert
 		}
+		randomTexture = Util::GenRandom1DTexture (512);
 	}
 
-	void Render(int DeltaTimeMillis, RenderState& state)
+	void Render(RenderState& state)
 	{
-		sumTime += DeltaTimeMillis;
+		sumTime += deltaTime;
 
-		UpdateParticles (DeltaTimeMillis);
+		UpdateParticles (deltaTime);
 		
 		RenderParticles (state);
 
 		currVB  = currTFB;
 		currTFB = (currTFB + 1) & 0x1; //[0,1]
 	}
+private:
 	void UpdateParticles (int DeltaTimeMillis)
 	{
 		updateTechnique->On();
 		{
-			///TODO
-			//Upload global and delta time
-			//Upload random texture
+			updateTechnique->SetTexture ("gRandomTexture",0,randomTexture, GL_TEXTURE_1D);
+			updateTechnique->SetUniform ("gTime", sumTime);
+			updateTechnique->SetUniform("gDeltaTimeMillis", DeltaTimeMillis);
+
 			glEnable(GL_RASTERIZER_DISCARD); //Mielott raszterizalohoz erne, abbahagyja a pipeline
 			{
 				glBindBuffer(GL_ARRAY_BUFFER, particleBuffer[currVB]);
@@ -116,7 +127,7 @@ public:
 	{
 		billboardTechnique->On();
 		{
-			//Upload uniforms
+			billboardTechnique->SetUniform ("PV", state.PV);
 			glBindBuffer(GL_ARRAY_BUFFER, particleBuffer[currTFB]);
 			{
 				glEnableVertexAttribArray(0);

@@ -24,7 +24,8 @@ CMyApp::CMyApp(void)
 	container (glm::ivec2(50, 50)),
 	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1),
 	waterRenderer (quadTexturer,{m_width, m_height}),
-	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3))
+	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
+	particleSystem (&shader_ParticleUpdate, &shader_ParticleRender)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -118,6 +119,8 @@ bool CMyApp::Init()
 	glEnable(GL_CULL_FACE);		// kapcsoljuk be a hatrafele nezo lapok eldobasat
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 	glEnable(GL_MULTISAMPLE);
+
+	particleSystem.InitParticleSystem (glm::vec3 (50,50,50));
 
 	geom_Sphere = Sphere (1.0f);
 	geom_Sphere.Create (30,30);
@@ -290,6 +293,7 @@ void CMyApp::Update()
 	spotLight.position  = activeCamera->GetEye ();
 
 	waterRenderer.Update(delta_time);
+	particleSystem.Update (delta_time);
 
 	// Update gameObj;
 	for(auto& obj : gameObjs)
@@ -339,6 +343,7 @@ void CMyApp::Render()
 		for(auto& obj : renderObjs)
 			obj->Draw (state);
 		waterRenderer.Draw(state);
+		particleSystem.Render (state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());

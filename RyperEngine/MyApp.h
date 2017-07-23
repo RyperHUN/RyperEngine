@@ -29,6 +29,7 @@
 
 #include "Controller.h"
 #include "WaterRenderer.h"
+#include "ParticleSystem.h"
 
 // PhysX
 #include "PhysX.h"
@@ -133,6 +134,8 @@ protected:
 	TextRenderer textRenderer;
 	SkyboxRenderer skyboxRenderer;
 	WaterRenderer waterRenderer;
+
+	ParticleSystem particleSystem;
 
 	//Widgets
 	Checkbox checkbox;
