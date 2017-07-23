@@ -63,12 +63,13 @@ public:
 	}*/
 	bool LinkWithTransformfeedback()
 	{
-		const GLchar* Varyings[4];
+		const GLchar* Varyings[5]; ///ORDER IS IMPORTANT!
 		Varyings[0] = "Type1";
 		Varyings[1] = "Position1";
 		Varyings[2] = "Velocity1";
-		Varyings[3] = "Age1";
-		glTransformFeedbackVaryings(m_id_program, 4, Varyings, GL_INTERLEAVED_ATTRIBS);
+		Varyings[3] = "Color1";
+		Varyings[4] = "Age1";
+		glTransformFeedbackVaryings(m_id_program, 5, Varyings, GL_INTERLEAVED_ATTRIBS);
 
 		return LinkProgram();
 	}

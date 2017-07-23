@@ -16,6 +16,7 @@ struct Particle
 	float type;
 	glm::vec3 pos;
 	glm::vec3 vel;
+	glm::vec3 color;
 	float lifeTimeMilis;
 };
 
@@ -55,6 +56,7 @@ public:
 		launcher.pos  = pos;
 		launcher.vel  = glm::vec3(0,0.0001, 0);
 		launcher.lifeTimeMilis = 50;
+		launcher.color = glm::vec3(0,0,0);
 
 		//Init buffers
 		for(size_t i = 0; i < 2; i++) 
@@ -96,11 +98,13 @@ private:
 				glEnableVertexAttribArray(1);
 				glEnableVertexAttribArray(2);
 				glEnableVertexAttribArray(3);
+				glEnableVertexAttribArray(4);
 
 				glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, type)); // type
 				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, pos)); // position
 				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, vel)); // velocity
-				glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, lifeTimeMilis)); // lifetime
+				glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, color)); // lifetime
+				glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, lifeTimeMilis)); // lifetime
 
 				auto error = glGetError();
 				transformFeedback[currTFB].begin(gl::kPoints); //TODO or currVB??
@@ -122,6 +126,7 @@ private:
 				glDisableVertexAttribArray(1);
 				glDisableVertexAttribArray(2);
 				glDisableVertexAttribArray(3);
+				glDisableVertexAttribArray(4);
 			}
 		}
 		updateTechnique->Off();
@@ -137,7 +142,7 @@ private:
 				glEnableVertexAttribArray(0);
 				glEnableVertexAttribArray(1);
 				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, pos));
-				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, vel)); // position
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, color)); // position
 
 				glDrawTransformFeedback(GL_POINTS, transformFeedback[currTFB].expose());
 
