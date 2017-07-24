@@ -196,7 +196,8 @@ void CMyApp::InitGameObjects ()
 {
 	MaterialPtr material1     = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
 	MaterialPtr material2     = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
-	MaterialPtr materialheightMap = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.05));
+	//MaterialPtr materialheightMap = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.05));
+	MaterialPtr materialheightMap = MaterialCreator::GOLD ();
 	MaterialPtr material3     = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
 	MaterialPtr materialMan   = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
 	MaterialPtr materialWater = std::make_shared<Material>(glm::vec3(0,0,0.1f), glm::vec3(0.4,0.4,0.8f), glm::vec3(1), 40);
