@@ -234,3 +234,79 @@ public:
 		return texture.expose();
 	}
 };
+
+//Frame buffer for deferred rendering.
+//Stores Albedo, Normal, Position geometry data and rbo depth buffer
+class gFrameBuffer : public AFrameBuffer
+{
+	gl::Texture2D    texPosition;
+	gl::Texture2D    texNormal;
+	gl::Texture2D    texAlbedo;
+	gl::Renderbuffer rbo;
+public:
+	//Creates FBO with Depth + Color attachement
+	void Recreate(glm::ivec2 size) override
+	{
+		texPosition = gl::Texture2D{};
+		texNormal   = gl::Texture2D{};
+		texAlbedo   = gl::Texture2D{};
+		texPosition = gl::Texture2D{};
+		rbo = gl::Renderbuffer{};
+
+		auto val = gl::MakeTemporaryBind(*this);
+		{
+			CreateColorAndDepthAttach (size, gl::kColorAttachment2);
+			ConfigureTexture (texPosition, size, gl::kColorAttachment0);
+			ConfigureTexture (texNormal,  size, gl::kColorAttachment1);
+
+			unsigned int attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
+			glDrawBuffers(3, attachments); ///TODO OGLWrap eqvivalent??
+
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+		}
+	}
+	GLuint GetColorAttachment() override{return texAlbedo.expose();  }
+	GLuint GetNormalAttachment()		{return texNormal.expose();  }
+	GLuint GetPositionAttachment()		{return texPosition.expose();}
+	GLuint GetDepthAttachment() override
+	{
+		MAssert(false, "Depth attachment cannot be accesed on gFrameBuffer");
+		return -1;
+	}
+private:
+	void ConfigureTexture (gl::Texture2D &texture,glm::ivec2 const& size, gl::FramebufferAttachment attachment)
+	{
+		auto bind = gl::MakeTemporaryBind (texture);
+		texture.upload (gl::kRgb16F, size.x, size.y, gl::kRgb, gl::kFloat, nullptr);
+		texture.minFilter (gl::kNearest);
+		texture.magFilter (gl::kNearest);
+		this->attachTexture (attachment, texture);
+	}
+	///Have to call on before init
+	void CreateColorAndDepthAttach(glm::ivec2 size, gl::FramebufferAttachment attachment)
+	{
+		{
+			auto val = gl::MakeTemporaryBind(texAlbedo);
+			texAlbedo.upload(gl::kRgba, size.x, size.y, gl::kRgb, gl::kUnsignedByte, NULL);
+			texAlbedo.minFilter(gl::kLinear);
+			texAlbedo.magFilter(gl::kLinear);
+			texAlbedo.wrapS(gl::kClampToBorder);
+			texAlbedo.wrapT(gl::kClampToBorder);
+			texAlbedo.borderColor(glm::vec4(1, 0, 0, 1));
+
+		}
+		// attach it to currently bound framebuffer object
+		this->attachTexture(gl::kColorAttachment0, texAlbedo, 0);
+
+		//CReate DEPTH render buffer object
+		//RBO faster > texture but write only
+		{
+			auto val = gl::MakeTemporaryBind(rbo);
+
+			rbo.storage(gl::kDepthStencil, size.x, size.y);
+		}
+		//Attach
+		this->attachBuffer(gl::kDepthStencilAttachment, rbo);
+	}
+};
