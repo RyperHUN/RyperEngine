@@ -180,11 +180,38 @@ private:
 
 struct QuadTexturer
 {
+	enum POS
+	{
+		TOP_RIGHT, TOP_LEFT, BOTTOM_LEFT, BOTTOM_RIGHT, FULL_CENTER
+	};
 	gShaderProgram* shader;
 	Geometry * geom;
 	QuadTexturer(Geometry * geom, gShaderProgram* shader)
 		:shader(shader), geom(geom)
 	{}
+	void Draw(GLuint texId, bool isInvertY , POS pos, float scaleMultiplier = 1.0)
+	{
+		const glm::vec3 scale = glm::vec3(0.5 * scaleMultiplier, 0.5 * scaleMultiplier, 1);
+
+		switch(pos)
+		{
+		case TOP_RIGHT:
+			Draw(texId, isInvertY, glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(scale)); //Right top corner
+			break;
+		case TOP_LEFT:
+			Draw(texId, isInvertY, glm::translate(glm::vec3(-0.5, 0.5, 0))*glm::scale(scale)); 
+			break;
+		case BOTTOM_LEFT:
+			Draw(texId, isInvertY, glm::translate(glm::vec3(-0.5, -0.5, 0))*glm::scale(scale));
+			break;
+		case BOTTOM_RIGHT:
+			Draw(texId, isInvertY, glm::translate(glm::vec3(0.5, -0.5, 0))*glm::scale(scale));
+			break;
+		case FULL_CENTER:
+			Draw(texId, isInvertY, glm::mat4(1.0));
+			break;
+		}
+	}
 	void Draw(GLuint texId, bool isInvertY = false, glm::mat4 Model = glm::mat4(1.0))
 	{
 		shader->On(); //Shader debug texturer

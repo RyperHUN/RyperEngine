@@ -79,10 +79,8 @@ public:
 	}
 	void RenderTextures ()
 	{
-		glm::mat4 ModelRT = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Right top corner
-		quadTexturer.Draw (GetRefractTexture(),true, ModelRT);
-		glm::mat4 ModelLT = glm::translate(glm::vec3(-0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Left Top Corner
-		quadTexturer.Draw (GetReflectTexture(), false, ModelLT);
+		quadTexturer.Draw (GetRefractTexture(),true, QuadTexturer::POS::TOP_RIGHT, 0.75);
+		quadTexturer.Draw (GetReflectTexture(), false, QuadTexturer::POS::TOP_LEFT, 0.75);
 	}
 	GLuint GetReflectTexture ()
 	{

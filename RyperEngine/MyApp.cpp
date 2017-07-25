@@ -353,10 +353,10 @@ void CMyApp::Render()
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Shadow map debug texture drawing
-		//if (IsWaterRendering) 
-		//	waterRenderer.RenderTextures ();
-		glm::mat4 ModelRT = glm::translate(glm::vec3(0.5, 0.5, 0))*glm::scale(glm::vec3(0.35, 0.35, 1)); //Right top corner
-		//quadTexturer.Draw (tex_randomPerlin,false,ModelRT);
+		if (IsWaterRendering) 
+			waterRenderer.RenderTextures ();
+		
+		//quadTexturer.Draw (tex_randomPerlin,false,QuadTexturer::POS::TOP_RIGHT);
 
 
 		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
