@@ -109,6 +109,10 @@ bool CMyApp::LoadShaders ()
 	if(!shader_ParticleUpdate.LinkWithTransformfeedback <5>({"Type1", "Position1", "Velocity1", "Color1", "Age1"}))
 		return false;
 
+	shader_DeferredGeometry.AttachShader(GL_VERTEX_SHADER, "deferredShader.vert");
+	shader_DeferredGeometry.AttachShader(GL_FRAGMENT_SHADER, "deferredShader.frag");
+	if (!shader_DeferredGeometry.LinkProgram()) return false;
+
 	return true;
 }
 
@@ -352,9 +356,9 @@ void CMyApp::Render()
 		//boundingBoxRenderer.Draw(state);
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
-		//////////////////////////////Shadow map debug texture drawing
-		if (IsWaterRendering) 
-			waterRenderer.RenderTextures ();
+		//////////////////////////////Other debug drawings
+		//if (IsWaterRendering) 
+		//	waterRenderer.RenderTextures ();
 		
 		//quadTexturer.Draw (tex_randomPerlin,false,QuadTexturer::POS::TOP_RIGHT);
 
@@ -565,4 +569,45 @@ void CMyApp::Clean()
 
 	delete mesh_Suzanne;
 	delete m_cow_mesh;
+}
+
+void CMyApp::InitDeferred()
+{
+	renderObjs.clear();
+
+	for(int i = 0 ; i < 30; i++)
+	{
+		GameObj *gameObj  = new GameObj{&shader_DeferredGeometry, &geom_Sphere, MaterialCreator::GetRandomMaterial (), Util::randomVec(-10, 10), Util::randomVec(0.5,3)};
+		renderObjs.push_back (gameObj);
+	}
+}
+
+void CMyApp::RenderDeferred()
+{
+	static bool isFirst = true;
+	if(isFirst) {
+		isFirst = false;
+		InitDeferred ();
+	}
+
+	RenderState state;
+	state.wEye = activeCamera->GetEye();
+	state.shaderLights = &shaderLights;
+	PrepareRendering (state);
+
+
+	{
+		fbo_Deferred.Recreate (glm::ivec2(m_width, m_height));
+		auto bind = gl::MakeTemporaryBind(fbo_Deferred);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
+
+		for(auto obj : renderObjs)
+			obj->Draw (state);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
+
+	quadTexturer.Draw (fbo_Deferred.GetColorAttachment(), true, QuadTexturer::POS::TOP_LEFT);
+	quadTexturer.Draw(fbo_Deferred.GetNormalAttachment(), true, QuadTexturer::POS::TOP_RIGHT);
+	quadTexturer.Draw(fbo_Deferred.GetPositionAttachment(), true, QuadTexturer::POS::BOTTOM_RIGHT);
 }

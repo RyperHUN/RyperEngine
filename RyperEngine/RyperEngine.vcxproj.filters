@@ -46,6 +46,9 @@
     <Filter Include="Shaders\Particles">
       <UniqueIdentifier>{47582643-25d3-4ae3-9aec-dac073bebcc3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Deferred">
+      <UniqueIdentifier>{6ea1ebfa-d824-4fac-af37-6dc5c1f7d8ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyApp.cpp">
@@ -262,6 +265,12 @@
     </None>
     <None Include="Shaders\particleDrawer.frag">
       <Filter>Shaders\Particles</Filter>
+    </None>
+    <None Include="Shaders\deferredShader.frag">
+      <Filter>Shaders\Deferred</Filter>
+    </None>
+    <None Include="Shaders\deferredShader.vert">
+      <Filter>Shaders\Deferred</Filter>
     </None>
   </ItemGroup>
 </Project>

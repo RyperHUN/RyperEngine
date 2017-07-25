@@ -255,7 +255,13 @@ public:
 
 		auto val = gl::MakeTemporaryBind(*this);
 		{
-			CreateColorAndDepthAttach (size, gl::kColorAttachment2);
+			{
+				auto val = gl::MakeTemporaryBind(rbo);
+				rbo.storage(gl::kDepthStencil, size.x, size.y);
+			}
+			this->attachBuffer(gl::kDepthStencilAttachment, rbo);
+
+			ConfigureTexture (texAlbedo,size, gl::kColorAttachment2);
 			ConfigureTexture (texPosition, size, gl::kColorAttachment0);
 			ConfigureTexture (texNormal,  size, gl::kColorAttachment1);
 
@@ -282,31 +288,5 @@ private:
 		texture.minFilter (gl::kNearest);
 		texture.magFilter (gl::kNearest);
 		this->attachTexture (attachment, texture);
-	}
-	///Have to call on before init
-	void CreateColorAndDepthAttach(glm::ivec2 size, gl::FramebufferAttachment attachment)
-	{
-		{
-			auto val = gl::MakeTemporaryBind(texAlbedo);
-			texAlbedo.upload(gl::kRgba, size.x, size.y, gl::kRgb, gl::kUnsignedByte, NULL);
-			texAlbedo.minFilter(gl::kLinear);
-			texAlbedo.magFilter(gl::kLinear);
-			texAlbedo.wrapS(gl::kClampToBorder);
-			texAlbedo.wrapT(gl::kClampToBorder);
-			texAlbedo.borderColor(glm::vec4(1, 0, 0, 1));
-
-		}
-		// attach it to currently bound framebuffer object
-		this->attachTexture(gl::kColorAttachment0, texAlbedo, 0);
-
-		//CReate DEPTH render buffer object
-		//RBO faster > texture but write only
-		{
-			auto val = gl::MakeTemporaryBind(rbo);
-
-			rbo.storage(gl::kDepthStencil, size.x, size.y);
-		}
-		//Attach
-		this->attachBuffer(gl::kDepthStencilAttachment, rbo);
 	}
 };

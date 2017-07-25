@@ -46,6 +46,8 @@ public:
 
 	void Update();
 	void Render();
+	void RenderDeferred ();
+	void InitDeferred ();
 
 //Event handlers
 	void KeyboardDown(SDL_KeyboardEvent&);
@@ -104,6 +106,7 @@ protected:
 	glFrameBuffer fbo_Rendered;
 	ShadowFrameBuffer fbo_Shadow;
 	MultiFrameBuffer fbo_RenderedMSAA;
+	gFrameBuffer fbo_Deferred;
 	
 	const GLuint SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
 
@@ -124,6 +127,8 @@ protected:
 	gShaderProgram  shader_Water;
 	gShaderProgram  shader_ParticleUpdate;
 	gShaderProgram  shader_ParticleRender;
+
+	gShaderProgram  shader_DeferredGeometry;
 
 	Chunk chunk;
 	ChunkManager chunkManager;

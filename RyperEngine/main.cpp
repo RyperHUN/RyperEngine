@@ -130,6 +130,7 @@ int main( int argc, char* args[] )
 
 	// véget kell-e érjen a program futása?
 	bool quit = false;
+	bool isDeferred = true;
 	// feldolgozandó üzenet ide kerül
 	SDL_Event ev;
 
@@ -188,8 +189,12 @@ int main( int argc, char* args[] )
 				}
 			}
 
+
 			app.Update();
-			app.Render();
+			if(!isDeferred)
+				app.Render();
+			else
+				app.RenderDeferred ();
 
 			//Show Fps
 			frameCount++;
