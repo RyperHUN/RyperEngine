@@ -219,4 +219,34 @@ public:
 		return std::make_shared<Material>
 			(glm::vec3(0.05, 0.05, 0.0), glm::vec3(0.5, 0.5, 0.4), glm::vec3(0.7, 0.7, 0.04), .078125 * SHININESS_MULTIPLIER);
 	}
+	static MaterialPtr GetRandomMaterial()
+	{
+		std::vector<std::function<MaterialPtr()>> functions;
+		functions.push_back(MaterialCreator::EMERALD);
+		functions.push_back(MaterialCreator::JADE);
+		functions.push_back(MaterialCreator::OBSIDIAN);
+		functions.push_back(MaterialCreator::PEARL);
+		functions.push_back(MaterialCreator::RUBY);
+		functions.push_back(MaterialCreator::TURQUOISE);
+		functions.push_back(MaterialCreator::BRASS);
+		functions.push_back(MaterialCreator::BRONZE);
+		functions.push_back(MaterialCreator::CHROME);
+		functions.push_back(MaterialCreator::COPPER);
+		functions.push_back(MaterialCreator::GOLD);
+		functions.push_back(MaterialCreator::SILVER);
+		functions.push_back(MaterialCreator::BLACK_PLASTIC);
+		functions.push_back(MaterialCreator::CYAN_PLASTIC);
+		functions.push_back(MaterialCreator::GREEN_PLASTIC);
+		functions.push_back(MaterialCreator::RED_PLASTIC);
+		functions.push_back(MaterialCreator::WHITE_PLASTIC);
+		functions.push_back(MaterialCreator::YELLOW_PLASTIC);
+		functions.push_back(MaterialCreator::BLACK_RUBBER);
+		functions.push_back(MaterialCreator::CYAN_RUBBER);
+		functions.push_back(MaterialCreator::GREEN_RUBBER);
+		functions.push_back(MaterialCreator::RED_RUBBER);
+		functions.push_back(MaterialCreator::YELLOW_RUBBER);
+
+		int index = rand() % functions.size();
+		return functions[index]();
+	}
 };
