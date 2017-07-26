@@ -272,5 +272,8 @@
     <None Include="Shaders\deferredShader.vert">
       <Filter>Shaders\Deferred</Filter>
     </None>
+    <None Include="Shaders\deferredLightPass.frag">
+      <Filter>Shaders\Deferred</Filter>
+    </None>
   </ItemGroup>
 </Project>

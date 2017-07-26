@@ -151,6 +151,7 @@
     <None Include="ClassDiagram.cd" />
     <None Include="Shaders\boundingBoxShader.frag" />
     <None Include="Shaders\boundingBoxShader.vert" />
+    <None Include="Shaders\deferredLightPass.frag" />
     <None Include="Shaders\deferredShader.frag" />
     <None Include="Shaders\deferredShader.vert" />
     <None Include="Shaders\frustumVisualizer.frag" />

@@ -113,6 +113,10 @@ bool CMyApp::LoadShaders ()
 	shader_DeferredGeometry.AttachShader(GL_FRAGMENT_SHADER, "deferredShader.frag");
 	if (!shader_DeferredGeometry.LinkProgram()) return false;
 
+	shader_DeferredLightPass.AttachShader(GL_VERTEX_SHADER, "quadTexturer.vert");
+	shader_DeferredLightPass.AttachShader(GL_FRAGMENT_SHADER, "deferredLightPass.frag");
+	if (!shader_DeferredLightPass.LinkProgram()) return false;
+
 	return true;
 }
 
@@ -575,6 +579,7 @@ void CMyApp::InitDeferred()
 {
 	renderObjs.clear();
 
+	renderObjs.push_back(&skyboxRenderer);
 	for(int i = 0 ; i < 30; i++)
 	{
 		GameObj *gameObj  = new GameObj{&shader_DeferredGeometry, &geom_Sphere, MaterialCreator::GetRandomMaterial (), Util::randomVec(-10, 10), Util::randomVec(0.5,3)};
@@ -584,6 +589,7 @@ void CMyApp::InitDeferred()
 
 void CMyApp::RenderDeferred()
 {
+	static const bool ShowOnlyTex = false;
 	static bool isFirst = true;
 	if(isFirst) {
 		isFirst = false;
@@ -607,7 +613,33 @@ void CMyApp::RenderDeferred()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
 
-	quadTexturer.Draw (fbo_Deferred.GetColorAttachment(), true, QuadTexturer::POS::TOP_LEFT);
-	quadTexturer.Draw(fbo_Deferred.GetNormalAttachment(), true, QuadTexturer::POS::TOP_RIGHT);
-	quadTexturer.Draw(fbo_Deferred.GetPositionAttachment(), true, QuadTexturer::POS::BOTTOM_RIGHT);
+	if (ShowOnlyTex)
+	{
+		quadTexturer.Draw (fbo_Deferred.GetColorAttachment(), true, QuadTexturer::POS::TOP_LEFT);
+		quadTexturer.Draw(fbo_Deferred.GetNormalAttachment(), true, QuadTexturer::POS::TOP_RIGHT);
+		quadTexturer.Draw(fbo_Deferred.GetPositionAttachment(), true, QuadTexturer::POS::BOTTOM_RIGHT);
+	}
+	else
+	{
+		{
+			auto disabledDepth = gl::TemporaryDisable (gl::kDepthTest);
+			gShaderProgram * shader = &shader_DeferredLightPass;
+			shader->On();
+			{
+				shader->SetUniform ("M", glm::mat4(1.0));
+				for (auto& light : *(state.shaderLights))
+					light.uploadToGPU(*shader);
+				shader->SetUniform("uwEye", state.wEye);
+				shader->SetTexture("tex_pos",0, fbo_Deferred.GetPositionAttachment());
+				shader->SetTexture("tex_normal", 1, fbo_Deferred.GetNormalAttachment());
+				shader->SetTexture("tex_color", 2, fbo_Deferred.GetColorAttachment());
+
+				buffer_Quad.On();
+				buffer_Quad.Draw ();
+				buffer_Quad.Off();
+			}
+			shader->Off();
+		}
+		lightRenderer.Draw (state.PV);
+	}
 }

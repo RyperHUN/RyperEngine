@@ -129,6 +129,7 @@ protected:
 	gShaderProgram  shader_ParticleRender;
 
 	gShaderProgram  shader_DeferredGeometry;
+	gShaderProgram  shader_DeferredLightPass;
 
 	Chunk chunk;
 	ChunkManager chunkManager;
