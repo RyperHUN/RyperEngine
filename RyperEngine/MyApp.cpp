@@ -187,13 +187,13 @@ bool CMyApp::Init()
 	geom_IslandHeight.Create(30,30);
 	geom_PerlinHeight.Create(40,40);
 
-	shaderLights.push_back(ShaderLight{&spotLight,"uSpotlight"});
-	shaderLights.push_back(ShaderLight{&dirLight, "uDirlight"});
+	lightManager.AddLight (&spotLight, Light::TYPE::SPOT);
+	lightManager.AddLight(&dirLight, Light::TYPE::DIRECTIONAL);
 	for(int i = 0; i < pointLight.size(); i++)
 	{
-		shaderLights.push_back(ShaderLight{ &pointLight[i], "uPointlights[" + std::to_string(i) + "]" });
+		lightManager.AddLight (&pointLight[i], Light::TYPE::POINT);
 	}
-	lightRenderer = LightRenderer(&geom_Box, &shader_LightRender);
+	lightRenderer = LightRenderer(&geom_Box, &shader_LightRender); ///TODO Light renderer - lightManager kapcsolat kulon refek helyett!!
 	for (auto& light : pointLight)
 		lightRenderer.AddLight(&light);
 	lightRenderer.AddLight(&dirLight);
@@ -265,8 +265,9 @@ void CMyApp::InitScene_InsideBox ()
 	MaterialPtr materialNormal = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1), 25);
 	materialNormal->SetTexture (tex_woodenBoxDiffuse, tex_woodenBoxSpecular);
 	
-	shaderLights.clear();
-	shaderLights.push_back(ShaderLight{ &dirLight, "uDirlight" });
+	lightManager.Clear();
+	lightManager.AddLight(&spotLight, Light::TYPE::SPOT);
+	lightManager.AddLight(&dirLight, Light::TYPE::DIRECTIONAL);
 
 	GameObj * OuterBox = new GameObj(&shader_Simple, &geom_Box, materialNormal, glm::vec3(0), glm::vec3(50));
 	for (int i = 0 ; i < 7; i++)
@@ -316,7 +317,7 @@ void CMyApp::Update()
 	// Update gameObj;
 	for(auto& obj : gameObjs)
 		obj->Animate (t, delta_time);
-	for(auto& light : shaderLights)
+	for(auto& light : lightManager.shaderLights)
 		light.light->Animate(t, delta_time);
 
 	if (gameObjs.size() > 0 && dynamic_cast<AnimatedCharacter*>(gameObjs.front()) != nullptr)
@@ -332,7 +333,7 @@ void CMyApp::Render()
 {
 	RenderState state;
 	state.wEye = activeCamera->GetEye ();
-	state.shaderLights = &shaderLights;
+	state.lightManager = &lightManager;
 	//FrustumCulling (secondaryCamera);
 
 	//////////////////////////////Shadow Rendering!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -603,7 +604,7 @@ void CMyApp::RenderDeferred()
 
 	RenderState state;
 	state.wEye = activeCamera->GetEye();
-	state.shaderLights = &shaderLights;
+	state.lightManager = &lightManager;
 	PrepareRendering (state);
 
 
@@ -632,8 +633,7 @@ void CMyApp::RenderDeferred()
 			shader->On();
 			{
 				shader->SetUniform ("M", glm::mat4(1.0));
-				for (auto& light : *(state.shaderLights))
-					light.uploadToGPU(*shader);
+				state.lightManager->Upload(shader);
 				shader->SetUniform("uwEye", state.wEye);
 				shader->SetTexture("tex_pos",0, fbo_Deferred.GetPositionAttachment());
 				shader->SetTexture("tex_normal", 1, fbo_Deferred.GetNormalAttachment());

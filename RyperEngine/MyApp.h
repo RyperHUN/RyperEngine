@@ -157,7 +157,7 @@ protected:
 	PhysX physX;
 	Engine::Controller controller;
 
-	std::vector<ShaderLight> shaderLights;
+	LightManager lightManager;
 	std::vector<GameObj*> gameObjs; ///TODO Delete
 	std::vector<IRenderable*> renderObjs; 
 };

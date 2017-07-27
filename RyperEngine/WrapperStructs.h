@@ -9,7 +9,7 @@ struct RenderState
 	glm::vec3 wEye;
 	glm::mat4 PV, M, Minv, rayDirMatrix;
 	glm::mat4 LightSpaceMtx;
-	std::vector<ShaderLight> *shaderLights;
+	LightManager *lightManager;
 	MaterialPtr material = nullptr;
 	Geometry * geom = nullptr;
 	gShaderProgram * shader = nullptr;

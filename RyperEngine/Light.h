@@ -9,6 +9,11 @@
 
 struct Light
 {
+	enum TYPE
+	{
+		DIRECTIONAL, POINT, SPOT
+	};
+
 	glm::vec3 position;
 	glm::vec3 color;
 	Light()
@@ -111,6 +116,45 @@ public:
 	{
 		attuentationLinear += sin(time * 10) * dt * 0.1;
 		attuentationLinear = glm::clamp(attuentationLinear, 0.2f, 1.0f);
+	}
+};
+
+struct LightManager
+{
+	std::vector<ShaderLight> shaderLights;
+	int directionalNum = 0;
+	int spotNum = 0;
+	int pointNum = 0;
+	void AddLight (Light * light, Light::TYPE type)
+	{
+		if(type == Light::TYPE::DIRECTIONAL)
+		{
+			directionalNum++; //TODO More directional lights
+			shaderLights.push_back(ShaderLight{light, "uDirlight"});
+		}
+		if(type == Light::TYPE::POINT)
+		{
+			shaderLights.push_back(ShaderLight{ light, "uPointlights[" + std::to_string(pointNum) + "]" });
+			pointNum++;
+		}
+		if(type == Light::TYPE::SPOT)
+		{
+			spotNum++;
+			shaderLights.push_back(ShaderLight{ light, "uSpotlight" });
+		}
+	}
+	void Upload (gShaderProgram * shader)
+	{
+		for(auto& light : shaderLights)
+			light.uploadToGPU (*shader);
+		shader->SetUniform ("uPointLightNum", pointNum);
+	}
+	void Clear ()
+	{
+		shaderLights.clear();
+		directionalNum = 0;
+		spotNum = 0;
+		pointNum = 0;
 	}
 };
 

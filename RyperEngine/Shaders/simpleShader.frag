@@ -55,6 +55,7 @@ uniform samplerCube skyBox;
 
 uniform Material uMaterial;
 uniform vec3 uwEye;
+uniform int  uPointLightNum;
 
 //TODO define only for max light, and upload used point light number
 #define POINT_LIGHT_NUM 3
@@ -182,7 +183,7 @@ void main()
 	vec2 texCoord = vec2(FS.texCoord.x, FS.texCoord.y);
 	vec3 color = uMaterial.ka * texture(texture_diffuse, texCoord).xyz;
 	
-	for(int i = 0; i < POINT_LIGHT_NUM; i++)
+	for(int i = 0; i < uPointLightNum; i++)
 		color += calcPointLight(uPointlights[i],normal,viewDir, FS.wFragPos, texCoord, uMaterial);
 	color += calcSpotLight (uSpotlight, FS.wFragPos, texCoord, uMaterial);
 

@@ -25,8 +25,7 @@ struct IRenderable {
 			shader->SetUniform("uPlane", state.planeEquation);
 
 			///TODO
-			for (auto& light : *(state.shaderLights))
-				light.uploadToGPU(*shader);
+			state.lightManager->Upload (shader);
 			if(state.material)
 				state.material->uploadToGpu(*shader);
 
