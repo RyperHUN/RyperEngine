@@ -518,7 +518,7 @@ float CMyApp::ReadDepthValueNdc (float pX, float pY)
 
 void CMyApp::BindFrameBuffersForRender()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	gl::Bind (fbo_Original);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
 
 														///////////////////////////Normal rendering
@@ -541,23 +541,16 @@ void CMyApp::HandleFrameBufferRendering()
 	if (IsFrameBufferRendering)
 	{
 		if (IsMSAAOn)
-		{
-			fbo_Rendered.Off();
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.expose ());
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_Rendered.expose());
-			glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		}
+			AFrameBuffer::CopyValue (fbo_RenderedMSAA, fbo_Rendered, glm::ivec2(m_width,m_height), GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		gl::Bind(fbo_Original);
 		quadTexturer.Draw(fbo_Rendered.GetColorAttachment (), true);
 	}
 	else if (IsMSAAOn)
 	{
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_RenderedMSAA.expose());
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		AFrameBuffer::CopyValue (fbo_RenderedMSAA, fbo_Original, glm::ivec2(m_width, m_height), GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		gl::Bind(fbo_Original);
 	}
 }
 
@@ -611,7 +604,7 @@ void CMyApp::RenderDeferred()
 		for(auto obj : renderObjs)
 			obj->Draw (state);
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	gl::Bind(fbo_Original);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
 
 	if (ShowOnlyTex)
@@ -643,7 +636,7 @@ void CMyApp::RenderDeferred()
 		}
 		{
 			//Copy the depth values to the draw buffer
-			AFrameBuffer::CopyValues (fbo_Deferred, fbo_Original, glm::ivec2(m_width,m_height), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			AFrameBuffer::CopyValue (fbo_Deferred, fbo_Original, glm::ivec2(m_width,m_height), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 
 		auto bind = gl::MakeTemporaryBind (fbo_Original);

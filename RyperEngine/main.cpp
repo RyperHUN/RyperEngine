@@ -13,6 +13,8 @@
 
 #include "MyApp.h"
 
+const bool IsDeferred = false;
+
 void exitProgram()
 {
 	SDL_Quit();
@@ -130,7 +132,6 @@ int main( int argc, char* args[] )
 
 	// véget kell-e érjen a program futása?
 	bool quit = false;
-	bool isDeferred = true;
 	// feldolgozandó üzenet ide kerül
 	SDL_Event ev;
 
@@ -191,7 +192,7 @@ int main( int argc, char* args[] )
 
 
 			app.Update();
-			if(!isDeferred)
+			if(!IsDeferred)
 				app.Render();
 			else
 				app.RenderDeferred ();

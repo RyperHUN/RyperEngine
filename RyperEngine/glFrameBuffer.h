@@ -25,7 +25,7 @@ public:
 	virtual GLuint GetColorAttachment() = 0;
 	virtual GLuint GetDepthAttachment() = 0;
 
-	static void CopyValues (gl::Framebuffer &from, gl::Framebuffer &to, glm::ivec2 fboSize, GLenum valueToCopy, GLenum interp = GL_NEAREST)
+	static void CopyValue (gl::Framebuffer &from, gl::Framebuffer &to, glm::ivec2 fboSize, GLenum valueToCopy, GLenum interp = GL_NEAREST)
 	{
 		MAssert(valueToCopy == GL_DEPTH_BUFFER_BIT || valueToCopy == GL_COLOR_BUFFER_BIT, "Error valueToCopy not valid");
 		MAssert(interp == GL_NEAREST || interp == GL_LINEAR, "Error interp not valid");
