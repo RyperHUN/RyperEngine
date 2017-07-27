@@ -365,7 +365,7 @@ void CMyApp::Render()
 		//if (IsWaterRendering) 
 		//	waterRenderer.RenderTextures ();
 		
-		//quadTexturer.Draw (tex_randomPerlin,false,QuadTexturer::POS::TOP_RIGHT);
+		quadTexturer.Draw (fbo_Shadow.GetDepthAttachment(),false,QuadTexturer::POS::TOP_RIGHT, 0.8);
 
 
 		WidgetRenderState state { screenSize, quadTexturer, textRenderer };

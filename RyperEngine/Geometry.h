@@ -75,6 +75,10 @@ namespace Geom{
 			assert(false); //Cannot reach this
 			return min;
 		}
+		glm::vec3 GetCenter ()
+		{
+			return (max + min) / 2.0f;
+		}
 		static bool IsCollidingAABB(Geom::Box &lhs, Geom::Box &rhs)
 		{
 			return (lhs.min.x <= rhs.max.x && lhs.max.x >= rhs.min.x) &&
@@ -163,7 +167,7 @@ struct Geometry {
 	glm::mat4 getLocalMatrixForBoxGeom() //You have to multiply it with Model matrix to get exact position
 	{
 		Geom::Box box = getLocalAABB();
-		glm::vec3 localCenterPos = (box.max + box.min) / 2.0f;
+		glm::vec3 localCenterPos = box.GetCenter ();
 		glm::vec3 localScale = box.max - localCenterPos;
 
 		return glm::translate(localCenterPos) * glm::scale(localScale);

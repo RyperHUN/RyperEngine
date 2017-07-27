@@ -57,11 +57,17 @@ public:
 
 	glm::mat4 GetLightMatrixDirectionLight (glm::vec3 const& lightDir)
 	{
-		glm::mat4 lightProjection = glm::ortho(-60.0f, 60.0f, 100.0f, -100.0f, -80.0f, 80.0f); //TODO Parameterized with the actual Camera
-		glm::vec3 pos = -lightDir * 4.0f;
-		glm::mat4 lightView = glm::lookAt(pos,
-			glm::vec3(0.0f),
+
+		FrustumG* frustum = this->GetFrustum ();
+		Geom::Box frustumBox = frustum->GetBox ();
+		glm::mat4 lightView = glm::lookAt(frustumBox.GetCenter (),
+			frustumBox.GetCenter() + lightDir,
 			glm::vec3(0.0f, 1.0f, 0.0f));
+
+		glm::vec3 min = Util::CV::Transform (lightView, frustumBox.min);
+		glm::vec3 max = Util::CV::Transform(lightView, frustumBox.max);
+
+		glm::mat4 lightProjection = glm::ortho(min.x, max.x, min.y, max.y, min.z, max.z); //TODO Parameterized with the actual Camera
 
 		return lightProjection * lightView; //LightSpace matrix
 	}
