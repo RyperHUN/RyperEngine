@@ -57,7 +57,7 @@ namespace Geom{
 		Box(glm::vec3 max, glm::vec3 min)
 			:max(max), min(min)
 		{}
-		glm::vec3 getVertex(int n)
+		glm::vec3 getVertex(int n) const
 		{
 			assert(0 <= n && n < 8);
 			switch(n)
@@ -75,13 +75,13 @@ namespace Geom{
 			assert(false); //Cannot reach this
 			return min;
 		}
-		glm::vec3 GetCenter ()
+		glm::vec3 GetCenter () const
 		{
 			return (max + min) / 2.0f;
 		}
-		float GetWidth  (){return (max.x - min.x);}
-		float GetHeight () { return (max.y - min.y); }
-		float GetDepth  () { return (max.z - min.z); }
+		float GetWidth  () const{return (max.x - min.x);}
+		float GetHeight () const{ return (max.y - min.y); }
+		float GetDepth  () const{ return (max.z - min.z); }
 		static bool IsCollidingAABB(Geom::Box &lhs, Geom::Box &rhs)
 		{
 			return (lhs.min.x <= rhs.max.x && lhs.max.x >= rhs.min.x) &&
@@ -104,6 +104,14 @@ namespace Geom{
 			}
 			Geom::Box box {min, max};
 			return box;
+		}
+		glm::mat4 CreateOrthographicProjection () const
+		{
+			float widthHalf  = GetWidth() / 2;
+			float heightHalf = GetHeight() / 2;
+			float depthHalf  = GetDepth() / 2;
+
+			return glm::ortho(-widthHalf, widthHalf, -heightHalf, heightHalf, -depthHalf, depthHalf);
 		}
 	};
 	struct Plane

@@ -64,12 +64,7 @@ public:
 			frustumBox.GetCenter() + lightDir,
 			glm::vec3(0.0f, 1.0f, 0.0f));
 
-
-		float widthHalf = frustumBox.GetWidth () / 2;
-		float heightHalf = frustumBox.GetHeight () / 2;
-		float depthHalf  = frustumBox.GetDepth () / 2;
-
-		glm::mat4 lightProjection = glm::ortho(-widthHalf, widthHalf, -heightHalf, heightHalf, -depthHalf, depthHalf); //TODO Parameterized with the actual Camera
+		glm::mat4 lightProjection = frustumBox.CreateOrthographicProjection ();
 
 		return lightProjection * lightView; //LightSpace matrix
 	}
