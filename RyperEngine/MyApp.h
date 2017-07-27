@@ -51,6 +51,7 @@ public:
 
 	void InitScene_Water ();
 	void InitScene_Minecraft ();
+	void InitScene_InsideBox ();
 
 //Event handlers
 	void KeyboardDown(SDL_KeyboardEvent&);
@@ -77,6 +78,8 @@ protected:
 	GLuint tex_randomPerlin;
 	GLuint tex_waterDuDv;
 	GLuint tex_waterNormal;
+	GLuint tex_woodenBoxDiffuse;
+	GLuint tex_woodenBoxSpecular;
 
 	//TODO Camera manager
 	int cameraFocusIndex = -1; //TODO better if pointer to gameobj
@@ -105,7 +108,7 @@ protected:
 	glm::ivec2 screenSize {640, 480};
 	bool IsFrameBufferRendering = false;
 	bool IsMSAAOn = true;
-	bool IsWaterRendering = true;
+	bool IsWaterRendering = false;
 	glFrameBuffer fbo_Rendered;
 	ShadowFrameBuffer fbo_Shadow;
 	MultiFrameBuffer fbo_RenderedMSAA;

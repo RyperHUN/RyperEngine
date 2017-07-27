@@ -57,6 +57,16 @@ struct Material
 		}
 		MAssert(false, "Replace texture failed, there is no such texture");
 	}
+	void SetTexture (GLuint texture_diffuse,GLuint texture_specular)
+	{
+		for(int i = 0; i < textures.size(); i++) {
+			MAssert(textures[i].type != "texture_diffuse","Diffuse texture already exists");
+			MAssert(textures[i].type != "texture_specular", "Specular texture already exists");
+		}
+
+		textures.push_back (Texture{texture_diffuse,  "texture_diffuse", aiString{}});
+		textures.push_back (Texture{texture_specular, "texture_specular", aiString{}});
+	}
 private:
 	void numberedUpload (gShaderProgram &shader)
 	{

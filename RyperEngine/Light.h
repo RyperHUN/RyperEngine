@@ -113,3 +113,4 @@ public:
 		attuentationLinear = glm::clamp(attuentationLinear, 0.2f, 1.0f);
 	}
 };
+

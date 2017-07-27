@@ -163,6 +163,8 @@ bool CMyApp::Init()
 	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
 	tex_waterDuDv     = Util::TextureFromFile ("pictures/waterDuDvMap.png");
 	tex_waterNormal   = Util::TextureFromFile("pictures/waterNormalMap.png");
+	tex_woodenBoxDiffuse  = Util::TextureFromFile ("pictures/textureWoodContainer.png");
+	tex_woodenBoxSpecular = Util::TextureFromFile("pictures/textureWoodContainerSpecular.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
 	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
 	tex_randomPerlin  = Util::GenRandomPerlinTexture ();
@@ -225,7 +227,7 @@ void CMyApp::InitScene_Water ()
 
 	renderObjs.push_back(waterObj);
 	renderObjs.push_back(&skyboxRenderer);
-	//IsWaterRenderin = true;
+	IsWaterRendering = true;
 }
 
 void CMyApp::InitScene_Minecraft ()
@@ -258,6 +260,27 @@ void CMyApp::InitScene_Minecraft ()
 	renderObjs.push_back (cowboyObj);
 }
 
+void CMyApp::InitScene_InsideBox ()
+{
+	MaterialPtr materialNormal = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1), 25);
+	materialNormal->SetTexture (tex_woodenBoxDiffuse, tex_woodenBoxSpecular);
+	
+	shaderLights.clear();
+	shaderLights.push_back(ShaderLight{ &dirLight, "uDirlight" });
+
+	GameObj * OuterBox = new GameObj(&shader_Simple, &geom_Box, materialNormal, glm::vec3(0), glm::vec3(50));
+	for (int i = 0 ; i < 7; i++)
+	{
+		glm::vec3 pos = Util::randomVec (-50, 50);
+		GameObj * insideBox = new GameObj (&shader_Simple, &geom_Box, materialNormal, pos, glm::vec3(Util::randomPoint(2,7)));
+		renderObjs.push_back (insideBox);
+	}
+
+
+	renderObjs.push_back(OuterBox);
+	gl::Disable (gl::kCullFace);
+}
+
 void CMyApp::InitGameObjects ()
 {
 	MaterialPtr material1     = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
@@ -268,7 +291,8 @@ void CMyApp::InitGameObjects ()
 
 	
 	//InitScene_Minecraft ();
-	InitScene_Water ();
+	//InitScene_Water ();
+	InitScene_InsideBox ();
 }
 
 void CMyApp::Update()
@@ -285,7 +309,8 @@ void CMyApp::Update()
 	spotLight.direction = activeCamera->GetDir ();
 	spotLight.position  = activeCamera->GetEye ();
 
-	waterRenderer.Update(delta_time);
+	if(IsWaterRendering)
+		waterRenderer.Update(delta_time);
 	particleSystem.Update (delta_time);
 
 	// Update gameObj;
@@ -294,8 +319,11 @@ void CMyApp::Update()
 	for(auto& light : shaderLights)
 		light.light->Animate(t, delta_time);
 
-	physX.stepPhysics (delta_time, false, gameObjs.front()->pos, controller); //TODO Save player ref
-	activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
+	if (gameObjs.size() > 0 && dynamic_cast<AnimatedCharacter*>(gameObjs.front()) != nullptr)
+	{
+		physX.stepPhysics (delta_time, false, gameObjs.front()->pos, controller); //TODO Save player ref
+		activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
+	}
 
 	last_time = SDL_GetTicks();
 }
