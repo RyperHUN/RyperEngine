@@ -268,6 +268,10 @@ void CMyApp::InitScene_InsideBox ()
 	lightManager.Clear();
 	lightManager.AddLight(&spotLight, Light::TYPE::SPOT);
 	lightManager.AddLight(&dirLight, Light::TYPE::DIRECTIONAL);
+	Light * light = new PointLight(glm::vec3(0), glm::vec3(1));
+	lightManager.AddLight (light, Light::TYPE::POINT); //TODO Leak
+	lightRenderer.lights.clear();
+	lightRenderer.AddLight (light);
 
 	GameObj * OuterBox = new GameObj(&shader_Simple, &geom_Box, materialNormal, glm::vec3(0), glm::vec3(50));
 	for (int i = 0 ; i < 7; i++)
@@ -369,7 +373,7 @@ void CMyApp::Render()
 		particleSystem.Render (state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
-		//lightRenderer.Draw(activeCamera->GetProjView());
+		lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
@@ -377,7 +381,7 @@ void CMyApp::Render()
 		//if (IsWaterRendering) 
 		//	waterRenderer.RenderTextures ();
 		
-		quadTexturer.Draw (fbo_Shadow.GetDepthAttachment(),false,QuadTexturer::POS::TOP_RIGHT, 0.8);
+		//quadTexturer.Draw (fbo_Shadow.GetDepthAttachment(),false,QuadTexturer::POS::TOP_RIGHT, 0.8);
 
 
 		WidgetRenderState state { screenSize, quadTexturer, textRenderer };

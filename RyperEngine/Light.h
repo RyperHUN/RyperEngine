@@ -99,8 +99,8 @@ public:
 struct PointLight : public Light
 {
 	float attuentationConst = 0.0f;
-	float attuentationLinear = 0.2f;
-	float attuentationQuadratic = 0.3f;
+	float attuentationLinear = 0.01f;
+	float attuentationQuadratic = 0.01f;
 public:
 	PointLight(glm::vec3 pos = glm::vec3(0, -1, 0), glm::vec3 color = glm::vec3(1))
 		:Light(pos,color)
@@ -114,8 +114,8 @@ public:
 	}
 	void Animate(float time, float dt) override
 	{
-		attuentationLinear += sin(time * 10) * dt * 0.1;
-		attuentationLinear = glm::clamp(attuentationLinear, 0.2f, 1.0f);
+		/*attuentationLinear += sin(time * 10) * dt * 0.1;
+		attuentationLinear = glm::clamp(attuentationLinear, 0.2f, 1.0f);*/
 	}
 };
 
