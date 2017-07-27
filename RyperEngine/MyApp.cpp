@@ -493,7 +493,7 @@ void CMyApp::Resize(int _w, int _h)
 	screenSize.x = _w;
 	screenSize.y = _h;
 
-	//secondaryCamera->Resize(_w, _h);
+	secondaryCamera->Resize(screenSize);
 	activeCamera->Resize(screenSize);
 	fbo_Rendered.Recreate(screenSize);
 
