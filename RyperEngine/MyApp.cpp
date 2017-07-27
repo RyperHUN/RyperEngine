@@ -23,7 +23,7 @@ CMyApp::CMyApp(void)
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50)),
 	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1),
-	waterRenderer (quadTexturer,{m_width, m_height}),
+	waterRenderer (quadTexturer,screenSize),
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
 	particleSystem (&shader_ParticleUpdate, &shader_ParticleRender),
 	fbo_Original (0)
@@ -32,8 +32,8 @@ CMyApp::CMyApp(void)
 	srand(2);
 	texture_Map = 0;
 	mesh_Suzanne = 0;
-	activeCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(5, 22, 24));
-	secondaryCamera = std::make_shared<FPSCamera>(1, 500, m_width, m_height, glm::vec3(70, 109, 43), glm::vec3(-0.5,-0.9, -0.5));
+	activeCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(5, 22, 24));
+	secondaryCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(70, 109, 43), glm::vec3(-0.5,-0.9, -0.5));
 
 	//container.AddWidget (&checkbox);
 	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer)); //TODO Delete
@@ -153,7 +153,7 @@ bool CMyApp::Init()
 	
 	// FBO, ami most csak egyetlen csatolmánnyal rendelkezik: a mélységi adatokkal
 	fbo_Shadow.Recreate (glm::ivec2(SHADOW_WIDTH, SHADOW_HEIGHT));
-	fbo_Rendered.Recreate(glm::ivec2(m_width, m_height));
+	fbo_Rendered.Recreate(screenSize);
 
 ///////////////////////////////////////////////////////////
 
@@ -270,7 +270,7 @@ void CMyApp::InitGameObjects ()
 	cowboyObj->pos = glm::vec3(0, 45, 6);
 
 	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
-	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, cowboyObj->pos);
+	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, screenSize, cowboyObj->pos);
 	std::swap(activeCamera, secondaryCamera);
 
 	chunkManager = ChunkManager(&geom_Box, &shader_Instanced, textureArray_blocks);
@@ -368,7 +368,7 @@ void CMyApp::Render()
 		//quadTexturer.Draw (tex_randomPerlin,false,QuadTexturer::POS::TOP_RIGHT);
 
 
-		WidgetRenderState state { glm::ivec2(m_width, m_height), quadTexturer, textRenderer };
+		WidgetRenderState state { screenSize, quadTexturer, textRenderer };
 		//container.Draw(state);
 	}
 	HandleFrameBufferRendering();
@@ -376,7 +376,7 @@ void CMyApp::Render()
 
 void CMyApp::PrepareRendering(RenderState & state)
 {
-	glViewport(0, 0, m_width, m_height);
+	glViewport(0, 0, screenSize.x, screenSize.y);
 	shader_Simple.On ();
 	shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
 	shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.GetDepthAttachment ());
@@ -458,7 +458,7 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 	{
 		int pX = mouse.x; //Pixel X
 		int pY = mouse.y;
-		glm::vec2 clip = Util::pixelToNdc (glm::ivec2(pX,pY), glm::ivec2(m_width, m_height));
+		glm::vec2 clip = Util::pixelToNdc (glm::ivec2(pX,pY), screenSize);
 
 		///Reading from Depth buffer, not the fastest
 		//float cZ = ReadDepthValueNdc (pX, pY);
@@ -490,20 +490,20 @@ void CMyApp::Resize(int _w, int _h)
 {
 	glViewport(0, 0, _w, _h);
 
-	m_width = _w;
-	m_height = _h;
+	screenSize.x = _w;
+	screenSize.y = _h;
 
 	//secondaryCamera->Resize(_w, _h);
-	activeCamera->Resize(_w, _h);
-	fbo_Rendered.Recreate(glm::ivec2(m_width, m_height));
+	activeCamera->Resize(screenSize);
+	fbo_Rendered.Recreate(screenSize);
 
-	waterRenderer.Resize(glm::ivec2(_w, _h));
+	waterRenderer.Resize(screenSize);
 }
 
 float CMyApp::ReadDepthValueNdc (float pX, float pY)
 {
 	float depth;
-	pY = m_height- pY; // Igy az origo a bal also sarokba lesz.
+	pY = screenSize.y- pY; // Igy az origo a bal also sarokba lesz.
 	if(IsFrameBufferRendering)	
 		fbo_Rendered.On();
 	{
@@ -524,13 +524,13 @@ void CMyApp::BindFrameBuffersForRender()
 														///////////////////////////Normal rendering
 	if (IsFrameBufferRendering)
 	{
-		fbo_Rendered.Recreate(glm::ivec2(m_width, m_height));
+		fbo_Rendered.Recreate(screenSize);
 		fbo_Rendered.On();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	if (IsMSAAOn)
 	{
-		fbo_RenderedMSAA.Recreate(glm::ivec2(m_width, m_height));
+		fbo_RenderedMSAA.Recreate(screenSize);
 		fbo_RenderedMSAA.On(); //IF offscreen rendering and msaa is too on, this should be the second;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
@@ -541,14 +541,14 @@ void CMyApp::HandleFrameBufferRendering()
 	if (IsFrameBufferRendering)
 	{
 		if (IsMSAAOn)
-			AFrameBuffer::CopyValue (fbo_RenderedMSAA, fbo_Rendered, glm::ivec2(m_width,m_height), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+			AFrameBuffer::CopyValue (fbo_RenderedMSAA, fbo_Rendered, screenSize, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
 		gl::Bind(fbo_Original);
 		quadTexturer.Draw(fbo_Rendered.GetColorAttachment (), true);
 	}
 	else if (IsMSAAOn)
 	{
-		AFrameBuffer::CopyValue (fbo_RenderedMSAA, fbo_Original, glm::ivec2(m_width, m_height), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		AFrameBuffer::CopyValue (fbo_RenderedMSAA, fbo_Original, screenSize, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
 		gl::Bind(fbo_Original);
 	}
@@ -597,7 +597,7 @@ void CMyApp::RenderDeferred()
 
 
 	{
-		fbo_Deferred.Recreate (glm::ivec2(m_width, m_height));
+		fbo_Deferred.Recreate (screenSize);
 		auto bind = gl::MakeTemporaryBind(fbo_Deferred);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the normal framebuffer
 
@@ -636,7 +636,7 @@ void CMyApp::RenderDeferred()
 		}
 		{
 			//Copy the depth values to the draw buffer
-			AFrameBuffer::CopyValue (fbo_Deferred, fbo_Original, glm::ivec2(m_width,m_height), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			AFrameBuffer::CopyValue (fbo_Deferred, fbo_Original, screenSize, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 
 		auto bind = gl::MakeTemporaryBind (fbo_Original);

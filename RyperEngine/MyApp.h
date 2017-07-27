@@ -99,7 +99,7 @@ protected:
 	OGL_Mesh *mesh_Suzanne;
 	OGL_Mesh *m_cow_mesh;
 
-	int	 m_width = 640, m_height = 480;
+	glm::ivec2 screenSize {640, 480};
 	bool IsFrameBufferRendering = false;
 	bool IsMSAAOn = true;
 	bool IsWaterRendering = true;

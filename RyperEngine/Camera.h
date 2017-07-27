@@ -22,7 +22,7 @@ protected:
 public:
 	virtual void UpdateViewMatrix(float yaw = 0.0f, float pitch = 0.0f) = 0;
 	virtual void UpdateProjMatrix() = 0;
-	virtual void Resize(int w, int h) = 0;
+	virtual void Resize(glm::ivec2 screenSize) = 0;
 	virtual void Update(float deltaTime) = 0;
 
 	virtual void SetSelected (glm::vec3 pos) {}
@@ -81,13 +81,13 @@ class FPSCamera : public Camera
 	const glm::vec3 globalUp;
 
 public:
-	FPSCamera(float zNear, float zFar, float width, float height,
+	FPSCamera(float zNear, float zFar, glm::ivec2 screenSize,
 			  glm::vec3 eyePos, glm::vec3 forwardDir = glm::vec3(0,0,-1))
 		:zNear(zNear), zFar(zFar), globalUp(0, 1, 0)
 	{
 		this->eyePos     = eyePos;
 		this->forwardDir = forwardDir;
-		Resize(width, height);
+		Resize(screenSize);
 
 		UpdateViewMatrix();
 	}
@@ -108,9 +108,9 @@ public:
 		projMatrix = glm::perspective(glm::radians(fovDegree), aspectRatio, zNear, zFar);
 		frustum.setCamInternals(fovDegree, aspectRatio, zNear, zFar);
 	}
-	void Resize(int w, int h) override
+	void Resize(glm::ivec2 screenSize) override
 	{
-		aspectRatio = w / (float)h;
+		aspectRatio = screenSize.x / (float)screenSize.y;
 		UpdateProjMatrix();
 	}
 
@@ -236,12 +236,12 @@ class TPSCamera : public Camera
 	glm::vec3 selectedPos;
 public:
 	
-	TPSCamera(float zNear, float zFar, float width, float height,
+	TPSCamera(float zNear, float zFar, glm::ivec2 screenSize,
 			  glm::vec3 selectedPos = glm::vec3(0))
 		:zNear(zNear), zFar(zFar), selectedPos(selectedPos)
 		, globalUp(0, 1, 0), globalRight(1,0,0), globalBack(0,0,-1)
 	{
-		Resize(width, height);
+		Resize(screenSize);
 
 		UpdateViewMatrix();
 	}
@@ -277,9 +277,9 @@ public:
 		projMatrix = glm::perspective(glm::radians(fovDegree), aspectRatio, zNear, zFar);
 		frustum.setCamInternals(fovDegree, aspectRatio, zNear, zFar);
 	}
-	void Resize(int w, int h) override
+	void Resize(glm::ivec2 screenSize) override
 	{
-		aspectRatio = w / (float)h;
+		aspectRatio = screenSize.x / (float)screenSize.y;
 		UpdateProjMatrix();
 	}
 
