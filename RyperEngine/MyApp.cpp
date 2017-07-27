@@ -201,70 +201,42 @@ bool CMyApp::Init()
 	return true;
 }
 
-void CMyApp::InitGameObjects ()
+void CMyApp::InitScene_Water ()
 {
-	MaterialPtr material1     = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
-	MaterialPtr material2     = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
 	//MaterialPtr materialheightMap = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.05));
-	MaterialPtr materialheightMap = MaterialCreator::GOLD ();
-	MaterialPtr material3     = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
-	MaterialPtr materialMan   = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
-	MaterialPtr materialWater = std::make_shared<Material>(glm::vec3(0,0,0.1f), glm::vec3(0.4,0.4,0.8f), glm::vec3(1), 40);
-
-	material2->textures.push_back(Texture {tex_randomPerlin, "texture_diffuse", aiString{}});
-	
+	MaterialPtr materialheightMap = MaterialCreator::GOLD();
+	MaterialPtr materialWater = std::make_shared<Material>(glm::vec3(0, 0, 0.1f), glm::vec3(0.4, 0.4, 0.8f), glm::vec3(1), 40);
 	materialWater->textures.push_back(Texture{ waterRenderer.GetReflectTexture(), "texture_reflect", aiString{} });
 	materialWater->textures.push_back(Texture{ waterRenderer.GetRefractTexture(), "texture_refract" , aiString{} });
 	materialWater->textures.push_back(Texture{ tex_waterDuDv, "texture_dudv", aiString{} });
 	materialWater->textures.push_back(Texture{ tex_waterNormal, "texture_normal", aiString{} });
 	materialWater->textures.push_back(Texture{ waterRenderer.GetRefractDepth(), "texture_refract_depth", aiString{} });
 
-
-	//GameObj *sphere = new GameObj(&shader_Simple, &geom_Sphere, material1, glm::vec3{ -7,0,-3 }, glm::vec3{ 3,3,3 });
-	//gameObjs.push_back(sphere);
-	//GameObj * sphere2 = new GameObj(*sphere);
-	//sphere2->pos = glm::vec3(2, 50, -3);
-	//gameObjs.push_back(sphere2);
-	Quadobj *quadObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,materialheightMap,glm::vec3{ -1,5,-5 },glm::vec3(200,200,50),glm::vec3(-1,0,0) };
-	quadObj->rotAngle = M_PI / 2.0;
-	Quadobj *quadObjWater = new Quadobj{*quadObj};
-	quadObjWater->pos += glm::vec3(0,1,0);
+	Quadobj *waterObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,materialheightMap,glm::vec3{ -1,5,-5 },glm::vec3(200,200,50),glm::vec3(-1,0,0) };
+	waterObj->rotAngle = M_PI / 2.0;
+	Quadobj *quadObjWater = new Quadobj{ *waterObj };
+	quadObjWater->pos += glm::vec3(0, 1, 0);
 	quadObjWater->scale *= 3.0;
 	quadObjWater->rotAngle = M_PI / 2.0;
 	quadObjWater->geometry = &geom_Quad;
-	quadObjWater->shader   = &shader_Water;
+	quadObjWater->shader = &shader_Water;
 	quadObjWater->material = materialWater;
-	waterRenderer.SetWaterInfo (quadObjWater, &quadObjWater->pos.y);
+	waterRenderer.SetWaterInfo(quadObjWater, &quadObjWater->pos.y);
 
-	//GameObj * suzanne = new GameObj(shaderLights,&shader_Simple, &geom_Suzanne, material3, glm::vec3(0,5,-20));
-	//suzanne->scale = glm::vec3(5,5,5);
-	//gameObjs.push_back (suzanne);
-	//for(int i = 0;i < 10; i++)
-	//{
-	//	GameObj * obj = new GameObj(*suzanne);
-	//	gameObjs.push_back (obj);
-	//	//if(i %2 == 0)
-	//	//	obj->geometry = &geom_Cow;
-	//}
+	renderObjs.push_back(waterObj);
+	renderObjs.push_back(&skyboxRenderer);
+	//IsWaterRenderin = true;
+}
 
-	float scaleFactor = 50.0f;
-	for (auto &obj : gameObjs)
-	{
-		glm::vec3 random = Util::randomVec();
-		float randomY = random.y * 3;
-		random *= scaleFactor;
-		random.y = 40 + randomY;
-		obj->pos = random;
-	}
-	//quadObj->pos = glm::vec3(0, 0, 0);
-
-	gameObjs.clear();
+void CMyApp::InitScene_Minecraft ()
+{
+	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
 
 	AnimatedCharacter* cowboyObj = new AnimatedCharacter(&shader_Simple, &geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1, 0, 0));
 	for (auto& mesh : geom_Man.meshes)
-		mesh.textures.push_back(Texture{ textureCube_id,"skyBox",aiString{} });
+		mesh.textures.push_back(Texture{ textureCube_id,"skyBox",aiString{} }); ///TODO I think this is not needed anymore
 	gameObjs.push_back(cowboyObj);
-	//gameObjs.push_back(quadObj);
+	//gameObjs.push_back(waterObj);
 	cowboyObj->rotAxis = glm::vec3{ 1,0,0 };
 	cowboyObj->rotAngle = -M_PI / 2; //For cowboy animated man
 	cowboyObj->pos = glm::vec3(0, 45, 6);
@@ -276,16 +248,27 @@ void CMyApp::InitGameObjects ()
 	chunkManager = ChunkManager(&geom_Box, &shader_Instanced, textureArray_blocks);
 	chunkManager.GenerateBoxes();
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
-	for(auto& chunk :chunkManager.chunks)
+	for (auto& chunk : chunkManager.chunks)
 		physX.createChunk(chunk);
 	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry, cowboyObj);
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
+	
+	renderObjs.push_back (&chunkManager);
+	renderObjs.push_back (cowboyObj);
+}
 
-	renderObjs.push_back(quadObj);
-	//renderObjs.push_back(cowboyObj);
-	//renderObjs.push_back(&chunkManager);
-	renderObjs.push_back(&skyboxRenderer);
+void CMyApp::InitGameObjects ()
+{
+	MaterialPtr material1     = std::make_shared<Material>(glm::vec3(0.1f, 0, 0), glm::vec3(0.8f, 0, 0), glm::vec3(1, 1, 1));
+	MaterialPtr material2     = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
+	MaterialPtr material3     = std::make_shared<Material>(glm::vec3(0.0f, 0.1f, 0.1f), glm::vec3(0, 0.7f, 0.7f), glm::vec3(1, 1, 1));
+
+	material2->textures.push_back(Texture {tex_randomPerlin, "texture_diffuse", aiString{}});
+
+	
+	//InitScene_Minecraft ();
+	InitScene_Water ();
 }
 
 void CMyApp::Update()

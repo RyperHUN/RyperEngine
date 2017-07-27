@@ -49,6 +49,9 @@ public:
 	void RenderDeferred ();
 	void InitDeferred ();
 
+	void InitScene_Water ();
+	void InitScene_Minecraft ();
+
 //Event handlers
 	void KeyboardDown(SDL_KeyboardEvent&);
 	void KeyboardUp(SDL_KeyboardEvent&);
