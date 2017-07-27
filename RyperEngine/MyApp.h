@@ -107,6 +107,7 @@ protected:
 	ShadowFrameBuffer fbo_Shadow;
 	MultiFrameBuffer fbo_RenderedMSAA;
 	gFrameBuffer fbo_Deferred;
+	gl::Framebuffer fbo_Original;
 	
 	const GLuint SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
 

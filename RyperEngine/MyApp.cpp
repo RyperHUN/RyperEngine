@@ -25,7 +25,8 @@ CMyApp::CMyApp(void)
 	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1),
 	waterRenderer (quadTexturer,{m_width, m_height}),
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
-	particleSystem (&shader_ParticleUpdate, &shader_ParticleRender)
+	particleSystem (&shader_ParticleUpdate, &shader_ParticleRender),
+	fbo_Original (0)
 {
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
@@ -642,12 +643,10 @@ void CMyApp::RenderDeferred()
 		}
 		{
 			//Copy the depth values to the draw buffer
-			glBindFramebuffer (GL_READ_FRAMEBUFFER, fbo_Deferred.expose());
-			glBindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
-			glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			AFrameBuffer::CopyValues (fbo_Deferred, fbo_Original, glm::ivec2(m_width,m_height), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 
-		glBindFramebuffer (GL_FRAMEBUFFER, 0);
+		auto bind = gl::MakeTemporaryBind (fbo_Original);
 		lightRenderer.Draw (state.PV);
 	}
 }

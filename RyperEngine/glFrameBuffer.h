@@ -24,6 +24,19 @@ public:
 	virtual void Recreate(glm::ivec2 size) = 0;
 	virtual GLuint GetColorAttachment() = 0;
 	virtual GLuint GetDepthAttachment() = 0;
+
+	static void CopyValues (gl::Framebuffer &from, gl::Framebuffer &to, glm::ivec2 fboSize, GLenum valueToCopy, GLenum interp = GL_NEAREST)
+	{
+		MAssert(valueToCopy == GL_DEPTH_BUFFER_BIT || valueToCopy == GL_COLOR_BUFFER_BIT, "Error valueToCopy not valid");
+		MAssert(interp == GL_NEAREST || interp == GL_LINEAR, "Error interp not valid");
+
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, from.expose());
+		MAssert(glGetError () == 0, "Error returned in FrameBuffer CopyValues");
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, to.expose());
+		MAssert(glGetError() == 0, "Error returned in FrameBuffer CopyValues");
+		glBlitFramebuffer(0, 0, fboSize.x, fboSize.y, 0, 0, fboSize.x, fboSize.y, valueToCopy, GL_NEAREST);
+		MAssert(glGetError() == 0, "Error returned in FrameBuffer CopyValues");
+	}
 };
 
 //Color can be read, Depth cannot (RBO)
