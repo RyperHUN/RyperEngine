@@ -54,7 +54,7 @@ namespace Geom{
 		glm::vec3 max;
 		glm::vec3 min;
 		Box(){}
-		Box(glm::vec3 max, glm::vec3 min)
+		Box(glm::vec3 min, glm::vec3 max)
 			:max(max), min(min)
 		{}
 		glm::vec3 getVertex(int n) const

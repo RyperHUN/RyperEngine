@@ -57,14 +57,21 @@ public:
 
 	glm::mat4 GetLightMatrixDirectionLight (glm::vec3 const& lightDir)
 	{
-
 		FrustumG* frustum = this->GetFrustum ();
 		Geom::Box frustumBox = frustum->GetBox ();
 		glm::mat4 lightView = glm::lookAt(frustumBox.GetCenter (),
 			frustumBox.GetCenter() + lightDir,
 			glm::vec3(0.0f, 1.0f, 0.0f));
 
-		glm::mat4 lightProjection = frustumBox.CreateOrthographicProjection ();
+		std::vector<glm::vec3> vertexes;
+		for(int i = 0 ; i < 6;i++)
+		{
+			glm::vec3 vertex = frustumBox.getVertex(i);
+			vertexes.push_back(Util::CV::Transform(lightView, vertex));
+		}
+		Geom::Box newBox = Geom::Box::CreateBoxFromVec (vertexes);
+
+		glm::mat4 lightProjection = newBox.CreateOrthographicProjection ();
 
 		return lightProjection * lightView; //LightSpace matrix
 	}

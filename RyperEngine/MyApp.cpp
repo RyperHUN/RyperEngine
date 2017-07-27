@@ -296,8 +296,8 @@ void CMyApp::InitGameObjects ()
 
 	
 	//InitScene_Minecraft ();
-	//InitScene_Water ();
-	InitScene_InsideBox ();
+	InitScene_Water ();
+	//InitScene_InsideBox ();
 }
 
 void CMyApp::Update()
@@ -381,7 +381,7 @@ void CMyApp::Render()
 		//if (IsWaterRendering) 
 		//	waterRenderer.RenderTextures ();
 		
-		//quadTexturer.Draw (fbo_Shadow.GetDepthAttachment(),false,QuadTexturer::POS::TOP_RIGHT, 0.8);
+		quadTexturer.Draw (fbo_Shadow.GetDepthAttachment(),false,QuadTexturer::POS::TOP_RIGHT, 0.8);
 
 
 		WidgetRenderState state { screenSize, quadTexturer, textRenderer };
