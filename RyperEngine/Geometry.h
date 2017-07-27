@@ -53,6 +53,10 @@ namespace Geom{
 	{
 		glm::vec3 max;
 		glm::vec3 min;
+		Box(){}
+		Box(glm::vec3 max, glm::vec3 min)
+			:max(max), min(min)
+		{}
 		glm::vec3 getVertex(int n)
 		{
 			assert(0 <= n && n < 8);
@@ -76,6 +80,23 @@ namespace Geom{
 			return (lhs.min.x <= rhs.max.x && lhs.max.x >= rhs.min.x) &&
 				(lhs.min.y <= rhs.max.y && lhs.max.y >= rhs.min.y) &&
 				(lhs.min.z <= rhs.max.z && lhs.max.z >= rhs.min.z);
+		}
+		static Box CreateBoxFromVec(std::vector<glm::vec3> positions)
+		{
+			glm::vec3 max = positions[0];
+			glm::vec3 min = positions[0];
+			for (glm::vec3& pos : positions)
+			{
+				if (pos.x > max.x) max.x = pos.x;
+				if (pos.y > max.y) max.y = pos.y;
+				if (pos.z > max.z) max.z = pos.z;
+
+				if (pos.x < min.x) min.x = pos.x;
+				if (pos.y < min.y) min.y = pos.y;
+				if (pos.z < min.z) min.z = pos.z;
+			}
+			Geom::Box box {min, max};
+			return box;
 		}
 	};
 	struct Plane
@@ -115,20 +136,9 @@ struct Geometry {
 		if(isCalculatedBox)
 			return cacheBox;
 		std::vector<glm::vec3> positions = buffer.GetPositionData();
-		glm::vec3 max = positions[0];
-		glm::vec3 min = positions[0];
-		for(glm::vec3& pos : positions)
-		{
-			if(pos.x > max.x) max.x = pos.x;
-			if(pos.y > max.y) max.y = pos.y;
-			if(pos.z > max.z) max.z = pos.z;
-
-			if(pos.x < min.x) min.x = pos.x;
-			if(pos.y < min.y) min.y = pos.y;
-			if(pos.z < min.z) min.z = pos.z;
-		}
+		
 		isCalculatedBox = true;
-		cacheBox = Geom::Box{ max, min };
+		cacheBox = Geom::Box::CreateBoxFromVec (positions);
 
 		return cacheBox;
 	}

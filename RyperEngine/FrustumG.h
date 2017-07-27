@@ -28,6 +28,11 @@ public:
 	void setCamInternals(float angle, float ratio, float nearD, float farD);
 	void setCamDef(glm::vec3 const&eyePos, glm::vec3 const&lookDir, glm::vec3 const&upVec);
 	bool pointInFrustum(glm::vec3 &p);
+	Geom::Box GetBox ()
+	{
+		std::vector<glm::vec3> points = {ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr};
+		return Geom::Box::CreateBoxFromVec (points);
+	}
 
 	////int sphereInFrustum(glm::vec3 &p, float raio);
 	///SAT is faster
