@@ -64,10 +64,12 @@ public:
 			frustumBox.GetCenter() + lightDir,
 			glm::vec3(0.0f, 1.0f, 0.0f));
 
-		glm::vec3 min = Util::CV::Transform (lightView, frustumBox.min);
-		glm::vec3 max = Util::CV::Transform(lightView, frustumBox.max);
 
-		glm::mat4 lightProjection = glm::ortho(min.x, max.x, min.y, max.y, min.z, max.z); //TODO Parameterized with the actual Camera
+		float widthHalf = frustumBox.GetWidth () / 2;
+		float heightHalf = frustumBox.GetHeight () / 2;
+		float depthHalf  = frustumBox.GetDepth () / 2;
+
+		glm::mat4 lightProjection = glm::ortho(-widthHalf, widthHalf, -heightHalf, heightHalf, -depthHalf, depthHalf); //TODO Parameterized with the actual Camera
 
 		return lightProjection * lightView; //LightSpace matrix
 	}

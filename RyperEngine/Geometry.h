@@ -79,6 +79,9 @@ namespace Geom{
 		{
 			return (max + min) / 2.0f;
 		}
+		float GetWidth  (){return (max.x - min.x);}
+		float GetHeight () { return (max.y - min.y); }
+		float GetDepth  () { return (max.z - min.z); }
 		static bool IsCollidingAABB(Geom::Box &lhs, Geom::Box &rhs)
 		{
 			return (lhs.min.x <= rhs.max.x && lhs.max.x >= rhs.min.x) &&
@@ -120,7 +123,7 @@ namespace Geom{
 			return glm::dot(normal, toPoint);
 		}
 	};
-};
+}; //NS Geom
 
 struct Geometry {
 	gVertexBuffer buffer;
