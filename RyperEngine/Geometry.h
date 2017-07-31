@@ -113,6 +113,13 @@ namespace Geom{
 
 			return glm::ortho(-widthHalf, widthHalf, -heightHalf, heightHalf, -depthHalf, depthHalf);
 		}
+		glm::mat4 GetLocalMatrix () const
+		{
+			glm::vec3 localCenterPos = this->GetCenter();
+			glm::vec3 localScale = this->max - localCenterPos;
+
+			return glm::translate(localCenterPos) * glm::scale(localScale);
+		}
 	};
 	struct Plane
 	{
@@ -178,10 +185,7 @@ struct Geometry {
 	glm::mat4 getLocalMatrixForBoxGeom() //You have to multiply it with Model matrix to get exact position
 	{
 		Geom::Box box = getLocalAABB();
-		glm::vec3 localCenterPos = box.GetCenter ();
-		glm::vec3 localScale = box.max - localCenterPos;
-
-		return glm::translate(localCenterPos) * glm::scale(localScale);
+		return box.GetLocalMatrix();
 	}
 protected:
 	Geometry(gVertexBuffer &&buffer)

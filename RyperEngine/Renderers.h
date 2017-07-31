@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "glmIncluder.h"
 #include "gShaderProgram.h"
+#include "ChunkManager.h"
 #include "Geometry.h"
 #include <oglwrap\oglwrap.h> //TODO
 
@@ -99,10 +100,21 @@ struct BoundingBoxRenderer
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		for (GameObj * obj : gameObjs)
-			DrawBox(state, obj);
+			DrawBox(state, obj->geometry->getModelMatrixForBoxGeom(obj->pos, obj->scale, obj->quaternion), obj->isSelected);
 		glDisable(GL_BLEND);
 	}
-	struct Ray {
+	void DrawChunks (RenderState &state, ChunkManager &manager)
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		for(auto& chunk : manager.chunks)
+		{
+			DrawBox(state, chunk.getBox().GetLocalMatrix(), false);
+		}
+		glDisable(GL_BLEND);
+	}
+	struct Ray 
+	{
 		glm::vec3 origin;
 		glm::vec3 direction;
 		glm::vec3 dir_inv;
@@ -159,14 +171,13 @@ struct BoundingBoxRenderer
 		return savedIndex;
 	}
 private:
-	void DrawBox(RenderState state, GameObj* obj)
+	void DrawBox(RenderState state, glm::mat4 M, bool isSelected)
 	{
 		shader->On();
-		glm::mat4 M = obj->geometry->getModelMatrixForBoxGeom(obj->pos, obj->scale, obj->quaternion);
 		glm::mat4 Minv = glm::inverse(M);
 		glm::mat4 PVM = state.PV * M;
 		shader->SetUniform("uIsAnimated", false);
-		shader->SetUniform("isSelected", obj->isSelected);
+		shader->SetUniform("isSelected", isSelected);
 		shader->SetUniform("PVM", PVM);
 		shader->SetUniform("M", M);
 		shader->SetUniform("Minv", Minv);

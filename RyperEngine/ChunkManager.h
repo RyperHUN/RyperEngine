@@ -37,7 +37,7 @@ struct Chunk
 				{
 					ChunkData &data = chunkInfo[i][j][k];
 					data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i,j,k) * BlockSize * 2.0f;
-					data.isExist = rand() % 4 == 0;
+					data.isExist = true;
 					data.type = Util::randomPointI(0,4);
 				}
 			}
@@ -124,6 +124,15 @@ struct Chunk
 	{
 		return size * 2 + 1;
 	}
+	Geom::Box getBox ()
+	{
+		const float cubeSize = BlockSize * 2.0f;
+		const glm::vec3 distance = glm::vec3(cubeSize) * (float)size + glm::vec3(BlockSize);
+		glm::vec3 min = glm::vec3(pos) - distance;
+		glm::vec3 max = glm::vec3(pos) + distance;
+
+		return Geom::Box {min, max};
+	}
 };
 
 static Util::IslandGenerator islandGen (10);
@@ -159,9 +168,10 @@ struct ChunkManager : public IRenderable
 					ChunkHeightInfo.push_back (TraverseChunk (arr, i, j));
 		
 			auto ChunkIter = ChunkHeightInfo.begin();
-			for (int i = -1; i <= 1; i++)
+			int interval = 15;
+			for (int i = -interval; i <= interval; i++)
 			{
-				for (int j = -1; j <= 1; j++)
+				for (int j = -interval; j <= interval; j++)
 				{
 					chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,-layer*Chunk::GetCubeSize(),j) * size));
 					ChunkIter++;

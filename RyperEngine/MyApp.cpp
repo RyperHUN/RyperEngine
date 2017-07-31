@@ -367,15 +367,16 @@ void CMyApp::Render()
 	BindFrameBuffersForRender ();
 	{
 		PrepareRendering (state);
-		for(auto& obj : renderObjs)
-			obj->Draw (state);
+		//for(auto& obj : renderObjs)
+		//	obj->Draw (state);
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
 		particleSystem.Render (state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
-		lightRenderer.Draw(activeCamera->GetProjView());
+		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
+		boundingBoxRenderer.DrawChunks(state, chunkManager);
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Other debug drawings
