@@ -256,6 +256,7 @@ void CMyApp::InitScene_Minecraft ()
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 	
+	renderObjs.push_back (&skyboxRenderer);
 	renderObjs.push_back (&chunkManager);
 	renderObjs.push_back (cowboyObj);
 }
@@ -295,8 +296,8 @@ void CMyApp::InitGameObjects ()
 	material2->textures.push_back(Texture {tex_randomPerlin, "texture_diffuse", aiString{}});
 
 	
-	//InitScene_Minecraft ();
-	InitScene_Water ();
+	InitScene_Minecraft ();
+	//InitScene_Water ();
 	//InitScene_InsideBox ();
 }
 
@@ -381,7 +382,7 @@ void CMyApp::Render()
 		//if (IsWaterRendering) 
 		//	waterRenderer.RenderTextures ();
 		
-		quadTexturer.Draw (fbo_Shadow.GetDepthAttachment(),false,QuadTexturer::POS::TOP_RIGHT, 0.8);
+		//quadTexturer.Draw (fbo_Shadow.GetDepthAttachment(),false,QuadTexturer::POS::TOP_RIGHT, 0.8);
 
 
 		WidgetRenderState state { screenSize, quadTexturer, textRenderer };
@@ -394,7 +395,7 @@ void CMyApp::PrepareRendering(RenderState & state)
 {
 	glViewport(0, 0, screenSize.x, screenSize.y);
 	shader_Simple.On ();
-	shader_Simple.SetCubeTexture("skyBox", 12, textureCube_id);
+	shader_Simple.SetCubeTexture("skyBox", 13, textureCube_id);
 	shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.GetDepthAttachment ());
 	shader_Simple.Off ();
 	state.PV = activeCamera->GetProjView();
