@@ -7,6 +7,7 @@
 #include "Geometry.h"
 #include <oglwrap\oglwrap.h> //TODO
 #include "Ray.h"
+#include <map>
 
 #include "Defs.h"
 
@@ -112,8 +113,9 @@ struct BoundingBoxRenderer
 		{
 			Chunk& chunk = manager.chunks[i];
 			bool isSelected = false;
-			if (chunkIndex == i)
-				isSelected = true;
+			for(auto &val: chunkIndexes)
+				if (val.second == i)
+					isSelected = true;
 			DrawBox(state, chunk.getBox().GetLocalMatrix(), isSelected);
 		}
 		glDisable(GL_BLEND);
@@ -140,9 +142,10 @@ struct BoundingBoxRenderer
 
 		return savedIndex;
 	}
-	int chunkIndex = -1;
+	std::map<float,size_t> chunkIndexes;
 	void FindChunk (glm::vec3 eye, glm::vec3 world, ChunkManager &manager)
 	{
+		chunkIndexes.clear();
 		Ray ray = Ray::createRay(eye, world - eye);
 		float smallest = -1.0f;
 		int savedIndex = -1;
@@ -151,14 +154,16 @@ struct BoundingBoxRenderer
 			Chunk& obj = manager.chunks[i];
 			Geom::Box box = obj.getBox ();
 			float t = Ray::intersection(box, ray);
-			if ((smallest > t || savedIndex == -1) && t >= 0)
+			if ((savedIndex == -1) && t >= 0)
 			{
-				savedIndex = i;
-				smallest = t;
+				if (smallest > t)
+				{
+					savedIndex = i;
+					smallest = t;
+				}
+				chunkIndexes[t] = i;
 			}
 		}
-
-		chunkIndex = savedIndex;
 	}
 private:
 	void DrawBox(RenderState state, glm::mat4 M, bool isSelected)
