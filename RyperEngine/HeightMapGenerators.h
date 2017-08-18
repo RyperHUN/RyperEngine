@@ -81,17 +81,14 @@ class PerlinGenerator
 	glm::vec2 topLeft, bottomRight;
 	GLuint texId; //TODO Free
 public:
+	PerlinGenerator ()
+	{
+		configure ();
+	}
 	PerlinGenerator (glm::vec2 topLeft, glm::vec2 bottomRight,int seed = 10)
 		:topLeft(topLeft), bottomRight(bottomRight)
 	{
-		Generator.SetSeed(seed);
-		Generator.SetFrequency(0.7);
-		Generator.SetLacunarity(2.375);
-		Generator.SetOctaveCount(3);
-		Generator.SetPersistence(0.5);
-		Generator.SetNoiseQuality(noise::QUALITY_STD);
-		
-		GenTexture ();
+		configure(seed);
 	}
 	GLuint GetTexture () {return texId;}
 	struct HeightValue
@@ -112,12 +109,31 @@ public:
 
 		return HeightValue{coord, height};
 	}
+	float GetValueWorldPos(glm::vec3 worldPos)
+	{
+		worldPos *= 0.01;
+		double height = Generator.GetValue (worldPos.x, worldPos.z, 0);
+		MAssert(height < 2 && height > -2, "Invalid value returned by generator");
+
+		return height;
+	}
 private:
 	void GenTexture()
 	{
 		HeightMapColorImpl heightMapColorer(topLeft, bottomRight);
 
 		texId = heightMapColorer.CreateTexture<512>(Generator);
+	}
+	void configure (int seed = 10)
+	{
+		Generator.SetSeed(seed);
+		Generator.SetFrequency(0.7);
+		Generator.SetLacunarity(2.375);
+		Generator.SetOctaveCount(3);
+		Generator.SetPersistence(0.5);
+		Generator.SetNoiseQuality(noise::QUALITY_STD);
+
+		GenTexture();
 	}
 };
 

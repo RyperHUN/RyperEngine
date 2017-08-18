@@ -72,6 +72,27 @@ struct Chunk
 		}
 	}
 
+	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 wBottomLeftCenterPos, std::vector<size_t> heights)
+		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
+	{
+		const size_t cubeSize = GetCubeSize();
+		auto heightIter = heights.begin();
+		for (int x = 0; x < cubeSize; x++) //row
+		{
+			for (int z = 0; z < cubeSize; z++)
+			{
+				MAssert (*heightIter <= cubeSize, "Height is too big to fit into chunk");
+				for(int i = 0 ; i < *heightIter; i++)
+				{
+					BlockData &data = chunkInfo[x][i][z];
+					data.isExist = 1;
+					data.type = Util::randomPointI(0, 4);
+				}
+				heightIter++;
+			}
+		}
+	}
+
 	void Draw(RenderState state, GLuint texId)
 	{
 		shader->On(); //TODO Can be refactored to state.shader
@@ -123,6 +144,10 @@ struct Chunk
 	{
 		return size * 2 + 1;
 	}
+	static constexpr size_t BlockCount ()
+	{
+		return Chunk::GetCubeSize() * Chunk::GetCubeSize() * Chunk::GetCubeSize();
+	}
 	Geom::Box getBox ()
 	{
 		const float wExtent		= wHalfExtent * 2.0f;
@@ -148,6 +173,8 @@ struct ChunkManager : public IRenderable
 	static const size_t MapSize = Chunk::GetCubeSize() * 4; //Map Size in Chunks MapSize x MapSize
 	using ChunkArray = Array2D<float, MapSize, MapSize>;
 
+	Util::PerlinGenerator random;
+
 	std::vector<Chunk> chunks;
 	std::vector<bool>  isInside;
 	ChunkManager () 
@@ -157,40 +184,49 @@ struct ChunkManager : public IRenderable
 	{
 		//Random creation
 	}
+	void Init (Geometry* geom_Box, gShaderProgram * shader, GLint texId)
+	{
+		this->geom_Box = geom_Box;
+		this->shader = shader;
+		this->texId = texId;
+		GenerateBoxes();
+	}
 	~ChunkManager () {}
 	void GenerateBoxes ()
 	{
-		float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
-
-		for(int layer = 0; layer < 3; layer++)
-		{
-			std::vector<std::vector<size_t>> ChunkHeightInfo;
-			ChunkArray arr = islandGen.GetArray<float, MapSize>();
-			for(int i = 0 ; i < arr.size(); i += Chunk::GetCubeSize())
-				for(int j = 0; j < arr.size(); j += Chunk::GetCubeSize ())
-					ChunkHeightInfo.push_back (TraverseChunk (arr, i, j));
-		
-			int interval = 1;
-			for (int i = -interval; i <= interval; i++)
+		int maxLayer = 1;
+		for(int layer = 0; layer < maxLayer; layer++)
+		{	
+			const float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
+			int interval = 4;
+			for (int x = -interval; x <= interval; x++)
 			{
-				for (int j = -interval; j <= interval; j++)
+				for (int z = -interval; z <= interval; z++)
 				{
-					chunks.push_back(Chunk(geom_Box, shader, glm::vec3(i,layer,j) * cubeExtent));
+					glm::vec3 wPos = glm::vec3(x, layer, z) * cubeExtent;
+					std::vector<size_t> heightInfo = TraverseChunk (wPos, maxLayer);
+
+					chunks.push_back(Chunk(geom_Box, shader, wPos, heightInfo));
 				}
 			}
 		}
 	}
 	//Returns how much is the height for the chunks!
-	std::vector<size_t> TraverseChunk (ChunkArray& arr, int iStart, int jStart) 
+	std::vector<size_t> TraverseChunk (glm::vec3 wPos, int maxLayer)
 	{
 		std::vector<size_t> heightInfo;
-		for(int i = iStart; i < iStart + Chunk::GetCubeSize(); i++)
+		for(int x = 0 ; x < Chunk::GetCubeSize(); x++)
 		{
-			for (int j = jStart; j < jStart + Chunk::GetCubeSize(); j++)
+			for(int z = 0 ; z < Chunk::GetCubeSize(); z++)
 			{
-				size_t HeightVal = arr[i][j] * 9; //TODO Interpolate between neighbours
-				arr[i][j] -= Chunk::GetCubeSize ();
-				heightInfo.push_back(HeightVal);
+				glm::vec3 blockPos = BlockData::GetWorldPos(wPos, glm::ivec3(x, 0, z), Chunk::wHalfExtent * 2);
+				float height = random.GetValueWorldPos (blockPos);
+				height = height + 1.0f;
+				height = glm::clamp(height, 0.f, 2.f);
+				height /= 2;
+				height = height * Chunk::GetCubeSize () * maxLayer;
+
+				heightInfo.push_back(height);
 			}
 		}
 		return heightInfo;

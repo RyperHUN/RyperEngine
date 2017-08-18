@@ -247,8 +247,7 @@ void CMyApp::InitScene_Minecraft ()
 	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, screenSize, cowboyObj->pos);
 	std::swap(activeCamera, secondaryCamera);
 
-	chunkManager = ChunkManager(&geom_Box, &shader_Instanced, textureArray_blocks);
-	chunkManager.GenerateBoxes();
+	chunkManager.Init(&geom_Box, &shader_Instanced, textureArray_blocks);
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	for (auto& chunk : chunkManager.chunks)
 		physX.createChunk(chunk);
