@@ -39,6 +39,15 @@ struct BlockData
 			localIndex.z * wExtent,
 		};
 	}
+	static Geom::Box GetWorldBox (glm::vec3 worldPos, glm::ivec3 localIndex, size_t wExtent)
+	{
+		glm::vec3 wPos = GetWorldPos (worldPos, localIndex, wExtent);
+		const float diagonal = glm::sqrt(wExtent * wExtent);
+		glm::vec3 min = wPos;
+		glm::vec3 max = wPos + diagonal;
+		
+		return Geom::Box{min, max};
+	}
 };
 struct Chunk
 {
@@ -52,6 +61,19 @@ struct Chunk
 	Geometry* geom_Box;
 	gShaderProgram * shader; //Can be removed, and box geom also!!
 	int amountOfCubes = 0;
+
+	struct D3Index
+	{
+		int x,y,z;
+		static D3Index convertIto3DIndex (int i)
+		{
+			const int size = Chunk::GetCubeSize();
+			int z = i % size;
+			int y = (i / size) % size;
+			int x = i / (size * size);
+			return D3Index{x,y,z};
+		}
+	};	
 
 	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 wBottomLeftCenterPos)
 		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
@@ -91,6 +113,13 @@ struct Chunk
 				heightIter++;
 			}
 		}
+	}
+
+	Geom::Box GetBoxForBlock (int i)
+	{
+		auto index = D3Index::convertIto3DIndex (i);
+		
+		return BlockData::GetWorldBox(wBottomLeftCenterPos, glm::ivec3(index.x, index.y, index.z), wHalfExtent * 2);;
 	}
 
 	void Draw(RenderState state, GLuint texId)
@@ -194,11 +223,11 @@ struct ChunkManager : public IRenderable
 	~ChunkManager () {}
 	void GenerateBoxes ()
 	{
-		int maxLayer = 3;
+		int maxLayer = 2;
 		for(int layer = 0; layer < maxLayer; layer++)
 		{	
 			const float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
-			int interval = 4;
+			int interval = 1;
 			for (int x = -interval; x <= interval; x++)
 			{
 				for (int z = -interval; z <= interval; z++)

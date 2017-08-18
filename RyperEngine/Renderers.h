@@ -113,7 +113,7 @@ struct BoundingBoxRenderer
 		{
 			Chunk& chunk = manager.chunks[i];
 			bool isSelected = false;
-			for(auto &val: chunkIndexes)
+			for(auto &val: chunkIndices)
 				if (val.second == i)
 					isSelected = true;
 			DrawBox(state, chunk.getBox().GetLocalMatrix(), isSelected);
@@ -142,10 +142,10 @@ struct BoundingBoxRenderer
 
 		return savedIndex;
 	}
-	std::map<float,size_t> chunkIndexes;
+	std::map<float,size_t> chunkIndices;
 	void FindChunk (glm::vec3 eye, glm::vec3 world, ChunkManager &manager)
 	{
-		chunkIndexes.clear();
+		chunkIndices.clear();
 		Ray ray = Ray::createRay(eye, world - eye);
 		float smallest = -1.0f;
 		int savedIndex = -1;
@@ -161,8 +161,39 @@ struct BoundingBoxRenderer
 					savedIndex = i;
 					smallest = t;
 				}
-				chunkIndexes[t] = i;
+				chunkIndices[t] = i;
 			}
+		}
+		FindChunkBox (ray, manager);
+	}
+	void FindChunkBox (Ray ray,ChunkManager &manager)
+	{
+		for(auto &val : chunkIndices)
+		{
+			if (val.first > 50.0f) //Max distance for raytracing
+				break;
+			
+			int savedIndex = -1;
+			float smallest = -1.0f;
+			Chunk& chunk = manager.chunks[val.second];
+			for(int i = 0 ; i < Chunk::BlockCount (); i++)
+			{
+				Geom::Box box = chunk.GetBoxForBlock (i);
+				float t = Ray::intersection(box, ray);
+				if ((smallest > t || savedIndex == -1) && t >= 0)
+				{
+					savedIndex = i;
+					smallest = t;
+					chunkIndices[t] = i;
+				}
+			}
+			if (savedIndex >= 0)
+			{
+				auto index = Chunk::D3Index::convertIto3DIndex(savedIndex);
+				chunk.chunkInfo[index.x][index.y][index.z].isExist = false;
+				return; //found the block
+			}
+			
 		}
 	}
 private:
