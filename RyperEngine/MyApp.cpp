@@ -53,7 +53,7 @@ bool CMyApp::LoadShaders ()
 	shader_Simple.CreateShadowShader();
 	shader_Simple.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
 	shader_Simple.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
-	if(!shader_Simple.LinkProgram()) return false;
+	if (!shader_Simple.LinkProgram()) return false;
 
 	shader_NormalVecDraw.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
 	shader_NormalVecDraw.AttachShader(GL_GEOMETRY_SHADER, "normalDrawer.geom");

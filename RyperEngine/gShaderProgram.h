@@ -88,20 +88,125 @@ private:
 		BoundShader = activeShaderID; 
 #endif
 	}
+
+	virtual void Load () {}
 };
 
 namespace Shader {
 
-struct LightRender : gShaderProgram {};
-struct Simple : gShaderProgram {};
-struct SkyBox : gShaderProgram {};
-struct QuadTexturer : gShaderProgram {};
-struct BoundingBox : gShaderProgram {};
-struct Frustum : gShaderProgram {};
-struct NormalVecDraw : gShaderProgram {};
-struct Instanced : gShaderProgram {};
-struct Water : gShaderProgram {};
-struct ParticleUpdate : gShaderProgram {};
-struct PatricleRender : gShaderProgram {};
+struct LightRender : gShaderProgram 
+{
+	void Load () override
+	{
+		CreateShadowShader();
+		AttachShader(GL_VERTEX_SHADER, "LightVisualizer.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "LightVisualizer.frag");
+		MAssert(LinkProgram(), "Light shader not loaded succesfully");
+	}
+};
+struct Simple : gShaderProgram 
+{
+	void Load() override
+	{
+		CreateShadowShader();
+		AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
+		MAssert(LinkProgram(), "Simple shader not loaded succesfully");
+	}
+};
+struct SkyBox : gShaderProgram 
+{
+	void Load() override
+	{
+		CreateShadowShader();
+		AttachShader(GL_VERTEX_SHADER, "skybox.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "skybox.frag");
+		MAssert(LinkProgram(), "Skybox shader not loaded succesfully");
+	}
+};
+struct QuadTexturer : gShaderProgram 
+{
+	void Load() override
+	{
+		CreateShadowShader();
+		AttachShader(GL_VERTEX_SHADER, "quadTexturer.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
+		MAssert(LinkProgram(), "Simple shader not loaded succesfully");
+	}
+};
+struct BoundingBox : gShaderProgram 
+{
+	void Load() override
+	{
+		CreateShadowShader();
+		AttachShader(GL_VERTEX_SHADER, "boundingBoxShader.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "boundingBoxShader.frag");
+		MAssert(LinkProgram(), "Bounding box shader not loaded succesfully");
+	}
+};
+struct Frustum : gShaderProgram 
+{
+	void Load() override
+	{
+		AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
+		MAssert(LinkProgram(), "Frustum shader not loaded succesfully");
+	}
+};
+struct NormalVecDraw : gShaderProgram 
+{
+	void Load() override
+	{
+		AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
+		AttachShader(GL_GEOMETRY_SHADER, "normalDrawer.geom");
+		AttachShader(GL_FRAGMENT_SHADER, "normalDrawer.frag");
+		MAssert(LinkProgram(), "NormalVecDraw shader not loaded succesfully");
+	}
+};
+struct Instanced : gShaderProgram 
+{
+	void Load() override
+	{
+		AttachShader(GL_VERTEX_SHADER, "InstancedDrawer.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "InstancedDrawer.frag");
+		MAssert(LinkProgram(), "Instanced shader not loaded succesfully");
+	}
+};
+struct Water : gShaderProgram 
+{
+	void Load() override
+	{
+		AttachShader(GL_VERTEX_SHADER, "waterRenderer.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "waterRenderer.frag");
+		MAssert(LinkProgram(), "Water shader not loaded succesfully");
+	}
+};
+struct ParticleUpdate : gShaderProgram 
+{
+	void Load() override
+	{
+		AttachShader(GL_VERTEX_SHADER, "particleUpdate.vert");
+		AttachShader(GL_GEOMETRY_SHADER, "particleUpdate.geom");
+		MAssert(shader_ParticleUpdate.LinkWithTransformfeedback <5>({ "Type1", "Position1", "Velocity1", "Color1", "Age1" })
+			,"ParticleUpdate shader not loaded succesfully"
+		);
+	}
+};
+struct PatricleRender : gShaderProgram 
+{
+	void Load() override
+	{
+		AttachShader(GL_VERTEX_SHADER, "particleDrawer.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "particleDrawer.frag");
+		MAssert(LinkProgram(), "PatricleRender shader not loaded succesfully");
+	}
+};
+
+
+struct ShaderManager
+{
+	std::vector<gShaderProgram*> program;
+
+};
 
 }; //NS Shader
