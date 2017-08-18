@@ -146,9 +146,8 @@ public:
 					BlockData const& data = chunk.chunkInfo[i][j][k];
 					if(data.isExist)
 					{
-						///TODO pos for physix
-						//physx::PxTransform localTm(physx::PxVec3(data.pos.x, data.pos.y, data.pos.z)); ///TODO need world pos of chunks
-						physx::PxTransform localTm(physx::PxVec3(0,0,0));
+						glm::vec3 wPos = BlockData::GetWorldPos (chunk.wBottomLeftCenterPos, glm::ivec3(i,j,k), HalfExtent * 2);
+						physx::PxTransform localTm(physx::PxVec3(wPos.x, wPos.y, wPos.z)); ///TODO need world pos of chunks
 						//physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
 						physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
 						body->attachShape(*shape);

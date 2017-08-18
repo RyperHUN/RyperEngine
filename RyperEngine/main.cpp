@@ -108,9 +108,12 @@ int main( int argc, char* args[] )
 
 	// kérdezzük le az OpenGL verziót
 	int glVersion[2] = {-1, -1}; 
+	char* vendor	= (char*)glGetString(GL_VENDOR);
+	char* renderer	= (char*)glGetString(GL_RENDERER);
 	glGetIntegerv(GL_MAJOR_VERSION, &glVersion[0]); 
 	glGetIntegerv(GL_MINOR_VERSION, &glVersion[1]); 
-	std::cout << "Running OpenGL " << glVersion[0] << "." << glVersion[1] << std::endl;
+	std::cout << "Running OpenGL " << glVersion[0] << "." << glVersion[1] 
+		<< " on:" /*<< vendor*/ << " " << renderer << std::endl;
 
 	if ( glVersion[0] == -1 && glVersion[1] == -1 )
 	{
