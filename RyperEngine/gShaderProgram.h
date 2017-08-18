@@ -215,7 +215,7 @@ struct ParticleRender : gShaderProgram
 class ShaderManager : public Ryper::Singleton
 {
 private:
-	std::vector<gShaderProgram*> shaders;
+	std::vector<gShaderProgram*> shaders; //std::get with an std::tuple is another alternative
 	ShaderManager ()
 	{
 		shaders.push_back(new LightRender);
