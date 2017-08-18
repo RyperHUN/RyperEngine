@@ -13,11 +13,12 @@
 
 class FrustumRenderer
 {
-	gShaderProgram * shader;
+	Shader::BoundingBox * shader;
 public:
-	FrustumRenderer (gShaderProgram * shader)
-		:shader(shader)
-	{}
+	FrustumRenderer ()
+	{
+		shader = Shader::ShaderManager::Instance().GetShader<Shader::BoundingBox>();
+	}
 	void Render(glm::mat4 VP, CameraPtr camera)
 	{
 		shader->On();
@@ -92,11 +93,13 @@ public:
 struct BoundingBoxRenderer
 {
 	static Geometry * geom_box;
-	gShaderProgram * shader;
+	Shader::BoundingBox* shader;
 	std::vector<GameObj*>& gameObjs;
-	BoundingBoxRenderer(std::vector<GameObj*>& gameObj, gShaderProgram * shader)
-		:gameObjs(gameObj), shader(shader)
-	{}
+	BoundingBoxRenderer(std::vector<GameObj*>& gameObj)
+		:gameObjs(gameObj)
+	{
+		shader = Shader::ShaderManager::Instance().GetShader<Shader::BoundingBox>();
+	}
 	void Draw(RenderState state)
 	{
 		glEnable(GL_BLEND);
@@ -236,11 +239,13 @@ struct QuadTexturer
 	{
 		TOP_RIGHT, TOP_LEFT, BOTTOM_LEFT, BOTTOM_RIGHT, FULL_CENTER
 	};
-	gShaderProgram* shader;
+	Shader::QuadTexturer* shader;
 	Geometry * geom;
-	QuadTexturer(Geometry * geom, gShaderProgram* shader)
-		:shader(shader), geom(geom)
-	{}
+	QuadTexturer(Geometry * geom)
+		: geom(geom)
+	{
+		shader = Shader::ShaderManager::Instance().GetShader<Shader::QuadTexturer>();
+	}
 	void Draw(GLuint texId, bool isInvertY , POS pos, float scaleMultiplier = 1.0)
 	{
 		const glm::vec3 scale = glm::vec3(0.5 * scaleMultiplier, 0.5 * scaleMultiplier, 1);
@@ -324,11 +329,12 @@ struct LightRenderer
 {
 	std::vector<Light*> lights;
 	Geometry* geom;
-	gShaderProgram * shader;
+	Shader::LightRender * shader;
 	LightRenderer() {}
-	LightRenderer(Geometry * geom, gShaderProgram * shader)
-		: geom(geom), shader(shader)
+	LightRenderer(Geometry * geom)
+		: geom(geom)
 	{
+		shader = Shader::ShaderManager::Instance().GetShader<Shader::LightRender>();
 	}
 	void AddLight(Light * light)
 	{

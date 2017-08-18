@@ -257,7 +257,7 @@ public:
 				return casted;
 		}
 
-		MAssert(false, "Shader is not found in shader manager");
+		SAssert(false, "Shader is not found in shader manager");
 	}
 };
 

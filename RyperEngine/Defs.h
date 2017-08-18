@@ -48,6 +48,11 @@ using Array3D = std::array<std::array<std::array<T,HEIGHT>, COL>, ROW>;
 #   define MAssert(Expr, Msg) ;
 #endif
 
+//Strict assert works in release mode also
+//Only use in cases which can break the program
+#define SAssert(Expr, Msg) \
+    __M_Assert(#Expr, Expr, __FILE__, __LINE__, Msg)
+
 #include <iostream>
 
 static inline void __M_Assert(char* expr_str, bool expr, char* file, int line, char* msg)

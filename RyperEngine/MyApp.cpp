@@ -15,10 +15,9 @@ CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
-	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
-	frustumRender (&shader_BoundingBox),
+	boundingBoxRenderer (gameObjs),
 	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20)),
-	quadTexturer(&geom_Quad, &shader_QuadTexturer),
+	quadTexturer(&geom_Quad),
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50)),
@@ -188,7 +187,7 @@ bool CMyApp::Init()
 	{
 		lightManager.AddLight (&pointLight[i], Light::TYPE::POINT);
 	}
-	lightRenderer = LightRenderer(&geom_Box, &shader_LightRender); ///TODO Light renderer - lightManager kapcsolat kulon refek helyett!!
+	lightRenderer = LightRenderer(&geom_Box); ///TODO Light renderer - lightManager kapcsolat kulon refek helyett!!
 	for (auto& light : pointLight)
 		lightRenderer.AddLight(&light);
 	lightRenderer.AddLight(&dirLight);
