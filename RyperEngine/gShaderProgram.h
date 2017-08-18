@@ -90,3 +90,18 @@ private:
 	}
 };
 
+namespace Shader {
+
+struct LightRender : gShaderProgram {};
+struct Simple : gShaderProgram {};
+struct SkyBox : gShaderProgram {};
+struct QuadTexturer : gShaderProgram {};
+struct BoundingBox : gShaderProgram {};
+struct Frustum : gShaderProgram {};
+struct NormalVecDraw : gShaderProgram {};
+struct Instanced : gShaderProgram {};
+struct Water : gShaderProgram {};
+struct ParticleUpdate : gShaderProgram {};
+struct PatricleRender : gShaderProgram {};
+
+}; //NS Shader

@@ -122,18 +122,17 @@ protected:
 	DirLight dirLight;
 	std::vector<PointLight> pointLight;
 	
-	gShaderProgram  shader_LightRender;
-	gShaderProgram  shader_Simple;
-	gShaderProgram  shader_Shadow;
-	gShaderProgram	shader_SkyBox;
-	gShaderProgram  shader_DebugQuadTexturer;
-	gShaderProgram  shader_BoundingBox;
-	gShaderProgram  shader_Frustum;
-	gShaderProgram  shader_NormalVecDraw;
-	gShaderProgram  shader_Instanced;
-	gShaderProgram  shader_Water;
-	gShaderProgram  shader_ParticleUpdate;
-	gShaderProgram  shader_ParticleRender;
+	Shader::LightRender		shader_LightRender;
+	Shader::Simple			shader_Simple;
+	Shader::SkyBox			shader_SkyBox;
+	Shader::QuadTexturer	shader_QuadTexturer;
+	Shader::BoundingBox		shader_BoundingBox;
+	Shader::Frustum			shader_Frustum;
+	Shader::NormalVecDraw	shader_NormalVecDraw;
+	Shader::Instanced		shader_Instanced;
+	Shader::Water			shader_Water;
+	Shader::ParticleUpdate  shader_ParticleUpdate;
+	gShaderProgram			shader_ParticleRender;
 
 	gShaderProgram  shader_DeferredGeometry;
 	gShaderProgram  shader_DeferredLightPass;

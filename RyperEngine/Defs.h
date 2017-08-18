@@ -72,6 +72,6 @@ namespace Ryper {
 	{
 		NonMoveable () = default;
 		NonMoveable (NonMoveable &&) = delete;
-		NonMoveable&& operator=(NonMoveable &&) = delete;
+		NonMoveable& operator=(NonMoveable &&) = delete;
 	};
 } //NS Ryper

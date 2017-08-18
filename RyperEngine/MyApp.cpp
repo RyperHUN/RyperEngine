@@ -18,7 +18,7 @@ CMyApp::CMyApp(void)
 	boundingBoxRenderer (gameObjs, &shader_BoundingBox),
 	frustumRender (&shader_BoundingBox),
 	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20)),
-	quadTexturer(&geom_Quad, &shader_DebugQuadTexturer),
+	quadTexturer(&geom_Quad, &shader_QuadTexturer),
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50)),
@@ -70,15 +70,10 @@ bool CMyApp::LoadShaders ()
 	shader_SkyBox.AttachShader(GL_FRAGMENT_SHADER, "skybox.frag");
 	if (!shader_SkyBox.LinkProgram())  return false;
 
-	///TODO Delete shadow shader
-	shader_Shadow.AttachShader(GL_VERTEX_SHADER, "shadowShader.vert");
-	shader_Shadow.AttachShader(GL_FRAGMENT_SHADER, "shadowShader.frag");
-	if (!shader_Shadow.LinkProgram()) return false;
-
-	shader_DebugQuadTexturer.CreateShadowShader();
-	shader_DebugQuadTexturer.AttachShader(GL_VERTEX_SHADER, "quadTexturer.vert");
-	shader_DebugQuadTexturer.AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
-	if (!shader_DebugQuadTexturer.LinkProgram()) return false;
+	shader_QuadTexturer.CreateShadowShader();
+	shader_QuadTexturer.AttachShader(GL_VERTEX_SHADER, "quadTexturer.vert");
+	shader_QuadTexturer.AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
+	if (!shader_QuadTexturer.LinkProgram()) return false;
 
 	shader_LightRender.CreateShadowShader();
 	shader_LightRender.AttachShader(GL_VERTEX_SHADER, "LightVisualizer.vert");
