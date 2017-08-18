@@ -121,19 +121,8 @@ protected:
 	SpotLight spotLight;
 	DirLight dirLight;
 	std::vector<PointLight> pointLight;
-	
-	Shader::LightRender		shader_LightRender;
-	Shader::Simple			shader_Simple;
-	Shader::SkyBox			shader_SkyBox;
-	Shader::QuadTexturer	shader_QuadTexturer;
-	Shader::BoundingBox		shader_BoundingBox;
-	Shader::Frustum			shader_Frustum;
-	Shader::NormalVecDraw	shader_NormalVecDraw;
-	Shader::Instanced		shader_Instanced;
-	Shader::Water			shader_Water;
-	Shader::ParticleUpdate  shader_ParticleUpdate;
-	gShaderProgram			shader_ParticleRender;
 
+	Shader::Simple*	shader_Simple;
 	gShaderProgram  shader_DeferredGeometry;
 	gShaderProgram  shader_DeferredLightPass;
 

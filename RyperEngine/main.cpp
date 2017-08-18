@@ -224,6 +224,7 @@ int main( int argc, char* args[] )
 
 		// takarítson el maga után az objektumunk
 		app.Clean();
+		Shader::ShaderManager::Instance().Clean();
 	}
 
 	SDL_GL_DeleteContext(context);

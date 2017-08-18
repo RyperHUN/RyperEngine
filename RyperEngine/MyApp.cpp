@@ -16,7 +16,7 @@ CMyApp::CMyApp(void)
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
 	boundingBoxRenderer (gameObjs),
-	chunk(&geom_Box, &shader_Instanced, glm::vec3(20,20,20)),
+	chunk(&geom_Box, glm::vec3(20,20,20)),
 	quadTexturer(&geom_Quad),
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
@@ -24,9 +24,9 @@ CMyApp::CMyApp(void)
 	skyboxRenderer (&geom_Quad, -1),
 	waterRenderer (quadTexturer,screenSize),
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
-	particleSystem (&shader_ParticleUpdate, &shader_ParticleRender),
 	fbo_Original (0)
 {
+	shader_Simple = Shader::ShaderManager::Instance().GetShader<Shader::Simple>();
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
 	texture_Map = 0;
@@ -49,61 +49,6 @@ CMyApp::~CMyApp(void)
 
 bool CMyApp::LoadShaders ()
 {
-	shader_Simple.CreateShadowShader();
-	shader_Simple.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
-	shader_Simple.AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
-	if (!shader_Simple.LinkProgram()) return false;
-
-	shader_NormalVecDraw.AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
-	shader_NormalVecDraw.AttachShader(GL_GEOMETRY_SHADER, "normalDrawer.geom");
-	shader_NormalVecDraw.AttachShader(GL_FRAGMENT_SHADER, "normalDrawer.frag");
-	if(!shader_NormalVecDraw.LinkProgram()) return false;
-
-	shader_Instanced.AttachShader(GL_VERTEX_SHADER, "InstancedDrawer.vert");
-	shader_Instanced.AttachShader(GL_FRAGMENT_SHADER, "InstancedDrawer.frag");
-	if(!shader_Instanced.LinkProgram()) return false;
-
-	// skybox shader
-	shader_SkyBox.CreateShadowShader();
-	shader_SkyBox.AttachShader(GL_VERTEX_SHADER, "skybox.vert");
-	shader_SkyBox.AttachShader(GL_FRAGMENT_SHADER, "skybox.frag");
-	if (!shader_SkyBox.LinkProgram())  return false;
-
-	shader_QuadTexturer.CreateShadowShader();
-	shader_QuadTexturer.AttachShader(GL_VERTEX_SHADER, "quadTexturer.vert");
-	shader_QuadTexturer.AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
-	if (!shader_QuadTexturer.LinkProgram()) return false;
-
-	shader_LightRender.CreateShadowShader();
-	shader_LightRender.AttachShader(GL_VERTEX_SHADER, "LightVisualizer.vert");
-	shader_LightRender.AttachShader(GL_FRAGMENT_SHADER, "LightVisualizer.frag");
-	if (!shader_LightRender.LinkProgram()) return false;
-
-	shader_BoundingBox.CreateShadowShader();
-	shader_BoundingBox.AttachShader(GL_VERTEX_SHADER, "boundingBoxShader.vert");
-	shader_BoundingBox.AttachShader(GL_FRAGMENT_SHADER, "boundingBoxShader.frag");
-	if (!shader_BoundingBox.LinkProgram()) return false;
-
-	shader_Frustum.CreateShadowShader();
-	shader_Frustum.AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
-	shader_Frustum.AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
-	if (!shader_Frustum.LinkProgram()) return false;
-	
-	///TODO Need shadow shader? i think not!
-	//shader_Water.CreateShadowShader();
-	shader_Water.AttachShader(GL_VERTEX_SHADER, "waterRenderer.vert");
-	shader_Water.AttachShader(GL_FRAGMENT_SHADER, "waterRenderer.frag");
-	if (!shader_Water.LinkProgram()) return false;
-
-	shader_ParticleRender.AttachShader (GL_VERTEX_SHADER, "particleDrawer.vert");
-	shader_ParticleRender.AttachShader(GL_FRAGMENT_SHADER, "particleDrawer.frag");
-	if(!shader_ParticleRender.LinkProgram ()) return false;
-
-	shader_ParticleUpdate.AttachShader(GL_VERTEX_SHADER, "particleUpdate.vert");
-	shader_ParticleUpdate.AttachShader(GL_GEOMETRY_SHADER, "particleUpdate.geom");
-	if(!shader_ParticleUpdate.LinkWithTransformfeedback <5>({"Type1", "Position1", "Velocity1", "Color1", "Age1"}))
-		return false;
-
 	shader_DeferredGeometry.AttachShader(GL_VERTEX_SHADER, "deferredShader.vert");
 	shader_DeferredGeometry.AttachShader(GL_FRAGMENT_SHADER, "deferredShader.frag");
 	if (!shader_DeferredGeometry.LinkProgram()) return false;
@@ -208,14 +153,14 @@ void CMyApp::InitScene_Water ()
 	materialWater->textures.push_back(Texture{ tex_waterNormal, "texture_normal", aiString{} });
 	materialWater->textures.push_back(Texture{ waterRenderer.GetRefractDepth(), "texture_refract_depth", aiString{} });
 
-	Quadobj *waterObj = new Quadobj{ &shader_Simple, &geom_PerlinHeight,materialheightMap,glm::vec3{ -1,5,-5 },glm::vec3(200,200,50),glm::vec3(-1,0,0) };
+	Quadobj *waterObj = new Quadobj{ shader_Simple, &geom_PerlinHeight,materialheightMap,glm::vec3{ -1,5,-5 },glm::vec3(200,200,50),glm::vec3(-1,0,0) };
 	waterObj->rotAngle = M_PI / 2.0;
 	Quadobj *quadObjWater = new Quadobj{ *waterObj };
 	quadObjWater->pos += glm::vec3(0, 1, 0);
 	quadObjWater->scale *= 3.0;
 	quadObjWater->rotAngle = M_PI / 2.0;
 	quadObjWater->geometry = &geom_Quad;
-	quadObjWater->shader = &shader_Water;
+	quadObjWater->shader = Shader::ShaderManager::Instance().GetShader<Shader::Water>();
 	quadObjWater->material = materialWater;
 	waterRenderer.SetWaterInfo(quadObjWater, &quadObjWater->pos.y);
 
@@ -228,7 +173,7 @@ void CMyApp::InitScene_Minecraft ()
 {
 	MaterialPtr materialMan = std::make_shared<Material>(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1, 1, 1));
 
-	AnimatedCharacter* cowboyObj = new AnimatedCharacter(&shader_Simple, &geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1, 0, 0));
+	AnimatedCharacter* cowboyObj = new AnimatedCharacter(shader_Simple, &geom_Man, materialMan, glm::vec3(0.0), glm::vec3(1.0), glm::vec3(1, 0, 0));
 	for (auto& mesh : geom_Man.meshes)
 		mesh.textures.push_back(Texture{ textureCube_id,"skyBox",aiString{} }); ///TODO I think this is not needed anymore
 	gameObjs.push_back(cowboyObj);
@@ -241,7 +186,7 @@ void CMyApp::InitScene_Minecraft ()
 	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, screenSize, cowboyObj->pos);
 	std::swap(activeCamera, secondaryCamera);
 
-	chunkManager.Init(&geom_Box, &shader_Instanced, textureArray_blocks);
+	chunkManager.Init(&geom_Box, textureArray_blocks);
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	for (auto& chunk : chunkManager.chunks)
 		physX.createChunk(chunk);
@@ -267,11 +212,11 @@ void CMyApp::InitScene_InsideBox ()
 	lightRenderer.lights.clear();
 	lightRenderer.AddLight (light);
 
-	GameObj * OuterBox = new GameObj(&shader_Simple, &geom_Box, materialNormal, glm::vec3(0), glm::vec3(50));
+	GameObj * OuterBox = new GameObj(shader_Simple, &geom_Box, materialNormal, glm::vec3(0), glm::vec3(50));
 	for (int i = 0 ; i < 7; i++)
 	{
 		glm::vec3 pos = Util::randomVec (-50, 50);
-		GameObj * insideBox = new GameObj (&shader_Simple, &geom_Box, materialNormal, pos, glm::vec3(Util::randomPoint(2,7)));
+		GameObj * insideBox = new GameObj (shader_Simple, &geom_Box, materialNormal, pos, glm::vec3(Util::randomPoint(2,7)));
 		renderObjs.push_back (insideBox);
 	}
 
@@ -388,10 +333,11 @@ void CMyApp::Render()
 void CMyApp::PrepareRendering(RenderState & state)
 {
 	glViewport(0, 0, screenSize.x, screenSize.y);
-	shader_Simple.On ();
-	shader_Simple.SetCubeTexture("skyBox", 13, textureCube_id);
-	shader_Simple.SetTexture("shadowMap", 15, fbo_Shadow.GetDepthAttachment ());
-	shader_Simple.Off ();
+	Shader::Simple * shader_Simple = Shader::ShaderManager::Instance().GetShader<Shader::Simple>();
+	shader_Simple->On ();
+	shader_Simple->SetCubeTexture("skyBox", 13, textureCube_id);
+	shader_Simple->SetTexture("shadowMap", 15, fbo_Shadow.GetDepthAttachment ());
+	shader_Simple->Off ();
 	state.PV = activeCamera->GetProjView();
 }
 
@@ -573,7 +519,6 @@ void CMyApp::Clean()
 	glDeleteTextures(1, &textureCube_id);
 	glDeleteTextures(1, &texture_Map);
 
-	shader_SkyBox.Clean(); //TODO Clean all shaders
 	physX.cleanupPhysics(false);
 
 	for(int i = 0; i < gameObjs.size(); i++)

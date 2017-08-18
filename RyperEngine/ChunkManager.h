@@ -62,7 +62,7 @@ struct Chunk
 	BlockData chunkInfo[size * 2 + 1][size * 2 + 1][size * 2 + 1];
 	glm::vec3 wBottomLeftCenterPos;
 	Geometry* geom_Box;
-	gShaderProgram * shader; //Can be removed, and box geom also!!
+	Shader::Instanced * shader; //Can be removed, and box geom also!!
 	int amountOfCubes = 0;
 
 	struct D3Index
@@ -78,9 +78,10 @@ struct Chunk
 		}
 	};	
 
-	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 wBottomLeftCenterPos)
+	Chunk(Geometry* geom, glm::vec3 wBottomLeftCenterPos)
 		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
 	{
+		shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
 		const size_t cubeSize = GetCubeSize();
 		for (int k = 0; k < cubeSize; k++)
 		{
@@ -97,9 +98,10 @@ struct Chunk
 		}
 	}
 
-	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 wBottomLeftCenterPos, std::vector<size_t> heights)
+	Chunk(Geometry* geom, glm::vec3 wBottomLeftCenterPos, std::vector<size_t> heights)
 		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
 	{
+		shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
 		const size_t cubeSize = GetCubeSize();
 		auto heightIter = heights.begin();
 		for (int x = 0; x < cubeSize; x++) //row
@@ -204,7 +206,7 @@ static Util::IslandGenerator islandGen (10);
 struct ChunkManager : public IRenderable
 {
 	Geometry* geom_Box;
-	gShaderProgram * shader;
+	Shader::Instanced * shader;
 	GLint texId;
 	static const size_t MapSize = Chunk::GetCubeSize() * 4; //Map Size in Chunks MapSize x MapSize
 	using ChunkArray = Array2D<float, MapSize, MapSize>;
@@ -214,17 +216,19 @@ struct ChunkManager : public IRenderable
 	std::vector<Chunk> chunks;
 	std::vector<bool>  isInside;
 	ChunkManager () 
-	{}
-	ChunkManager(Geometry* geom_Box, gShaderProgram * shader, GLint texId)
-		:geom_Box(geom_Box), shader(shader), texId(texId)
+	{
+	}
+	ChunkManager(Geometry* geom_Box, GLint texId)
+		:geom_Box(geom_Box), texId(texId)
 	{
 		//Random creation
+		shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
 	}
-	void Init (Geometry* geom_Box, gShaderProgram * shader, GLint texId)
+	void Init (Geometry* geom_Box, GLint texId)
 	{
 		this->geom_Box = geom_Box;
-		this->shader = shader;
 		this->texId = texId;
+		this->shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
 		GenerateBoxes();
 	}
 	~ChunkManager () {}
@@ -247,7 +251,7 @@ struct ChunkManager : public IRenderable
 						height = glm::clamp (temp, 0, (int)Chunk::GetCubeSize());
 					}
 
-					chunks.push_back(Chunk(geom_Box, shader, wPos, heightInfo));
+					chunks.push_back(Chunk(geom_Box, wPos, heightInfo));
 				}
 			}
 		}

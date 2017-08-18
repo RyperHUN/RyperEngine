@@ -259,6 +259,14 @@ public:
 
 		SAssert(false, "Shader is not found in shader manager");
 	}
+
+	void Clean ()
+	{
+		for (gShaderProgram* shader : shaders)
+		{
+			shader->Clean ();
+		}
+	}
 };
 
 }; //NS Shader

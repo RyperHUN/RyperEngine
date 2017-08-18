@@ -34,9 +34,11 @@ class ParticleSystem
 
 	static const size_t MAX_PARTICLES = 200;
 public:
-	ParticleSystem(gShaderProgram* updateShader, gShaderProgram* renderShader)
-		:updateTechnique(updateShader), billboardTechnique (renderShader)
-	{}
+	ParticleSystem()
+	{
+		updateTechnique		= Shader::ShaderManager::Instance().GetShader<Shader::ParticleUpdate>();
+		billboardTechnique  = Shader::ShaderManager::Instance().GetShader<Shader::ParticleRender>();
+	}
 
 	~ParticleSystem()
 	{}
