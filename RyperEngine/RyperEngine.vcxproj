@@ -48,7 +48,7 @@
     <ReferencePath>
     </ReferencePath>
     <OutDir>$(SolutionDir)\BuildResult\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\Intermediate\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)\BuildResult\Intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -57,7 +57,7 @@
     <ReferencePath>
     </ReferencePath>
     <OutDir>$(SolutionDir)\BuildResult\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\Intermediate\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)\BuildResult\Intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -182,7 +182,7 @@ struct BoundingBoxRenderer
 	{
 		for(auto &val : chunkIndices)
 		{
-			if (val.first > 50.0f) //Max distance for raytracing
+			if (val.first > 10.0f) //Max distance for raytracing
 				break;
 			
 			int savedIndex = -1;
