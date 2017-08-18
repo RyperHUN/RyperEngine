@@ -205,6 +205,8 @@ struct ChunkManager : public IRenderable
 			Geom::Box box = chunks[i].getBox ();
 			if (frustum->boxInFrustum (box) != FrustumG::OUTSIDE)
 				isInside[i] = true;
+			else
+				isInside[i] = false;
 		}
 	}
 	void Draw(RenderState & state) override
