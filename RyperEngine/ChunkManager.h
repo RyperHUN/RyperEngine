@@ -194,7 +194,7 @@ struct ChunkManager : public IRenderable
 	~ChunkManager () {}
 	void GenerateBoxes ()
 	{
-		int maxLayer = 1;
+		int maxLayer = 3;
 		for(int layer = 0; layer < maxLayer; layer++)
 		{	
 			const float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
@@ -204,7 +204,12 @@ struct ChunkManager : public IRenderable
 				for (int z = -interval; z <= interval; z++)
 				{
 					glm::vec3 wPos = glm::vec3(x, layer, z) * cubeExtent;
-					std::vector<size_t> heightInfo = TraverseChunk (wPos, maxLayer);
+					std::vector<size_t> heightInfo = GetHeightInfo (wPos, maxLayer);
+					for(size_t& height : heightInfo)
+					{
+						int temp = (int)height - layer * (int)Chunk::GetCubeSize();
+						height = glm::clamp (temp, 0, (int)Chunk::GetCubeSize());
+					}
 
 					chunks.push_back(Chunk(geom_Box, shader, wPos, heightInfo));
 				}
@@ -212,7 +217,7 @@ struct ChunkManager : public IRenderable
 		}
 	}
 	//Returns how much is the height for the chunks!
-	std::vector<size_t> TraverseChunk (glm::vec3 wPos, int maxLayer)
+	std::vector<size_t> GetHeightInfo (glm::vec3 wPos, int maxLayer)
 	{
 		std::vector<size_t> heightInfo;
 		for(int x = 0 ; x < Chunk::GetCubeSize(); x++)
