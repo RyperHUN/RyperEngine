@@ -5,6 +5,8 @@
 #include <vector>
 
 GLuint gShaderProgram::BoundShader = 0;
+std::unique_ptr<Shader::ShaderManager> Shader::ShaderManager::instance;
+std::once_flag Shader::ShaderManager::onceFlag;
 
 gShaderProgram::gShaderProgram(void) : m_map_uniform_locations(), m_list_shaders_attached(), m_id_program(0)
 {

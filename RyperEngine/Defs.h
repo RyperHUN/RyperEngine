@@ -74,4 +74,8 @@ namespace Ryper {
 		NonMoveable (NonMoveable &&) = delete;
 		NonMoveable& operator=(NonMoveable &&) = delete;
 	};
+
+	struct Singleton : public NonCopyable, NonMoveable
+	{
+	};
 } //NS Ryper

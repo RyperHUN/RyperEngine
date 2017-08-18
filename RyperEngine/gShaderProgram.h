@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "Defs.h"
+#include <mutex>
 
 class gShaderProgram
 {
@@ -26,6 +27,7 @@ public:
 	void BindAttribLoc(int index, const char* uniform);
 	void BindFragDataLoc(int index, const char* uniform);
 	bool LinkProgram();
+	virtual void Load() {}
 
 	void SetVerbose(bool);
 
@@ -88,8 +90,6 @@ private:
 		BoundShader = activeShaderID; 
 #endif
 	}
-
-	virtual void Load () {}
 };
 
 namespace Shader {
@@ -192,7 +192,7 @@ struct ParticleUpdate : gShaderProgram
 		);
 	}
 };
-struct PatricleRender : gShaderProgram 
+struct ParticleRender : gShaderProgram
 {
 	void Load() override
 	{
@@ -203,10 +203,53 @@ struct PatricleRender : gShaderProgram
 };
 
 
-struct ShaderManager
+class ShaderManager : public Ryper::Singleton
 {
-	std::vector<gShaderProgram*> program;
+private:
+	std::vector<gShaderProgram*> shaders;
+	ShaderManager ()
+	{
+		shaders.push_back(new LightRender);
+		shaders.push_back(new Simple);
+		shaders.push_back(new SkyBox);
+		shaders.push_back(new QuadTexturer);
+		shaders.push_back(new BoundingBox);
+		shaders.push_back(new Frustum);
+		shaders.push_back(new NormalVecDraw);
+		shaders.push_back(new Instanced);
+		shaders.push_back(new Water);
+		shaders.push_back(new ParticleUpdate);
+		shaders.push_back(new ParticleRender);
+		for(gShaderProgram* shader : shaders)
+			shader->Load();
+	}
+	static std::unique_ptr<ShaderManager> instance;
+	static std::once_flag onceFlag; //wraps a callable object and ensure it is called only once. 
+									//Even if multiple threads try to call it at the same time
+public:
+	static ShaderManager& Instance()
+	{
+		std::call_once(ShaderManager::onceFlag, []() {
+			instance.reset(new ShaderManager);
+		});
 
+		return *(instance.get());
+	}
+
+	template <typename T>
+	T* GetShader ()
+	{
+		static_assert(std::is_base_of<gShaderProgram, T>::value, "T should inherit from gShaderProgram");
+
+		for(gShaderProgram* shader : shaders)
+		{
+			T* casted = dynamic_cast<T*>(shader);
+			if (casted != nullptr)
+				return casted;
+		}
+
+		MAssert(false, "Shader is not found in shader manager");
+	}
 };
 
 }; //NS Shader
