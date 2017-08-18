@@ -191,6 +191,9 @@
     <ClInclude Include="ParticleSystem.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Utils\Helpers\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

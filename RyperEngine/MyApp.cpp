@@ -366,8 +366,8 @@ void CMyApp::Render()
 	BindFrameBuffersForRender ();
 	{
 		PrepareRendering (state);
-		for(auto& obj : renderObjs)
-			obj->Draw (state);
+		/*for(auto& obj : renderObjs)
+			obj->Draw (state);*/
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
 		particleSystem.Render (state);
@@ -375,8 +375,8 @@ void CMyApp::Render()
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
-		//boundingBoxRenderer.DrawChunks(state, chunkManager);
-		frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
+		boundingBoxRenderer.DrawChunks(state, chunkManager);
+		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Other debug drawings
 		//if (IsWaterRendering) 
@@ -489,6 +489,8 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 		int index = boundingBoxRenderer.FindObject(activeCamera->GetEye(), world);
 		if(index >= 0)
 			activeCamera->SetSelected (gameObjs[index]->pos); //TODo better solution, what if the selected moves?
+
+		boundingBoxRenderer.FindChunk (activeCamera->GetEye(), world, chunkManager);
 
 		cameraFocusIndex = index;
 	}

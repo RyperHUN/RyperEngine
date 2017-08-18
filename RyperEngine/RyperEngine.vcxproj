@@ -120,6 +120,7 @@
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PxController.h" />
     <ClInclude Include="PxJump.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderers.h" />
     <ClInclude Include="ChunkManager.h" />
     <ClInclude Include="Controller.h" />

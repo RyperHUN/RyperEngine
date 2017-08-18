@@ -108,9 +108,13 @@ struct BoundingBoxRenderer
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		for(auto& chunk : manager.chunks)
+		for(int i = 0 ; i < manager.chunks.size(); i++)
 		{
-			DrawBox(state, chunk.getBox().GetLocalMatrix(), false);
+			Chunk& chunk = manager.chunks[i];
+			bool isSelected = false;
+			if (chunkIndex == i)
+				isSelected = true;
+			DrawBox(state, chunk.getBox().GetLocalMatrix(), isSelected);
 		}
 		glDisable(GL_BLEND);
 	}
@@ -135,6 +139,26 @@ struct BoundingBoxRenderer
 			gameObjs[savedIndex]->isSelected = true;
 
 		return savedIndex;
+	}
+	int chunkIndex = -1;
+	void FindChunk (glm::vec3 eye, glm::vec3 world, ChunkManager &manager)
+	{
+		Ray ray = Ray::createRay(eye, world - eye);
+		float smallest = -1.0f;
+		int savedIndex = -1;
+		for (int i = 0; i < manager.chunks.size(); i++)
+		{
+			Chunk& obj = manager.chunks[i];
+			Geom::Box box = obj.getBox ();
+			float t = Ray::intersection(box, ray);
+			if ((smallest > t || savedIndex == -1) && t >= 0)
+			{
+				savedIndex = i;
+				smallest = t;
+			}
+		}
+
+		chunkIndex = savedIndex;
 	}
 private:
 	void DrawBox(RenderState state, glm::mat4 M, bool isSelected)
