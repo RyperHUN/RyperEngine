@@ -160,10 +160,9 @@ struct ChunkManager : public IRenderable
 	~ChunkManager () {}
 	void GenerateBoxes ()
 	{
-		glm::ivec3 startPos(15, 20, 5);
-		float size = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
+		float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
 
-		for(int layer = 0; layer < 1; layer++)
+		for(int layer = 0; layer < 3; layer++)
 		{
 			std::vector<std::vector<size_t>> ChunkHeightInfo;
 			ChunkArray arr = islandGen.GetArray<float, MapSize>();
@@ -176,12 +175,10 @@ struct ChunkManager : public IRenderable
 			{
 				for (int j = -interval; j <= interval; j++)
 				{
-					chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,-layer*Chunk::GetCubeSize(),j) * size));
+					chunks.push_back(Chunk(geom_Box, shader, glm::vec3(i,layer,j) * cubeExtent));
 				}
 			}
 		}
-
-		//chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(0, 0, 0) * size));
 	}
 	//Returns how much is the height for the chunks!
 	std::vector<size_t> TraverseChunk (ChunkArray& arr, int iStart, int jStart) 
@@ -231,7 +228,7 @@ private:
 	{
 		for (int i = 0; i < chunks.size(); i++)
 		{
-			if(isInside[i])
+			//if(isInside[i])
 				chunks[i].Draw(state, texId);
 		}
 	}
