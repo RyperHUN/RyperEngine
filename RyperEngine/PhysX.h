@@ -148,7 +148,7 @@ public:
 					{
 						///TODO pos for physix
 						//physx::PxTransform localTm(physx::PxVec3(data.pos.x, data.pos.y, data.pos.z)); ///TODO need world pos of chunks
-						physx::PxTransform localTm;
+						physx::PxTransform localTm(physx::PxVec3(0,0,0));
 						//physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
 						physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
 						body->attachShape(*shape);

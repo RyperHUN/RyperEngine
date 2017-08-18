@@ -49,6 +49,7 @@ struct Chunk
 	glm::vec3 wCenterPos;
 	Geometry* geom_Box;
 	gShaderProgram * shader; //Can be removed, and box geom also!!
+	int amountOfCubes = 0;
 
 	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 wCenterPos)
 		:geom_Box(geom), shader(shader), wCenterPos(wCenterPos)
@@ -78,7 +79,7 @@ struct Chunk
 			shader->SetUniform("uScale", wHalfExtent);
 			shader->SetTexture("tex1", 0,  texId, GL_TEXTURE_2D_ARRAY);
 			shader->SetUniform("uLayer", 1);
-			int amountOfCubes = UploadInstanceData ();
+			UploadInstanceData();
 
 			geom_Box->buffer.On();
 			geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
@@ -86,7 +87,8 @@ struct Chunk
 		}
 		shader->Off();
 	}
-	int UploadInstanceData ()
+	///TODO Instance data as attribute
+	void UploadInstanceData ()
 	{
 		int numberOfExistingCubes = 0;
 		int index = 0;
@@ -102,7 +104,7 @@ struct Chunk
 					{
 						std::string name("positions[" + std::to_string(index) + "]");
 						glm::vec3 wPos = ChunkData::GetWorldPos (wCenterPos, glm::ivec3(i,j,k), wHalfExtent * 2);
-						shader->SetUniform (name.c_str(), glm::vec3(wPos));
+						shader->SetUniform (name.c_str(), wPos);
 						std::string name2("uLayer[" + std::to_string(index) + "]");
 						shader->SetUniform (name2.c_str(), (int)data.type);
 
@@ -112,7 +114,7 @@ struct Chunk
 				}
 			}
 		}
-		return numberOfExistingCubes;
+		amountOfCubes = numberOfExistingCubes;
 	}
 
 	static constexpr size_t GetCubeSize()
@@ -121,10 +123,14 @@ struct Chunk
 	}
 	Geom::Box getBox ()
 	{
-		const float wExtent = wHalfExtent * 2.0f;
-		const glm::vec3 distance = glm::vec3(wExtent) * (float)size + glm::vec3(wHalfExtent);
-		glm::vec3 min = glm::vec3(wCenterPos) - distance;
-		glm::vec3 max = glm::vec3(wCenterPos) + distance;
+		const float wExtent		= wHalfExtent * 2.0f;
+		const float chunkExtent = wExtent * GetCubeSize();
+		const float diagonal	= glm::sqrt(chunkExtent * chunkExtent);
+		glm::vec3 min			= glm::vec3(wCenterPos);
+		glm::vec3 max			= glm::vec3(wCenterPos) + diagonal;
+
+		min -= wHalfExtent;
+		max -= wHalfExtent;
 
 		return Geom::Box {min, max};
 	}
@@ -163,14 +169,12 @@ struct ChunkManager : public IRenderable
 				for(int j = 0; j < arr.size(); j += Chunk::GetCubeSize ())
 					ChunkHeightInfo.push_back (TraverseChunk (arr, i, j));
 		
-			auto ChunkIter = ChunkHeightInfo.begin();
 			int interval = 1;
 			for (int i = -interval; i <= interval; i++)
 			{
 				for (int j = -interval; j <= interval; j++)
 				{
 					chunks.push_back(Chunk(geom_Box, shader, glm::vec3(startPos) + glm::vec3(i,-layer*Chunk::GetCubeSize(),j) * size));
-					ChunkIter++;
 				}
 			}
 		}
