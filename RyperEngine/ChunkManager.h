@@ -5,71 +5,67 @@
 #include <glm/gtc/random.hpp>
 #include "UtilEngine.h"
 #include <noise/noise.h>
+#include "Camera.h"
 
-///TODO Better speed if these are all uniforms
+/*
+Chunk coord system
+so the origo is at the bottom far left corner
+y = j
+^
+|
+|
+----> x = i
+/
+/
+v   z = k   */
+
 struct ChunkData
 {
-	glm::vec3 pos; ///TODO Can be ivec3
+	//glm::vec3 pos; ///TODO Can be ivec3
 	int type;
 	bool isExist = false;
+	static glm::vec3 GetWorldPos(glm::vec3 worldPos, glm::ivec3 localIndex, size_t wExtent)
+	{
+		glm::vec3 localPos = GetLocalPos(localIndex, wExtent);
+		return localPos + worldPos;
+	}
+	static glm::vec3 GetLocalPos(glm::ivec3 localIndex, size_t wExtent)
+	{
+		return glm::vec3{
+			localIndex.x * wExtent,
+			localIndex.y * wExtent,
+			localIndex.z * wExtent,
+		};
+	}
 };
-
 struct Chunk
 {
-	glm::ivec3 pos = glm::ivec3(15,20,5);
+	static const float wHalfExtent /*= 4.0f*/; //TODO Maybe move this to ChunkData??
 
-	static const float BlockSize /*= 4.0f*/;
-	static const size_t size = 2; //size * 2 + 1 = cube size
+	static const size_t size = 2; //size * 2 + 1  == --x-- ==GetCubeSize()
+								  // --x(--) the 2 lines are the size
+
+	ChunkData chunkInfo[size * 2 + 1][size * 2 + 1][size * 2 + 1];
+	glm::vec3 wCenterPos;
 	Geometry* geom_Box;
 	gShaderProgram * shader; //Can be removed, and box geom also!!
 
-	ChunkData chunkInfo[size*2 + 1][size * 2 + 1][size * 2 + 1];
-
-	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 pos)
-		:geom_Box(geom), shader(shader), pos(pos)
-	{
-		const size_t cubeSize = GetCubeSize();
-		for(int k = 0; k < cubeSize; k++)
-		{
-			for(int i = 0; i < cubeSize; i++) //row
-			{
-				for(int j = 0; j < cubeSize; j++)
-				{
-					ChunkData &data = chunkInfo[i][j][k];
-					data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i,j,k) * BlockSize * 2.0f;
-					data.isExist = true;
-					data.type = Util::randomPointI(0,4);
-				}
-			}
-		}
-	}
-	Chunk(std::vector<size_t> heightInfo,Geometry* geom, gShaderProgram * shader, glm::vec3 pos)
-		:geom_Box(geom), shader(shader), pos(pos)
-	{
-		const size_t cubeSize = GetCubeSize();
-		MAssert(heightInfo.size() == cubeSize * cubeSize, "Not valid height info given to Chunk, array size is not valid");
-		for (int i = 0; i < cubeSize; i++) //row
-		{
-			for (int j = 0; j < cubeSize; j++)
-			{
-				const size_t index = i * cubeSize + j;
-				PutHeightNumChunks (i, j, heightInfo[index]);				
-			}
-		}
-	}
-	void PutHeightNumChunks (const int i,const int j,const int height)
+	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 wCenterPos)
+		:geom_Box(geom), shader(shader), wCenterPos(wCenterPos)
 	{
 		const size_t cubeSize = GetCubeSize();
 		for (int k = 0; k < cubeSize; k++)
 		{
-			if (k >= height)
-				break;
-			ChunkData &data = chunkInfo[i][j][k];
-			data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i, -k, j) * BlockSize * 2.0f;
-			data.isExist = 1;
-			data.type = 0; //dirt
-			if (k == height - 1)
-				data.type = 1; //TODO Grass
+			for (int i = 0; i < cubeSize; i++) //row
+			{
+				for (int j = 0; j < cubeSize; j++)
+				{
+					ChunkData &data = chunkInfo[i][j][k];
+					//data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i, j, k) * wHalfExtent * 2.0f;
+					data.isExist = true;
+					data.type = Util::randomPointI(0, 4);
+				}
+			}
 		}
 	}
 
@@ -79,7 +75,7 @@ struct Chunk
 		{
 			shader->SetUniform("uPlane", state.planeEquation);
 			shader->SetUniform("PV", state.PV);
-			shader->SetUniform("uScale", BlockSize);
+			shader->SetUniform("uScale", wHalfExtent);
 			shader->SetTexture("tex1", 0,  texId, GL_TEXTURE_2D_ARRAY);
 			shader->SetUniform("uLayer", 1);
 			int amountOfCubes = UploadInstanceData ();
@@ -104,12 +100,11 @@ struct Chunk
 					ChunkData const& data = chunkInfo[i][j][k];
 					if(data.isExist)
 					{
-						//positions[MAX_INSTANCED];
 						std::string name("positions[" + std::to_string(index) + "]");
-						shader->SetUniform (name.c_str(), glm::vec3(data.pos));
+						glm::vec3 wPos = ChunkData::GetWorldPos (wCenterPos, glm::ivec3(i,j,k), wHalfExtent * 2);
+						shader->SetUniform (name.c_str(), glm::vec3(wPos));
 						std::string name2("uLayer[" + std::to_string(index) + "]");
 						shader->SetUniform (name2.c_str(), (int)data.type);
-						//shader->SetUniform(name2.c_str(), (int)0);
 
 						index++;
 						numberOfExistingCubes++;
@@ -126,10 +121,10 @@ struct Chunk
 	}
 	Geom::Box getBox ()
 	{
-		const float cubeSize = BlockSize * 2.0f;
-		const glm::vec3 distance = glm::vec3(cubeSize) * (float)size + glm::vec3(BlockSize);
-		glm::vec3 min = glm::vec3(pos) - distance;
-		glm::vec3 max = glm::vec3(pos) + distance;
+		const float wExtent = wHalfExtent * 2.0f;
+		const glm::vec3 distance = glm::vec3(wExtent) * (float)size + glm::vec3(wHalfExtent);
+		glm::vec3 min = glm::vec3(wCenterPos) - distance;
+		glm::vec3 max = glm::vec3(wCenterPos) + distance;
 
 		return Geom::Box {min, max};
 	}
@@ -146,6 +141,7 @@ struct ChunkManager : public IRenderable
 	using ChunkArray = Array2D<float, MapSize, MapSize>;
 
 	std::vector<Chunk> chunks;
+	std::vector<bool>  isInside;
 	ChunkManager () 
 	{}
 	ChunkManager(Geometry* geom_Box, gShaderProgram * shader, GLint texId)
@@ -157,7 +153,7 @@ struct ChunkManager : public IRenderable
 	void GenerateBoxes ()
 	{
 		glm::ivec3 startPos(15, 20, 5);
-		float size = Chunk::GetCubeSize() * Chunk::BlockSize * 2;
+		float size = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
 
 		for(int layer = 0; layer < 1; layer++)
 		{
@@ -168,7 +164,7 @@ struct ChunkManager : public IRenderable
 					ChunkHeightInfo.push_back (TraverseChunk (arr, i, j));
 		
 			auto ChunkIter = ChunkHeightInfo.begin();
-			int interval = 15;
+			int interval = 1;
 			for (int i = -interval; i <= interval; i++)
 			{
 				for (int j = -interval; j <= interval; j++)
@@ -196,7 +192,17 @@ struct ChunkManager : public IRenderable
 		}
 		return heightInfo;
 	}
-
+	void frustumCull (CameraPtr camera)
+	{
+		isInside.resize(chunks.size());
+		for(int i = 0 ; i < chunks.size(); i++)
+		{
+			FrustumG * frustum = camera->GetFrustum ();
+			Geom::Box box = chunks[i].getBox ();
+			if (frustum->boxInFrustum (box) != FrustumG::OUTSIDE)
+				isInside[i] = true;
+		}
+	}
 	void Draw(RenderState & state) override
 	{
 		//TODO FrustumCulling for each block
@@ -217,7 +223,8 @@ private:
 	{
 		for (int i = 0; i < chunks.size(); i++)
 		{
-			chunks[i].Draw(state, texId);
+			if(isInside[i])
+				chunks[i].Draw(state, texId);
 		}
 	}
 };

@@ -1,3 +1,3 @@
 #include "ChunkManager.h"
 
-const float Chunk::BlockSize = 4.0f;
+const float Chunk::wHalfExtent = 4.0f;

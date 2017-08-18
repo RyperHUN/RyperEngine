@@ -133,7 +133,7 @@ public:
 	}
 	void createChunk(Chunk const& chunk)
 	{
-		const float HalfExtent = chunk.BlockSize * 0.99998;
+		const float HalfExtent = chunk.wHalfExtent * 0.99998;
 		physx::PxShape* shape = gPhysics->createShape(physx::PxBoxGeometry(HalfExtent, HalfExtent, HalfExtent), *gMaterial);
 		const size_t cubeSize = chunk.GetCubeSize ();
 		for (int k = 0; k < cubeSize; k++)
@@ -146,7 +146,9 @@ public:
 					ChunkData const& data = chunk.chunkInfo[i][j][k];
 					if(data.isExist)
 					{
-						physx::PxTransform localTm(physx::PxVec3(data.pos.x, data.pos.y, data.pos.z));
+						///TODO pos for physix
+						//physx::PxTransform localTm(physx::PxVec3(data.pos.x, data.pos.y, data.pos.z)); ///TODO need world pos of chunks
+						physx::PxTransform localTm;
 						//physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
 						physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
 						body->attachShape(*shape);

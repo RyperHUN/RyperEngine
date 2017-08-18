@@ -244,7 +244,7 @@ void CMyApp::InitScene_Minecraft ()
 	cowboyObj->pos = glm::vec3(0, 45, 6);
 
 	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
-	activeCamera = std::make_shared<TPSCamera>(0.1, 1000, screenSize, cowboyObj->pos);
+	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, screenSize, cowboyObj->pos);
 	std::swap(activeCamera, secondaryCamera);
 
 	chunkManager = ChunkManager(&geom_Box, &shader_Instanced, textureArray_blocks);
@@ -339,7 +339,7 @@ void CMyApp::Render()
 	RenderState state;
 	state.wEye = activeCamera->GetEye ();
 	state.lightManager = &lightManager;
-	//FrustumCulling (secondaryCamera);
+	FrustumCulling (secondaryCamera);
 
 	//////////////////////////////Shadow Rendering!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	glm::mat4 lightSpaceMatrix = activeCamera->GetLightMatrixDirectionLight (dirLight.direction);
@@ -367,8 +367,8 @@ void CMyApp::Render()
 	BindFrameBuffersForRender ();
 	{
 		PrepareRendering (state);
-		//for(auto& obj : renderObjs)
-		//	obj->Draw (state);
+		for(auto& obj : renderObjs)
+			obj->Draw (state);
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
 		particleSystem.Render (state);
@@ -377,7 +377,7 @@ void CMyApp::Render()
 		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
 		boundingBoxRenderer.DrawChunks(state, chunkManager);
-		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
+		frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Other debug drawings
 		//if (IsWaterRendering) 
@@ -413,6 +413,7 @@ void CMyApp::FrustumCulling (CameraPtr camera)
 		else
 			obj->isInsideFrustum = false;
 	}
+	chunkManager.frustumCull (camera);
 }
 
 void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
