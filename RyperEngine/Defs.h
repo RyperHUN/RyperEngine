@@ -60,3 +60,18 @@ static inline void __M_Assert(char* expr_str, bool expr, char* file, int line, c
 		abort();
 	}
 }
+
+namespace Ryper {
+	struct NonCopyable 
+	{
+		NonCopyable () = default;
+		NonCopyable(NonCopyable const&)  = delete;
+		NonCopyable& operator=(NonCopyable const&) = delete;
+	};
+	struct NonMoveable 
+	{
+		NonMoveable () = default;
+		NonMoveable (NonMoveable &&) = delete;
+		NonMoveable&& operator=(NonMoveable &&) = delete;
+	};
+} //NS Ryper
