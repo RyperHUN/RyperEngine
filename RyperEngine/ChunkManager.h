@@ -45,6 +45,9 @@ struct BlockData
 		const float diagonal = glm::sqrt(wExtent * wExtent);
 		glm::vec3 min = wPos;
 		glm::vec3 max = wPos + diagonal;
+
+		min -= wExtent * 0.5f;
+		max -= wExtent * 0.5f;
 		
 		return Geom::Box{min, max};
 	}

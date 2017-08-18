@@ -116,9 +116,18 @@ struct BoundingBoxRenderer
 			for(auto &val: chunkIndices)
 				if (val.second == i)
 					isSelected = true;
-			DrawBox(state, chunk.getBox().GetLocalMatrix(), isSelected);
+			DrawChunkBox (state, chunk);
+			//DrawBox(state, chunk.getBox().GetLocalMatrix(), isSelected);
 		}
 		glDisable(GL_BLEND);
+	}
+	void DrawChunkBox (RenderState &state, Chunk& chunk)
+	{
+		for(int i = 0 ; i < Chunk::BlockCount (); i++)
+		{
+			Geom::Box box = chunk.GetBoxForBlock (i);
+			DrawBox (state, box.GetLocalMatrix (), false);
+		}
 	}
 	int FindObject(glm::vec3 eye, glm::vec3 world)
 	{
