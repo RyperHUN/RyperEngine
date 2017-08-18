@@ -10,14 +10,14 @@
 /*
 Chunk coord system
 so the origo is at the bottom far left corner
-y = j
-^
-|
-|
-----> x = i
-/
-/
-v   z = k   */
+    
+	   ^  y = j
+	   |
+	   |
+	   ----> x = i
+	  /
+	 /
+	v   z = k   */
 
 struct BlockData
 {
@@ -118,11 +118,15 @@ struct Chunk
 		}
 	}
 
-	Geom::Box GetBoxForBlock (int i)
+	bool GetBoxForBlock (int i, Geom::Box & result)
 	{
 		auto index = D3Index::convertIto3DIndex (i);
 		
-		return BlockData::GetWorldBox(wBottomLeftCenterPos, glm::ivec3(index.x, index.y, index.z), wHalfExtent * 2);;
+		if (!chunkInfo[index.x][index.y][index.z].isExist)
+			return false;
+
+		result = BlockData::GetWorldBox(wBottomLeftCenterPos, glm::ivec3(index.x, index.y, index.z), wHalfExtent * 2);
+		return true;
 	}
 
 	void Draw(RenderState state, GLuint texId)

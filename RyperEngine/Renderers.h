@@ -125,8 +125,11 @@ struct BoundingBoxRenderer
 	{
 		for(int i = 0 ; i < Chunk::BlockCount (); i++)
 		{
-			Geom::Box box = chunk.GetBoxForBlock (i);
-			DrawBox (state, box.GetLocalMatrix (), false);
+			Geom::Box box;
+			if(chunk.GetBoxForBlock (i,box))
+			{
+				DrawBox (state, box.GetLocalMatrix (), false);
+			}
 		}
 	}
 	int FindObject(glm::vec3 eye, glm::vec3 world)
@@ -187,13 +190,16 @@ struct BoundingBoxRenderer
 			Chunk& chunk = manager.chunks[val.second];
 			for(int i = 0 ; i < Chunk::BlockCount (); i++)
 			{
-				Geom::Box box = chunk.GetBoxForBlock (i);
-				float t = Ray::intersection(box, ray);
-				if ((smallest > t || savedIndex == -1) && t >= 0)
+				Geom::Box box;
+				if(chunk.GetBoxForBlock (i,box))
 				{
-					savedIndex = i;
-					smallest = t;
-					chunkIndices[t] = i;
+					float t = Ray::intersection(box, ray);
+					if ((smallest > t || savedIndex == -1) && t >= 0)
+					{
+						savedIndex = i;
+						smallest = t;
+						chunkIndices[t] = i;
+					}
 				}
 			}
 			if (savedIndex >= 0)
