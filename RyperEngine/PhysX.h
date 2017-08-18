@@ -143,7 +143,7 @@ public:
 				for (int j = 0; j < cubeSize; j++)
 				{
 					physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
-					ChunkData const& data = chunk.chunkInfo[i][j][k];
+					BlockData const& data = chunk.chunkInfo[i][j][k];
 					if(data.isExist)
 					{
 						///TODO pos for physix

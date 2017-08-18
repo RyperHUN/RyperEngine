@@ -19,11 +19,13 @@ y = j
 /
 v   z = k   */
 
-struct ChunkData
+struct BlockData
 {
 	//glm::vec3 pos; ///TODO Can be ivec3
 	int type;
 	bool isExist = false;
+
+	//Returns block center pos
 	static glm::vec3 GetWorldPos(glm::vec3 worldPos, glm::ivec3 localIndex, size_t wExtent)
 	{
 		glm::vec3 localPos = GetLocalPos(localIndex, wExtent);
@@ -40,19 +42,19 @@ struct ChunkData
 };
 struct Chunk
 {
-	static const float wHalfExtent /*= 4.0f*/; //TODO Maybe move this to ChunkData??
+	static const float wHalfExtent /*= 4.0f*/; //TODO Maybe move this to BlockData??
 
 	static const size_t size = 2; //size * 2 + 1  == --x-- ==GetCubeSize()
 								  // --x(--) the 2 lines are the size
 
-	ChunkData chunkInfo[size * 2 + 1][size * 2 + 1][size * 2 + 1];
-	glm::vec3 wCenterPos;
+	BlockData chunkInfo[size * 2 + 1][size * 2 + 1][size * 2 + 1];
+	glm::vec3 wBottomLeftCenterPos;
 	Geometry* geom_Box;
 	gShaderProgram * shader; //Can be removed, and box geom also!!
 	int amountOfCubes = 0;
 
-	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 wCenterPos)
-		:geom_Box(geom), shader(shader), wCenterPos(wCenterPos)
+	Chunk(Geometry* geom, gShaderProgram * shader, glm::vec3 wBottomLeftCenterPos)
+		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
 	{
 		const size_t cubeSize = GetCubeSize();
 		for (int k = 0; k < cubeSize; k++)
@@ -61,9 +63,9 @@ struct Chunk
 			{
 				for (int j = 0; j < cubeSize; j++)
 				{
-					ChunkData &data = chunkInfo[i][j][k];
+					BlockData &data = chunkInfo[i][j][k];
 					//data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i, j, k) * wHalfExtent * 2.0f;
-					data.isExist = true;
+					data.isExist = rand() % 2;
 					data.type = Util::randomPointI(0, 4);
 				}
 			}
@@ -99,11 +101,11 @@ struct Chunk
 			{
 				for (int j = 0; j < cubeSize; j++)
 				{
-					ChunkData const& data = chunkInfo[i][j][k];
+					BlockData const& data = chunkInfo[i][j][k];
 					if(data.isExist)
 					{
 						std::string name("positions[" + std::to_string(index) + "]");
-						glm::vec3 wPos = ChunkData::GetWorldPos (wCenterPos, glm::ivec3(i,j,k), wHalfExtent * 2);
+						glm::vec3 wPos = BlockData::GetWorldPos (wBottomLeftCenterPos, glm::ivec3(i,j,k), wHalfExtent * 2);
 						shader->SetUniform (name.c_str(), wPos);
 						std::string name2("uLayer[" + std::to_string(index) + "]");
 						shader->SetUniform (name2.c_str(), (int)data.type);
@@ -126,8 +128,8 @@ struct Chunk
 		const float wExtent		= wHalfExtent * 2.0f;
 		const float chunkExtent = wExtent * GetCubeSize();
 		const float diagonal	= glm::sqrt(chunkExtent * chunkExtent);
-		glm::vec3 min			= glm::vec3(wCenterPos);
-		glm::vec3 max			= glm::vec3(wCenterPos) + diagonal;
+		glm::vec3 min			= glm::vec3(wBottomLeftCenterPos);
+		glm::vec3 max			= glm::vec3(wBottomLeftCenterPos) + diagonal;
 
 		min -= wHalfExtent;
 		max -= wHalfExtent;
