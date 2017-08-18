@@ -22,7 +22,7 @@ CMyApp::CMyApp(void)
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50)),
-	skyboxRenderer (&geom_Quad, &shader_SkyBox, -1),
+	skyboxRenderer (&geom_Quad, -1),
 	waterRenderer (quadTexturer,screenSize),
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
 	particleSystem (&shader_ParticleUpdate, &shader_ParticleRender),

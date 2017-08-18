@@ -14,7 +14,7 @@
 #include "Defs.h"
 #include <mutex>
 
-class gShaderProgram
+class gShaderProgram : public Ryper::NonCopyable, public Ryper::NonMoveable
 {
 	std::unique_ptr<gShaderProgram> shadowShader;
 public:
@@ -101,7 +101,8 @@ struct LightRender : gShaderProgram
 		CreateShadowShader();
 		AttachShader(GL_VERTEX_SHADER, "LightVisualizer.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "LightVisualizer.frag");
-		MAssert(LinkProgram(), "Light shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "Light shader not loaded succesfully");
 	}
 };
 struct Simple : gShaderProgram 
@@ -111,7 +112,8 @@ struct Simple : gShaderProgram
 		CreateShadowShader();
 		AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "simpleShader.frag");
-		MAssert(LinkProgram(), "Simple shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "Simple shader not loaded succesfully");
 	}
 };
 struct SkyBox : gShaderProgram 
@@ -121,7 +123,8 @@ struct SkyBox : gShaderProgram
 		CreateShadowShader();
 		AttachShader(GL_VERTEX_SHADER, "skybox.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "skybox.frag");
-		MAssert(LinkProgram(), "Skybox shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "Skybox shader not loaded succesfully");
 	}
 };
 struct QuadTexturer : gShaderProgram 
@@ -131,7 +134,8 @@ struct QuadTexturer : gShaderProgram
 		CreateShadowShader();
 		AttachShader(GL_VERTEX_SHADER, "quadTexturer.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "quadTexturer.frag");
-		MAssert(LinkProgram(), "Simple shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "Simple shader not loaded succesfully");
 	}
 };
 struct BoundingBox : gShaderProgram 
@@ -141,7 +145,8 @@ struct BoundingBox : gShaderProgram
 		CreateShadowShader();
 		AttachShader(GL_VERTEX_SHADER, "boundingBoxShader.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "boundingBoxShader.frag");
-		MAssert(LinkProgram(), "Bounding box shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "Bounding box shader not loaded succesfully");
 	}
 };
 struct Frustum : gShaderProgram 
@@ -150,7 +155,8 @@ struct Frustum : gShaderProgram
 	{
 		AttachShader(GL_VERTEX_SHADER, "frustumVisualizer.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "frustumVisualizer.frag");
-		MAssert(LinkProgram(), "Frustum shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "Frustum shader not loaded succesfully");
 	}
 };
 struct NormalVecDraw : gShaderProgram 
@@ -160,7 +166,8 @@ struct NormalVecDraw : gShaderProgram
 		AttachShader(GL_VERTEX_SHADER, "simpleShader.vert");
 		AttachShader(GL_GEOMETRY_SHADER, "normalDrawer.geom");
 		AttachShader(GL_FRAGMENT_SHADER, "normalDrawer.frag");
-		MAssert(LinkProgram(), "NormalVecDraw shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "NormalVecDraw shader not loaded succesfully");
 	}
 };
 struct Instanced : gShaderProgram 
@@ -169,7 +176,8 @@ struct Instanced : gShaderProgram
 	{
 		AttachShader(GL_VERTEX_SHADER, "InstancedDrawer.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "InstancedDrawer.frag");
-		MAssert(LinkProgram(), "Instanced shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "Instanced shader not loaded succesfully");
 	}
 };
 struct Water : gShaderProgram 
@@ -178,7 +186,8 @@ struct Water : gShaderProgram
 	{
 		AttachShader(GL_VERTEX_SHADER, "waterRenderer.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "waterRenderer.frag");
-		MAssert(LinkProgram(), "Water shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "Water shader not loaded succesfully");
 	}
 };
 struct ParticleUpdate : gShaderProgram 
@@ -187,9 +196,8 @@ struct ParticleUpdate : gShaderProgram
 	{
 		AttachShader(GL_VERTEX_SHADER, "particleUpdate.vert");
 		AttachShader(GL_GEOMETRY_SHADER, "particleUpdate.geom");
-		MAssert(shader_ParticleUpdate.LinkWithTransformfeedback <5>({ "Type1", "Position1", "Velocity1", "Color1", "Age1" })
-			,"ParticleUpdate shader not loaded succesfully"
-		);
+		bool success = LinkWithTransformfeedback <5>({ "Type1", "Position1", "Velocity1", "Color1", "Age1" });
+		MAssert(success,"ParticleUpdate shader not loaded succesfully");
 	}
 };
 struct ParticleRender : gShaderProgram
@@ -198,7 +206,8 @@ struct ParticleRender : gShaderProgram
 	{
 		AttachShader(GL_VERTEX_SHADER, "particleDrawer.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "particleDrawer.frag");
-		MAssert(LinkProgram(), "PatricleRender shader not loaded succesfully");
+		bool success = LinkProgram();
+		MAssert(success, "PatricleRender shader not loaded succesfully");
 	}
 };
 

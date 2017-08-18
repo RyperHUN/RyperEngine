@@ -294,13 +294,15 @@ struct QuadTexturer
 struct SkyboxRenderer : public IRenderable
 {
 private:
-	gShaderProgram* shader;
+	Shader::SkyBox* shader;
 	Geometry * geom;
 	GLuint textureCube;
 public:
-	SkyboxRenderer(Geometry * geom, gShaderProgram* shader, GLuint textureCube)
-		:shader(shader), geom(geom), textureCube(textureCube)
-	{}
+	SkyboxRenderer(Geometry * geom, GLuint textureCube)
+		:geom(geom), textureCube(textureCube)
+	{
+		shader = Shader::ShaderManager::Instance().GetShader<Shader::SkyBox>();
+	}
 	virtual void Draw(RenderState & state) override
 	{
 		shader->On();

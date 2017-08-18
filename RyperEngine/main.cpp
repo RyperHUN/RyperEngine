@@ -140,6 +140,7 @@ int main( int argc, char* args[] )
 
 	// alkalmazas példánya
 	{
+		Shader::ShaderManager::Instance (); //It is better to call before MyApp, all initialization will be done here
 		CMyApp app;
 		if (!app.Init())
 		{
