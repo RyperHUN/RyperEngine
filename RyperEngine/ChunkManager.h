@@ -64,6 +64,7 @@ struct Chunk : Ryper::NonCopyable
 	Geometry* geom_Box;
 	Shader::Instanced * shader; //Can be removed, and box geom also!!
 	int amountOfCubes = 0;
+	gl::ArrayBuffer instancedVBO;
 
 	struct D3Index
 	{
@@ -96,6 +97,7 @@ struct Chunk : Ryper::NonCopyable
 				}
 			}
 		}
+		CreateVBO();
 	}
 
 	Chunk(Geometry* geom, glm::vec3 wBottomLeftCenterPos, std::vector<size_t> heights)
@@ -118,6 +120,7 @@ struct Chunk : Ryper::NonCopyable
 				heightIter++;
 			}
 		}
+		CreateVBO();
 	}
 
 	bool GetBoxForBlock (int i, Geom::Box & result)
@@ -136,16 +139,15 @@ struct Chunk : Ryper::NonCopyable
 		UploadInstanceData();
 
 		geom_Box->buffer.On();
-		gl::Bind(VBO);
-		gl::VertexAttrib attrib(10);
-		attrib.pointer(3, gl::kFloat);
-		attrib.enable();
-		attrib.divisor(1);
-		glm::vec3 data[10];
-		glGetBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(data), data);
-		auto error = glGetError();
-		geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
-		gl::Unbind(VBO);
+		{
+			auto bind = gl::MakeTemporaryBind (instancedVBO);
+			gl::VertexAttrib attrib(10);
+			attrib.pointer(3, gl::kFloat);
+			attrib.enable();
+			attrib.divisor(1);
+
+			geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
+		}
 		geom_Box->buffer.Off();
 	}
 	
@@ -167,14 +169,7 @@ struct Chunk : Ryper::NonCopyable
 			}
 		});
 		amountOfCubes = numberOfExistingCubes;
-		if(isFirstVbo)
-		{
-			CreateVBO();
-			isFirstVbo = false;
-		}
 	}
-	gl::ArrayBuffer VBO;
-	bool isFirstVbo = true;
 	void CreateVBO ()
 	{
 		std::vector<glm::vec3> positions;
@@ -190,16 +185,16 @@ struct Chunk : Ryper::NonCopyable
 
 		geom_Box->buffer.On();
 		{
-			gl::Bind(VBO);
+			gl::Bind(instancedVBO);
 			{
-				VBO.data(positions, gl::kStaticDraw);
+				instancedVBO.data(positions, gl::kStaticDraw);
 			
 				gl::VertexAttrib attrib(10);
 				attrib.pointer(3, gl::kFloat);
 				attrib.enable();
 				attrib.divisor(1);
 			}
-			gl::Unbind(VBO);
+			gl::Unbind(instancedVBO);
 		}
 		geom_Box->buffer.Off();
 	}
@@ -275,18 +270,15 @@ struct ChunkManager : public IRenderable
 	~ChunkManager () {}
 	void GenerateBoxes ()
 	{
-		int maxLayer = 1;
+		int maxLayer = 2;
 		for(int layer = 0; layer < maxLayer; layer++)
 		{	
 			const float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
-			int interval = 1;
-	/*		for (int x = -interval; x <= interval; x++)
+			int interval = 2;
+			for (int x = -interval; x <= interval; x++)
 			{
 				for (int z = -interval; z <= interval; z++)
-				{*/
-				for(int x = 0 ; x < 2; x++)
 				{
-					int  z = 0;
 					glm::vec3 wPos = glm::vec3(x, layer, z) * cubeExtent;
 					std::vector<size_t> heightInfo = GetHeightInfo (wPos, maxLayer);
 					for(size_t& height : heightInfo)
@@ -297,8 +289,7 @@ struct ChunkManager : public IRenderable
 
 					chunks.emplace_back(geom_Box, wPos, heightInfo);
 				}
-	/*			}
-			}*/
+			}
 		}
 	}
 	//Returns how much is the height for the chunks!
