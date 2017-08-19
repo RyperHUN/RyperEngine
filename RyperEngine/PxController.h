@@ -39,7 +39,7 @@ struct FPSController
 		dispCurStep.y = dy;
 
 		//dispCurStep += createDisplacementVector (controller); //wasd move
-		dispCurStep += createDisplacementVectorResident(controller, dTime) * 0.2;
+		dispCurStep += createDisplacementVectorResident(controller, dTime) * 0.4;
 
 
 		physx::PxControllerState cctState; //Get controller is on ground or not!

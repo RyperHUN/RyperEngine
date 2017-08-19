@@ -37,4 +37,13 @@ struct Ray
 
 		return -1.0;
 	}
+	static float checkinside(Geom::Box &b, Ray const&r)
+	{
+		if (b.min.x < r.origin.x && b.min.y <= r.origin.y && b.min.z <= r.origin.z &&
+			b.max.x >= r.origin.x && b.max.y >= r.origin.y && b.max.z >= r.origin.z)
+		{
+			return 0.0000001; //Ray is inside box;
+		}
+		return -1.0f;
+	}
 };

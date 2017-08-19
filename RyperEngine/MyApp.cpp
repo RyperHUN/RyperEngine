@@ -315,7 +315,7 @@ void CMyApp::Render()
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
-		//boundingBoxRenderer.DrawChunks(state, chunkManager);
+		boundingBoxRenderer.DrawChunks(state, chunkManager);
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Other debug drawings

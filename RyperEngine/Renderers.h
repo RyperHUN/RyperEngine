@@ -119,8 +119,8 @@ struct BoundingBoxRenderer
 			for(auto &val: chunkIndices)
 				if (val.second == i)
 					isSelected = true;
-			DrawChunkBox (state, chunk);
-			//DrawBox(state, chunk.getBox().GetLocalMatrix(), isSelected);
+			//DrawChunkBox (state, chunk);
+			DrawBox(state, chunk.getBox().GetLocalMatrix(), isSelected);
 		}
 		glDisable(GL_BLEND);
 	}
@@ -169,6 +169,8 @@ struct BoundingBoxRenderer
 			Chunk& obj = manager.chunks[i];
 			Geom::Box box = obj.getBox ();
 			float t = Ray::intersection(box, ray);
+			if (t <= 0)
+				t = Ray::checkinside(box, ray);
 			if ((savedIndex == -1) && t >= 0)
 			{
 				if (smallest > t)
@@ -185,7 +187,7 @@ struct BoundingBoxRenderer
 	{
 		for(auto &val : chunkIndices)
 		{
-			if (val.first > 10.0f) //Max distance for raytracing
+			if (val.first > 50.0f) //Max distance for raytracing
 				break;
 			
 			int savedIndex = -1;
@@ -209,6 +211,7 @@ struct BoundingBoxRenderer
 			{
 				auto index = Chunk::D3Index::convertIto3DIndex(savedIndex);
 				chunk.chunkInfo[index.x][index.y][index.z].isExist = false;
+				chunk.ChunkModified ();
 				return; //found the block
 			}
 			

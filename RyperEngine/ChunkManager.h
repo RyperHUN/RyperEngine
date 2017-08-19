@@ -116,6 +116,11 @@ struct Chunk : Ryper::NonCopyable
 		CreateVBO();
 	}
 
+	void ChunkModified ()
+	{
+		CreateVBO();
+	}
+
 	bool GetBoxForBlock (int i, Geom::Box & result)
 	{
 		auto index = D3Index::convertIto3DIndex (i);
@@ -162,7 +167,7 @@ struct Chunk : Ryper::NonCopyable
 	void CreateVBO ()
 	{
 		std::vector<InstanceData> instanceData;
-		//positions.reserve(amountOfCubes); //TODO Amount of cubes must be set before this
+		instanceData.reserve(amountOfCubes); //TODO Amount of cubes must be set before this
 		TraverseChunks ([this,&instanceData](int i , int j, int k)
 		{
 			BlockData & block = chunkInfo[i][j][k];
