@@ -29,6 +29,7 @@ class PhysX
 	physx::PxControllerManager*     mControllerManager = NULL;
 
 	PX::FPSController				mController;
+	const float OPTIMAL_FIXED_TIME = 1.0f / 60.0f;
 public:
 	void initPhysics(bool interactive)
 	{
@@ -80,26 +81,28 @@ public:
 
 		mControllerManager = PxCreateControllerManager(*gScene);
 	}
+	float sumTime = 0;
 	void stepPhysics(float deltaTime, bool interactive, Engine::Controller & controller)
 	{
-		//const double dTime = 1.0f / 60.0f;
-		const double dTime = deltaTime; //TODO Fix timestepping algorithm
-		gScene->simulate(dTime);
-		gScene->fetchResults(true);
-
-		//This is only needed if the player is dynamic
-		/*size_t numberOfTransforms;
-		const physx::PxActiveTransform* transforms = gScene->getActiveTransforms(numberOfTransforms);
-
-		if (numberOfTransforms > 0)
+		if (FixedTimeStep (deltaTime))
 		{
-			physx::PxActiveTransform transform = transforms[0];
-			glm::vec3 pos = Util::PhysXVec3ToglmVec3(transform.actor2World.p);
-			glm::quat quat = Util::PhysXQuatToglmQuat(transform.actor2World.q);
-			cowboyPos = pos - glm::vec3(0,9,0);
-		}*/
-		if (mController.IsValid ())
-			mController.Step (deltaTime, controller);
+			gScene->simulate(OPTIMAL_FIXED_TIME);
+			gScene->fetchResults(true);
+
+			//This is only needed if the player is dynamic
+			/*size_t numberOfTransforms;
+			const physx::PxActiveTransform* transforms = gScene->getActiveTransforms(numberOfTransforms);
+
+			if (numberOfTransforms > 0)
+			{
+				physx::PxActiveTransform transform = transforms[0];
+				glm::vec3 pos = Util::PhysXVec3ToglmVec3(transform.actor2World.p);
+				glm::quat quat = Util::PhysXQuatToglmQuat(transform.actor2World.q);
+				cowboyPos = pos - glm::vec3(0,9,0);
+			}*/
+			if (mController.IsValid ())
+				mController.Step (OPTIMAL_FIXED_TIME, controller);
+		}
 	}
 
 	void cleanupPhysics(bool interactive)
@@ -206,6 +209,16 @@ public:
 		mController.mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
 	}
 private:
+	bool FixedTimeStep (float deltaTime)
+	{
+		sumTime += deltaTime;
+		if (OPTIMAL_FIXED_TIME < sumTime )
+		{
+			sumTime = sumTime - OPTIMAL_FIXED_TIME;
+			return true;
+		}
+		return false;
+	}
 	void createCharacterDynamic (glm::vec3 pos, glm::quat rot, AssimpModel * assimpModel)
 	{
 		//const std::vector<glm::vec3> vertexes = assimpModel->meshes[0].buffer.GetPositionData();

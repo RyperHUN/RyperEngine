@@ -244,7 +244,7 @@ void CMyApp::Update()
 	static Uint32 last_time = SDL_GetTicks();
 	float delta_time = (SDL_GetTicks() - last_time)/1000.0f;
 	if(delta_time <= 0.0f) 
-		delta_time = 0.00001f; //Fixes in it bug
+		delta_time = 0.00001f; //Fixes init bug
 	float t = SDL_GetTicks() / 1000.0f;
 
 	activeCamera->Update(delta_time);
@@ -263,9 +263,10 @@ void CMyApp::Update()
 	for(auto& light : lightManager.shaderLights)
 		light.light->Animate(t, delta_time);
 
+	physX.stepPhysics(delta_time, false, controller); //TODO Save player ref
+
 	if (gameObjs.size() > 0 && dynamic_cast<AnimatedCharacter*>(gameObjs.front()) != nullptr)
 	{
-		physX.stepPhysics (delta_time, false, controller); //TODO Save player ref
 		activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
 	}
 
