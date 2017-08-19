@@ -258,6 +258,7 @@ public:
 		}
 
 		SAssert(false, "Shader is not found in shader manager");
+		throw "Shader not found";
 	}
 
 	void Clean ()

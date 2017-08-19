@@ -97,7 +97,8 @@ public:
 			glm::quat quat = Util::PhysXQuatToglmQuat(transform.actor2World.q);
 			cowboyPos = pos - glm::vec3(0,9,0);
 		}
-		mController.Step (deltaTime, cowboyPos, controller);
+		if (mController.IsValid ())
+			mController.Step (deltaTime, cowboyPos, controller);
 	}
 
 	void cleanupPhysics(bool interactive)
@@ -133,7 +134,7 @@ public:
 	}
 	void createChunk(Chunk const& chunk)
 	{
-		const float HalfExtent = chunk.wHalfExtent * 0.99998;
+		const float HalfExtent = chunk.wHalfExtent;
 		physx::PxShape* shape = gPhysics->createShape(physx::PxBoxGeometry(HalfExtent, HalfExtent, HalfExtent), *gMaterial);
 		const size_t cubeSize = chunk.GetCubeSize ();
 		for (int k = 0; k < cubeSize; k++)

@@ -12,10 +12,15 @@ struct Controller
 {
 	glm::vec3 forwardVec;
 	AnimatedCharacter *				player      = nullptr;
-	physx::PxCapsuleController*		mController = NULL;
+	physx::PxCapsuleController*		mController = nullptr;
 	float							mGravity    =-9.81f;
 	float							mJumpForce  = 60.0f;
 	PX::Jump						mJump;
+
+	bool IsValid ()
+	{
+		return player != nullptr && mController != nullptr;
+	}
 
 	void Step (float dTime, glm::vec3 &cowboyPos, Engine::Controller & controller)
 	{

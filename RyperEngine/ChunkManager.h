@@ -234,7 +234,7 @@ struct ChunkManager : public IRenderable
 	~ChunkManager () {}
 	void GenerateBoxes ()
 	{
-		int maxLayer = 2;
+		int maxLayer = 1;
 		for(int layer = 0; layer < maxLayer; layer++)
 		{	
 			const float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;

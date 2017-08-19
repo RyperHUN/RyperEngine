@@ -107,7 +107,7 @@ protected:
 
 	glm::ivec2 screenSize {640, 480};
 	bool IsFrameBufferRendering = false;
-	bool IsMSAAOn = true;
+	bool IsMSAAOn = false;
 	bool IsWaterRendering = false;
 	glFrameBuffer fbo_Rendered;
 	ShadowFrameBuffer fbo_Shadow;

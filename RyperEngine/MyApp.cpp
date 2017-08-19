@@ -190,7 +190,7 @@ void CMyApp::InitScene_Minecraft ()
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	for (auto& chunk : chunkManager.chunks)
 		physX.createChunk(chunk);
-	physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry, cowboyObj);
+	//physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry, cowboyObj);
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 	
@@ -309,12 +309,12 @@ void CMyApp::Render()
 			obj->Draw (state);
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
-		particleSystem.Render (state);
+		//particleSystem.Render (state);
 
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
-		boundingBoxRenderer.DrawChunks(state, chunkManager);
+		//boundingBoxRenderer.DrawChunks(state, chunkManager);
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Other debug drawings
