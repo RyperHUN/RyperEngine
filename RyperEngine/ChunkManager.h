@@ -130,23 +130,15 @@ struct Chunk
 		result = BlockData::GetWorldBox(wBottomLeftCenterPos, glm::ivec3(index.x, index.y, index.z), wHalfExtent * 2);
 		return true;
 	}
-
+	//Shader must be binded before drawing
 	void Draw(RenderState state, GLuint texId)
 	{
-		shader->On(); //TODO Can be refactored to state.shader
-		{
-			shader->SetUniform("uPlane", state.planeEquation);
-			shader->SetUniform("PV", state.PV);
-			shader->SetUniform("uScale", wHalfExtent);
-			shader->SetTexture("tex1", 0,  texId, GL_TEXTURE_2D_ARRAY);
-			shader->SetUniform("uLayer", 1);
-			UploadInstanceData();
+		UploadInstanceData();
 
-			geom_Box->buffer.On();
-			geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
-			geom_Box->buffer.Off();
-		}
-		shader->Off();
+		geom_Box->buffer.On();
+		geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
+		geom_Box->buffer.Off();
+
 	}
 	///TODO Instance data as attribute
 	void UploadInstanceData ()
@@ -307,10 +299,20 @@ struct ChunkManager : public IRenderable
 private:
 	void DrawLogic (RenderState& state)
 	{
-		for (int i = 0; i < chunks.size(); i++)
+		gShaderProgram* shader = state.shader;
+		shader->On ();
 		{
-			//if(isInside[i])
-				chunks[i].Draw(state, texId);
+			shader->SetUniform("uPlane", state.planeEquation);
+			shader->SetUniform("PV", state.PV);
+			shader->SetUniform("uScale", Chunk::wHalfExtent);
+			shader->SetTexture("tex1", 0, texId, GL_TEXTURE_2D_ARRAY);
+
+			for (int i = 0; i < chunks.size(); i++)
+			{
+				//if(isInside[i])
+					chunks[i].Draw(state, texId);
+			}
 		}
+		shader->Off();
 	}
 };
