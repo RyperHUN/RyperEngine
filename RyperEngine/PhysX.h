@@ -28,7 +28,7 @@ class PhysX
 	physx::PxCooking*				mCooking = NULL;
 	physx::PxControllerManager*     mControllerManager = NULL;
 
-	PX::Controller					mController;
+	PX::FPSController				mController;
 public:
 	void initPhysics(bool interactive)
 	{
@@ -80,14 +80,15 @@ public:
 
 		mControllerManager = PxCreateControllerManager(*gScene);
 	}
-	void stepPhysics(float deltaTime, bool interactive, glm::vec3& cowboyPos, Engine::Controller & controller)
+	void stepPhysics(float deltaTime, bool interactive, Engine::Controller & controller)
 	{
 		//const double dTime = 1.0f / 60.0f;
 		const double dTime = deltaTime; //TODO Fix timestepping algorithm
 		gScene->simulate(dTime);
 		gScene->fetchResults(true);
 
-		size_t numberOfTransforms;
+		//This is only needed if the player is dynamic
+		/*size_t numberOfTransforms;
 		const physx::PxActiveTransform* transforms = gScene->getActiveTransforms(numberOfTransforms);
 
 		if (numberOfTransforms > 0)
@@ -96,9 +97,9 @@ public:
 			glm::vec3 pos = Util::PhysXVec3ToglmVec3(transform.actor2World.p);
 			glm::quat quat = Util::PhysXQuatToglmQuat(transform.actor2World.q);
 			cowboyPos = pos - glm::vec3(0,9,0);
-		}
+		}*/
 		if (mController.IsValid ())
-			mController.Step (deltaTime, cowboyPos, controller);
+			mController.Step (deltaTime, controller);
 	}
 
 	void cleanupPhysics(bool interactive)
@@ -164,7 +165,7 @@ public:
 	}
 	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel, AnimatedCharacter * player)
 	{
-		mController.player = player;
+		//mController.player = player;
 		//createCharacterDynamic(pos,rot, assimpModel);
 		physx::PxCapsuleControllerDesc desc;
 
@@ -174,6 +175,27 @@ public:
 		desc.radius = 3.0f; 
 		desc.material = gMaterial;
 		desc.position = physx::PxExtendedVec3 (pos.x, pos.y, pos.z);
+		desc.slopeLimit = 0.00001f;
+		desc.contactOffset = 0.00001f;
+		desc.stepOffset = 0.00001f;
+		desc.invisibleWallHeight = 0.000000001f;
+		desc.maxJumpHeight = 10.0f;
+		desc.reportCallback = NULL; // Meg lehet adni neki osztalyt
+
+		mController.mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
+	}
+	void createFPSCharacter(glm::vec3& pos, glm::vec3& forwardVec)
+	{
+		mController.playerPos   = &pos;
+		mController.forwardVec  = &forwardVec;
+		physx::PxCapsuleControllerDesc desc;
+
+		//TODO Fix gap between ground
+		Geom::Box charBox;
+		desc.height = 5.0f; //TODO Little bit smaller capsule
+		desc.radius = 3.0f;
+		desc.material = gMaterial;
+		desc.position = physx::PxExtendedVec3(pos.x, pos.y, pos.z);
 		desc.slopeLimit = 0.00001f;
 		desc.contactOffset = 0.00001f;
 		desc.stepOffset = 0.00001f;

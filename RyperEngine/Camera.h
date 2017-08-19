@@ -331,3 +331,26 @@ public:
 	}
 private:
 };
+
+class PlayerCamera : public FPSCamera 
+{
+public:
+	using FPSCamera::FPSCamera;
+	void Init ()
+	{
+	}
+	glm::vec3& GetPos ()
+	{
+		return eyePos;
+	}
+	glm::vec3& GetForward ()
+	{
+		return forwardDir;
+	}
+	void KeyboardDown(SDL_KeyboardEvent& key) override
+	{
+	}
+	void KeyboardUp(SDL_KeyboardEvent& key) override
+	{
+	}
+};

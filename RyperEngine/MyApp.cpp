@@ -181,15 +181,16 @@ void CMyApp::InitScene_Minecraft ()
 	cowboyObj->rotAngle = -M_PI / 2; //For cowboy animated man
 	cowboyObj->pos = glm::vec3(0, 45, 6);
 
-	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, m_width, m_height, glm::ivec3(15, 20, 5));
-	//activeCamera = std::make_shared<TPSCamera>(0.1, 1000, screenSize, cowboyObj->pos);
-	std::swap(activeCamera, secondaryCamera);
+	activeCamera = std::make_shared<PlayerCamera>(0.1, 1000, screenSize, glm::vec3(0, 50, 0));
+	PlayerCamera * playerCam = (PlayerCamera*)activeCamera.get();
+	playerCam->Init();
 
 	chunkManager.Init(&geom_Box, textureArray_blocks);
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	for (auto& chunk : chunkManager.chunks)
 		physX.createChunk(chunk);
 	//physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry, cowboyObj);
+	physX.createFPSCharacter(playerCam->GetPos (), playerCam->GetForward ());
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 	
@@ -264,7 +265,7 @@ void CMyApp::Update()
 
 	if (gameObjs.size() > 0 && dynamic_cast<AnimatedCharacter*>(gameObjs.front()) != nullptr)
 	{
-		physX.stepPhysics (delta_time, false, gameObjs.front()->pos, controller); //TODO Save player ref
+		physX.stepPhysics (delta_time, false, controller); //TODO Save player ref
 		activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
 	}
 
