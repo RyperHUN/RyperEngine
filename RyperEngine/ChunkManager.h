@@ -52,7 +52,7 @@ struct BlockData
 		return Geom::Box{min, max};
 	}
 };
-struct Chunk
+struct Chunk : Ryper::NonCopyable
 {
 	static const float wHalfExtent /*= 4.0f*/; //TODO Maybe move this to BlockData??
 
@@ -136,11 +136,19 @@ struct Chunk
 		UploadInstanceData();
 
 		geom_Box->buffer.On();
+		gl::Bind(VBO);
+		gl::VertexAttrib attrib(10);
+		attrib.pointer(3, gl::kFloat);
+		attrib.enable();
+		attrib.divisor(1);
+		glm::vec3 data[10];
+		glGetBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(data), data);
+		auto error = glGetError();
 		geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
+		gl::Unbind(VBO);
 		geom_Box->buffer.Off();
-
 	}
-	GLuint VBO;
+	
 	///TODO Instance data as attribute
 	void UploadInstanceData ()
 	{
@@ -151,18 +159,49 @@ struct Chunk
 			BlockData const& data = chunkInfo[i][j][k];
 			if (data.isExist)
 			{
-				std::string name2("uLayer[" + std::to_string(index) + "]");
-				shader->SetUniform(name2.c_str(), (int)data.type);
+				//std::string name2("uLayer[" + std::to_string(index) + "]");
+				//shader->SetUniform(name2.c_str(), (int)data.type);
 
 				index++;
 				numberOfExistingCubes++;
 			}
 		});
 		amountOfCubes = numberOfExistingCubes;
+		if(isFirstVbo)
+		{
+			CreateVBO();
+			isFirstVbo = false;
+		}
 	}
+	gl::ArrayBuffer VBO;
+	bool isFirstVbo = true;
 	void CreateVBO ()
 	{
-		//glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
+		std::vector<glm::vec3> positions;
+		//positions.reserve(amountOfCubes); //TODO Amount of cubes must be set before this
+		TraverseChunks ([this,&positions](int i , int j, int k)
+		{
+			if (chunkInfo[i][j][k].isExist)
+			{
+				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
+				positions.push_back(wPos);
+			}
+		});
+
+		geom_Box->buffer.On();
+		{
+			gl::Bind(VBO);
+			{
+				VBO.data(positions, gl::kStaticDraw);
+			
+				gl::VertexAttrib attrib(10);
+				attrib.pointer(3, gl::kFloat);
+				attrib.enable();
+				attrib.divisor(1);
+			}
+			gl::Unbind(VBO);
+		}
+		geom_Box->buffer.Off();
 	}
 
 	void TraverseChunks (std::function<void(int,int,int)> fv)
@@ -241,10 +280,13 @@ struct ChunkManager : public IRenderable
 		{	
 			const float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
 			int interval = 1;
-			for (int x = -interval; x <= interval; x++)
+	/*		for (int x = -interval; x <= interval; x++)
 			{
 				for (int z = -interval; z <= interval; z++)
+				{*/
+				for(int x = 0 ; x < 2; x++)
 				{
+					int  z = 0;
 					glm::vec3 wPos = glm::vec3(x, layer, z) * cubeExtent;
 					std::vector<size_t> heightInfo = GetHeightInfo (wPos, maxLayer);
 					for(size_t& height : heightInfo)
@@ -253,9 +295,10 @@ struct ChunkManager : public IRenderable
 						height = glm::clamp (temp, 0, (int)Chunk::GetCubeSize());
 					}
 
-					chunks.push_back(Chunk(geom_Box, wPos, heightInfo));
+					chunks.emplace_back(geom_Box, wPos, heightInfo);
 				}
-			}
+	/*			}
+			}*/
 		}
 	}
 	//Returns how much is the height for the chunks!

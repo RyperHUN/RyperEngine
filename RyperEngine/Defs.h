@@ -72,6 +72,9 @@ namespace Ryper {
 		NonCopyable () = default;
 		NonCopyable(NonCopyable const&)  = delete;
 		NonCopyable& operator=(NonCopyable const&) = delete;
+
+		NonCopyable(NonCopyable&&) = default;
+		NonCopyable& operator=(NonCopyable&&) = default;
 	};
 	struct NonMoveable 
 	{

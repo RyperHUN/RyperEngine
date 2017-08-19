@@ -16,7 +16,6 @@ CMyApp::CMyApp(void)
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
 	boundingBoxRenderer (gameObjs),
-	chunk(&geom_Box, glm::vec3(20,20,20)),
 	quadTexturer(&geom_Quad),
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),

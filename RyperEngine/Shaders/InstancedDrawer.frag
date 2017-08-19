@@ -6,7 +6,6 @@ in VS_OUT
 	vec3 normal;
 	vec2 texCoord;
 	vec4 fragPosLightSpace4;
-	vec4 testColor;
 	flat int instanceId;
 } FS;
 
@@ -24,11 +23,10 @@ void main()
 	vec3 normal = normalize (FS.normal);
 	vec3 color = mix(normal, vec3(FS.texCoord, 0), 0.5);
 
-	//if(FS.instanceId > 2)
-	//	fs_out_col = vec4(color, 1);
-	//else
-		fs_out_col = texture(tex1, vec3(FS.texCoord, uLayer[FS.instanceId]));
+	fs_out_col = vec4(color, 1);
+	
+	//fs_out_col = texture(tex1, vec3(FS.texCoord, uLayer[1]));
 
-	//fs_out_col = vec4(FS.instanceId * 0.5, 0, 0, 1);
+	fs_out_col = vec4(FS.instanceId * 0.01, 0, 0, 1);
 	//fs_out_col = texture(diffuseTex, FS.texCoord);
 }
