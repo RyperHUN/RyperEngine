@@ -39,6 +39,7 @@ CMyApp::CMyApp(void)
 	//gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false); });
 
 	physX.initPhysics (false);
+	Chunk::blockChangedEvent = &physX;
 }
 
 

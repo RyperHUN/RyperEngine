@@ -8,10 +8,11 @@
 #include "GameObjects.h"
 
 #include "PxController.h"
+#include "Events.h"
 
 #define PVD_HOST "127.0.0.1"
 
-class PhysX 
+class PhysX : public Event::IBlockChanged
 {
 	physx::PxDefaultAllocator		gAllocator;
 	physx::PxDefaultErrorCallback	gErrorCallback;
@@ -136,7 +137,7 @@ public:
 		}
 		shape->release();
 	}
-	void createChunk(Chunk const& chunk)
+	void createChunk(Chunk & chunk)
 	{
 		const float HalfExtent = chunk.wHalfExtent;
 		physx::PxShape* shape = gPhysics->createShape(physx::PxBoxGeometry(HalfExtent, HalfExtent, HalfExtent), *gMaterial);
@@ -148,13 +149,14 @@ public:
 				for (int j = 0; j < cubeSize; j++)
 				{
 					physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
-					BlockData const& data = chunk.chunkInfo[i][j][k];
+					BlockData & data = chunk.chunkInfo[i][j][k];
 					if(data.isExist)
 					{
 						glm::vec3 wPos = BlockData::GetWorldPos (chunk.wBottomLeftCenterPos, glm::ivec3(i,j,k), HalfExtent * 2);
 						physx::PxTransform localTm(physx::PxVec3(wPos.x, wPos.y, wPos.z)); ///TODO need world pos of chunks
 						//physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
 						physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
+						data.physxPtr = body;
 						body->attachShape(*shape);
 						body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
 						//physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
@@ -165,6 +167,12 @@ public:
 		}
 
 		shape->release();
+	}
+	virtual void BlockChangedHandler(BlockData& data) override
+	{
+		physx::PxRigidStatic* body = (physx::PxRigidStatic*)data.physxPtr;
+		gScene->removeActor (*body);
+		data.physxPtr = nullptr;
 	}
 	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel, AnimatedCharacter * player)
 	{

@@ -6,6 +6,7 @@
 #include "UtilEngine.h"
 #include <noise/noise.h>
 #include "Camera.h"
+#include "Events.h"
 
 /*
 Chunk coord system
@@ -24,6 +25,7 @@ struct BlockData
 	//glm::vec3 pos; ///TODO Can be ivec3
 	int type;
 	bool isExist = false;
+	void * physxPtr = nullptr;
 
 	//Returns block center pos
 	static glm::vec3 GetWorldPos(glm::vec3 worldPos, glm::ivec3 localIndex, size_t wExtent)
@@ -58,6 +60,7 @@ struct Chunk : Ryper::NonCopyable
 
 	static const size_t size = 2; //size * 2 + 1  == --x-- ==GetCubeSize()
 								  // --x(--) the 2 lines are the size
+	static Event::IBlockChanged * blockChangedEvent;
 
 	BlockData chunkInfo[size * 2 + 1][size * 2 + 1][size * 2 + 1];
 	glm::vec3 wBottomLeftCenterPos;
@@ -116,9 +119,11 @@ struct Chunk : Ryper::NonCopyable
 		CreateVBO();
 	}
 
-	void ChunkModified ()
+	void ChunkModified (BlockData & changed)
 	{
 		CreateVBO();
+		if (blockChangedEvent != nullptr)
+			blockChangedEvent->BlockChangedHandler (changed);
 	}
 
 	bool GetBoxForBlock (int i, Geom::Box & result)
