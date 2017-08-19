@@ -26,7 +26,7 @@ struct FPSController
 	void Step(float dTime, Engine::Controller & controller)
 	{
 		//Handle controller movement
-		*playerPos = Util::PhysXVec3ToglmVec3(mController->getFootPosition());
+		*playerPos = Util::PhysXVec3ToglmVec3(mController->getPosition()) + glm::vec3(0,2,0);
 
 		physx::PxVec3 dispCurStep{ 0,0,0 };
 		const PxF32 heightDelta = mJump.getHeight(dTime);

@@ -31,16 +31,16 @@ struct Controller
 		case SDLK_s:
 			isBack = val;
 			break;
-		case SDLK_a:
+		case SDLK_q:
 			isLeft = val;
 			break;
-		case SDLK_d:
+		case SDLK_e:
 			isRight = val;
 			break;
-		case SDLK_e:
+		case SDLK_d:
 			isRightStrafe = val;
 			break;
-		case SDLK_q:
+		case SDLK_a:
 			isLeftStrafe = val;
 			break;
 		case SDLK_SPACE:
