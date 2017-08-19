@@ -140,34 +140,44 @@ struct Chunk
 		geom_Box->buffer.Off();
 
 	}
+	GLuint VBO;
 	///TODO Instance data as attribute
 	void UploadInstanceData ()
 	{
 		int numberOfExistingCubes = 0;
-		int index = 0;
-		const size_t cubeSize = GetCubeSize();
-		for (int k = 0; k < cubeSize; k++)
+		TraverseChunks ([&numberOfExistingCubes, this](int i, int j, int k)
 		{
-			for (int i = 0; i < cubeSize; i++) //row
+			int index = 0;
+			BlockData const& data = chunkInfo[i][j][k];
+			if (data.isExist)
 			{
-				for (int j = 0; j < cubeSize; j++)
-				{
-					BlockData const& data = chunkInfo[i][j][k];
-					if(data.isExist)
-					{
-						std::string name("positions[" + std::to_string(index) + "]");
-						glm::vec3 wPos = BlockData::GetWorldPos (wBottomLeftCenterPos, glm::ivec3(i,j,k), wHalfExtent * 2);
-						shader->SetUniform (name.c_str(), wPos);
-						std::string name2("uLayer[" + std::to_string(index) + "]");
-						shader->SetUniform (name2.c_str(), (int)data.type);
+				std::string name2("uLayer[" + std::to_string(index) + "]");
+				shader->SetUniform(name2.c_str(), (int)data.type);
 
-						index++;
-						numberOfExistingCubes++;
-					}
+				index++;
+				numberOfExistingCubes++;
+			}
+		});
+		amountOfCubes = numberOfExistingCubes;
+	}
+	void CreateVBO ()
+	{
+		//glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
+	}
+
+	void TraverseChunks (std::function<void(int,int,int)> fv)
+	{
+		const size_t cubeSize = GetCubeSize();
+		for(int i = 0; i < cubeSize; i++)
+		{
+			for(int j = 0 ; j < cubeSize; j++)
+			{
+				for(int k = 0; k < cubeSize; k++)
+				{
+					fv(i,j,k);
 				}
 			}
 		}
-		amountOfCubes = numberOfExistingCubes;
 	}
 
 	static constexpr size_t GetCubeSize()
