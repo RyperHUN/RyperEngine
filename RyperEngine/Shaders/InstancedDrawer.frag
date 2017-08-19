@@ -7,7 +7,7 @@ in VS_OUT
 	vec2 texCoord;
 	vec4 fragPosLightSpace4;
 	flat int instanceId;
-	flat int texId;
+	flat ivec4 texId;
 } FS;
 
 uniform sampler2D diffuseTex;
@@ -23,8 +23,8 @@ void main()
 
 	fs_out_col = vec4(color, 1);
 	
-	fs_out_col = texture(tex1, vec3(FS.texCoord, FS.texId));
+	fs_out_col = texture(tex1, vec3(FS.texCoord, FS.texId.x));
 
-	//fs_out_col = vec4(FS.instanceId * 0.01, 0, 0, 1);
-	fs_out_col = vec4(FS.texId* 0.0001,0,0,1);
+	//fs_out_col = vec4(FS.instanceId * 0.001, 0, 0, 1);
+	//fs_out_col = vec4(FS.texId.x* 0.0001,0,0,1);
 }

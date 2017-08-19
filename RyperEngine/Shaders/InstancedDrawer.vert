@@ -4,7 +4,7 @@ layout (location = 0) in	vec3	vs_in_pos;
 layout (location = 1) in	vec3	vs_in_normal;
 layout (location = 2) in	vec2	vs_in_tex;
 layout (location = 10) in	vec3	positions;
-layout (location = 11) in	int	texId;
+layout (location = 11) in	ivec4	texId;
 
 uniform mat4 PV;
 uniform mat4 LightSpaceMtx;
@@ -18,7 +18,7 @@ out VS_OUT
 	vec2 texCoord;
 	vec4 fragPosLightSpace4;
 	flat int instanceId;
-	flat int texId;
+	flat ivec4 texId;
 } VS;
 
 mat4 Translate (vec3 pos)

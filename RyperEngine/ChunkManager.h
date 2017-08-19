@@ -169,7 +169,7 @@ struct Chunk : Ryper::NonCopyable
 			if (block.isExist)
 			{
 				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
-				instanceData.push_back({wPos, (i32)block.type});
+				instanceData.push_back({wPos, glm::ivec4{block.type}});
 			}
 		});
 
@@ -225,7 +225,7 @@ struct Chunk : Ryper::NonCopyable
 private:
 	struct InstanceData {
 		glm::vec3 pos;
-		i32 texId;
+		glm::ivec4 texId;
 	};
 	void SetAttribPointers()
 	{
@@ -233,8 +233,10 @@ private:
 		attribPos.pointer(3, gl::kFloat, false, sizeof(InstanceData), (void*)offsetof(InstanceData, pos));
 		attribPos.enable();
 		attribPos.divisor(1);
+
 		gl::VertexAttrib attribTex(11);
-		attribTex.pointer(1, gl::kInt, false, sizeof(InstanceData), (void*)offsetof(InstanceData, texId));
+		//attribTex.pointer(1, gl::kInt, false, sizeof(InstanceData), (void*)offsetof(InstanceData, texId));
+		attribTex.ipointer(4, gl::kInt, sizeof(InstanceData), (void*)offsetof(InstanceData, texId));
 		attribTex.enable();
 		attribTex.divisor(1);
 	}
