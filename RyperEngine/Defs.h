@@ -67,6 +67,7 @@ static inline void __M_Assert(char* expr_str, bool expr, char* file, int line, c
 }
 
 namespace Ryper {
+	//Cannot be copyed, but can be moved
 	struct NonCopyable 
 	{
 		NonCopyable () = default;

@@ -7,13 +7,11 @@ in VS_OUT
 	vec2 texCoord;
 	vec4 fragPosLightSpace4;
 	flat int instanceId;
+	flat int texId;
 } FS;
 
 uniform sampler2D diffuseTex;
 uniform sampler2DArray tex1;
-
-#define MAX_INSTANCED 125
-uniform int uLayer[MAX_INSTANCED];
 
 //TODO Texture for cube
 out vec4 fs_out_col;
@@ -25,8 +23,8 @@ void main()
 
 	fs_out_col = vec4(color, 1);
 	
-	//fs_out_col = texture(tex1, vec3(FS.texCoord, uLayer[1]));
+	fs_out_col = texture(tex1, vec3(FS.texCoord, FS.texId));
 
-	fs_out_col = vec4(FS.instanceId * 0.01, 0, 0, 1);
-	//fs_out_col = texture(diffuseTex, FS.texCoord);
+	//fs_out_col = vec4(FS.instanceId * 0.01, 0, 0, 1);
+	fs_out_col = vec4(FS.texId* 0.0001,0,0,1);
 }

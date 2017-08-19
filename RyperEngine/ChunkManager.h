@@ -83,20 +83,13 @@ struct Chunk : Ryper::NonCopyable
 		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
 	{
 		shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
-		const size_t cubeSize = GetCubeSize();
-		for (int k = 0; k < cubeSize; k++)
+		TraverseChunks ([this](int i, int j, int k)
 		{
-			for (int i = 0; i < cubeSize; i++) //row
-			{
-				for (int j = 0; j < cubeSize; j++)
-				{
-					BlockData &data = chunkInfo[i][j][k];
-					//data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i, j, k) * wHalfExtent * 2.0f;
-					data.isExist = rand() % 2;
-					data.type = Util::randomPointI(0, 4);
-				}
-			}
-		}
+			BlockData &data = chunkInfo[i][j][k];
+			//data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i, j, k) * wHalfExtent * 2.0f;
+			data.isExist = rand() % 2;
+			data.type = Util::randomPointI(0, 4);
+		});
 		CreateVBO();
 	}
 
@@ -141,10 +134,9 @@ struct Chunk : Ryper::NonCopyable
 		geom_Box->buffer.On();
 		{
 			auto bind = gl::MakeTemporaryBind (instancedVBO);
-			gl::VertexAttrib attrib(10);
-			attrib.pointer(3, gl::kFloat);
-			attrib.enable();
-			attrib.divisor(1);
+			SetAttribPointers ();
+			InstanceData data[10];
+			glGetBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(data), data);
 
 			geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
 		}
@@ -161,9 +153,6 @@ struct Chunk : Ryper::NonCopyable
 			BlockData const& data = chunkInfo[i][j][k];
 			if (data.isExist)
 			{
-				//std::string name2("uLayer[" + std::to_string(index) + "]");
-				//shader->SetUniform(name2.c_str(), (int)data.type);
-
 				index++;
 				numberOfExistingCubes++;
 			}
@@ -172,14 +161,15 @@ struct Chunk : Ryper::NonCopyable
 	}
 	void CreateVBO ()
 	{
-		std::vector<glm::vec3> positions;
+		std::vector<InstanceData> instanceData;
 		//positions.reserve(amountOfCubes); //TODO Amount of cubes must be set before this
-		TraverseChunks ([this,&positions](int i , int j, int k)
+		TraverseChunks ([this,&instanceData](int i , int j, int k)
 		{
-			if (chunkInfo[i][j][k].isExist)
+			BlockData & block = chunkInfo[i][j][k];
+			if (block.isExist)
 			{
 				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
-				positions.push_back(wPos);
+				instanceData.push_back({wPos, (i32)block.type});
 			}
 		});
 
@@ -187,12 +177,9 @@ struct Chunk : Ryper::NonCopyable
 		{
 			gl::Bind(instancedVBO);
 			{
-				instancedVBO.data(positions, gl::kStaticDraw);
+				instancedVBO.data(instanceData, gl::kStaticDraw);
 			
-				gl::VertexAttrib attrib(10);
-				attrib.pointer(3, gl::kFloat);
-				attrib.enable();
-				attrib.divisor(1);
+				SetAttribPointers();
 			}
 			gl::Unbind(instancedVBO);
 		}
@@ -235,6 +222,22 @@ struct Chunk : Ryper::NonCopyable
 
 		return Geom::Box {min, max};
 	}
+private:
+	struct InstanceData {
+		glm::vec3 pos;
+		i32 texId;
+	};
+	void SetAttribPointers()
+	{
+		gl::VertexAttrib attribPos(10);
+		attribPos.pointer(3, gl::kFloat, false, sizeof(InstanceData), (void*)offsetof(InstanceData, pos));
+		attribPos.enable();
+		attribPos.divisor(1);
+		gl::VertexAttrib attribTex(11);
+		attribTex.pointer(1, gl::kInt, false, sizeof(InstanceData), (void*)offsetof(InstanceData, texId));
+		attribTex.enable();
+		attribTex.divisor(1);
+	}
 };
 
 static Util::IslandGenerator islandGen (10);
@@ -270,11 +273,11 @@ struct ChunkManager : public IRenderable
 	~ChunkManager () {}
 	void GenerateBoxes ()
 	{
-		int maxLayer = 2;
+		int maxLayer = 1;
 		for(int layer = 0; layer < maxLayer; layer++)
 		{	
 			const float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
-			int interval = 2;
+			int interval = 1;
 			for (int x = -interval; x <= interval; x++)
 			{
 				for (int z = -interval; z <= interval; z++)

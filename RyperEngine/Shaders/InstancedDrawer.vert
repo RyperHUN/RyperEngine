@@ -1,9 +1,10 @@
 #version 430
 
-layout (location = 0) in vec3 vs_in_pos;
-layout (location = 1) in vec3 vs_in_normal;
-layout (location = 2) in vec2 vs_in_tex;
-layout (location = 10) in vec3 positions;
+layout (location = 0) in	vec3	vs_in_pos;
+layout (location = 1) in	vec3	vs_in_normal;
+layout (location = 2) in	vec2	vs_in_tex;
+layout (location = 10) in	vec3	positions;
+layout (location = 11) in	int	texId;
 
 uniform mat4 PV;
 uniform mat4 LightSpaceMtx;
@@ -17,6 +18,7 @@ out VS_OUT
 	vec2 texCoord;
 	vec4 fragPosLightSpace4;
 	flat int instanceId;
+	flat int texId;
 } VS;
 
 mat4 Translate (vec3 pos)
@@ -54,4 +56,5 @@ void main()
 	VS.texCoord = vs_in_tex;
 	VS.fragPosLightSpace4 = (LightSpaceMtx * vec4(VS.wFragPos, 1.0));
 	VS.instanceId = gl_InstanceID;
+	VS.texId = texId;
 }
