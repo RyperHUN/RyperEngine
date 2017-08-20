@@ -26,100 +26,100 @@ namespace Geom
 		};
 		
 		//Front side
-		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
-		loadCubeSide (CUBESIDE::SIDE);
-	
+		buffer_Box.AddData(0, -1, -1, 1);	buffer_Box.AddData(2, 0, 1);
+		buffer_Box.AddData(0, 1, -1, 1);	buffer_Box.AddData(2, 1, 1);
+		buffer_Box.AddData(0, 1, 1, 1);		buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, 1, 1, 1);		buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, -1, 1, 1);	buffer_Box.AddData(2, 0, 0);
+		buffer_Box.AddData(0, -1, -1, 1);	buffer_Box.AddData(2, 0, 1);
+		loadCubeSide(CUBESIDE::SIDE);
+
 		//Back side
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, -1, -1, -1);	buffer_Box.AddData(2, 0, 1);
+		buffer_Box.AddData(0, -1, 1, -1);	buffer_Box.AddData(2, 0, 0);
+		buffer_Box.AddData(0, 1, -1, -1);	buffer_Box.AddData(2, 1, 1);
+		buffer_Box.AddData(0, 1, 1, -1);	buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, 1, -1, -1);	buffer_Box.AddData(2, 1, 1);
+		buffer_Box.AddData(0, -1, 1, -1);	buffer_Box.AddData(2, 0, 0);
 		loadCubeSide(CUBESIDE::SIDE);
-		
+
 		//Left side
-		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0); buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		buffer_Box.AddData(0, -1, -1, 1);	buffer_Box.AddData(2, 0, 1);
+		buffer_Box.AddData(0, -1, 1, 1);	buffer_Box.AddData(2, 0, 0);
+		buffer_Box.AddData(0, -1, 1, -1);	buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, -1, -1, -1);	buffer_Box.AddData(2, 1, 1);
+		buffer_Box.AddData(0, -1, -1, 1);	buffer_Box.AddData(2, 0, 1);
+		buffer_Box.AddData(0, -1, 1, -1);	buffer_Box.AddData(2, 1, 0);
 		loadCubeSide(CUBESIDE::SIDE);
-		
+
 		//Right Side
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);	buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);	buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);	buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f);	buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);	buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);	buffer_Box.AddData(2, 0.0f, 0.0f);
+		buffer_Box.AddData(0, 1, 1, 1);		buffer_Box.AddData(2, 0, 0);
+		buffer_Box.AddData(0, 1, -1, 1);	buffer_Box.AddData(2, 0, 1);
+		buffer_Box.AddData(0, 1, 1, -1);	buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, 1, -1, -1);	buffer_Box.AddData(2, 1, 1);
+		buffer_Box.AddData(0, 1, 1, -1);	buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, 1, -1, 1);	buffer_Box.AddData(2, 0, 1);
 		loadCubeSide(CUBESIDE::SIDE);
 
 		//Bottom
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f);	buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, -1, -1, -1);	buffer_Box.AddData(2, 0, 1);
+		buffer_Box.AddData(0, 1, -1, -1);	buffer_Box.AddData(2, 1, 1);
+		buffer_Box.AddData(0, 1, -1, 1);	buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, 1, -1, 1);	buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, -1, -1, 1);	buffer_Box.AddData(2, 0, 0);
+		buffer_Box.AddData(0, -1, -1, -1);	buffer_Box.AddData(2, 0, 1);
 		loadCubeSide(CUBESIDE::BOTTOM);
-		
+
 		//Top
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
-		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
-		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		buffer_Box.AddData(0, -1, 1, -1);	buffer_Box.AddData(2, 0, 1);
+		buffer_Box.AddData(0, 1, 1, 1);		buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, 1, 1, -1);	buffer_Box.AddData(2, 1, 1);
+		buffer_Box.AddData(0, -1, 1, 1);	buffer_Box.AddData(2, 0, 0);
+		buffer_Box.AddData(0, 1, 1, 1);		buffer_Box.AddData(2, 1, 0);
+		buffer_Box.AddData(0, -1, 1, -1);	buffer_Box.AddData(2, 0, 1);
 		loadCubeSide(CUBESIDE::TOP);
 
-		buffer_Box.AddData(1, 0, 0, -1.0f);
-		buffer_Box.AddData(1, 0, 0, -1.0f);
-		buffer_Box.AddData(1, 0, 0, -1.0f);
-		buffer_Box.AddData(1, 0, 0, -1.0f);
-		buffer_Box.AddData(1, 0, 0, -1.0f);
-		buffer_Box.AddData(1, 0, 0, -1.0f);
+		buffer_Box.AddData(1, 0, 0, -1);
+		buffer_Box.AddData(1, 0, 0, -1);
+		buffer_Box.AddData(1, 0, 0, -1);
+		buffer_Box.AddData(1, 0, 0, -1);
+		buffer_Box.AddData(1, 0, 0, -1);
+		buffer_Box.AddData(1, 0, 0, -1);
 
-		buffer_Box.AddData(1, 0, 0, 1.0f);
-		buffer_Box.AddData(1, 0, 0, 1.0f);
-		buffer_Box.AddData(1, 0, 0, 1.0f);
-		buffer_Box.AddData(1, 0, 0, 1.0f);
-		buffer_Box.AddData(1, 0, 0, 1.0f);
-		buffer_Box.AddData(1, 0, 0, 1.0f);
+		buffer_Box.AddData(1, 0, 0, 1);
+		buffer_Box.AddData(1, 0, 0, 1);
+		buffer_Box.AddData(1, 0, 0, 1);
+		buffer_Box.AddData(1, 0, 0, 1);
+		buffer_Box.AddData(1, 0, 0, 1);
+		buffer_Box.AddData(1, 0, 0, 1);
 
-		buffer_Box.AddData(1, -1.0f, 0, 0);
-		buffer_Box.AddData(1, -1.0f, 0, 0);
-		buffer_Box.AddData(1, -1.0f, 0, 0);
-		buffer_Box.AddData(1, -1.0f, 0, 0);
-		buffer_Box.AddData(1, -1.0f, 0, 0);
-		buffer_Box.AddData(1, -1.0f, 0, 0);
+		buffer_Box.AddData(1, -1, 0, 0);
+		buffer_Box.AddData(1, -1, 0, 0);
+		buffer_Box.AddData(1, -1, 0, 0);
+		buffer_Box.AddData(1, -1, 0, 0);
+		buffer_Box.AddData(1, -1, 0, 0);
+		buffer_Box.AddData(1, -1, 0, 0);
 
-		buffer_Box.AddData(1, 1.0f, 0, 0);
-		buffer_Box.AddData(1, 1.0f, 0, 0);
-		buffer_Box.AddData(1, 1.0f, 0, 0);
-		buffer_Box.AddData(1, 1.0f, 0, 0);
-		buffer_Box.AddData(1, 1.0f, 0, 0);
-		buffer_Box.AddData(1, 1.0f, 0, 0);
+		buffer_Box.AddData(1, 1, 0, 0);
+		buffer_Box.AddData(1, 1, 0, 0);
+		buffer_Box.AddData(1, 1, 0, 0);
+		buffer_Box.AddData(1, 1, 0, 0);
+		buffer_Box.AddData(1, 1, 0, 0);
+		buffer_Box.AddData(1, 1, 0, 0);
 
-		buffer_Box.AddData(1, 0, -1.0f, 0);
-		buffer_Box.AddData(1, 0, -1.0f, 0);
-		buffer_Box.AddData(1, 0, -1.0f, 0);
-		buffer_Box.AddData(1, 0, -1.0f, 0);
-		buffer_Box.AddData(1, 0, -1.0f, 0);
-		buffer_Box.AddData(1, 0, -1.0f, 0);
+		buffer_Box.AddData(1, 0, -1, 0);
+		buffer_Box.AddData(1, 0, -1, 0);
+		buffer_Box.AddData(1, 0, -1, 0);
+		buffer_Box.AddData(1, 0, -1, 0);
+		buffer_Box.AddData(1, 0, -1, 0);
+		buffer_Box.AddData(1, 0, -1, 0);
 
-		buffer_Box.AddData(1, 0, 1.0f, 0);
-		buffer_Box.AddData(1, 0, 1.0f, 0);
-		buffer_Box.AddData(1, 0, 1.0f, 0);
-		buffer_Box.AddData(1, 0, 1.0f, 0);
-		buffer_Box.AddData(1, 0, 1.0f, 0);
-		buffer_Box.AddData(1, 0, 1.0f, 0);
+		buffer_Box.AddData(1, 0, 1, 0);
+		buffer_Box.AddData(1, 0, 1, 0);
+		buffer_Box.AddData(1, 0, 1, 0);
+		buffer_Box.AddData(1, 0, 1, 0);
+		buffer_Box.AddData(1, 0, 1, 0);
+		buffer_Box.AddData(1, 0, 1, 0);
 
 		buffer_Box.InitBuffers ();
 

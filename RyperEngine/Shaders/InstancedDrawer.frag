@@ -22,11 +22,12 @@ void main()
 
 	fs_out_col = vec4(color, 1);
 	
-	fs_out_col = texture(tex1, vec3(FS.texCoord, FS.texId.x));
+	int id = FS.texId[FS.cubeSide];
+	fs_out_col = texture(tex1, vec3(FS.texCoord, id));
 
 	//fs_out_col = vec4(FS.instanceId * 0.001, 0, 0, 1);
 	//fs_out_col = vec4(FS.texId.x* 0.0001,0,0,1);
-	fs_out_col = vec4(0, FS.cubeSide * 0.3, 0, 1);
+	//fs_out_col = vec4(0, FS.cubeSide * 0.3, 0, 1);
 }
 
 //texId

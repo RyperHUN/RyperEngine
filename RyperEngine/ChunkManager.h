@@ -233,7 +233,7 @@ private:
 			if (block.isExist)
 			{
 				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
-				instanceData.push_back({ wPos, glm::ivec4{ 0, 1, 2, 0 } });
+				instanceData.push_back({ wPos, glm::ivec4{ 0, 1, 2, 3 } });
 			}
 		});
 
