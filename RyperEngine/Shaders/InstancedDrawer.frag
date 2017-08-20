@@ -10,10 +10,8 @@ in VS_OUT
 	flat ivec4 texId;
 } FS;
 
-uniform sampler2D diffuseTex;
 uniform sampler2DArray tex1;
 
-//TODO Texture for cube
 out vec4 fs_out_col;
 
 void main()
@@ -28,3 +26,13 @@ void main()
 	//fs_out_col = vec4(FS.instanceId * 0.001, 0, 0, 1);
 	//fs_out_col = vec4(FS.texId.x* 0.0001,0,0,1);
 }
+
+//texId
+// Top texId.z
+// ------
+// |	|   Side: texId.x;
+// |	|
+// |	|
+// ------
+// bottom: texId.y
+// texId.w = extra, for example block destruction
