@@ -46,6 +46,7 @@ public:
 
 	void Update();
 	void Render();
+	void RenderExtra(RenderState & state);
 	void RenderDeferred ();
 	void InitDeferred ();
 
@@ -109,6 +110,10 @@ protected:
 	bool IsFrameBufferRendering = false;
 	bool IsMSAAOn = false;
 	bool IsWaterRendering = false;
+	bool IsBoundingBoxRendering = false;
+	bool IsLightRendering = false;
+	bool IsFrustumRendering = false;
+	bool IsWidgetRendering = false;
 	glFrameBuffer fbo_Rendered;
 	ShadowFrameBuffer fbo_Shadow;
 	MultiFrameBuffer fbo_RenderedMSAA;

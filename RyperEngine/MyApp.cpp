@@ -311,23 +311,34 @@ void CMyApp::Render()
 			waterRenderer.Draw(state);
 		//particleSystem.Render (state);
 
-		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
-		//lightRenderer.Draw(activeCamera->GetProjView());
-		//boundingBoxRenderer.Draw(state);
-		//boundingBoxRenderer.DrawChunks(state, chunkManager);
-		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
+		RenderExtra(state);
 
 		//////////////////////////////Other debug drawings
 		//if (IsWaterRendering) 
 		//	waterRenderer.RenderTextures ();
 		
 		//quadTexturer.Draw (fbo_Shadow.GetDepthAttachment(),false,QuadTexturer::POS::TOP_RIGHT, 0.8);
-
-
-		WidgetRenderState state { screenSize, quadTexturer, textRenderer };
-		//container.Draw(state);
 	}
 	HandleFrameBufferRendering();
+}
+
+void CMyApp::RenderExtra(RenderState & state)
+{
+	//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
+	if (IsLightRendering)
+		lightRenderer.Draw(activeCamera->GetProjView());
+	if (IsBoundingBoxRendering)
+	{
+		boundingBoxRenderer.Draw(state);
+		boundingBoxRenderer.DrawChunks(state, chunkManager);
+	}
+	if (IsFrustumRendering)
+		frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
+	if (IsWidgetRendering)
+	{
+		WidgetRenderState state{ screenSize, quadTexturer, textRenderer };
+		//container.Draw(state);
+	}
 }
 
 void CMyApp::PrepareRendering(RenderState & state)
@@ -379,6 +390,22 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 		case SDLK_8:
 			IsMSAAOn = !IsMSAAOn;
 			std::cout << "MSAAOn " << IsMSAAOn << std::endl;//Log
+			break;
+		case SDLK_7:
+			IsBoundingBoxRendering = !IsBoundingBoxRendering;
+			std::cout << "Bounding Box Render " << IsBoundingBoxRendering << std::endl;//Log
+			break;
+		case SDLK_6:
+			IsLightRendering = !IsLightRendering;
+			std::cout << "Light Render " << IsLightRendering << std::endl;//Log
+			break;
+		case SDLK_5:
+			IsFrustumRendering = !IsFrustumRendering;
+			std::cout << "Frustum Render " << IsFrustumRendering << std::endl;//Log
+			break;
+		case SDLK_4:
+			IsWidgetRendering = !IsWidgetRendering;
+			std::cout << "Widget Render " << IsWidgetRendering << std::endl;//Log
 			break;
 		case SDLK_c:
 			std::swap(activeCamera, secondaryCamera);
