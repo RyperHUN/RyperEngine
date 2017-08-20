@@ -29,13 +29,15 @@ enum TextureType
 	T_GRASS_TOP = 2,
 	T_GLASS_RED = 3,
 	T_TRAPDOOR = 4,
+	T_TREE_LEAVES = 5,
 };
 
 enum BlockType {
 	GRASS = 0,
 	GLASS_RED = 1,
 	TRAPDOOR = 2,
-	MAX_NUMBER = 3,
+	TREE_LEAVES = 3,
+	MAX_NUMBER = 4,
 };
 
 class BlockTextureMapper
@@ -75,15 +77,17 @@ private:
 			std::make_pair(TextureType::T_GRASS_SIDE , "grass_side"),
 			std::make_pair(TextureType::T_GRASS_TOP , "grass_top_colored"),
 			std::make_pair(TextureType::T_TRAPDOOR , "trapdoor"),
-			std::make_pair(TextureType::T_GLASS_RED , "glass_red") };
+			std::make_pair(TextureType::T_GLASS_RED , "glass_red"),
+			std::make_pair(TextureType::T_TREE_LEAVES, "leaves_colored") };
 	}
 	static std::map<BlockType, glm::ivec3> initBlockTextureData()
 	{
 		return{ std::make_pair(BlockType::GRASS, glm::ivec3{ TextureType::T_GRASS_BOTTOM,
-			TextureType::T_GRASS_SIDE,
-			TextureType::T_GRASS_TOP }),
+															TextureType::T_GRASS_SIDE,
+															TextureType::T_GRASS_TOP }),
 			std::make_pair(BlockType::GLASS_RED, glm::ivec3{ TextureType::T_GLASS_RED }),
-			std::make_pair(BlockType::TRAPDOOR, glm::ivec3{ TextureType::T_TRAPDOOR })
+			std::make_pair(BlockType::TRAPDOOR, glm::ivec3{ TextureType::T_TRAPDOOR }),
+			std::make_pair(BlockType::TREE_LEAVES, glm::ivec3{ TextureType::T_TREE_LEAVES })
 		};
 	}
 	static void Init ()
