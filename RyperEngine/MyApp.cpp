@@ -33,8 +33,11 @@ CMyApp::CMyApp(void)
 	activeCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(5, 22, 24));
 	secondaryCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(70, 109, 43), glm::vec3(-0.5,-0.9, -0.5));
 
-	//container.AddWidget (&checkbox);
-	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer)); //TODO Delete
+	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer));
+	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Bounding box rendering", &IsBoundingBoxRendering, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Light render", &IsLightRendering, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Frustum render", &IsFrustumRendering, textRenderer));
 	
 	//gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false); });
 
@@ -441,9 +444,8 @@ void CMyApp::MouseMove(SDL_MouseMotionEvent& mouse)
 
 void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 {
-	/*button.MouseDown (mouse);
-	checkbox.MouseDown (mouse);*/
-	container.MouseDown (mouse);
+	if (IsWidgetRendering)
+		container.MouseDown (mouse);
 	if (mouse.button == SDL_BUTTON_RIGHT) //right Click
 	{
 		int pX = mouse.x; //Pixel X
