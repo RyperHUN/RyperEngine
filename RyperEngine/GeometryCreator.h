@@ -1,62 +1,83 @@
 #pragma once
 
 #include "gVertexBuffer.h"
+#include <oglwrap\oglwrap.h>
+#include "LocationDefinitions.h"
 
 namespace Geom
 {
+
 	void CreateBoxGeom(gVertexBuffer &buffer_Box)
 	{
-		buffer_Box.AddAttribute(0, 3);
-		buffer_Box.AddAttribute(1, 3);
-		buffer_Box.AddAttribute(2, 2);
+		enum CUBESIDE {
+			BOTTOM = 0,
+			SIDE = 1,
+			TOP = 2,
+			OTHER = 3,
+		};
+		buffer_Box.AddAttribute(LOCATION::POSITION, 3);
+		buffer_Box.AddAttribute(LOCATION::NORMAL, 3);
+		buffer_Box.AddAttribute(LOCATION::UV, 2);
+		std::vector<int> cubeSideInfo;
+		cubeSideInfo.reserve(36);
+		auto loadCubeSide = [&cubeSideInfo](CUBESIDE side){
+			for(int i = 0 ; i < 6; i++)
+				cubeSideInfo.push_back((int)side);
+		};
 		
-		//Eleje
+		//Front side
 		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
 		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
 		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
 		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
 		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
+		loadCubeSide (CUBESIDE::SIDE);
 	
-		//Hatulja
+		//Back side
 		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
 		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
 		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		loadCubeSide(CUBESIDE::SIDE);
 		
-		//Bal oldal
+		//Left side
 		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0); buffer_Box.AddData(2, 0.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
 		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
 		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
+		loadCubeSide(CUBESIDE::SIDE);
 		
-		//Jobb oldal
+		//Right Side
 		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f);	buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);	buffer_Box.AddData(2, 0.0f, 0.0f);
 		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);	buffer_Box.AddData(2, 1.0f, 1.0f);
 		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f);	buffer_Box.AddData(2, 0.0f, 1.0f);
 		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f);	buffer_Box.AddData(2, 1.0f, 1.0f);
 		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f);	buffer_Box.AddData(2, 0.0f, 0.0f);
+		loadCubeSide(CUBESIDE::SIDE);
 
-		//Alja		
+		//Bottom
 		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
 		buffer_Box.AddData(0, 1.0f, -1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
 		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, 1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, -1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, -1.0f, -1.0f);	buffer_Box.AddData(2, 0.0f, 1.0f);
+		loadCubeSide(CUBESIDE::BOTTOM);
 		
-		//Teteje
+		//Top
 		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
 		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, 1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 1.0f, 1.0f);
 		buffer_Box.AddData(0, -1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 0.0f, 0.0f);
 		buffer_Box.AddData(0, 1.0f, 1.0f, 1.0f); buffer_Box.AddData(2, 1.0f, 0.0f);
 		buffer_Box.AddData(0, -1.0f, 1.0f, -1.0f); buffer_Box.AddData(2, 0.0f, 1.0f);
+		loadCubeSide(CUBESIDE::TOP);
 
 		buffer_Box.AddData(1, 0, 0, -1.0f);
 		buffer_Box.AddData(1, 0, 0, -1.0f);
@@ -99,6 +120,24 @@ namespace Geom
 		buffer_Box.AddData(1, 0, 1.0f, 0);
 		buffer_Box.AddData(1, 0, 1.0f, 0);
 		buffer_Box.AddData(1, 0, 1.0f, 0);
+
+		buffer_Box.InitBuffers ();
+
+		GLuint vboID;
+		glGenBuffers(1, &vboID);
+		gl::ArrayBuffer VBO(vboID);
+		buffer_Box.setBufferOwner(vboID);
+
+		buffer_Box.On();
+		{
+			auto bind = gl::MakeTemporaryBind (VBO);
+			VBO.data(cubeSideInfo, gl::kStaticDraw);
+
+			gl::VertexAttrib attrib(LOCATION::CUBE_SIDE);
+			attrib.enable();
+			attrib.ipointer (1);
+		}
+		buffer_Box.Off();
 	}
 	void CreateQuadGeom(gVertexBuffer &buffer)
 	{
@@ -122,5 +161,7 @@ namespace Geom
 
 		buffer.AddIndex(0, 1, 2);
 		buffer.AddIndex(2, 1, 3);
+
+		buffer.InitBuffers ();
 	}
 }

@@ -118,6 +118,7 @@
     <ClInclude Include="GLFXShaderManager.h" />
     <ClInclude Include="HeightMapGenerators.h" />
     <ClInclude Include="Interfaces.h" />
+    <ClInclude Include="LocationDefinitions.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PxController.h" />
     <ClInclude Include="PxJump.h" />

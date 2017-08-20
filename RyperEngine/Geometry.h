@@ -11,16 +11,7 @@
 #include "Defs.h"
 #include "UtilEngine.h"
 #include "HeightMapGenerators.h"
-
-enum LOCATION {
-	POSITION = 0,
-	NORMAL = 1,
-	UV = 2,
-	WEIGHT = 3,
-	BONEID = 4,
-	TANGENT = 5,
-	BITANGENT = 6,
-};
+#include "LocationDefinitions.h"
 
 struct MeshVertexData {
 	// position
@@ -406,13 +397,13 @@ public:
 	}
 	void Init() { buffer.InitBuffers(); }
 	template<typename T>
-	void AddAttribute(LOCATION loc, std::vector<T>& attribute)
+	void AddAttribute(Geom::LOCATION loc, std::vector<T>& attribute)
 	{
 		for (int i = 0; i < attribute.size(); i++)
 			buffer.AddData((int)loc, attribute[i]);
 	}
 	template<typename T>
-	void AddAttribute(LOCATION loc, T & attribute)
+	void AddAttribute(Geom::LOCATION loc, T & attribute)
 	{
 		buffer.AddData((int)loc, attribute);
 	}
@@ -421,11 +412,11 @@ public:
 		for (int i = 0; i < vertices.size(); i++)
 		{
 			MeshVertexData& vertex = vertices[i];
-			AddAttribute(POSITION, vertex.Position);
-			AddAttribute(NORMAL, vertex.Normal);
-			AddAttribute(UV, vertex.TexCoords);
-			AddAttribute(TANGENT, vertex.Tangent);
-			AddAttribute(TANGENT, vertex.Bitangent);
+			AddAttribute(Geom::POSITION, vertex.Position);
+			AddAttribute(Geom::NORMAL, vertex.Normal);
+			AddAttribute(Geom::UV, vertex.TexCoords);
+			AddAttribute(Geom::TANGENT, vertex.Tangent);
+			AddAttribute(Geom::TANGENT, vertex.Bitangent);
 		}
 	}
 	void AddIndices(std::vector<unsigned int> const& indices)

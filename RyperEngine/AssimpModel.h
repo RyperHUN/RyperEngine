@@ -171,8 +171,8 @@ struct Animator
 
 			//ownMesh.vertices[pair.first].Tangent = boneData.weights; //TODO Ideiglenes adat mentes csontoknak
 			//ownMesh.vertices[pair.first].Bitangent = boneData.IDs;
-			ownMesh.AddAttribute(WEIGHT, boneData.weights);
-			ownMesh.AddAttribute(BONEID, boneData.IDs);
+			ownMesh.AddAttribute(Geom::WEIGHT, boneData.weights);
+			ownMesh.AddAttribute(Geom::BONEID, boneData.IDs);
 		}
 	}
 	void ReadNodeHierarchy(float animationTime, const aiScene *scene, const aiNode* node, glm::mat4 parentTransform)

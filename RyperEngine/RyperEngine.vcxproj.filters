@@ -197,6 +197,9 @@
     <ClInclude Include="Events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LocationDefinitions.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

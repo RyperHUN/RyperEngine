@@ -54,6 +54,7 @@ struct BlockData
 		return Geom::Box{min, max};
 	}
 };
+
 struct Chunk : Ryper::NonCopyable
 {
 	static const float wHalfExtent /*= 4.0f*/; //TODO Maybe move this to BlockData??
@@ -145,8 +146,6 @@ struct Chunk : Ryper::NonCopyable
 		{
 			auto bind = gl::MakeTemporaryBind (instancedVBO);
 			SetAttribPointers ();
-			InstanceData data[10];
-			glGetBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(data), data);
 
 			geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
 		}
@@ -168,32 +167,6 @@ struct Chunk : Ryper::NonCopyable
 			}
 		});
 		amountOfCubes = numberOfExistingCubes;
-	}
-	void CreateVBO ()
-	{
-		std::vector<InstanceData> instanceData;
-		instanceData.reserve(amountOfCubes); //TODO Amount of cubes must be set before this
-		TraverseChunks ([this,&instanceData](int i , int j, int k)
-		{
-			BlockData & block = chunkInfo[i][j][k];
-			if (block.isExist)
-			{
-				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
-				instanceData.push_back({wPos, glm::ivec4{block.type}});
-			}
-		});
-
-		geom_Box->buffer.On();
-		{
-			gl::Bind(instancedVBO);
-			{
-				instancedVBO.data(instanceData, gl::kStaticDraw);
-			
-				SetAttribPointers();
-			}
-			gl::Unbind(instancedVBO);
-		}
-		geom_Box->buffer.Off();
 	}
 
 	void TraverseChunks (std::function<void(int,int,int)> fv)
@@ -249,6 +222,32 @@ private:
 		attribTex.ipointer(4, gl::kInt, sizeof(InstanceData), (void*)offsetof(InstanceData, texId));
 		attribTex.enable();
 		attribTex.divisor(1);
+	}
+	void CreateVBO()
+	{
+		std::vector<InstanceData> instanceData;
+		instanceData.reserve(amountOfCubes); //TODO Amount of cubes must be set before this
+		TraverseChunks([this, &instanceData](int i, int j, int k)
+		{
+			BlockData & block = chunkInfo[i][j][k];
+			if (block.isExist)
+			{
+				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
+				instanceData.push_back({ wPos, glm::ivec4{ 0, 1, 2, 0 } });
+			}
+		});
+
+		geom_Box->buffer.On();
+		{
+			gl::Bind(instancedVBO);
+			{
+				instancedVBO.data(instanceData, gl::kStaticDraw);
+
+				SetAttribPointers();
+			}
+			gl::Unbind(instancedVBO);
+		}
+		geom_Box->buffer.Off();
 	}
 };
 

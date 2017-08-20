@@ -76,12 +76,10 @@ bool CMyApp::Init()
 
 	// skybox kocka
 	Geom::CreateBoxGeom(buffer_Box);
-	buffer_Box.InitBuffers();
+	Geom::CreateQuadGeom(buffer_Quad);
 
 	geom_Box = TriangleMesh(buffer_Box);
 //////////////////////////////
-	Geom::CreateQuadGeom(buffer_Quad);
-	buffer_Quad.InitBuffers ();
 	
 
 	geom_Quad = TriangleMesh(buffer_Quad);
@@ -105,8 +103,8 @@ bool CMyApp::Init()
 	tex_woodenBoxDiffuse  = Util::TextureFromFile ("pictures/textureWoodContainer.png");
 	tex_woodenBoxSpecular = Util::TextureFromFile("pictures/textureWoodContainerSpecular.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
-	textureArray_blocks = Util::TextureArray ({"dirt", "ice", "lapis_ore", "trapdoor", "glass_red"});
-	tex_randomPerlin  = Util::GenRandomPerlinTexture ();
+	textureArray_blocks   = Util::TextureArray ({"dirt", "grass_side", "grass_top_colored", "ice", "lapis_ore", "trapdoor", "glass_red"});
+	tex_randomPerlin	  = Util::GenRandomPerlinTexture ();
 	skyboxRenderer.SetTexture(textureCube_id);
 
 	// mesh betöltés
@@ -316,7 +314,7 @@ void CMyApp::Render()
 		//gameObjs[0]->Draw(state, &shader_NormalVecDraw);
 		//lightRenderer.Draw(activeCamera->GetProjView());
 		//boundingBoxRenderer.Draw(state);
-		boundingBoxRenderer.DrawChunks(state, chunkManager);
+		//boundingBoxRenderer.DrawChunks(state, chunkManager);
 		//frustumRender.Render(activeCamera->GetProjView (), secondaryCamera);
 
 		//////////////////////////////Other debug drawings

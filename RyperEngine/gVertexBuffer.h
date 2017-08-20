@@ -72,6 +72,12 @@ public:
 		}
 	}
 
+	//This way it will be deleted with the buffer.Clean() method
+	void setBufferOwner (GLuint vbo)
+	{
+		vboIds.push_back (vbo);
+	}
+
 	void InitBuffers();
 
 	void On();

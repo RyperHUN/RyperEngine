@@ -3,6 +3,7 @@
 layout (location = 0) in	vec3	vs_in_pos;
 layout (location = 1) in	vec3	vs_in_normal;
 layout (location = 2) in	vec2	vs_in_tex;
+layout (location = 7) in    int     cube_side;
 layout (location = 10) in	vec3	positions;
 layout (location = 11) in	ivec4	texId;
 
@@ -19,6 +20,7 @@ out VS_OUT
 	vec4 fragPosLightSpace4;
 	flat int instanceId;
 	flat ivec4 texId;
+	flat int cubeSide;
 } VS;
 
 mat4 Translate (vec3 pos)
@@ -57,4 +59,5 @@ void main()
 	VS.fragPosLightSpace4 = (LightSpaceMtx * vec4(VS.wFragPos, 1.0));
 	VS.instanceId = gl_InstanceID;
 	VS.texId = texId;
+	VS.cubeSide = cube_side;
 }
