@@ -427,6 +427,8 @@ private:
 		gShaderProgram* shader = state.shader;
 		shader->On ();
 		{
+			shader->SetTexture("shadowMap", 10, state.shadowMap);
+			shader->SetUniform("LightSpaceMtx", state.LightSpaceMtx);
 			shader->SetUniform("uPlane", state.planeEquation);
 			shader->SetUniform("PV", state.PV);
 			shader->SetUniform("uScale", Chunk::wHalfExtent);

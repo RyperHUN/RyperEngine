@@ -15,6 +15,7 @@ struct RenderState
 	gShaderProgram * shader = nullptr;
 	glm::vec4 planeEquation;
 	glm::vec3 cameraDir;
+	GLuint shadowMap;
 
 	//Texture* texture;
 	//Vector<light> lights;

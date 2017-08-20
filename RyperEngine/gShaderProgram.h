@@ -174,6 +174,7 @@ struct Instanced : gShaderProgram
 {
 	void Load() override
 	{
+		CreateShadowShader ();
 		AttachShader(GL_VERTEX_SHADER, "InstancedDrawer.vert");
 		AttachShader(GL_FRAGMENT_SHADER, "InstancedDrawer.frag");
 		bool success = LinkProgram();

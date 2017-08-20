@@ -38,6 +38,7 @@ CMyApp::CMyApp(void)
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer));
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Light render", &IsLightRendering, textRenderer));
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Frustum render", &IsFrustumRendering, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Shadowmap texture render", &IsShadowMapTextureDebug, textRenderer));
 	
 	//gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false); });
 
@@ -298,6 +299,7 @@ void CMyApp::Render()
 
 		for (auto& obj : renderObjs)
 			obj->DrawShadows(state);
+		state.shadowMap = fbo_Shadow.GetDepthAttachment ();
 	}
 	fbo_Shadow.Off();
 
@@ -320,8 +322,6 @@ void CMyApp::Render()
 		//////////////////////////////Other debug drawings
 		//if (IsWaterRendering) 
 		//	waterRenderer.RenderTextures ();
-		
-		//quadTexturer.Draw (fbo_Shadow.GetDepthAttachment(),false,QuadTexturer::POS::TOP_RIGHT, 0.8);
 	}
 	HandleFrameBufferRendering();
 }
@@ -342,6 +342,10 @@ void CMyApp::RenderExtra(RenderState & state)
 	{
 		WidgetRenderState state{ screenSize, quadTexturer, textRenderer };
 		container.Draw(state);
+	}
+	if (IsShadowMapTextureDebug)
+	{
+		quadTexturer.Draw(state.shadowMap, false, QuadTexturer::POS::TOP_RIGHT, 0.8);
 	}
 }
 

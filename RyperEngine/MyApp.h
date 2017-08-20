@@ -114,6 +114,7 @@ protected:
 	bool IsLightRendering = false;
 	bool IsFrustumRendering = false;
 	bool IsWidgetRendering = false;
+	bool IsShadowMapTextureDebug = false;
 	glFrameBuffer fbo_Rendered;
 	ShadowFrameBuffer fbo_Shadow;
 	MultiFrameBuffer fbo_RenderedMSAA;
