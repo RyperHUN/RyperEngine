@@ -21,7 +21,7 @@ so the origo is at the bottom far left corner
 	 /
 	v   z = k   */
 
-	//Block texture loading
+//Block texture loading
 enum TextureType
 {
 	T_GRASS_BOTTOM = 0,
@@ -32,15 +32,70 @@ enum TextureType
 };
 
 enum BlockType {
-	GRASS = 0 ,
+	GRASS = 0,
 	GLASS_RED = 1,
 	TRAPDOOR = 2,
 	MAX_NUMBER = 3,
 };
 
+class BlockTextureMapper
+{
+	static bool initialized /*= false*/;
+	static std::map<BlockType, glm::ivec3> blockTextureData;
+	static std::map<TextureType, std::string> textureMapping;
+	using StringVec = std::vector<std::string>;
+public:
+	static StringVec GetTextureNamesInOrder()
+	{
+		if (!initialized)
+			Init();
+
+		StringVec vec;
+		vec.reserve(textureMapping.size());
+		for (auto& elem : textureMapping)
+		{
+			vec.emplace_back(elem.second);
+		}
+		return vec;
+	}
+	static glm::ivec3 GetTextureId(BlockType type)
+	{
+		if (!initialized)
+			Init();
+
+		auto iter = blockTextureData.find(type);
+		MAssert(iter != blockTextureData.end(), "BlockType is not added to the map");
+
+		return iter->second;
+	}
+private:
+	static std::map<TextureType, std::string> initTextureMaping()
+	{
+		return{ std::make_pair(TextureType::T_GRASS_BOTTOM, "dirt"),
+			std::make_pair(TextureType::T_GRASS_SIDE , "grass_side"),
+			std::make_pair(TextureType::T_GRASS_TOP , "grass_top_colored"),
+			std::make_pair(TextureType::T_TRAPDOOR , "trapdoor"),
+			std::make_pair(TextureType::T_GLASS_RED , "glass_red") };
+	}
+	static std::map<BlockType, glm::ivec3> initBlockTextureData()
+	{
+		return{ std::make_pair(BlockType::GRASS, glm::ivec3{ TextureType::T_GRASS_BOTTOM,
+			TextureType::T_GRASS_SIDE,
+			TextureType::T_GRASS_TOP }),
+			std::make_pair(BlockType::GLASS_RED, glm::ivec3{ TextureType::T_GLASS_RED }),
+			std::make_pair(BlockType::TRAPDOOR, glm::ivec3{ TextureType::T_TRAPDOOR })
+		};
+	}
+	static void Init ()
+	{
+		initialized = true;
+		textureMapping   = initTextureMaping ();
+		blockTextureData = initBlockTextureData ();
+	}
+};
+
 struct BlockData
 {
-	//glm::vec3 pos; ///TODO Can be ivec3
 	BlockType type;
 	bool isExist = false;
 	void * physxPtr = nullptr;
@@ -251,8 +306,7 @@ private:
 			if (block.isExist)
 			{
 				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
-				instanceData.push_back({ wPos, glm::ivec4{ 0, 1, 2, 3 } });
-				//TODO Replace glm::ivec4 with blockType
+				instanceData.push_back({ wPos, glm::ivec4(BlockTextureMapper::GetTextureId (BlockType::GRASS),0) });
 			}
 		});
 
@@ -285,7 +339,6 @@ struct ChunkManager : public IRenderable
 	std::vector<Chunk> chunks;
 	std::vector<bool>  isInside;
 	ChunkManager () 
-		:textureMapping (initTextureMaping ()), blockTextureData(initBlockTextureData())
 	{
 	}
 	void Init (Geometry* geom_Box, GLint texId)
@@ -368,37 +421,7 @@ struct ChunkManager : public IRenderable
 		state.shader = shader->GetShadowShader();
 		DrawLogic(state);
 	}
-	std::map<BlockType, glm::ivec3> blockTextureData;
-	std::map<TextureType, std::string> textureMapping;
-	using StringVec = std::vector<std::string>;
-	StringVec GetTextureNamesInOrder()
-	{
-		StringVec vec;
-		vec.reserve (textureMapping.size());
-		for(auto& elem : textureMapping)
-		{
-			vec.emplace_back(elem.second);
-		}
-		return vec;
-	}
 private:
-	static std::map<TextureType, std::string> initTextureMaping()
-	{
-		return {std::make_pair(TextureType::T_GRASS_BOTTOM, "dirt"),
-				std::make_pair(TextureType::T_GRASS_SIDE , "grass_side"),
-				std::make_pair(TextureType::T_GRASS_TOP , "grass_top_colored"),
-				std::make_pair(TextureType::T_TRAPDOOR , "trapdoor"), 
-				std::make_pair(TextureType::T_GLASS_RED , "glass_red")};
-	}
-	static std::map<BlockType, glm::ivec3> initBlockTextureData ()
-	{
-		return {std::make_pair(BlockType::GRASS, glm::ivec3{TextureType::T_GRASS_BOTTOM, 
-															TextureType::T_GRASS_SIDE, 
-															TextureType::T_GRASS_TOP }),
-				std::make_pair (BlockType::GLASS_RED, glm::ivec3{TextureType::T_GLASS_RED}),
-				std::make_pair (BlockType::TRAPDOOR, glm::ivec3{TextureType::T_TRAPDOOR})
-				};
-	}
 	void DrawLogic (RenderState& state)
 	{
 		gShaderProgram* shader = state.shader;
