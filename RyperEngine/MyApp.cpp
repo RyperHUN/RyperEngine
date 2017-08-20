@@ -106,7 +106,9 @@ bool CMyApp::Init()
 	tex_woodenBoxDiffuse  = Util::TextureFromFile ("pictures/textureWoodContainer.png");
 	tex_woodenBoxSpecular = Util::TextureFromFile("pictures/textureWoodContainerSpecular.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
-	textureArray_blocks   = Util::TextureArray ({"dirt", "grass_side", "grass_top_colored", "grass_path_side", "ice", "lapis_ore", "trapdoor", "glass_red"});
+	auto textureArrayNames = chunkManager.GetTextureNamesInOrder ();
+	textureArray_blocks    = Util::TextureArray (textureArrayNames);
+	//textureArray_blocks   = Util::TextureArray ({"dirt", "grass_side", "grass_top_colored", "grass_path_side", "ice", "lapis_ore", "trapdoor", "glass_red"});
 	tex_randomPerlin	  = Util::GenRandomPerlinTexture ();
 	skyboxRenderer.SetTexture(textureCube_id);
 

@@ -7,6 +7,7 @@
 #include <noise/noise.h>
 #include "Camera.h"
 #include "Events.h"
+#include <map>
 
 /*
 Chunk coord system
@@ -19,6 +20,7 @@ so the origo is at the bottom far left corner
 	  /
 	 /
 	v   z = k   */
+
 
 struct BlockData
 {
@@ -266,13 +268,8 @@ struct ChunkManager : public IRenderable
 	std::vector<Chunk> chunks;
 	std::vector<bool>  isInside;
 	ChunkManager () 
+		:textureMapping (initTextureMaping ())
 	{
-	}
-	ChunkManager(Geometry* geom_Box, GLint texId)
-		:geom_Box(geom_Box), texId(texId)
-	{
-		//Random creation
-		shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
 	}
 	void Init (Geometry* geom_Box, GLint texId)
 	{
@@ -354,7 +351,43 @@ struct ChunkManager : public IRenderable
 		state.shader = shader->GetShadowShader();
 		DrawLogic(state);
 	}
+	//Block texture loading
+	enum TextureType
+	{
+		T_GRASS_BOTTOM	= 0,
+		T_GRASS_SIDE	= 1,
+		T_GRASS_TOP		= 2,
+		T_GLASS_RED		= 3,
+		T_TRAPDOOR		= 4,
+	};
+
+	enum BlockType {
+		GRASS,
+		GLASS_RED,
+		TRAPDOOR
+	};
+	std::map<BlockType, glm::ivec3> blockTextureData;
+	std::map<TextureType, std::string> textureMapping;
+	using StringVec = std::vector<std::string>;
+	StringVec GetTextureNamesInOrder()
+	{
+		StringVec vec;
+		vec.reserve (textureMapping.size());
+		for(auto& elem : textureMapping)
+		{
+			vec.emplace_back(elem.second);
+		}
+		return vec;
+	}
 private:
+	static std::map<TextureType, std::string> initTextureMaping()
+	{
+		return {std::make_pair(TextureType::T_GRASS_BOTTOM, "dirt"),
+				std::make_pair(TextureType::T_GRASS_SIDE , "grass_side"),
+				std::make_pair(TextureType::T_GRASS_TOP , "grass_top_colored"),
+				std::make_pair(TextureType::T_TRAPDOOR , "trapdoor"), 
+				std::make_pair(TextureType::T_GLASS_RED , "glass_red")};
+	}
 	void DrawLogic (RenderState& state)
 	{
 		gShaderProgram* shader = state.shader;
