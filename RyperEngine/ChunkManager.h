@@ -21,11 +21,27 @@ so the origo is at the bottom far left corner
 	 /
 	v   z = k   */
 
+	//Block texture loading
+enum TextureType
+{
+	T_GRASS_BOTTOM = 0,
+	T_GRASS_SIDE = 1,
+	T_GRASS_TOP = 2,
+	T_GLASS_RED = 3,
+	T_TRAPDOOR = 4,
+};
+
+enum BlockType {
+	GRASS = 0 ,
+	GLASS_RED = 1,
+	TRAPDOOR = 2,
+	MAX_NUMBER = 3,
+};
 
 struct BlockData
 {
 	//glm::vec3 pos; ///TODO Can be ivec3
-	int type;
+	BlockType type;
 	bool isExist = false;
 	void * physxPtr = nullptr;
 
@@ -94,7 +110,7 @@ struct Chunk : Ryper::NonCopyable
 			BlockData &data = chunkInfo[i][j][k];
 			//data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i, j, k) * wHalfExtent * 2.0f;
 			data.isExist = rand() % 2;
-			data.type = Util::randomPointI(0, 4);
+			data.type = (BlockType)Util::randomPointI(0, BlockType::MAX_NUMBER - 1);
 		});
 		CreateVBO();
 	}
@@ -114,7 +130,7 @@ struct Chunk : Ryper::NonCopyable
 				{
 					BlockData &data = chunkInfo[x][i][z];
 					data.isExist = 1;
-					data.type = Util::randomPointI(0, 4);
+					data.type = (BlockType)Util::randomPointI(0, BlockType::MAX_NUMBER - 1);
 				}
 				heightIter++;
 			}
@@ -236,6 +252,7 @@ private:
 			{
 				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
 				instanceData.push_back({ wPos, glm::ivec4{ 0, 1, 2, 3 } });
+				//TODO Replace glm::ivec4 with blockType
 			}
 		});
 
@@ -268,7 +285,7 @@ struct ChunkManager : public IRenderable
 	std::vector<Chunk> chunks;
 	std::vector<bool>  isInside;
 	ChunkManager () 
-		:textureMapping (initTextureMaping ())
+		:textureMapping (initTextureMaping ()), blockTextureData(initBlockTextureData())
 	{
 	}
 	void Init (Geometry* geom_Box, GLint texId)
@@ -351,21 +368,6 @@ struct ChunkManager : public IRenderable
 		state.shader = shader->GetShadowShader();
 		DrawLogic(state);
 	}
-	//Block texture loading
-	enum TextureType
-	{
-		T_GRASS_BOTTOM	= 0,
-		T_GRASS_SIDE	= 1,
-		T_GRASS_TOP		= 2,
-		T_GLASS_RED		= 3,
-		T_TRAPDOOR		= 4,
-	};
-
-	enum BlockType {
-		GRASS,
-		GLASS_RED,
-		TRAPDOOR
-	};
 	std::map<BlockType, glm::ivec3> blockTextureData;
 	std::map<TextureType, std::string> textureMapping;
 	using StringVec = std::vector<std::string>;
@@ -387,6 +389,15 @@ private:
 				std::make_pair(TextureType::T_GRASS_TOP , "grass_top_colored"),
 				std::make_pair(TextureType::T_TRAPDOOR , "trapdoor"), 
 				std::make_pair(TextureType::T_GLASS_RED , "glass_red")};
+	}
+	static std::map<BlockType, glm::ivec3> initBlockTextureData ()
+	{
+		return {std::make_pair(BlockType::GRASS, glm::ivec3{TextureType::T_GRASS_BOTTOM, 
+															TextureType::T_GRASS_SIDE, 
+															TextureType::T_GRASS_TOP }),
+				std::make_pair (BlockType::GLASS_RED, glm::ivec3{TextureType::T_GLASS_RED}),
+				std::make_pair (BlockType::TRAPDOOR, glm::ivec3{TextureType::T_TRAPDOOR})
+				};
 	}
 	void DrawLogic (RenderState& state)
 	{
