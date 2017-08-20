@@ -179,6 +179,7 @@ struct Container : public Widget
 		widget->SetPos(newPos);
 
 		size += widget->GetSize () + offset.y;
+		size.x = MaxWidgetWidth () + 2 * padding.x;
 
 		children.push_back(widget);
 	}
@@ -222,4 +223,15 @@ struct Container : public Widget
 		for (auto& widget : children)
 			widget->MouseWheel(mouse);
 	};
+private:
+	int MaxWidgetWidth()
+	{
+		int max = 0;
+		for(auto widget : children)
+		{
+			if (widget->GetSize ().x > max)
+				max = widget->GetSize().x;
+		}
+		return max;
+	}
 };
