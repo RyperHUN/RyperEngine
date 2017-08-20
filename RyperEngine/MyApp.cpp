@@ -337,7 +337,7 @@ void CMyApp::RenderExtra(RenderState & state)
 	if (IsWidgetRendering)
 	{
 		WidgetRenderState state{ screenSize, quadTexturer, textRenderer };
-		//container.Draw(state);
+		container.Draw(state);
 	}
 }
 
@@ -403,12 +403,17 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 			IsFrustumRendering = !IsFrustumRendering;
 			std::cout << "Frustum Render " << IsFrustumRendering << std::endl;//Log
 			break;
-		case SDLK_4:
+		case SDLK_h:
 			IsWidgetRendering = !IsWidgetRendering;
 			std::cout << "Widget Render " << IsWidgetRendering << std::endl;//Log
 			break;
 		case SDLK_c:
 			std::swap(activeCamera, secondaryCamera);
+			break;
+		case SDLK_v: //Changes game camera to flying camera
+			secondaryCamera->SetForwardDir(activeCamera->GetForwardDir());
+			secondaryCamera->SetEye(activeCamera->GetEye());
+			std::swap(secondaryCamera, activeCamera); //TODO Backwards swap does not work!
 			break;
 		case SDLK_1:
 			activeCamera->SetEye (glm::vec3(33.1, 34, -99));
