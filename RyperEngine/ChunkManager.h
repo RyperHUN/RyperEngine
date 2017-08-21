@@ -405,7 +405,7 @@ struct ChunkManager : public IRenderable
 				}
 			}
 		}
-		GetHeight ({0,0,0});
+		std::cout << GetHeight ({0,0,0}) << std::endl;
 	}
 	void AddChunk (glm::ivec3 const& index, glm::vec3 const& wPos, std::vector<size_t> const& heightInfo = {})
 	{
@@ -432,14 +432,24 @@ struct ChunkManager : public IRenderable
 		}
 		return heightInfo;
 	}
-	void GetHeight (glm::ivec3 globalIndex)
+	int GetHeight (glm::ivec3 globalIndex)
 	{
-		glm::ivec3 chunkIndex = Chunk::globalToChunkindex (globalIndex);
+		glm::ivec3 chunkIndex	 = Chunk::globalToChunkindex (globalIndex);
+		glm::ivec3 localIndex = Chunk::globalToLocalindex (globalIndex);
 		std::pair<MultiMapIter, MultiMapIter> range = chunkMap.equal_range (glm::ivec2XZ(chunkIndex));
+		int maxHeight = 0;
 		for(auto iter = range.first; iter != range.second; iter++)
 		{
-			std::cout << iter->second->GetChunkindex () << std::endl;
+			glm::ivec3 foundChunkIndex = iter->second->GetChunkindex();
+			int height = 0;
+			for(int i = 0; i < Chunk::GetCubeSize (); i++)
+				if(iter->second->chunkInfo[localIndex.x][i][localIndex.z].isExist)
+					height++;
+			if(height > maxHeight)
+				maxHeight = height;
 		}
+
+		return maxHeight;
 	}
 	void frustumCull (CameraPtr camera)
 	{
