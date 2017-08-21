@@ -45,8 +45,8 @@ struct TextRenderer
 	}
 	TextData RenderStrToTexture(std::string const& str)
 	{
-		SDL_Color red = { 255, 255, 255, 255 };
-		SDL_Surface * felirat = TTF_RenderText_Blended(font, str.c_str(), red);
+		SDL_Color color = { 255, 0, 0, 255 };
+		SDL_Surface * felirat = TTF_RenderText_Blended(font, str.c_str(), color);
 		if (!felirat) // no str given
 			return TextData {glm::ivec2{0}, GLuint(-1)};
 

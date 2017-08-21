@@ -278,7 +278,7 @@ struct Chunk : Ryper::NonCopyable
 	}
 	static glm::ivec3 worldToChunkindex (glm::vec3 const& world)
 	{
-		return world / GetChunkExtent();
+		return glm::ivec3(world / GetChunkExtent()) + getNegativeSign(world);
 	}
 	static glm::ivec3 worldToGlobalindex (glm::vec3 const& world)
 	{
@@ -286,7 +286,7 @@ struct Chunk : Ryper::NonCopyable
 	}
 	static glm::ivec3 worldToLocalindex (glm::vec3 const& world)
 	{
-		return glm::mod(world, GetChunkExtent()) / (Chunk::wHalfExtent * 2);
+		return glm::mod(world, GetChunkExtent())  / (Chunk::wHalfExtent * 2);
 	}
 	static glm::ivec3 globalToChunkindex(glm::ivec3 const& global)
 	{
@@ -295,6 +295,15 @@ struct Chunk : Ryper::NonCopyable
 	static glm::ivec3 globalToLocalindex (glm::vec3 const& global)
 	{
 		return glm::mod (global, (float)GetCubeSize());
+	}
+	static glm::ivec3 getNegativeSign (glm::vec3 coord)
+	{
+		glm::ivec3 result;
+		result.x = coord.x < 0 ? -1 : 0;
+		result.y = coord.y < 0 ? -1 : 0;
+		result.z = coord.z < 0 ? -1 : 0;
+		
+		return result;
 	}
 	static float GetChunkExtent()
 	{
@@ -400,7 +409,7 @@ struct ChunkManager : public IRenderable
 		for(int layer = 0; layer < maxLayer; layer++)
 		{	
 			
-			int interval = 1;
+			int interval = 2;
 			for (int x = -interval; x <= interval; x++)
 			{
 				for (int z = -interval; z <= interval; z++)

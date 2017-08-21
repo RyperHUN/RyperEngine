@@ -438,7 +438,7 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 			break;
 		case SDLK_1:
 			activeCamera->SetEye (glm::vec3(0,0, 0));
-			activeCamera->SetForwardDir (glm::vec3(-0.13, -0.33, 0.93));
+			activeCamera->SetForwardDir (glm::vec3(0, 0, -1));
 			break;
 		case SDLK_2:
 			activeCamera->SetEye(glm::vec3(37.5, 62.36, -104.6));

@@ -219,7 +219,7 @@ struct Container : public Widget
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		state.texturer.Draw (glm::vec4(0.9, 0.9,0.9, 0.3), Widget::GetModelTransform (pos, size, state.screenSize));
+		state.texturer.Draw (glm::vec4(0.9, 0.9,0.9, 0.5), Widget::GetModelTransform (pos, size, state.screenSize));
 		
 
 		for(auto& widget : children)
