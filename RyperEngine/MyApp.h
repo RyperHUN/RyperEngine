@@ -84,6 +84,7 @@ protected:
 
 	//TODO Camera manager
 	int cameraFocusIndex = -1; //TODO better if pointer to gameobj
+	glm::vec3 cameraPos;
 	CameraPtr activeCamera;
 	CameraPtr secondaryCamera; //TODO receive resize events also
 	FrustumRenderer frustumRender;

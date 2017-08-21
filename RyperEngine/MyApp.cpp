@@ -39,9 +39,9 @@ CMyApp::CMyApp(void)
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Light render", &IsLightRendering, textRenderer));
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Frustum render", &IsFrustumRendering, textRenderer));
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Shadowmap texture render", &IsShadowMapTextureDebug, textRenderer));
-	container.AddWidget (std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20,20), textRenderer, [](){
-		glm::vec3 testPos {0, 5.32, 6.33};
-		return std::string{std::string("pos:(") + std::to_string(testPos.x) + ", " + std::to_string(testPos.y) + ", " + std::to_string(testPos.z) + ")"};
+	glm::vec3* cameraPosPtr = &cameraPos;
+	container.AddWidget (std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20,20), textRenderer, [cameraPosPtr](){
+		return std::string{std::string("pos:(") + std::to_string((int)cameraPosPtr->x) + ", " + std::to_string((int)cameraPosPtr->y) + ", " + std::to_string((int)cameraPosPtr->z) + ")"};
 	}));
 	
 	//gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false); });
@@ -277,6 +277,7 @@ void CMyApp::Update()
 		activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
 	}
 
+	cameraPos = activeCamera->GetEye();
 	last_time = SDL_GetTicks();
 }
 

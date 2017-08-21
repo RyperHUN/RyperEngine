@@ -14,6 +14,9 @@
 #include <oglwrap\oglwrap.h>
 #include "UtilConverters.h"
 
+#include <sstream>
+#include <iomanip>
+
 namespace Util 
 {
 	struct TextureData
@@ -42,6 +45,16 @@ namespace Util
 			return BasisVectors {forward, up, right};
 		}
 	};
+
+	//std::to_string with precision
+	//TODO Precision not works perfectly with floats
+	template <typename T>
+	static inline std::string to_string(const T a_value, const int n = 2)
+	{
+		std::ostringstream out;
+		out << std::setprecision(n) << a_value;
+		return out.str();
+	}
 
 	//Returns [lowerBound, upperBound]
 	inline static int randomPointI(int lowerBound, int upperBound)
