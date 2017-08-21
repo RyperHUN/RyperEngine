@@ -176,12 +176,11 @@ struct Container : public Widget
 
 			size += padding;
 		}
+		children.push_back(widget);
 		widget->SetPos(newPos);
 
 		size += widget->GetSize () + offset.y;
 		size.x = MaxWidgetWidth () + 2 * padding.x;
-
-		children.push_back(widget);
 	}
 	void UpdatePos ()
 	{
