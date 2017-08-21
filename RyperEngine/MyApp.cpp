@@ -437,7 +437,7 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 			std::swap(secondaryCamera, activeCamera); //TODO Backwards swap does not work!
 			break;
 		case SDLK_1:
-			activeCamera->SetEye (glm::vec3(33.1, 34, -99));
+			activeCamera->SetEye (glm::vec3(0,0, 0));
 			activeCamera->SetForwardDir (glm::vec3(-0.13, -0.33, 0.93));
 			break;
 		case SDLK_2:

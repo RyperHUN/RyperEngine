@@ -133,6 +133,8 @@ struct BlockData
 	}
 };
 
+
+
 struct Chunk : Ryper::NonCopyable
 {
 	static const float wHalfExtent /*= 4.0f*/; //TODO Maybe move this to BlockData??
@@ -280,7 +282,7 @@ struct Chunk : Ryper::NonCopyable
 	}
 	static glm::ivec3 worldToGlobalindex (glm::vec3 const& world)
 	{
-		return worldToChunkindex (world) + worldToLocalindex (world);
+		return GetGlobalIndex(worldToChunkindex (world),worldToLocalindex (world));
 	}
 	static glm::ivec3 worldToLocalindex (glm::vec3 const& world)
 	{
@@ -449,19 +451,21 @@ struct ChunkManager : public IRenderable
 		glm::ivec3 chunkIndex	 = Chunk::globalToChunkindex (globalIndex);
 		glm::ivec3 localIndex = Chunk::globalToLocalindex (globalIndex);
 		std::pair<MultiMapIter, MultiMapIter> range = chunkMap.equal_range (glm::ivec2XZ(chunkIndex));
-		int maxHeight = 0;
+		int indexOfMaxHeight = 0;
 		for(auto iter = range.first; iter != range.second; iter++)
 		{
 			glm::ivec3 foundChunkIndex = iter->second->GetChunkindex();
 			int height = 0;
 			for(int i = 0; i < Chunk::GetCubeSize (); i++)
+			{
 				if(iter->second->chunkInfo[localIndex.x][i][localIndex.z].isExist)
-					height++;
-			if(height > maxHeight)
-				maxHeight = height;
+					indexOfMaxHeight = Chunk::GetGlobalIndex (iter->second->GetChunkindex (), glm::ivec3(localIndex.x, i, localIndex.z)).y;
+				else
+					break;
+			}
 		}
 
-		return maxHeight;
+		return indexOfMaxHeight; //TODO calculate the index of the max height
 	}
 	void frustumCull (CameraPtr camera)
 	{
