@@ -116,6 +116,7 @@
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="GLFXShaderManager.h" />
+    <ClInclude Include="glmExtension.h" />
     <ClInclude Include="HeightMapGenerators.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="LocationDefinitions.h" />

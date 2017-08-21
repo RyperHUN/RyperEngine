@@ -200,6 +200,9 @@
     <ClInclude Include="LocationDefinitions.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="glmExtension.h">
+      <Filter>Utils\Helpers\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
