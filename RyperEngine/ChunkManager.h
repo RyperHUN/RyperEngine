@@ -142,7 +142,7 @@ struct Chunk : Ryper::NonCopyable
 	static Event::IBlockChanged * blockChangedEvent;
 
 	BlockData chunkInfo[size * 2 + 1][size * 2 + 1][size * 2 + 1];
-	glm::vec3 wBottomLeftCenterPos;
+	glm::ivec3 wBottomLeftCenterPos;
 	Geometry* geom_Box;
 	Shader::Instanced * shader; //Can be removed, and box geom also!!
 	int amountOfCubes = 0;
@@ -161,7 +161,7 @@ struct Chunk : Ryper::NonCopyable
 		}
 	};	
 
-	Chunk(Geometry* geom, glm::vec3 wBottomLeftCenterPos)
+	Chunk(Geometry* geom, glm::ivec3 wBottomLeftCenterPos)
 		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
 	{
 		shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
@@ -175,7 +175,7 @@ struct Chunk : Ryper::NonCopyable
 		CreateVBO();
 	}
 
-	Chunk(Geometry* geom, glm::vec3 wBottomLeftCenterPos, std::vector<size_t> heights)
+	Chunk(Geometry* geom, glm::ivec3 wBottomLeftCenterPos, std::vector<size_t> heights)
 		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
 	{
 		shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
@@ -288,7 +288,7 @@ struct Chunk : Ryper::NonCopyable
 	}
 	glm::ivec3 GetChunkindex () const
 	{
-		return wBottomLeftCenterPos / GetChunkExtent ();
+		return wBottomLeftCenterPos / (int)GetChunkExtent ();
 	}
 	static glm::ivec3 GetGlobalIndex(glm::ivec3 chunkIndex, glm::ivec3 localIndex)
 	{
@@ -364,8 +364,10 @@ struct ChunkManager : public IRenderable
 
 	Util::PerlinGenerator random;
 
-	std::multimap<glm::ivec2XZ, Chunk*> chunkMap;
-	std::vector<Chunk> chunks;
+	using MultiMap = std::multimap<glm::ivec2XZ, Chunk*>;
+	using MultiMapIter = MultiMap::iterator;
+	MultiMap chunkMap;
+	std::vector<Chunk*> chunks;
 	std::vector<bool>  isInside;
 	ChunkManager () 
 	{
@@ -399,16 +401,16 @@ struct ChunkManager : public IRenderable
 					}
 
 					AddChunk(chunkIndex, wPos, heightInfo);
-					MAssert(chunks.back().GetChunkindex() == chunkIndex, "Chunk index calculation works");
+					MAssert(chunks.back()->GetChunkindex() == chunkIndex, "Chunk index calculation works");
 				}
 			}
 		}
+		GetHeight ({0,0,0});
 	}
 	void AddChunk (glm::ivec3 const& index, glm::vec3 const& wPos, std::vector<size_t> const& heightInfo = {})
 	{
-		chunks.emplace_back(geom_Box, wPos, heightInfo); //TODO Maybe store the index in the chunk too
-		Chunk* chunk = &chunks.back();
-		chunkMap.insert(std::make_pair(glm::ivec2XZ{index}, chunk));
+		chunks.emplace_back(new Chunk(geom_Box, wPos, heightInfo)); //TODO Maybe store the index in the chunk too
+		chunkMap.insert(std::make_pair(glm::ivec2XZ{index}, chunks.back()));
 	}
 	//Returns how much is the height for the chunks!
 	std::vector<size_t> GetHeightInfo (glm::vec3 wPos, int maxLayer)
@@ -430,13 +432,22 @@ struct ChunkManager : public IRenderable
 		}
 		return heightInfo;
 	}
+	void GetHeight (glm::ivec3 globalIndex)
+	{
+		glm::ivec3 chunkIndex = Chunk::globalToChunkindex (globalIndex);
+		std::pair<MultiMapIter, MultiMapIter> range = chunkMap.equal_range (glm::ivec2XZ(chunkIndex));
+		for(auto iter = range.first; iter != range.second; iter++)
+		{
+			std::cout << iter->second->GetChunkindex () << std::endl;
+		}
+	}
 	void frustumCull (CameraPtr camera)
 	{
 		isInside.resize(chunks.size());
 		for(int i = 0 ; i < chunks.size(); i++)
 		{
 			FrustumG * frustum = camera->GetFrustum ();
-			Geom::Box box = chunks[i].getBox ();
+			Geom::Box box = chunks[i]->getBox ();
 			if (frustum->boxInFrustum (box) != FrustumG::OUTSIDE)
 				isInside[i] = true;
 			else
@@ -478,7 +489,7 @@ private:
 			for (int i = 0; i < chunks.size(); i++)
 			{
 				//if(isInside[i])
-					chunks[i].Draw(state, texId);
+					chunks[i]->Draw(state, texId);
 			}
 		}
 		shader->Off();

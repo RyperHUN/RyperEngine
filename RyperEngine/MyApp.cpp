@@ -192,7 +192,7 @@ void CMyApp::InitScene_Minecraft ()
 	chunkManager.Init(&geom_Box, textureArray_blocks);
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	for (auto& chunk : chunkManager.chunks)
-		physX.createChunk(chunk);
+		physX.createChunk(*chunk);
 	//physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry, cowboyObj);
 	physX.createFPSCharacter(playerCam->GetPos (), playerCam->GetForward ());
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
@@ -223,7 +223,6 @@ void CMyApp::InitScene_InsideBox ()
 		GameObj * insideBox = new GameObj (shader_Simple, &geom_Box, materialNormal, pos, glm::vec3(Util::randomPoint(2,7)));
 		renderObjs.push_back (insideBox);
 	}
-
 
 	renderObjs.push_back(OuterBox);
 	gl::Disable (gl::kCullFace);

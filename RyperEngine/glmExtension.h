@@ -21,10 +21,21 @@ namespace glm
 		{
 			if(x < rhs.x)
 				return true;
-			//if (z < rhs.z)
-			//	return true;
+			if(x > rhs.x)
+				return false;
+
+			if (z < rhs.z)
+				return true;
+			if (z > rhs.z)
+				return false;
 
 			return false;
 		}
 	};
+
+	static inline std::ostream& operator<<(std::ostream& os, glm::ivec3 const& vec)
+	{
+		os << "x:" << vec.x << ", y:" << vec.y << ", z:" << vec.z;
+		return os;
+	}
 }

@@ -114,7 +114,7 @@ struct BoundingBoxRenderer
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		for(int i = 0 ; i < manager.chunks.size(); i++)
 		{
-			Chunk& chunk = manager.chunks[i];
+			Chunk& chunk = (*manager.chunks[i]);
 			bool isSelected = false;
 			for(auto &val: chunkIndices)
 				if (val.second == i)
@@ -166,7 +166,7 @@ struct BoundingBoxRenderer
 		int savedIndex = -1;
 		for (int i = 0; i < manager.chunks.size(); i++)
 		{
-			Chunk& obj = manager.chunks[i];
+			Chunk& obj = (*manager.chunks[i]);
 			Geom::Box box = obj.getBox ();
 			float t = Ray::intersection(box, ray);
 			if (t <= 0)
@@ -192,7 +192,7 @@ struct BoundingBoxRenderer
 			
 			int savedIndex = -1;
 			float smallest = -1.0f;
-			Chunk& chunk = manager.chunks[val.second];
+			Chunk& chunk = (*manager.chunks[val.second]);
 			for(int i = 0 ; i < Chunk::BlockCount (); i++)
 			{
 				Geom::Box box;
