@@ -148,6 +148,33 @@ struct Checkbox : public Widget
 	}
 };
 
+struct TextWidget : public Widget
+{
+	std::function<std::string()> stringCreator;
+	TextRenderer& textRenderer;
+	TextWidget(glm::ivec2 pos, glm::ivec2 size, TextRenderer& textRenderer, std::function<std::string()> stringCreator = []() {return "";})
+		:Widget(pos, size), stringCreator(stringCreator), textRenderer(textRenderer)
+	{}
+	virtual glm::ivec2 GetSize() override
+	{
+		glm::ivec2 buttonSize(size.y, size.y);
+		buttonSize.x += textRenderer.TextSize(stringCreator()).x;
+		return  buttonSize;
+	}
+	virtual void Draw(WidgetRenderState &state) override
+	{
+		glDisable(GL_DEPTH_TEST);
+		glm::mat4 model = Widget::GetModelTransform(pos, size, state.screenSize);
+		std::string str = stringCreator();
+		size.x = textRenderer.TextSize(str).x;
+
+		TextData data = state.textRenderer.RenderStrToTexture(str);
+		if (data.texCoord != -1)
+			state.textRenderer.RenderStr(std::move(data), model);
+		glEnable(GL_DEPTH_TEST);
+	}
+};
+
 struct Container : public Widget
 {
 	glm::ivec2 padding;
