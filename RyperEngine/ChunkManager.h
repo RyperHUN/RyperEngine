@@ -274,6 +274,18 @@ struct Chunk : Ryper::NonCopyable
 	{
 		return glm::vec3(chunkIndex) * GetChunkExtent();
 	}
+	static glm::ivec3 worldToChunkindex (glm::vec3 const& world)
+	{
+		return world / GetChunkExtent();
+	}
+	static glm::ivec3 worldToGlobalindex (glm::vec3 const& world)
+	{
+		return worldToChunkindex (world) + worldToLocalindex (world);
+	}
+	static glm::ivec3 worldToLocalindex (glm::vec3 const& world)
+	{
+		return glm::mod(world, GetChunkExtent()) / (Chunk::wHalfExtent * 2);
+	}
 	static glm::ivec3 globalToChunkindex(glm::ivec3 const& global)
 	{
 		return (global - globalToLocalindex(global)) / (int)GetCubeSize();

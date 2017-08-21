@@ -41,7 +41,16 @@ CMyApp::CMyApp(void)
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Shadowmap texture render", &IsShadowMapTextureDebug, textRenderer));
 	glm::vec3* cameraPosPtr = &cameraPos;
 	container.AddWidget (std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20,20), textRenderer, [cameraPosPtr](){
-		return std::string{std::string("pos:(") + std::to_string((int)cameraPosPtr->x) + ", " + std::to_string((int)cameraPosPtr->y) + ", " + std::to_string((int)cameraPosPtr->z) + ")"};
+		return	Util::to_string(*cameraPosPtr, "Pos");
+	}));
+	container.AddWidget (std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20, 20), textRenderer, [cameraPosPtr]() {
+		glm::ivec3 globalIndex = Chunk::worldToGlobalindex (*cameraPosPtr);
+		return Util::to_string(globalIndex, "GlobalIndex");
+	}));
+	ChunkManager * chunkPtr = &chunkManager;
+	container.AddWidget(std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20, 20), textRenderer, [cameraPosPtr, chunkPtr]() {
+		glm::ivec3 globalIndex = Chunk::worldToGlobalindex(*cameraPosPtr);
+		return std::to_string(chunkPtr->GetHeight (globalIndex));
 	}));
 	
 	//gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false); });

@@ -55,6 +55,10 @@ namespace Util
 		out << std::setprecision(n) << a_value;
 		return out.str();
 	}
+	static inline std::string to_string(glm::ivec3 const& vec, std::string const& text)
+	{
+		return { text + "(" + std::to_string(vec.x) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z) + ")" };
+	}
 
 	//Returns [lowerBound, upperBound]
 	inline static int randomPointI(int lowerBound, int upperBound)
