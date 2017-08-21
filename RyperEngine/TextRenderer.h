@@ -69,6 +69,7 @@ struct TextRenderer
 	void RenderStr (TextData &&data, glm::mat4 const& model)
 	{
 		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		quadTexturer.Draw (data.texCoord, false, model);
 		glDisable(GL_BLEND);
 

@@ -74,7 +74,6 @@ struct ButtonA : public Widget
 	}
 	virtual void Draw (WidgetRenderState &state) override
 	{
-		glDisable(GL_DEPTH_TEST);
 		glm::mat4 model = Widget::GetModelTransform(pos, size, state.screenSize);
 
 		//TODO Render texture
@@ -87,7 +86,6 @@ struct ButtonA : public Widget
 		//data.size     = size;
 		if(data.texCoord != -1)
 			state.textRenderer.RenderStr (std::move(data), model);
-		glEnable(GL_DEPTH_TEST);
 	}
 };
 
@@ -163,7 +161,7 @@ struct TextWidget : public Widget
 	}
 	virtual void Draw(WidgetRenderState &state) override
 	{
-		glDisable(GL_DEPTH_TEST);
+		
 		glm::mat4 model = Widget::GetModelTransform(pos, size, state.screenSize);
 		std::string str = stringCreator();
 		size.x = textRenderer.TextSize(str).x;
@@ -171,7 +169,6 @@ struct TextWidget : public Widget
 		TextData data = state.textRenderer.RenderStrToTexture(str);
 		if (data.texCoord != -1)
 			state.textRenderer.RenderStr(std::move(data), model);
-		glEnable(GL_DEPTH_TEST);
 	}
 };
 
@@ -221,11 +218,13 @@ struct Container : public Widget
 		glDisable(GL_DEPTH_TEST);
 
 		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		state.texturer.Draw (glm::vec4(0.9, 0.9,0.9, 0.3), Widget::GetModelTransform (pos, size, state.screenSize));
-		glDisable(GL_BLEND);
+		
 
 		for(auto& widget : children)
 			widget->Draw (state);
+		glDisable(GL_BLEND);
 
 		glEnable(GL_DEPTH_TEST);
 	}
