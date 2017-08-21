@@ -270,6 +270,30 @@ struct Chunk : Ryper::NonCopyable
 	{
 		return Chunk::GetCubeSize() * Chunk::GetCubeSize() * Chunk::GetCubeSize();
 	}
+	static glm::vec3 chunkindexToWorld(glm::ivec3 const& chunkIndex)
+	{
+		return glm::vec3(chunkIndex) * GetChunkExtent();
+	}
+	static glm::ivec3 globalToChunkindex(glm::ivec3 const& global)
+	{
+		return (global - globalToLocalindex(global)) / (int)GetCubeSize();
+	}
+	static glm::ivec3 globalToLocalindex (glm::vec3 const& global)
+	{
+		return glm::mod (global, (float)GetCubeSize());
+	}
+	static float GetChunkExtent()
+	{
+		return Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
+	}
+	glm::ivec3 GetChunkindex () const
+	{
+		return wBottomLeftCenterPos / GetChunkExtent ();
+	}
+	static glm::ivec3 GetGlobalIndex(glm::ivec3 chunkIndex, glm::ivec3 localIndex)
+	{
+		return chunkIndex * (int)Chunk::GetCubeSize() + localIndex;
+	}
 	Geom::Box getBox ()
 	{
 		const float wExtent		= wHalfExtent * 2.0f;
@@ -366,7 +390,7 @@ struct ChunkManager : public IRenderable
 				for (int z = -interval; z <= interval; z++)
 				{
 					glm::ivec3 chunkIndex = glm::vec3(x, layer, z);
-					glm::vec3 wPos = indexToWorld (chunkIndex);
+					glm::vec3 wPos = Chunk::chunkindexToWorld (chunkIndex);
 					std::vector<size_t> heightInfo = GetHeightInfo (wPos, maxLayer);
 					for(size_t& height : heightInfo)
 					{
@@ -375,6 +399,7 @@ struct ChunkManager : public IRenderable
 					}
 
 					AddChunk(chunkIndex, wPos, heightInfo);
+					MAssert(chunks.back().GetChunkindex() == chunkIndex, "Chunk index calculation works");
 				}
 			}
 		}
@@ -384,18 +409,6 @@ struct ChunkManager : public IRenderable
 		chunks.emplace_back(geom_Box, wPos, heightInfo); //TODO Maybe store the index in the chunk too
 		Chunk* chunk = &chunks.back();
 		chunkMap.insert(std::make_pair(glm::ivec2XZ{index}, chunk));
-	}
-	glm::vec3 indexToWorld (glm::ivec3 const& chunkIndex)
-	{
-		return glm::vec3(chunkIndex) * GetChunkExtent();
-	}
-	glm::ivec3 worldToIndex (glm::vec3 const& world)
-	{
-		return world / GetChunkExtent ();
-	}
-	static float GetChunkExtent () //TODO Constexpr
-	{
-		return Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
 	}
 	//Returns how much is the height for the chunks!
 	std::vector<size_t> GetHeightInfo (glm::vec3 wPos, int maxLayer)

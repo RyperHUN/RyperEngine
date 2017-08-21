@@ -21,8 +21,8 @@ namespace glm
 		{
 			if(x < rhs.x)
 				return true;
-			if (z < rhs.z)
-				return true;
+			//if (z < rhs.z)
+			//	return true;
 
 			return false;
 		}
