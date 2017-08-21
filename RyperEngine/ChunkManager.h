@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Events.h"
 #include <map>
+#include "glmExtension.h"
 
 /*
 Chunk coord system
@@ -336,10 +337,10 @@ struct ChunkManager : public IRenderable
 	Shader::Instanced * shader;
 	GLint texId;
 	static const size_t MapSize = Chunk::GetCubeSize() * 4; //Map Size in Chunks MapSize x MapSize
-	using ChunkArray = Array2D<float, MapSize, MapSize>;
 
 	Util::PerlinGenerator random;
 
+	std::multimap<glm::ivec2XZ, Chunk*> chunkMap;
 	std::vector<Chunk> chunks;
 	std::vector<bool>  isInside;
 	ChunkManager () 
@@ -355,7 +356,7 @@ struct ChunkManager : public IRenderable
 	~ChunkManager () {}
 	void GenerateBoxes ()
 	{
-		int maxLayer = 1;
+		int maxLayer = 2;
 		for(int layer = 0; layer < maxLayer; layer++)
 		{	
 			const float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
@@ -364,7 +365,8 @@ struct ChunkManager : public IRenderable
 			{
 				for (int z = -interval; z <= interval; z++)
 				{
-					glm::vec3 wPos = glm::vec3(x, layer, z) * cubeExtent;
+					glm::ivec3 chunkIndex = glm::vec3(x, layer, z);
+					glm::vec3 wPos = glm::vec3(chunkIndex) * cubeExtent;
 					std::vector<size_t> heightInfo = GetHeightInfo (wPos, maxLayer);
 					for(size_t& height : heightInfo)
 					{
@@ -372,10 +374,16 @@ struct ChunkManager : public IRenderable
 						height = glm::clamp (temp, 0, (int)Chunk::GetCubeSize());
 					}
 
-					chunks.emplace_back(geom_Box, wPos, heightInfo);
+					AddChunk(chunkIndex, wPos, heightInfo);
 				}
 			}
 		}
+	}
+	void AddChunk (glm::ivec3 const& index, glm::vec3 const& wPos, std::vector<size_t> const& heightInfo = {})
+	{
+		chunks.emplace_back(geom_Box, wPos, heightInfo); //TODO Maybe store the index in the chunk too
+		Chunk* chunk = &chunks.back();
+		chunkMap.insert(std::make_pair(glm::ivec2XZ{index}, chunk));
 	}
 	//Returns how much is the height for the chunks!
 	std::vector<size_t> GetHeightInfo (glm::vec3 wPos, int maxLayer)
@@ -409,6 +417,10 @@ struct ChunkManager : public IRenderable
 			else
 				isInside[i] = false;
 		}
+	}
+	void AddTrees ()
+	{
+		
 	}
 	void Draw(RenderState & state) override
 	{
