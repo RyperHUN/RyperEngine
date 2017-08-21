@@ -359,14 +359,14 @@ struct ChunkManager : public IRenderable
 		int maxLayer = 2;
 		for(int layer = 0; layer < maxLayer; layer++)
 		{	
-			const float cubeExtent = Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
+			
 			int interval = 1;
 			for (int x = -interval; x <= interval; x++)
 			{
 				for (int z = -interval; z <= interval; z++)
 				{
 					glm::ivec3 chunkIndex = glm::vec3(x, layer, z);
-					glm::vec3 wPos = glm::vec3(chunkIndex) * cubeExtent;
+					glm::vec3 wPos = indexToWorld (chunkIndex);
 					std::vector<size_t> heightInfo = GetHeightInfo (wPos, maxLayer);
 					for(size_t& height : heightInfo)
 					{
@@ -384,6 +384,18 @@ struct ChunkManager : public IRenderable
 		chunks.emplace_back(geom_Box, wPos, heightInfo); //TODO Maybe store the index in the chunk too
 		Chunk* chunk = &chunks.back();
 		chunkMap.insert(std::make_pair(glm::ivec2XZ{index}, chunk));
+	}
+	glm::vec3 indexToWorld (glm::ivec3 const& chunkIndex)
+	{
+		return glm::vec3(chunkIndex) * GetChunkExtent();
+	}
+	glm::ivec3 worldToIndex (glm::vec3 const& world)
+	{
+		return world / GetChunkExtent ();
+	}
+	static float GetChunkExtent () //TODO Constexpr
+	{
+		return Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
 	}
 	//Returns how much is the height for the chunks!
 	std::vector<size_t> GetHeightInfo (glm::vec3 wPos, int maxLayer)
