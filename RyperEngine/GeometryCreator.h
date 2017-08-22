@@ -193,12 +193,12 @@ namespace Geom
 
 		//Z Axis
 		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 0, 1));
-		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, -1)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 0, 1));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 1)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 0, 1));
 		//Z Arrow
-		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, -1)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
-		buffer.AddData(LOCATION::POSITION, glm::vec3(arrowSize, 0, -1 + arrowSize)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
-		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, -1)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
-		buffer.AddData(LOCATION::POSITION, glm::vec3(-arrowSize, 0, -1 + arrowSize)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 1)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(arrowSize, 0, 1 - arrowSize)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 1)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(-arrowSize, 0, 1 - arrowSize)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
 	
 
 		buffer.InitBuffers();

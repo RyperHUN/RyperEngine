@@ -334,23 +334,6 @@ void CMyApp::Render()
 
 		RenderExtra(state);
 
-		glDisable(GL_DEPTH_TEST);
-		{
-			auto shader = Shader::ShaderManager::GetShader<Shader::CoordinateVisualizer>();
-			shader->On();
-			buffer_CoordAxes.On();
-			{
-				glLineWidth(3);
-				glm::mat4 M = glm::translate(glm::vec3(-0.7, -0.7, 0))*activeCamera->GetViewRotationMatrix() * glm::scale(glm::vec3(0.2f));
-				shader->SetUniform("M", M);
-
-				buffer_CoordAxes.Draw (GL_LINES);
-			}
-			buffer_CoordAxes.Off();
-			shader->Off();
-		}
-		glEnable(GL_DEPTH_TEST);
-
 		//////////////////////////////Other debug drawings
 		//if (IsWaterRendering) 
 		//	waterRenderer.RenderTextures ();
@@ -374,6 +357,22 @@ void CMyApp::RenderExtra(RenderState & state)
 	{
 		WidgetRenderState state{ screenSize, quadTexturer, textRenderer };
 		container.Draw(state);
+		glDisable(GL_DEPTH_TEST);
+		{
+			auto shader = Shader::ShaderManager::GetShader<Shader::CoordinateVisualizer>();
+			shader->On();
+			buffer_CoordAxes.On();
+			{
+				glLineWidth(3);
+				glm::mat4 M = glm::translate(glm::vec3(-0.7, -0.7, 0))*activeCamera->GetViewRotationMatrix() * glm::scale(glm::vec3(0.2f));
+				shader->SetUniform("M", M);
+
+				buffer_CoordAxes.Draw(GL_LINES);
+			}
+			buffer_CoordAxes.Off();
+			shader->Off();
+		}
+		glEnable(GL_DEPTH_TEST);
 	}
 	if (IsShadowMapTextureDebug)
 	{
