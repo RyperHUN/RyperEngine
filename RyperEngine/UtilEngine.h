@@ -44,6 +44,16 @@ namespace Util
 			glm::vec3 up = glm::cross(right, forward);
 			return BasisVectors {forward, up, right};
 		}
+		static glm::mat4 createTBNMatrix (glm::vec3 forward, glm::vec3 globalUp = glm::vec3(0, 1, 0))
+		{
+			glm::mat4 matrix(1);
+			Util::BasisVectors vectors = Util::BasisVectors::create(forward);
+			matrix[0] = glm::vec4(vectors.right, 0);
+			matrix[1] = glm::vec4(vectors.up, 0);
+			matrix[2] = glm::vec4(vectors.right, 0);
+
+			return matrix;
+		}
 	};
 
 	//std::to_string with precision
