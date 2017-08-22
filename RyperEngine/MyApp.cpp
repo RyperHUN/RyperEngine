@@ -7,6 +7,7 @@
 #include "ObjParser_OGL3.h"
 #include "UtilEngine.h"
 #include "GeometryCreator.h"
+#include "glmIncluder.h"
 
 
 Geometry * BoundingBoxRenderer::geom_box = nullptr;
@@ -94,6 +95,7 @@ bool CMyApp::Init()
 	// skybox kocka
 	Geom::CreateBoxGeom(buffer_Box);
 	Geom::CreateQuadGeom(buffer_Quad);
+	Geom::CreateCoordAxes(buffer_CoordAxes);
 
 	geom_Box = TriangleMesh(buffer_Box);
 //////////////////////////////
@@ -324,13 +326,32 @@ void CMyApp::Render()
 	BindFrameBuffersForRender ();
 	{
 		PrepareRendering (state);
-		for(auto& obj : renderObjs)
-			obj->Draw (state);
+		//for(auto& obj : renderObjs)
+		//	obj->Draw (state);
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
 		//particleSystem.Render (state);
 
 		RenderExtra(state);
+
+		glDisable(GL_DEPTH_TEST);
+		{
+			auto shader = Shader::ShaderManager::Instance().GetShader<Shader::QuadTexturer>();
+			shader->On();
+			buffer_CoordAxes.On();
+			{
+				glLineWidth(5);
+				glm::mat4 M = glm::translate(glm::vec3(-0.5, -0.5, 0))*activeCamera->GetViewRotationMatrix() * glm::scale(glm::vec3(0.3f));
+				shader->SetUniform("M", M);
+				shader->SetUniform("isTexture", false);
+				shader->SetUniform("uColor", glm::vec4(1,0,0,1));
+
+				buffer_CoordAxes.Draw (GL_LINES);
+			}
+			buffer_CoordAxes.Off();
+			shader->Off();
+		}
+		glEnable(GL_DEPTH_TEST);
 
 		//////////////////////////////Other debug drawings
 		//if (IsWaterRendering) 

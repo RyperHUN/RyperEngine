@@ -92,6 +92,7 @@ protected:
 	// melysegi puffer kirajzolasa
 	gVertexBuffer	buffer_Box;
 	gVertexBuffer   buffer_Quad;
+	gVertexBuffer   buffer_CoordAxes;
 	TriangleMesh    geom_Box;
 	TriangleMesh    geom_Quad;
 	Sphere          geom_Sphere;
