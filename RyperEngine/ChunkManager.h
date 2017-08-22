@@ -154,6 +154,7 @@ struct Chunk : Ryper::NonCopyable
 
 	BlockData chunkInfo[size * 2 + 1][size * 2 + 1][size * 2 + 1];
 	glm::ivec3 wBottomLeftCenterPos;
+	glm::ivec3 chunkIndex;
 	Geometry* geom_Box;
 	Shader::Instanced * shader; //Can be removed, and box geom also!!
 	int amountOfCubes = 0;
@@ -172,22 +173,8 @@ struct Chunk : Ryper::NonCopyable
 		}
 	};	
 
-	Chunk(Geometry* geom, glm::ivec3 wBottomLeftCenterPos)
-		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
-	{
-		shader = Shader::ShaderManager::GetShader<Shader::Instanced>();
-		TraverseChunks ([this](int i, int j, int k)
-		{
-			BlockData &data = chunkInfo[i][j][k];
-			//data.pos = glm::vec3(pos) + glm::vec3(size + 1) - glm::vec3(i, j, k) * wHalfExtent * 2.0f;
-			data.isExist = rand() % 2;
-			data.type = (BlockType)Util::randomPointI(0, BlockType::MAX_NUMBER - 1);
-		});
-		CreateVBO();
-	}
-
-	Chunk(Geometry* geom, glm::ivec3 wBottomLeftCenterPos, std::vector<size_t> heights)
-		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
+	Chunk(Geometry* geom, glm::ivec3 wBottomLeftCenterPos,glm::ivec3 chunkIndex, std::vector<size_t> heights)
+		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos), chunkIndex (chunkIndex)
 	{
 		shader = Shader::ShaderManager::GetShader<Shader::Instanced>();
 		const size_t cubeSize = GetCubeSize();
@@ -201,7 +188,7 @@ struct Chunk : Ryper::NonCopyable
 				{
 					BlockData &data = chunkInfo[x][i][z];
 					data.isExist = 1;
-					data.type = (BlockType)Util::randomPointI(0, BlockType::MAX_NUMBER - 1);
+					data.type = BlockType::GRASS;
 				}
 				heightIter++;
 			}
@@ -289,7 +276,7 @@ struct Chunk : Ryper::NonCopyable
 	}
 	static glm::ivec3 worldToChunkindex (glm::vec3 const& world)
 	{
-		return glm::ivec3(world / GetChunkExtent()) + getNegativeSign(world);
+		return glm::ivec3(world / GetChunkExtent());// + getNegativeSign(world);
 	}
 	static glm::ivec3 worldToGlobalindex (glm::vec3 const& world)
 	{
@@ -322,7 +309,7 @@ struct Chunk : Ryper::NonCopyable
 	}
 	glm::ivec3 GetChunkindex () const
 	{
-		return worldToChunkindex (wBottomLeftCenterPos);
+		return chunkIndex;
 	}
 	static glm::ivec3 GetGlobalIndex(glm::ivec3 chunkIndex, glm::ivec3 localIndex)
 	{
@@ -369,7 +356,7 @@ private:
 			if (block.isExist)
 			{
 				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
-				instanceData.push_back({ wPos, glm::ivec4(BlockTextureMapper::GetTextureId (BlockType::GRASS),0) });
+				instanceData.push_back({ wPos, glm::ivec4(BlockTextureMapper::GetTextureId (block.type),0) });
 			}
 		});
 
@@ -439,11 +426,11 @@ struct ChunkManager : public IRenderable
 				}
 			}
 		}
-		std::cout << GetHeight ({0,0,0}) << std::endl;
+		AddTrees();
 	}
 	void AddChunk (glm::ivec3 const& index, glm::vec3 const& wPos, std::vector<size_t> const& heightInfo = {})
 	{
-		chunks.emplace_back(new Chunk(geom_Box, wPos, heightInfo)); //TODO Maybe store the index in the chunk too
+		chunks.emplace_back(new Chunk(geom_Box, wPos, index, heightInfo)); //TODO Maybe store the index in the chunk too
 		chunkMap.insert(std::make_pair(glm::ivec2XZ{index}, chunks.back()));
 	}
 	//Returns how much is the height for the chunks!
@@ -502,7 +489,36 @@ struct ChunkManager : public IRenderable
 	}
 	void AddTrees ()
 	{
-		
+		int height = GetHeight(glm::ivec3(0,0,0));
+		glm::vec3 globalIndex = glm::ivec3(0, height + 1, 0);
+		BlockData& data = AddBlock(globalIndex, BlockType::TREE_BODY);
+		for(Chunk* chunk : chunks)
+			chunk->ChunkModified (data);
+	}
+	BlockData& FindBlock (glm::ivec3 globalIndex)
+	{
+		glm::ivec3 chunkIndex = Chunk::globalToChunkindex(globalIndex);
+		glm::ivec3 localIndex = Chunk::globalToLocalindex(globalIndex);
+		std::pair<MultiMapIter, MultiMapIter> range = chunkMap.equal_range(glm::ivec2XZ(chunkIndex));
+		auto found = chunkMap.end();
+		for (auto iter = range.first; iter != range.second; iter++)
+		{
+			if (iter->second->GetChunkindex() == chunkIndex)
+			{
+				found = iter;
+				return found->second->chunkInfo[localIndex.x][localIndex.y][localIndex.z];
+			}
+		}
+
+		if(found == chunkMap.end())
+			SAssert(false, "ERROR block not found, add chunk");
+	}
+	BlockData& AddBlock (glm::ivec3 globalIndex, BlockType type)
+	{
+		BlockData& data = FindBlock (globalIndex);
+		data.isExist = true;
+		data.type = type;
+		return data;
 	}
 	void Draw(RenderState & state) override
 	{

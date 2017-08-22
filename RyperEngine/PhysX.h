@@ -170,9 +170,12 @@ public:
 	}
 	virtual void BlockChangedHandler(BlockData& data) override
 	{
-		physx::PxRigidStatic* body = (physx::PxRigidStatic*)data.physxPtr;
-		gScene->removeActor (*body);
-		data.physxPtr = nullptr;
+		if (data.physxPtr != nullptr)
+		{
+			physx::PxRigidStatic* body = (physx::PxRigidStatic*)data.physxPtr;
+			gScene->removeActor (*body);
+			data.physxPtr = nullptr;
+		}
 	}
 	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel, AnimatedCharacter * player)
 	{
