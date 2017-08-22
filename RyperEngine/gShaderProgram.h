@@ -212,6 +212,17 @@ struct ParticleRender : gShaderProgram
 	}
 };
 
+struct CoordinateVisualizer : gShaderProgram
+{
+	void Load() override
+	{
+		AttachShader(GL_VERTEX_SHADER, "coordVisualizer.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "coordVisualizer.frag");
+		bool success = LinkProgram();
+		MAssert(success, "PatricleRender shader not loaded succesfully");
+	}
+};
+
 
 class ShaderManager : public Ryper::Singleton
 {
@@ -230,6 +241,7 @@ private:
 		shaders.push_back(new Water);
 		shaders.push_back(new ParticleUpdate);
 		shaders.push_back(new ParticleRender);
+		shaders.push_back(new CoordinateVisualizer);
 		for(gShaderProgram* shader : shaders)
 			shader->Load();
 	}
@@ -237,7 +249,7 @@ private:
 	static std::once_flag onceFlag; //wraps a callable object and ensure it is called only once. 
 									//Even if multiple threads try to call it at the same time
 public:
-	static ShaderManager& Instance()
+	static ShaderManager& Instance() //TODO Refactor instance to getShader
 	{
 		std::call_once(ShaderManager::onceFlag, []() {
 			instance.reset(new ShaderManager);

@@ -48,9 +48,15 @@ namespace Util
 		{
 			glm::mat4 matrix(1);
 			Util::BasisVectors vectors = Util::BasisVectors::create(forward);
-			matrix[0] = glm::vec4(vectors.right, 0);
-			matrix[1] = glm::vec4(vectors.up, 0);
-			matrix[2] = glm::vec4(vectors.right, 0);
+			matrix[0][0] = vectors.right.x;
+			matrix[1][0] = vectors.right.y;
+			matrix[2][0] = vectors.right.z;
+			matrix[0][1] = vectors.up.x;
+			matrix[1][1] = vectors.up.y;
+			matrix[2][1] = vectors.up.z;
+			matrix[0][2] = vectors.forward.x;
+			matrix[1][2] = vectors.forward.y;
+			matrix[2][2] = vectors.forward.z;
 
 			return matrix;
 		}

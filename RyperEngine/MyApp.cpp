@@ -326,8 +326,8 @@ void CMyApp::Render()
 	BindFrameBuffersForRender ();
 	{
 		PrepareRendering (state);
-		//for(auto& obj : renderObjs)
-		//	obj->Draw (state);
+		for(auto& obj : renderObjs)
+			obj->Draw (state);
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
 		//particleSystem.Render (state);
@@ -336,15 +336,13 @@ void CMyApp::Render()
 
 		glDisable(GL_DEPTH_TEST);
 		{
-			auto shader = Shader::ShaderManager::Instance().GetShader<Shader::QuadTexturer>();
+			auto shader = Shader::ShaderManager::Instance().GetShader<Shader::CoordinateVisualizer>();
 			shader->On();
 			buffer_CoordAxes.On();
 			{
-				glLineWidth(5);
-				glm::mat4 M = glm::translate(glm::vec3(-0.5, -0.5, 0))*activeCamera->GetViewRotationMatrix() * glm::scale(glm::vec3(0.3f));
+				glLineWidth(3);
+				glm::mat4 M = glm::translate(glm::vec3(-0.7, -0.7, 0))*activeCamera->GetViewRotationMatrix() * glm::scale(glm::vec3(0.2f));
 				shader->SetUniform("M", M);
-				shader->SetUniform("isTexture", false);
-				shader->SetUniform("uColor", glm::vec4(1,0,0,1));
 
 				buffer_CoordAxes.Draw (GL_LINES);
 			}

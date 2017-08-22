@@ -11,6 +11,7 @@ enum LOCATION {
 	TANGENT = 5,
 	BITANGENT = 6,
 	CUBE_SIDE = 7,
+	COLOR = 8,
 };
 
 }; //NS Geom

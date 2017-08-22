@@ -168,12 +168,13 @@ namespace Geom
 	void CreateCoordAxes(gVertexBuffer &buffer)
 	{
 		buffer.AddAttribute(LOCATION::POSITION, 3);
-		buffer.AddData(0, glm::vec3(0, 0, 0));
-		buffer.AddData(0, glm::vec3(1, 0, 0));
-		buffer.AddData(0, glm::vec3(0, 0, 0));
-		buffer.AddData(0, glm::vec3(0, 1, 0));
-		buffer.AddData(0, glm::vec3(0, 0, 0));
-		buffer.AddData(0, glm::vec3(0, 0,-1));
+		buffer.AddAttribute(LOCATION::COLOR, 3);
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(1, 0, 0));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(1, 0, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(1, 0, 0));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 1, 0));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 1, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 1, 0));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 0, 1));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, -1)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 0, 1));
 
 		buffer.InitBuffers();
 	}

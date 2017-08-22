@@ -287,5 +287,11 @@
     <None Include="Shaders\deferredLightPass.frag">
       <Filter>Shaders\Deferred</Filter>
     </None>
+    <None Include="Shaders\coordVisualizer.frag">
+      <Filter>Shaders\Debug</Filter>
+    </None>
+    <None Include="Shaders\coordVisualizer.vert">
+      <Filter>Shaders\Debug</Filter>
+    </None>
   </ItemGroup>
 </Project>
