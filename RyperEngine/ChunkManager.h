@@ -272,6 +272,8 @@ struct Chunk : Ryper::NonCopyable
 	{
 		return Chunk::GetCubeSize() * Chunk::GetCubeSize() * Chunk::GetCubeSize();
 	}
+	//TODO Refactor coord conversions to another class
+	//Only avaible when there is CPP - Headers
 	static glm::vec3 chunkindexToWorld(glm::ivec3 const& chunkIndex)
 	{
 		return glm::vec3(chunkIndex) * GetChunkExtent();
@@ -311,7 +313,7 @@ struct Chunk : Ryper::NonCopyable
 	}
 	glm::ivec3 GetChunkindex () const
 	{
-		return wBottomLeftCenterPos / (int)GetChunkExtent ();
+		return worldToChunkindex (wBottomLeftCenterPos);
 	}
 	static glm::ivec3 GetGlobalIndex(glm::ivec3 chunkIndex, glm::ivec3 localIndex)
 	{
