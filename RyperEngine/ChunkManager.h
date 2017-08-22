@@ -166,7 +166,7 @@ struct Chunk : Ryper::NonCopyable
 	Chunk(Geometry* geom, glm::ivec3 wBottomLeftCenterPos)
 		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
 	{
-		shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
+		shader = Shader::ShaderManager::GetShader<Shader::Instanced>();
 		TraverseChunks ([this](int i, int j, int k)
 		{
 			BlockData &data = chunkInfo[i][j][k];
@@ -180,7 +180,7 @@ struct Chunk : Ryper::NonCopyable
 	Chunk(Geometry* geom, glm::ivec3 wBottomLeftCenterPos, std::vector<size_t> heights)
 		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos)
 	{
-		shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
+		shader = Shader::ShaderManager::GetShader<Shader::Instanced>();
 		const size_t cubeSize = GetCubeSize();
 		auto heightIter = heights.begin();
 		for (int x = 0; x < cubeSize; x++) //row
@@ -399,7 +399,7 @@ struct ChunkManager : public IRenderable
 	{
 		this->geom_Box = geom_Box;
 		this->texId = texId;
-		this->shader = Shader::ShaderManager::Instance().GetShader<Shader::Instanced>();
+		this->shader = Shader::ShaderManager::GetShader<Shader::Instanced>();
 		GenerateBoxes();
 	}
 	~ChunkManager () {}

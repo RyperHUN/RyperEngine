@@ -26,7 +26,7 @@ CMyApp::CMyApp(void)
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
 	fbo_Original (0)
 {
-	shader_Simple = Shader::ShaderManager::Instance().GetShader<Shader::Simple>();
+	shader_Simple = Shader::ShaderManager::GetShader<Shader::Simple>();
 	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
 	texture_Map = 0;
@@ -178,7 +178,7 @@ void CMyApp::InitScene_Water ()
 	quadObjWater->scale *= 3.0;
 	quadObjWater->rotAngle = M_PI / 2.0;
 	quadObjWater->geometry = &geom_Quad;
-	quadObjWater->shader = Shader::ShaderManager::Instance().GetShader<Shader::Water>();
+	quadObjWater->shader = Shader::ShaderManager::GetShader<Shader::Water>();
 	quadObjWater->material = materialWater;
 	waterRenderer.SetWaterInfo(quadObjWater, &quadObjWater->pos.y);
 
@@ -336,7 +336,7 @@ void CMyApp::Render()
 
 		glDisable(GL_DEPTH_TEST);
 		{
-			auto shader = Shader::ShaderManager::Instance().GetShader<Shader::CoordinateVisualizer>();
+			auto shader = Shader::ShaderManager::GetShader<Shader::CoordinateVisualizer>();
 			shader->On();
 			buffer_CoordAxes.On();
 			{
@@ -384,7 +384,7 @@ void CMyApp::RenderExtra(RenderState & state)
 void CMyApp::PrepareRendering(RenderState & state)
 {
 	glViewport(0, 0, screenSize.x, screenSize.y);
-	Shader::Simple * shader_Simple = Shader::ShaderManager::Instance().GetShader<Shader::Simple>();
+	Shader::Simple * shader_Simple = Shader::ShaderManager::GetShader<Shader::Simple>();
 	shader_Simple->On ();
 	shader_Simple->SetCubeTexture("skyBox", 13, textureCube_id);
 	shader_Simple->SetTexture("shadowMap", 15, fbo_Shadow.GetDepthAttachment ());

@@ -17,7 +17,7 @@ class FrustumRenderer
 public:
 	FrustumRenderer ()
 	{
-		shader = Shader::ShaderManager::Instance().GetShader<Shader::BoundingBox>();
+		shader = Shader::ShaderManager::GetShader<Shader::BoundingBox>();
 	}
 	void Render(glm::mat4 VP, CameraPtr camera)
 	{
@@ -98,7 +98,7 @@ struct BoundingBoxRenderer
 	BoundingBoxRenderer(std::vector<GameObj*>& gameObj)
 		:gameObjs(gameObj)
 	{
-		shader = Shader::ShaderManager::Instance().GetShader<Shader::BoundingBox>();
+		shader = Shader::ShaderManager::GetShader<Shader::BoundingBox>();
 	}
 	void Draw(RenderState state)
 	{
@@ -248,7 +248,7 @@ struct QuadTexturer
 	QuadTexturer(Geometry * geom)
 		: geom(geom)
 	{
-		shader = Shader::ShaderManager::Instance().GetShader<Shader::QuadTexturer>();
+		shader = Shader::ShaderManager::GetShader<Shader::QuadTexturer>();
 	}
 	void Draw(GLuint texId, bool isInvertY , POS pos, float scaleMultiplier = 1.0)
 	{
@@ -310,7 +310,7 @@ public:
 	SkyboxRenderer(Geometry * geom, GLuint textureCube)
 		:geom(geom), textureCube(textureCube)
 	{
-		shader = Shader::ShaderManager::Instance().GetShader<Shader::SkyBox>();
+		shader = Shader::ShaderManager::GetShader<Shader::SkyBox>();
 	}
 	virtual void Draw(RenderState & state) override
 	{
@@ -338,7 +338,7 @@ struct LightRenderer
 	LightRenderer(Geometry * geom)
 		: geom(geom)
 	{
-		shader = Shader::ShaderManager::Instance().GetShader<Shader::LightRender>();
+		shader = Shader::ShaderManager::GetShader<Shader::LightRender>();
 	}
 	void AddLight(Light * light)
 	{

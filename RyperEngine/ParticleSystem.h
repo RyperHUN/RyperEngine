@@ -36,8 +36,8 @@ class ParticleSystem
 public:
 	ParticleSystem()
 	{
-		updateTechnique		= Shader::ShaderManager::Instance().GetShader<Shader::ParticleUpdate>();
-		billboardTechnique  = Shader::ShaderManager::Instance().GetShader<Shader::ParticleRender>();
+		updateTechnique		= Shader::ShaderManager::GetShader<Shader::ParticleUpdate>();
+		billboardTechnique  = Shader::ShaderManager::GetShader<Shader::ParticleRender>();
 	}
 
 	~ParticleSystem()

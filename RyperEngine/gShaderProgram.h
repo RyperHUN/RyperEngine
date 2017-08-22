@@ -259,11 +259,12 @@ public:
 	}
 
 	template <typename T>
-	T* GetShader ()
+	static T* GetShader ()
 	{
 		static_assert(std::is_base_of<gShaderProgram, T>::value, "T should inherit from gShaderProgram");
+		ShaderManager& manager = Instance();
 
-		for(gShaderProgram* shader : shaders)
+		for(gShaderProgram* shader : manager.shaders)
 		{
 			T* casted = dynamic_cast<T*>(shader);
 			if (casted != nullptr)
