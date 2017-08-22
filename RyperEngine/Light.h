@@ -99,8 +99,8 @@ public:
 struct PointLight : public Light
 {
 	float attuentationConst = 0.0f;
-	float attuentationLinear = 0.01f;
-	float attuentationQuadratic = 0.01f;
+	float attuentationLinear = 0.04f;
+	float attuentationQuadratic = 0.2f;
 public:
 	PointLight(glm::vec3 pos = glm::vec3(0, -1, 0), glm::vec3 color = glm::vec3(1))
 		:Light(pos,color)

@@ -140,9 +140,8 @@ bool CMyApp::Init()
 	m_cow_mesh->initBuffers();
 
 	dirLight = DirLight{ glm::vec3(-1,-1,0) };
-	pointLight.push_back(PointLight{glm::vec3(0,2,6)});
-	pointLight.push_back(PointLight{ glm::vec3(-20,5,-10) });
-	pointLight.push_back(PointLight{ glm::vec3(20,10,-30) });
+	pointLight.push_back(PointLight{glm::vec3(38,54,18)});
+	pointLight.push_back(PointLight{ glm::vec3(8,67,-58) });
 
 	geom_Suzanne = TriangleMeshLoaded(mesh_Suzanne);
 	geom_Cow     = TriangleMeshLoaded(m_cow_mesh);

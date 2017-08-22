@@ -55,14 +55,14 @@ uniform samplerCube skyBox;
 
 uniform Material uMaterial;
 uniform vec3 uwEye;
-uniform int  uPointLightNum;
 
 //TODO define only for max light, and upload used point light number
-#define POINT_LIGHT_NUM 3
+#define MAX_POINT_LIGHT_NUM 10
 
 uniform SpotLight uSpotlight;
 uniform DirLight uDirlight;
-uniform PointLight uPointlights[POINT_LIGHT_NUM];
+uniform PointLight uPointlights[MAX_POINT_LIGHT_NUM];
+uniform int uPointLightNum = 0;
 
 ///////////////////////////////////
 ////////--------FUNCTIONS-----------

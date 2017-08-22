@@ -43,11 +43,12 @@ uniform sampler2D shadowMap;
 uniform vec3 uwEye;
 
 //TODO define only for max light, and upload used point light number
-#define POINT_LIGHT_NUM 3
+#define MAX_POINT_LIGHT_NUM 10
 
 uniform SpotLight uSpotlight;
 uniform DirLight uDirlight;
-uniform PointLight uPointlights[POINT_LIGHT_NUM];
+uniform PointLight uPointlights[MAX_POINT_LIGHT_NUM];
+uniform int uPointLightNum = 0;
 
 out vec4 fs_out_col;
 
@@ -94,6 +95,27 @@ float ShadowCalcWithPcf(vec4 fragPosLightSpace)
 	return float(notInShadowTexel) / float(sumShadowPixels);
 }
 
+vec3 calcPointLight (PointLight light, vec3 normal, vec3 viewDir, vec3 wFragPos, vec2 texCoord)
+{
+	vec3 toLight = normalize(light.position - wFragPos);
+	float diff = max(dot(normal, toLight), 0.0);
+	// Specular shading
+    vec3 reflectDir = reflect(-toLight, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 20);
+
+	float dist = length(light.position - wFragPos);
+	//Lecsenges
+	float attenuation = 1.0f / 
+	(light.constant + light.linear * dist +  light.quadratic * (dist * dist));   
+
+	vec3 diffuse  = light.color * diff;
+	//vec3 specular = light.color * spec;
+	diffuse  *= attenuation; 
+	//specular *= attenuation;
+
+	return diffuse;
+}
+
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
     // perform perspective divide
@@ -126,7 +148,10 @@ void main()
 	float ka = 0.1;
 	float lightValue = ShadowCalculation (FS.fragPosLightSpace4);
 	vec3 kaColor = ka * default_color.xyz;
-	vec3 kdColor = lightValue * calcDirLight (uDirlight,normal, viewDir, FS.texCoord) * default_color.xyz;
+	vec3 kdColor = vec3(0);
+	//kdColor += lightValue * calcDirLight (uDirlight,normal, viewDir, FS.texCoord) * default_color.xyz;
+	for(int i = 0 ; i < uPointLightNum; i++)
+		kdColor += calcPointLight (uPointlights[i], normal, viewDir, FS.wFragPos, FS.texCoord) * default_color.xyz;
 	fs_out_col = vec4(kaColor + kdColor, 1);
 
 	//fs_out_col = vec4(FS.instanceId * 0.001, 0, 0, 1);
