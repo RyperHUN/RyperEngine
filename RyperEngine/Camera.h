@@ -75,6 +75,16 @@ public:
 
 		return lightProjection * lightView; //LightSpace matrix
 	}
+	glm::mat4 GetTBNMatrix ()
+	{
+		glm::mat4 matrix(1);
+		Util::BasisVectors vectors = Util::BasisVectors::create (GetForwardDir ());
+		matrix[0] = glm::vec4(vectors.right, 0);
+		matrix[1] = glm::vec4(vectors.up, 0);
+		matrix[2] = glm::vec4(vectors.right, 0);
+
+		return matrix;
+	}
 };
 
 class FPSCamera : public Camera
