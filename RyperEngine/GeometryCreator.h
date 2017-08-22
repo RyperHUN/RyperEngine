@@ -169,12 +169,37 @@ namespace Geom
 	{
 		buffer.AddAttribute(LOCATION::POSITION, 3);
 		buffer.AddAttribute(LOCATION::COLOR, 3);
-		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(1, 0, 0));
-		buffer.AddData(LOCATION::POSITION, glm::vec3(1, 0, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(1, 0, 0));
-		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 1, 0));
-		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 1, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 1, 0));
+		glm::vec3 XColor = glm::vec3(1,0,0);
+		glm::vec3 YColor = glm::vec3(0,1,0);
+		glm::vec3 ZColor = glm::vec3(0,0,1);
+		float arrowSize = 0.15;
+		//X axis
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 0)); buffer.AddData (LOCATION::COLOR, XColor);
+		buffer.AddData(LOCATION::POSITION, glm::vec3(1, 0, 0)); buffer.AddData (LOCATION::COLOR, XColor);
+		//X arrow
+		buffer.AddData(LOCATION::POSITION, glm::vec3(1, 0, 0)); buffer.AddData(LOCATION::COLOR, XColor);
+		buffer.AddData(LOCATION::POSITION, glm::vec3(1 - arrowSize, arrowSize, 0)); buffer.AddData(LOCATION::COLOR, XColor);
+		buffer.AddData(LOCATION::POSITION, glm::vec3(1, 0, 0)); buffer.AddData(LOCATION::COLOR, XColor);
+		buffer.AddData(LOCATION::POSITION, glm::vec3(1 - arrowSize, -arrowSize, 0)); buffer.AddData(LOCATION::COLOR, XColor);
+
+		//X axis
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 0)); buffer.AddData (LOCATION::COLOR, YColor);
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 1, 0)); buffer.AddData (LOCATION::COLOR, YColor);
+		//X arrow
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 1, 0)); buffer.AddData(LOCATION::COLOR, YColor);
+		buffer.AddData(LOCATION::POSITION, glm::vec3(-arrowSize, 1 - arrowSize, 0)); buffer.AddData(LOCATION::COLOR, YColor);
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 1, 0)); buffer.AddData(LOCATION::COLOR, YColor);
+		buffer.AddData(LOCATION::POSITION, glm::vec3(arrowSize, 1 - arrowSize, 0)); buffer.AddData(LOCATION::COLOR, YColor);
+
+		//Z Axis
 		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, 0)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 0, 1));
 		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, -1)); buffer.AddData (LOCATION::COLOR, glm::vec3(0, 0, 1));
+		//Z Arrow
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, -1)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(arrowSize, 0, -1 + arrowSize)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(0, 0, -1)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
+		buffer.AddData(LOCATION::POSITION, glm::vec3(-arrowSize, 0, -1 + arrowSize)); buffer.AddData(LOCATION::COLOR, glm::vec3(0, 0, 1));
+	
 
 		buffer.InitBuffers();
 	}
