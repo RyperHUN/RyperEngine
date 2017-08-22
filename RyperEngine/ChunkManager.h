@@ -547,6 +547,8 @@ private:
 			shader->SetUniform("PV", state.PV);
 			shader->SetUniform("uScale", Chunk::wHalfExtent);
 			shader->SetTexture("tex1", 0, texId, GL_TEXTURE_2D_ARRAY);
+			shader->SetUniform ("uwEye", state.wEye);
+			state.lightManager->Upload (shader);
 
 			for (int i = 0; i < chunks.size(); i++)
 			{
