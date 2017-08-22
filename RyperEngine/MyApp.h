@@ -49,6 +49,7 @@ public:
 	void RenderExtra(RenderState & state);
 	void RenderDeferred ();
 	void InitDeferred ();
+	void InitWidgets ();
 
 	void InitScene_Water ();
 	void InitScene_Minecraft ();

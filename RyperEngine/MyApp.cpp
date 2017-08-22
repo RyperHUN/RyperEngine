@@ -34,25 +34,7 @@ CMyApp::CMyApp(void)
 	activeCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(5, 22, 24));
 	secondaryCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(70, 109, 43), glm::vec3(-0.5,-0.9, -0.5));
 
-	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer));
-	container.AddWidget (std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20,20),"Bounding box rendering", &IsBoundingBoxRendering, textRenderer));
-	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer));
-	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Light render", &IsLightRendering, textRenderer));
-	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Frustum render", &IsFrustumRendering, textRenderer));
-	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Shadowmap texture render", &IsShadowMapTextureDebug, textRenderer));
-	glm::vec3* cameraPosPtr = &cameraPos;
-	container.AddWidget (std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20,20), textRenderer, [cameraPosPtr](){
-		return	Util::to_string(*cameraPosPtr, "Pos");
-	}));
-	container.AddWidget (std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20, 20), textRenderer, [cameraPosPtr]() {
-		glm::ivec3 globalIndex = Chunk::worldToGlobalindex (*cameraPosPtr);
-		return Util::to_string(globalIndex, "GlobalIndex");
-	}));
-	ChunkManager * chunkPtr = &chunkManager;
-	container.AddWidget(std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20, 20), textRenderer, [cameraPosPtr, chunkPtr]() {
-		glm::ivec3 globalIndex = Chunk::worldToGlobalindex(*cameraPosPtr);
-		return std::to_string(chunkPtr->GetHeight (globalIndex));
-	}));
+	
 	
 	//gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false); });
 
@@ -78,8 +60,32 @@ bool CMyApp::LoadShaders ()
 	return true;
 }
 
+void CMyApp::InitWidgets()
+{
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Frame Buffer Rendering", &IsFrameBufferRendering, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Bounding box rendering", &IsBoundingBoxRendering, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Light render", &IsLightRendering, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Frustum render", &IsFrustumRendering, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Shadowmap texture render", &IsShadowMapTextureDebug, textRenderer));
+	glm::vec3* cameraPosPtr = &cameraPos;
+	container.AddWidget(std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20, 20), textRenderer, [cameraPosPtr]() {
+		return	Util::to_string(*cameraPosPtr, "Pos");
+	}));
+	container.AddWidget(std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20, 20), textRenderer, [cameraPosPtr]() {
+		glm::ivec3 globalIndex = Chunk::worldToGlobalindex(*cameraPosPtr);
+		return Util::to_string(globalIndex, "GlobalIndex");
+	}));
+	ChunkManager * chunkPtr = &chunkManager;
+	container.AddWidget(std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20, 20), textRenderer, [cameraPosPtr, chunkPtr]() {
+		glm::ivec3 globalIndex = Chunk::worldToGlobalindex(*cameraPosPtr);
+		return std::to_string(chunkPtr->GetHeight(globalIndex));
+	}));
+}
+
 bool CMyApp::Init()
 {
+	InitWidgets();
 	// törlési szín legyen kékes
 	glClearColor(0.125f, 0.25f, 0.5f, 1.0f);
 
