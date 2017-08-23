@@ -375,9 +375,18 @@ struct SunRenderer
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		{
-			quadTexturer.Draw(sunTexture, false,QuadTexturer::POS::TOP_RIGHT);
+			glm::mat4 model = glm::translate(GetSunPos(state.wEye));
+			model = Util::createVMWithoutCamRotation(state.V, model); //Quad will face the camera
+			model = model * glm::scale(glm::vec3{25.0f});
+			model = state.PV * model;
+			quadTexturer.Draw(sunTexture, false,model);
 		}
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
+	}
+	glm::vec3 GetSunPos (glm::vec3 wEye)
+	{
+		glm::vec3 pos = -sun.direction * 100.f;
+		return  wEye + pos;
 	}
 };

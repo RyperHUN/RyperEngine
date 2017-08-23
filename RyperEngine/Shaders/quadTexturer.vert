@@ -11,7 +11,7 @@ out vec2 fragTex;
 
 void main()
 {
-	vec4 pos = M * vec4(vs_in_pos.xy,0.05, 1);
+	vec4 pos = M * vec4(vs_in_pos.xy, 0, 1);
 	gl_Position = pos;
 	fragTex = vs_in_tex;
 }

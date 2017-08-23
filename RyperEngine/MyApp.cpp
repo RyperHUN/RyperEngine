@@ -398,6 +398,8 @@ void CMyApp::PrepareRendering(RenderState & state)
 	shader_Simple->SetTexture("shadowMap", 15, fbo_Shadow.GetDepthAttachment ());
 	shader_Simple->Off ();
 	state.PV = activeCamera->GetProjView();
+	state.P =  activeCamera->GetProj();
+	state.V =  activeCamera->GetViewMatrix();
 }
 
 void CMyApp::FrustumCulling (CameraPtr camera)

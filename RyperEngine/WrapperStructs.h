@@ -8,6 +8,7 @@ struct RenderState
 {
 	glm::vec3 wEye;
 	glm::mat4 PV, M, Minv, rayDirMatrix;
+	glm::mat4 P, V;
 	glm::mat4 LightSpaceMtx;
 	LightManager *lightManager;
 	MaterialPtr material = nullptr;
