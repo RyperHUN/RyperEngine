@@ -61,6 +61,16 @@ namespace Util
 			return matrix;
 		}
 	};
+	//This is used for camera facing quad
+	static inline glm::mat4 createVMWithoutCamRotation (glm::mat4 const& view,glm::mat4 const& model)
+	{
+		glm::mat4 finalModel = model;
+		for(int i = 0 ; i < 3; i ++)
+			for(int j = 0; j < 3; j++)
+				finalModel[i][j] = view[j][i]; //Transposing;
+
+		return finalModel;
+	}
 
 	//std::to_string with precision
 	//TODO Precision not works perfectly with floats
