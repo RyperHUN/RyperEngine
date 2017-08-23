@@ -298,6 +298,15 @@ struct QuadTexturer
 		}
 		shader->Off();
 	}
+	//TODO Add Z rotation
+	static glm::mat4 CreateCameraFacingQuadMatrix (RenderState &state, glm::vec3 wPos, glm::vec3 scale)
+	{
+		glm::mat4 model = glm::translate(wPos);
+		model = Util::createVMWithoutCamRotation(state.V, model); //Quad will face the camera
+		model = model * glm::scale(scale);
+		model = state.PV * model;
+		return model;
+	}
 };
 
 struct SkyboxRenderer : public IRenderable
@@ -375,11 +384,8 @@ struct SunRenderer
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		{
-			glm::mat4 model = glm::translate(GetSunPos(state.wEye));
-			model = Util::createVMWithoutCamRotation(state.V, model); //Quad will face the camera
-			model = model * glm::scale(glm::vec3{25.0f});
-			model = state.PV * model;
-			quadTexturer.Draw(sunTexture, false,model);
+			glm::mat4 PVM = QuadTexturer::CreateCameraFacingQuadMatrix (state, GetSunPos(state.wEye), glm::vec3{24.0f});
+			quadTexturer.Draw(sunTexture, false,PVM);
 		}
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
