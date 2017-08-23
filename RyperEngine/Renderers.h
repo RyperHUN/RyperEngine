@@ -366,8 +366,47 @@ struct LightRenderer
 	}
 };
 
+struct FlareManager
+{
+	const glm::vec2 SCREEN_CENTER /*(0)*/;
+	std::vector<GLuint> flareTextures;
+	const float spacing = 0.5f;
+	FlareManager()
+		:SCREEN_CENTER(0.0)
+	{
+		static const int AMOUNT_OF_FLARES = 9;
+		flareTextures.resize(AMOUNT_OF_FLARES);
+		int i = 1;
+		for (auto& tex : flareTextures)
+			tex = Util::TextureFromFile("Pictures/lensFlare/tex" + std::to_string(i++) + ".png");
+	}
+	void Draw(QuadTexturer& quadTexturer, glm::vec2 sunPosNDC)
+	{
+		if (Util::CV::IsNDC(sunPosNDC)) //Sun is on the screen
+		{
+			//Calculate line throught center of the screen from sun
+			glm::vec2 sunToCenter = SCREEN_CENTER - sunPosNDC;
+			//TODO Calc brightness
+			const float SunLength = glm::length(sunToCenter);
+			float brightness = 1 - (SunLength / 1.5f);
+			if (brightness > 0)
+			{
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE); //Additive blending
+				//Draw flares
+				
+				for (int i = flareTextures.size() - 1; i >= 0; i--)
+				{
+					glm::vec2 flarePos = sunPosNDC + sunToCenter * spacing * (float)i;
+					quadTexturer.Draw(flareTextures[i], false, glm::translate(glm::vec3{ flarePos, 0 }) * glm::scale(glm::vec3(0.1)));
+				}
+			}
+		}
+	}
+};
+
 struct SunRenderer
 {
+	FlareManager flareManager;
 	QuadTexturer &quadTexturer;
 	DirLight &sun;
 	GLuint sunTexture;
@@ -386,6 +425,7 @@ struct SunRenderer
 		{
 			glm::mat4 PVM = QuadTexturer::CreateCameraFacingQuadMatrix (state, GetSunPos(state.wEye), glm::vec3{24.0f});
 			quadTexturer.Draw(sunTexture, false,PVM);
+			flareManager.Draw(quadTexturer, GetSunPosNdc(state));
 		}
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
@@ -403,3 +443,4 @@ struct SunRenderer
 		return Util::CV::Transform (PVM, wPos);
 	}
 };
+

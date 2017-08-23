@@ -85,6 +85,10 @@ namespace Util
 	{
 		return { text + "(" + std::to_string(vec.x) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z) + ")" };
 	}
+	static inline std::string to_string_float(glm::vec3 const& vec, std::string const& text)
+	{
+		return{ text + "(" + std::to_string(vec.x) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z) + ")" };
+	}
 
 	//Returns [lowerBound, upperBound]
 	inline static int randomPointI(int lowerBound, int upperBound)
@@ -168,9 +172,8 @@ namespace Util
 	}
 
 	//TODO Add gamma support
-	static inline unsigned int TextureFromFile(const char *path, bool gamma = false)
+	static inline unsigned int TextureFromFile(std::string filename, bool gamma = false)
 	{
-		std::string filename (path);
 		GLuint textureId;
 		glGenTextures (1, &textureId);
 		gl::Texture2D texture (textureId);
@@ -189,7 +192,7 @@ namespace Util
 		}
 		else
 		{
-			std::cout << "Texture failed to load at path: " << path << std::endl;
+			std::cout << "Texture failed to load at path: " << filename << std::endl;
 		}
 
 		return texture.expose ();
