@@ -273,14 +273,22 @@ struct QuadTexturer
 			break;
 		}
 	}
-	void Draw(GLuint texId, bool isInvertY = false, glm::mat4 Model = glm::mat4(1.0))
+	void Draw(GLuint texId, bool isInvertY = false, glm::mat4 Model = glm::mat4(1.0), float alpha = 0.0f)
 	{
+		MAssert(alpha < 1.0f && alpha >= 0.0f, "Invalid alpha value");
 		shader->On(); //Shader debug texturer
 		{
 			shader->SetTexture("loadedTex", 15, texId);
 			shader->SetUniform("M", Model);
 			shader->SetUniform("isInvertY", isInvertY);
 			shader->SetUniform("isTexture", true);
+			if (alpha > 0.0f)
+			{
+				shader->SetUniform("isAddedAlpha", true);
+				shader->SetUniform("uAlpha", alpha);
+			}
+			else
+				shader->SetUniform("isAddedAlpha", false);
 
 			geom->Draw();
 		}
@@ -292,6 +300,7 @@ struct QuadTexturer
 		{
 			shader->SetUniform("M", Model);
 			shader->SetUniform("isTexture", false);
+			shader->SetUniform("isAddedAlpha", false);
 			shader->SetUniform("uColor", color);
 
 			geom->Draw();
@@ -399,7 +408,7 @@ struct FlareManager
 				for (int i = flareTextures.size() - 1; i >= 0; i--)
 				{
 					glm::vec2 flarePos = sunPosNDC + sunToCenter * spacing * (float)i;
-					quadTexturer.Draw(flareTextures[i], false, glm::translate(glm::vec3{ flarePos, 0 }) * glm::scale(glm::vec3(0.1)));
+					quadTexturer.Draw(flareTextures[i], false, glm::translate(glm::vec3{ flarePos, 0 }) * glm::scale(glm::vec3(0.1)), brightness);
 				}
 			}
 		}

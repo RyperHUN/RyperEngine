@@ -5,6 +5,8 @@ in vec2 fragTex;
 uniform sampler2D loadedTex;
 uniform bool isInvertY;
 uniform bool isTexture;
+uniform bool isAddedAlpha;
+uniform float uAlpha;
 uniform vec4 uColor;
 
 out vec4 fs_out_col;
@@ -100,4 +102,6 @@ void main()
 	//fs_out_col = Grayscale(tex);
 	//fs_out_col = ToneMapping(tex, 1.0);
 	fs_out_col = texture(loadedTex, tex);
+	if (isAddedAlpha)
+		fs_out_col.w = fs_out_col.w * uAlpha;
 }  
