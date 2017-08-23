@@ -203,6 +203,9 @@
     <ClInclude Include="glmExtension.h">
       <Filter>Utils\Helpers\Math</Filter>
     </ClInclude>
+    <ClInclude Include="glQuery.h">
+      <Filter>Utils\GL_Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
