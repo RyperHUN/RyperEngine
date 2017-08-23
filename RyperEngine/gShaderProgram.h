@@ -280,6 +280,7 @@ public:
 		for (gShaderProgram* shader : shaders)
 		{
 			shader->Clean ();
+			delete shader;
 		}
 	}
 };
