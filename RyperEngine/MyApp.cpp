@@ -340,6 +340,7 @@ void CMyApp::Render()
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
 		//particleSystem.Render (state);
+		sunRender.DrawLensFlareEffect (state);
 
 		RenderExtra(state);
 
