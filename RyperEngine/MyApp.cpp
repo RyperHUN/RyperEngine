@@ -24,7 +24,8 @@ CMyApp::CMyApp(void)
 	skyboxRenderer (&geom_Quad, -1),
 	waterRenderer (quadTexturer,screenSize),
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
-	fbo_Original (0)
+	fbo_Original (0),
+	sunRender (quadTexturer, dirLight)
 {
 	shader_Simple = Shader::ShaderManager::GetShader<Shader::Simple>();
 	BoundingBoxRenderer::geom_box = &geom_Box;
@@ -127,11 +128,13 @@ bool CMyApp::Init()
 	tex_waterNormal   = Util::TextureFromFile("pictures/waterNormalMap.png");
 	tex_woodenBoxDiffuse  = Util::TextureFromFile ("pictures/textureWoodContainer.png");
 	tex_woodenBoxSpecular = Util::TextureFromFile("pictures/textureWoodContainerSpecular.png");
+	tex_sun					= Util::TextureFromFile ("Pictures/lensFlare/sun.png");
 	//tex_dirt		  = Util::GenRandomTexture ();
 	textureArray_blocks    = Util::TextureArray (BlockTextureMapper::GetTextureNamesInOrder());
 	//textureArray_blocks   = Util::TextureArray ({"dirt", "grass_side", "grass_top_colored", "grass_path_side", "ice", "lapis_ore", "trapdoor", "glass_red"});
 	tex_randomPerlin	  = Util::GenRandomPerlinTexture ();
 	skyboxRenderer.SetTexture(textureCube_id);
+	sunRender.Init (tex_sun);
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
@@ -218,7 +221,6 @@ void CMyApp::InitScene_Minecraft ()
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
 	
-	renderObjs.push_back (&skyboxRenderer);
 	renderObjs.push_back (&chunkManager);
 	renderObjs.push_back (cowboyObj);
 }
@@ -331,6 +333,8 @@ void CMyApp::Render()
 	BindFrameBuffersForRender ();
 	{
 		PrepareRendering (state);
+		skyboxRenderer.Draw (state);
+		sunRender.Draw (state);
 		for(auto& obj : renderObjs)
 			obj->Draw (state);
 		if (IsWaterRendering)

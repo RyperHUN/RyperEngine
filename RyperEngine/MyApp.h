@@ -82,6 +82,7 @@ protected:
 	GLuint tex_waterNormal;
 	GLuint tex_woodenBoxDiffuse;
 	GLuint tex_woodenBoxSpecular;
+	GLuint tex_sun;
 
 	//TODO Camera manager
 	int cameraFocusIndex = -1; //TODO better if pointer to gameobj
@@ -89,6 +90,7 @@ protected:
 	CameraPtr activeCamera;
 	CameraPtr secondaryCamera; //TODO receive resize events also
 	FrustumRenderer frustumRender;
+	SunRenderer sunRender;
 
 	// melysegi puffer kirajzolasa
 	gVertexBuffer	buffer_Box;

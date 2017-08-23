@@ -512,6 +512,7 @@ struct ChunkManager : public IRenderable
 
 		if(found == chunkMap.end())
 			SAssert(false, "ERROR block not found, add chunk");
+		throw "error";
 	}
 	BlockData& AddBlock (glm::ivec3 globalIndex, BlockType type)
 	{

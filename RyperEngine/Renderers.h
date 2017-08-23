@@ -322,10 +322,6 @@ public:
 		}
 		shader->Off();
 	}
-	void Draw(glm::mat4 const& rayDirMatrix)
-	{
-		
-	}
 	void SetTexture(GLuint textureCubeID) {textureCube = textureCubeID;}
 };
 
@@ -358,5 +354,30 @@ struct LightRenderer
 			}
 		}
 		shader->Off();
+	}
+};
+
+struct SunRenderer
+{
+	QuadTexturer &quadTexturer;
+	DirLight &sun;
+	GLuint sunTexture;
+	SunRenderer (QuadTexturer &quadTexturer, DirLight &sun)
+		:quadTexturer(quadTexturer), sun(sun)
+	{}
+	void Init (GLuint sunTexture)
+	{
+		this->sunTexture = sunTexture;	
+	}
+	void Draw (RenderState &state)
+	{
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		{
+			quadTexturer.Draw(sunTexture, false,QuadTexturer::POS::TOP_RIGHT);
+		}
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 	}
 };
