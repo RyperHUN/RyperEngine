@@ -22,6 +22,11 @@ namespace Util
 
 namespace CV //CV == CONVERTER
 { 
+	inline bool IsNDC (glm::ivec2 ndc)
+	{
+		return (glm::abs(ndc.x) < 1.0f && glm::abs(ndc.y) < 1.0f);
+	}
+
 	template <typename T>
 	inline T NdcToUV (T const& ndc)
 	{
@@ -36,6 +41,7 @@ namespace CV //CV == CONVERTER
 
 		return glm::vec2((ndc.x + 1.0f)/2.0f,(ndc.y - 1.0f)/-2.0f);
 	}
+	//Applies perspective division by default
 	inline glm::vec3 Transform(glm::mat4 mat, glm::vec3 vec)
 	{
 		glm::vec4 result4 = mat * glm::vec4(vec,1);

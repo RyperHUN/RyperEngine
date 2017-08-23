@@ -395,4 +395,11 @@ struct SunRenderer
 		glm::vec3 pos = -sun.direction * 100.f;
 		return  wEye + pos;
 	}
+	glm::vec2 GetSunPosNdc (RenderState &state)
+	{
+		glm::vec3 wPos = GetSunPos (state.wEye);
+		glm::mat4 PVM = state.PV * glm::translate(wPos);
+
+		return Util::CV::Transform (PVM, wPos);
+	}
 };
