@@ -301,9 +301,9 @@ struct QuadTexturer
 	//TODO Add Z rotation
 	static glm::mat4 CreateCameraFacingQuadMatrix (RenderState &state, glm::vec3 wPos, glm::vec3 scale)
 	{
-		glm::mat4 model = glm::translate(wPos);
+		glm::mat4 model = glm::mat4(1);
 		model = Util::createVMWithoutCamRotation(state.V, model); //Quad will face the camera
-		model = model * glm::scale(scale);
+		model = glm::translate(wPos) * model * glm::scale(scale);
 		model = state.PV * model;
 		return model;
 	}
@@ -440,7 +440,7 @@ struct SunRenderer
 		glm::vec3 wPos = GetSunPos (state.wEye);
 		glm::mat4 PVM = state.PV * glm::translate(wPos);
 
-		return Util::CV::Transform (PVM, wPos);
+		return Util::CV::Transform (PVM, wPos) - glm::vec3(0, 0.2f, 0); //TODO Fix this offset??
 	}
 };
 
