@@ -10,6 +10,7 @@
 #include <map>
 
 #include "Defs.h"
+#include "glQuery.h"
 
 class FrustumRenderer
 {
@@ -273,7 +274,8 @@ struct QuadTexturer
 			break;
 		}
 	}
-	void Draw(GLuint texId, bool isInvertY = false, glm::mat4 Model = glm::mat4(1.0), float alpha = 0.0f)
+	void Draw(GLuint texId, bool isInvertY = false, glm::mat4 Model = glm::mat4(1.0),
+			  bool isBackPos = true, float alpha = 0.0f)
 	{
 		MAssert(alpha < 1.0f && alpha >= 0.0f, "Invalid alpha value");
 		shader->On(); //Shader debug texturer
@@ -289,6 +291,7 @@ struct QuadTexturer
 			}
 			else
 				shader->SetUniform("isAddedAlpha", false);
+			shader->SetUniform("isBackPos", isBackPos);
 
 			geom->Draw();
 		}
@@ -301,6 +304,7 @@ struct QuadTexturer
 			shader->SetUniform("M", Model);
 			shader->SetUniform("isTexture", false);
 			shader->SetUniform("isAddedAlpha", false);
+			shader->SetUniform("isBackPos", false);
 			shader->SetUniform("uColor", color);
 
 			geom->Draw();
@@ -408,7 +412,7 @@ struct FlareManager
 				for (int i = flareTextures.size() - 1; i >= 0; i--)
 				{
 					glm::vec2 flarePos = sunPosNDC + sunToCenter * spacing * (float)i;
-					quadTexturer.Draw(flareTextures[i], false, glm::translate(glm::vec3{ flarePos, 0 }) * glm::scale(glm::vec3(0.1)), brightness);
+					quadTexturer.Draw(flareTextures[i], false, glm::translate(glm::vec3{ flarePos, 0 }) * glm::scale(glm::vec3(0.1)),false, brightness);
 				}
 			}
 		}
@@ -418,12 +422,13 @@ struct FlareManager
 
 struct SunRenderer
 {
+	glQuery query;
 	FlareManager flareManager;
 	QuadTexturer &quadTexturer;
 	DirLight &sun;
 	GLuint sunTexture;
 	SunRenderer (QuadTexturer &quadTexturer, DirLight &sun)
-		:quadTexturer(quadTexturer), sun(sun)
+		:quadTexturer(quadTexturer), sun(sun), query{GL_SAMPLES_PASSED}
 	{}
 	void Init (GLuint sunTexture)
 	{
@@ -441,9 +446,26 @@ struct SunRenderer
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 	}
+	void DoOcculusionTest (RenderState &state)
+	{
+		if(query.isResultReady ())
+		{
+			std::cout << query.GetResult () << std::endl;
+		}
+		if (!query.isInUse ())
+		{
+			query.StartQuery ();
+			auto depth = gl::TemporaryEnable (gl::kDepthTest);
+			glm::mat4 PVM = QuadTexturer::CreateCameraFacingQuadMatrix(state, GetSunPos(state.wEye), glm::vec3{ 15.0f });
+			quadTexturer.Draw(2, false, PVM, true);
+			query.EndQuery ();
+		}
+
+	}
 	//Must be called after all drawing
 	void DrawLensFlareEffect (RenderState &state)
 	{
+		DoOcculusionTest (state);
 		flareManager.Draw(quadTexturer, GetSunPosNdc(state));
 	}
 	glm::vec3 GetSunPos (glm::vec3 wEye)
