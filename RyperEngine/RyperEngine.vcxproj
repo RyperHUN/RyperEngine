@@ -101,6 +101,7 @@
     <ClCompile Include="Bezier.cpp" />
     <ClCompile Include="ChunkManager.cpp" />
     <ClCompile Include="FrustumG.cpp" />
+    <ClCompile Include="GeometryManager.cpp" />
     <ClCompile Include="gShaderProgram.cpp" />
     <ClCompile Include="gVertexBuffer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="AssimpModel.h" />
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="Events.h" />
+    <ClInclude Include="GeometryManager.h" />
     <ClInclude Include="GLFXShaderManager.h" />
     <ClInclude Include="glmExtension.h" />
     <ClInclude Include="glQuery.h" />

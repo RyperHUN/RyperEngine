@@ -87,6 +87,9 @@
     <ClCompile Include="T:\OGLPack\include\noise\noiseutils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeometryManager.cpp">
+      <Filter>Utils\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Light.h">
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="FireworkParticle.h">
       <Filter>Utils\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryManager.h">
+      <Filter>Utils\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,8 +6,7 @@
 
 namespace Geom
 {
-
-	void CreateBoxGeom(gVertexBuffer &buffer_Box)
+	inline void CreateBoxGeom(gVertexBuffer &buffer_Box)
 	{
 		enum CUBESIDE {
 			BOTTOM = 0,
@@ -139,7 +138,7 @@ namespace Geom
 		}
 		buffer_Box.Off();
 	}
-	void CreateQuadGeom(gVertexBuffer &buffer)
+	inline void CreateQuadGeom(gVertexBuffer &buffer)
 	{
 		buffer.AddAttribute(LOCATION::POSITION, 3);
 		buffer.AddData(0, glm::vec3(-1.0f, 1.0f, 0.0f));
@@ -165,7 +164,7 @@ namespace Geom
 		buffer.InitBuffers ();
 	}
 
-	void CreateCoordAxes(gVertexBuffer &buffer)
+	inline void CreateCoordAxes(gVertexBuffer &buffer)
 	{
 		buffer.AddAttribute(LOCATION::POSITION, 3);
 		buffer.AddAttribute(LOCATION::COLOR, 3);

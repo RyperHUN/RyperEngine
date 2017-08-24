@@ -364,6 +364,11 @@ struct TriangleMesh : public Geometry
 	}
 };
 
+struct PrimitiveGeom : public Geometry 
+{
+	virtual void Load () = 0;
+};
+
 ///TODO OGL_mesh helyett sajat vertexBuffer hasznalata ittis.
 struct TriangleMeshLoaded : public Geometry
 {
