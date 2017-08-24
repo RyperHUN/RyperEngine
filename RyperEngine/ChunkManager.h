@@ -9,6 +9,7 @@
 #include "Events.h"
 #include <map>
 #include "glmExtension.h"
+#include "GeometryManager.h"
 
 /*
 Chunk coord system
@@ -155,7 +156,7 @@ struct Chunk : Ryper::NonCopyable
 	BlockData chunkInfo[size * 2 + 1][size * 2 + 1][size * 2 + 1];
 	glm::ivec3 wBottomLeftCenterPos;
 	glm::ivec3 chunkIndex;
-	Geometry* geom_Box;
+	Geom::Primitive::Box* geom_Box;
 	Shader::Instanced * shader; //Can be removed, and box geom also!!
 	int amountOfCubes = 0;
 	gl::ArrayBuffer instancedVBO;
@@ -173,9 +174,10 @@ struct Chunk : Ryper::NonCopyable
 		}
 	};	
 
-	Chunk(Geometry* geom, glm::ivec3 wBottomLeftCenterPos,glm::ivec3 chunkIndex, std::vector<size_t> heights)
-		:geom_Box(geom), shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos), chunkIndex (chunkIndex)
+	Chunk(glm::ivec3 wBottomLeftCenterPos,glm::ivec3 chunkIndex, std::vector<size_t> heights)
+		:shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos), chunkIndex (chunkIndex)
 	{
+		geom_Box = Geom::GeometryManager::GetGeometry <Geom::Primitive::Box>();
 		shader = Shader::ShaderManager::GetShader<Shader::Instanced>();
 		const size_t cubeSize = GetCubeSize();
 		auto heightIter = heights.begin();
@@ -378,7 +380,7 @@ static Util::IslandGenerator islandGen (10);
 
 struct ChunkManager : public IRenderable
 {
-	Geometry* geom_Box;
+	Geom::Primitive::Box* geom_Box;
 	Shader::Instanced * shader;
 	GLint texId;
 	static const size_t MapSize = Chunk::GetCubeSize() * 4; //Map Size in Chunks MapSize x MapSize
@@ -393,9 +395,9 @@ struct ChunkManager : public IRenderable
 	ChunkManager () 
 	{
 	}
-	void Init (Geometry* geom_Box, GLint texId)
+	void Init (GLint texId)
 	{
-		this->geom_Box = geom_Box;
+		this->geom_Box = Geom::GeometryManager::GetGeometry<Geom::Primitive::Box> ();
 		this->texId = texId;
 		this->shader = Shader::ShaderManager::GetShader<Shader::Instanced>();
 		GenerateBoxes();
@@ -430,7 +432,7 @@ struct ChunkManager : public IRenderable
 	}
 	void AddChunk (glm::ivec3 const& index, glm::vec3 const& wPos, std::vector<size_t> const& heightInfo = {})
 	{
-		chunks.emplace_back(new Chunk(geom_Box, wPos, index, heightInfo)); //TODO Maybe store the index in the chunk too
+		chunks.emplace_back(new Chunk(wPos, index, heightInfo)); //TODO Maybe store the index in the chunk too
 		chunkMap.insert(std::make_pair(glm::ivec2XZ{index}, chunks.back()));
 	}
 	//Returns how much is the height for the chunks!

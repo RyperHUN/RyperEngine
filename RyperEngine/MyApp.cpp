@@ -9,19 +9,15 @@
 #include "GeometryCreator.h"
 #include "glmIncluder.h"
 
-
-Geometry * BoundingBoxRenderer::geom_box = nullptr;
-
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
 	geom_Man { "Model/model.dae" },
 	geom_AnimatedMan{"Model/model.dae"},
 	boundingBoxRenderer (gameObjs),
-	quadTexturer(&geom_Quad),
 	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50)),
-	skyboxRenderer (&geom_Quad, -1),
+	skyboxRenderer (-1),
 	waterRenderer (quadTexturer,screenSize),
 	particleRenderer (quadTexturer, Engine::Particle::RenderType::ALPHA_BLENDED),
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
@@ -29,7 +25,6 @@ CMyApp::CMyApp(void)
 	sunRender (quadTexturer, dirLight)
 {
 	shader_Simple = Shader::ShaderManager::GetShader<Shader::Simple>();
-	BoundingBoxRenderer::geom_box = &geom_Box;
 	srand(2);
 	texture_Map = 0;
 	mesh_Suzanne = 0;
@@ -103,7 +98,6 @@ bool CMyApp::Init()
 	// skybox kocka
 	Geom::CreateBoxGeom(buffer_Box);
 	Geom::CreateQuadGeom(buffer_Quad);
-	Geom::CreateCoordAxes(buffer_CoordAxes);
 
 	geom_Box = TriangleMesh(buffer_Box);
 //////////////////////////////
@@ -160,7 +154,7 @@ bool CMyApp::Init()
 	{
 		lightManager.AddLight (&pointLight[i], Light::TYPE::POINT);
 	}
-	lightRenderer = LightRenderer(&geom_Box); ///TODO Light renderer - lightManager kapcsolat kulon refek helyett!!
+	//TODO Light renderer - lightManager kapcsolat kulon refek helyett!!
 	for (auto& light : pointLight)
 		lightRenderer.AddLight(&light);
 	lightRenderer.AddLight(&dirLight);
@@ -215,7 +209,7 @@ void CMyApp::InitScene_Minecraft ()
 	playerCam->Init();
 	std::swap(activeCamera, secondaryCamera);
 
-	chunkManager.Init(&geom_Box, textureArray_blocks);
+	chunkManager.Init(textureArray_blocks);
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
 	for (auto& chunk : chunkManager.chunks)
 		physX.createChunk(*chunk);
@@ -375,6 +369,7 @@ void CMyApp::RenderExtra(RenderState & state)
 		glDisable(GL_DEPTH_TEST);
 		{
 			auto shader = Shader::ShaderManager::GetShader<Shader::CoordinateVisualizer>();
+			auto& buffer_CoordAxes = Geom::GeometryManager::GetGeometry <Geom::Primitive::CoordAxes>()->buffer;
 			shader->On();
 			buffer_CoordAxes.On();
 			{

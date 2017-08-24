@@ -58,9 +58,9 @@ public:
 	static T* GetGeometry()
 	{
 		static_assert(std::is_base_of<Geometry, T>::value, "T should inherit from gShaderProgram");
-		ShaderManager& manager = Instance();
+		GeometryManager& manager = Instance();
 
-		for (Geometry* shader : manager.shaders)
+		for (Geometry* shader : manager.geometries)
 		{
 			T* casted = dynamic_cast<T*>(shader);
 			if (casted != nullptr)
@@ -68,7 +68,7 @@ public:
 		}
 
 		SAssert(false, "Shader is not found in shader manager");
-		throw "Shader not found";
+		throw "Geometry not found";
 	}
 
 	void Clean()

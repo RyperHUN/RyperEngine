@@ -4,7 +4,7 @@
 #include "glmIncluder.h"
 #include "gShaderProgram.h"
 #include "ChunkManager.h"
-#include "Geometry.h"
+#include "GeometryManager.h"
 #include <oglwrap\oglwrap.h> //TODO
 #include "Ray.h"
 #include <map>
@@ -93,13 +93,14 @@ public:
 
 struct BoundingBoxRenderer
 {
-	static Geometry * geom_box;
+	Geom::Primitive::Box * geom_box;
 	Shader::BoundingBox* shader;
 	std::vector<GameObj*>& gameObjs;
 	BoundingBoxRenderer(std::vector<GameObj*>& gameObj)
 		:gameObjs(gameObj)
 	{
 		shader = Shader::ShaderManager::GetShader<Shader::BoundingBox>();
+		geom_box = Geom::GeometryManager::GetGeometry <Geom::Primitive::Box>();
 	}
 	void Draw(RenderState state)
 	{
@@ -245,11 +246,11 @@ struct QuadTexturer
 		TOP_RIGHT, TOP_LEFT, BOTTOM_LEFT, BOTTOM_RIGHT, FULL_CENTER
 	};
 	Shader::QuadTexturer* shader;
-	Geometry * geom;
-	QuadTexturer(Geometry * geom)
-		: geom(geom)
+	Geom::Primitive::Quad * geom;
+	QuadTexturer()
 	{
 		shader = Shader::ShaderManager::GetShader<Shader::QuadTexturer>();
+		geom = Geom::GeometryManager::GetGeometry <Geom::Primitive::Quad> ();
 	}
 	void Draw(GLuint texId, bool isInvertY , POS pos, float scaleMultiplier = 1.0)
 	{
@@ -326,13 +327,14 @@ struct SkyboxRenderer : public IRenderable
 {
 private:
 	Shader::SkyBox* shader;
-	Geometry * geom;
+	Geom::Primitive::Quad * geom;
 	GLuint textureCube;
 public:
-	SkyboxRenderer(Geometry * geom, GLuint textureCube)
-		:geom(geom), textureCube(textureCube)
+	SkyboxRenderer(GLuint textureCube)
+		: textureCube(textureCube)
 	{
 		shader = Shader::ShaderManager::GetShader<Shader::SkyBox>();
+		geom = Geom::GeometryManager::GetGeometry <Geom::Primitive::Quad>();
 	}
 	virtual void Draw(RenderState & state) override
 	{
@@ -350,13 +352,12 @@ public:
 struct LightRenderer
 {
 	std::vector<Light*> lights;
-	Geometry* geom;
+	Geom::Primitive::Box* geom;
 	Shader::LightRender * shader;
-	LightRenderer() {}
-	LightRenderer(Geometry * geom)
-		: geom(geom)
+	LightRenderer()
 	{
 		shader = Shader::ShaderManager::GetShader<Shader::LightRender>();
+		geom = Geom::GeometryManager::GetGeometry <Geom::Primitive::Box>();
 	}
 	void AddLight(Light * light)
 	{
