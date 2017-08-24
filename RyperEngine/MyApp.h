@@ -146,7 +146,8 @@ protected:
 	SkyboxRenderer skyboxRenderer;
 	WaterRenderer waterRenderer;
 
-	Engine::Particle::Fireworks::ParticleSystem particleSystem;
+	Engine::Particle::Fireworks::ParticleSystem particleFireworks;
+	Engine::Particle::ParticleRenderer particleRenderer;
 
 	//Widgets
 	Checkbox checkbox;

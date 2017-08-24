@@ -23,6 +23,7 @@ CMyApp::CMyApp(void)
 	container (glm::ivec2(50, 50)),
 	skyboxRenderer (&geom_Quad, -1),
 	waterRenderer (quadTexturer,screenSize),
+	particleRenderer (quadTexturer),
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
 	fbo_Original (0),
 	sunRender (quadTexturer, dirLight)
@@ -94,7 +95,7 @@ bool CMyApp::Init()
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 	glEnable(GL_MULTISAMPLE);
 
-	particleSystem.InitParticleSystem (glm::vec3 ({ -31.0326405,67.2910538,44.0244446}));
+	particleFireworks.InitParticleSystem (glm::vec3 ({ -31.0326405,67.2910538,44.0244446}));
 
 	geom_Sphere = Sphere (1.0f);
 	geom_Sphere.Create (30,30);
@@ -135,6 +136,7 @@ bool CMyApp::Init()
 	tex_randomPerlin	  = Util::GenRandomPerlinTexture ();
 	skyboxRenderer.SetTexture(textureCube_id);
 	sunRender.Init (tex_sun);
+	particleRenderer.Init (tex_dirt);
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
@@ -280,7 +282,8 @@ void CMyApp::Update()
 
 	if(IsWaterRendering)
 		waterRenderer.Update(delta_time);
-	particleSystem.Update (delta_time);
+	particleFireworks.Update (delta_time);
+	particleRenderer.Update (delta_time);
 
 	// Update gameObj;
 	for(auto& obj : gameObjs)
@@ -339,7 +342,8 @@ void CMyApp::Render()
 			obj->Draw (state);
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
-		//particleSystem.Render (state);
+		particleRenderer.Draw (state);
+		//particleFireworks.Render (state);
 		sunRender.DrawLensFlareEffect (state);
 
 		RenderExtra(state);

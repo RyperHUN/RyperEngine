@@ -311,11 +311,11 @@ struct QuadTexturer
 		}
 		shader->Off();
 	}
-	//TODO Add Z rotation
-	static glm::mat4 CreateCameraFacingQuadMatrix (RenderState &state, glm::vec3 wPos, glm::vec3 scale)
+	static glm::mat4 CreateCameraFacingQuadMatrix (RenderState &state, glm::vec3 wPos, glm::vec3 scale, float rotationZ = 0)
 	{
 		glm::mat4 model = glm::translate(wPos);
 		glm::mat4 VM = Util::createVMWithoutCamRotation(state.V, model); //Quad will face the camera
+		VM = VM * glm::rotate(rotationZ, glm::vec3(0,0,1));
 		VM = VM * glm::scale(scale);
 		VM = state.P * VM;
 		return VM;
