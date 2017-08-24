@@ -23,7 +23,7 @@ namespace Particle
 		bool Update (float dt)
 		{
 			static const float GRAVITY = -10.0f;
-			velocity.y = GRAVITY * gravityEffect * dt;
+			velocity.y = velocity.y + GRAVITY * gravityEffect * dt;
 			glm::vec3 movementDt = velocity * dt;
 			position = position + movementDt;
 			elapsedTime += dt;
@@ -44,38 +44,49 @@ namespace Particle
 		ParticleRenderer (QuadTexturer & quadTexturer)
 			:quadTexturer(quadTexturer)
 		{
-			
 		}
 		void Init (GLuint texture)
 		{
-			glm::vec3 initPos = glm::vec3 (0, 100, 0);
+			
 			this->texture = texture;
-			const int particleNum = 20;
+			const int particleNum = 40;
 			particles.reserve (particleNum);
 			for (int i = 0 ; i < particleNum; i++)
 			{
-				glm::vec3 velocity = Util::randomVec (-1 , 1);
-				velocity.y = glm::max(0.3f, velocity.y);
-				velocity *= 7.0f;
-				particles.push_back(Particle{initPos, velocity, 
-					Util::randomPoint (), //Gravity
-					Util::randomPoint(10, 20),  //Life length
-					Util::randomPoint(0,glm::pi<float> ()), //rotationZ
-					Util::randomPoint (1,3) }); //scale
+				particles.push_back(GenParticle ());
 			}
+		}
+		Particle GenParticle ()
+		{
+			glm::vec3 initPos = glm::vec3(0, 75, 0);
+			glm::vec3 velocity = Util::randomVec(-1, 1);
+			velocity.y = glm::max(0.5f, velocity.y) * 2;
+			velocity *= 5.0f;
+			return Particle{ initPos, velocity,
+				Util::randomPoint(0.5,1), //Gravity
+				Util::randomPoint(1, 8),  //Life length
+				Util::randomPoint(0,glm::pi<float>()), //rotationZ
+				Util::randomPoint(1,2) }; //scale
 		}
 		void Update (float dt)
 		{
 			for (auto & particle : particles)
-				particle.Update (dt);
+				if (!particle.Update (dt))
+					particle = GenParticle();
 		}
 		void Draw (RenderState & state)
 		{
+			//auto depth = gl::TemporaryDisable(gl::kDepthTest);
+			auto depth = gl::TemporaryEnable(gl::kDepthTest);
+			gl::DepthMask (false);
+			auto blend = gl::TemporaryEnable (gl::kBlend);
+			gl::BlendFunc(gl::kSrcAlpha, gl::kOne); //Additive blending
 			for (auto const& particle : particles)
 			{
 				glm::mat4 MVP = QuadTexturer::CreateCameraFacingQuadMatrix (state, particle.position, glm::vec3(particle.scale), particle.rotationZ);
-				quadTexturer.Draw (glm::vec4(0,1,0,1),MVP);
+				quadTexturer.Draw (texture, false,MVP);
 			}
+			gl::DepthMask(true);
 		}
 	};
 

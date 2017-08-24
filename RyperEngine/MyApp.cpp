@@ -122,21 +122,21 @@ bool CMyApp::Init()
 ///////////////////////////////////////////////////////////
 
 	// textúra betöltése
-	texture_Map		  = Util::TextureFromFile("pictures/texture.png");
-	textureCube_id    = Util::LoadCubeMap("pictures/skyboxes/cloud/");
-	tex_dirt          = Util::TextureFromFile ("pictures/blocks/dirt.png");
-	tex_waterDuDv     = Util::TextureFromFile ("pictures/waterDuDvMap.png");
-	tex_waterNormal   = Util::TextureFromFile("pictures/waterNormalMap.png");
-	tex_woodenBoxDiffuse  = Util::TextureFromFile ("pictures/textureWoodContainer.png");
-	tex_woodenBoxSpecular = Util::TextureFromFile("pictures/textureWoodContainerSpecular.png");
+	texture_Map				= Util::TextureFromFile("pictures/texture.png");
+	textureCube_id			= Util::LoadCubeMap("pictures/skyboxes/cloud/");
+	tex_dirt				= Util::TextureFromFile ("pictures/blocks/dirt.png");
+	tex_waterDuDv			= Util::TextureFromFile ("pictures/waterDuDvMap.png");
+	tex_waterNormal			= Util::TextureFromFile("pictures/waterNormalMap.png");
+	tex_woodenBoxDiffuse	= Util::TextureFromFile ("pictures/textureWoodContainer.png");
+	tex_woodenBoxSpecular	= Util::TextureFromFile("pictures/textureWoodContainerSpecular.png");
 	tex_sun					= Util::TextureFromFile ("Pictures/lensFlare/sun.png");
-	//tex_dirt		  = Util::GenRandomTexture ();
-	textureArray_blocks    = Util::TextureArray (BlockTextureMapper::GetTextureNamesInOrder());
+	tex_particleStar		= Util::TextureFromFile ("Pictures/particles/particleStar.png");
+	textureArray_blocks		= Util::TextureArray(BlockTextureMapper::GetTextureNamesInOrder());
 	//textureArray_blocks   = Util::TextureArray ({"dirt", "grass_side", "grass_top_colored", "grass_path_side", "ice", "lapis_ore", "trapdoor", "glass_red"});
-	tex_randomPerlin	  = Util::GenRandomPerlinTexture ();
+	tex_randomPerlin		= Util::GenRandomPerlinTexture ();
 	skyboxRenderer.SetTexture(textureCube_id);
 	sunRender.Init (tex_sun);
-	particleRenderer.Init (tex_dirt);
+	particleRenderer.Init (tex_particleStar);
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
@@ -213,6 +213,7 @@ void CMyApp::InitScene_Minecraft ()
 	activeCamera = std::make_shared<PlayerCamera>(0.1, 1000, screenSize, glm::vec3(0, 50, 0));
 	PlayerCamera * playerCam = (PlayerCamera*)activeCamera.get();
 	playerCam->Init();
+	std::swap(activeCamera, secondaryCamera);
 
 	chunkManager.Init(&geom_Box, textureArray_blocks);
 	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
