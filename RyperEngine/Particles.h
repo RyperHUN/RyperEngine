@@ -48,7 +48,7 @@ class ParticleRenderer
 	QuadTexturer &quadTexturer;
 	GLuint texture;
 	std::vector<Particle> particles;
-	RenderType type;
+	const RenderType type;
 public:
 	ParticleRenderer (QuadTexturer & quadTexturer, RenderType type)
 		:quadTexturer(quadTexturer), type(type)
@@ -57,7 +57,7 @@ public:
 	void Init (GLuint texture)
 	{
 		this->texture = texture;
-		const int particleNum = 40;
+		const int particleNum = 70;
 		particles.reserve (particleNum);
 		for (int i = 0 ; i < particleNum; i++)
 		{
@@ -66,7 +66,7 @@ public:
 	}
 	Particle GenParticle ()
 	{
-		glm::vec3 initPos = glm::vec3(0, 75, 0);
+		glm::vec3 initPos = glm::vec3(0, 48, 0);
 		glm::vec3 velocity = Util::randomVec(-1, 1);
 		velocity.y = glm::max(0.5f, velocity.y) * 2;
 		velocity *= 5.0f;
@@ -84,7 +84,7 @@ public:
 	}
 	void Draw (RenderState & state)
 	{
-		prepareDraw();
+		prepareDraw(state);
 		for (auto const& particle : particles)
 		{
 			glm::mat4 MVP = QuadTexturer::CreateCameraFacingQuadMatrix (state, particle.position, glm::vec3(particle.scale), particle.rotationZ);
@@ -93,22 +93,26 @@ public:
 		endDraw();
 	}
 private:
-	void prepareDraw () 
+	void prepareDraw (RenderState & state)
 	{
-		if (type == RenderType::ADDITIVE) {
-			gl::Enable(gl::kDepthTest);
-			gl::DepthMask(false); //Need to disable depth writing, because then the particles behind it will be wrong
-			gl::Enable(gl::kBlend);
+		gl::Enable(gl::kDepthTest);
+		gl::DepthMask(false); //Need to disable depth writing, because then the particles behind it will be wrong
+		gl::Enable(gl::kBlend);
+		if (type == RenderType::ADDITIVE) 
 			gl::BlendFunc(gl::kSrcAlpha, gl::kOne); //Additive blending	
+		else if (type == RenderType::ALPHA_BLENDED) {
+			gl::BlendFunc(gl::kSrcAlpha, gl::kOneMinusSrcAlpha); //Alpha blend
+			std::sort (particles.begin(), particles.end(), [&state](Particle& left, Particle& right) {
+				return glm::length2(left.position - state.wEye) > glm::length2(right.position - state.wEye); 
+				//Farthest away in front of vector
+			});
 		}
 	}
 
 	void endDraw ()
 	{
-		if (type == RenderType::ADDITIVE) {
-			gl::DepthMask (true);
-			gl::Disable (gl::kBlend);
-		}
+		gl::DepthMask(true);
+		gl::Disable(gl::kBlend);
 	}
 };
 
