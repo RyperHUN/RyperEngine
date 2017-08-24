@@ -428,7 +428,7 @@ struct SunRenderer
 	DirLight &sun;
 	GLuint sunTexture;
 	SunRenderer (QuadTexturer &quadTexturer, DirLight &sun)
-		:quadTexturer(quadTexturer), sun(sun), query{GL_SAMPLES_PASSED}
+		:quadTexturer(quadTexturer), sun(sun), query{GL_ANY_SAMPLES_PASSED}
 	{}
 	void Init (GLuint sunTexture)
 	{
@@ -446,19 +446,22 @@ struct SunRenderer
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 	}
+	bool isSunVisible = false;
 	void DoOcculusionTest (RenderState &state)
 	{
-		if(query.isResultReady ())
+		if(query.isInUse() && query.isResultReady ())
 		{
-			std::cout << query.GetResult () << std::endl;
+			isSunVisible = query.GetResult ();
 		}
 		if (!query.isInUse ())
 		{
+			//gl::ColorMask (false, false, false, false); //This way we cannot see the quad
 			query.StartQuery ();
 			auto depth = gl::TemporaryEnable (gl::kDepthTest);
 			glm::mat4 PVM = QuadTexturer::CreateCameraFacingQuadMatrix(state, GetSunPos(state.wEye), glm::vec3{ 15.0f });
 			quadTexturer.Draw(2, false, PVM, true);
 			query.EndQuery ();
+			gl::ColorMask (true, true, true, true);
 		}
 
 	}
@@ -466,7 +469,8 @@ struct SunRenderer
 	void DrawLensFlareEffect (RenderState &state)
 	{
 		DoOcculusionTest (state);
-		flareManager.Draw(quadTexturer, GetSunPosNdc(state));
+		if (isSunVisible)
+			flareManager.Draw(quadTexturer, GetSunPosNdc(state));
 	}
 	glm::vec3 GetSunPos (glm::vec3 wEye)
 	{
@@ -478,7 +482,7 @@ struct SunRenderer
 		glm::vec3 wPos = GetSunPos (state.wEye);
 		glm::mat4 PVM = state.PV * glm::translate(wPos);
 
-		return Util::CV::Transform (PVM, wPos) - glm::vec3(0, 0.2f, 0); //TODO Fix this offset??
+		return Util::CV::Transform (PVM, wPos); //TODO Fix this offset??
 	}
 };
 
