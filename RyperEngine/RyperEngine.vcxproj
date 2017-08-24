@@ -176,6 +176,8 @@
     <None Include="Shaders\particleUpdate.vert" />
     <None Include="Shaders\quadTexturer.frag" />
     <None Include="Shaders\quadTexturer.vert" />
+    <None Include="Shaders\quadTexturerInstanced.frag" />
+    <None Include="Shaders\quadTexturerInstanced.vert" />
     <None Include="Shaders\shadowShader.frag" />
     <None Include="Shaders\shadowShader.vert" />
     <None Include="Shaders\simpleShader.frag" />

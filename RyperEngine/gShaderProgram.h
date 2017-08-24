@@ -223,6 +223,17 @@ struct CoordinateVisualizer : gShaderProgram
 	}
 };
 
+struct QuadTexturerInstanced : gShaderProgram
+{
+	void Load() override
+	{
+		AttachShader(GL_VERTEX_SHADER, "quadTexturerInstanced.vert");
+		AttachShader(GL_FRAGMENT_SHADER, "quadTexturerInstanced.frag");
+		bool success = LinkProgram();
+		MAssert(success, "PatricleRender shader not loaded succesfully");
+	}
+};
+
 
 class ShaderManager : public Ryper::Singleton
 {
@@ -242,6 +253,7 @@ private:
 		shaders.push_back(new ParticleUpdate);
 		shaders.push_back(new ParticleRender);
 		shaders.push_back(new CoordinateVisualizer);
+		shaders.push_back(new QuadTexturerInstanced);
 		for(gShaderProgram* shader : shaders)
 			shader->Load();
 	}
