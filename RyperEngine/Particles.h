@@ -15,9 +15,10 @@ struct Particle
 	float lifeLength;
 	float rotationZ;
 	float scale;
+	float alpha;
 	float elapsedTime = 0;
-	Particle (glm::vec3 pos, glm::vec3 velocity, float gravityEffect, float lifeLength, float rotationZ = 0, float scale = 1)
-		:position(pos), velocity(velocity), gravityEffect (gravityEffect), lifeLength(lifeLength), rotationZ(rotationZ), scale(scale)
+	Particle (glm::vec3 pos, glm::vec3 velocity, float gravityEffect, float lifeLength, float rotationZ = 0, float scale = 1, float alpha = 1)
+		:position(pos), velocity(velocity), gravityEffect (gravityEffect), lifeLength(lifeLength), rotationZ(rotationZ), scale(scale), alpha(alpha)
 	{}
 	//Returns true if alive
 	bool Update (float dt)
@@ -44,8 +45,8 @@ enum RenderType
 
 class ParticleRenderer
 {
-	
-	QuadTexturer &quadTexturer;
+	Shader::QuadTexturerInstanced *shader;
+	QuadTexturer quadTexturer;
 	GLuint texture;
 	std::vector<Particle> particles;
 	const RenderType type;
@@ -53,6 +54,7 @@ public:
 	ParticleRenderer (QuadTexturer & quadTexturer, RenderType type)
 		:quadTexturer(quadTexturer), type(type)
 	{
+		shader = Shader::ShaderManager::GetShader <Shader::QuadTexturerInstanced> ();
 	}
 	void Init (GLuint texture)
 	{
@@ -84,17 +86,22 @@ public:
 	}
 	void Draw (RenderState & state)
 	{
+		UploadVBO (state);
 		prepareDraw(state);
-		for (auto const& particle : particles)
-		{
-			glm::mat4 MVP = QuadTexturer::CreateCameraFacingQuadMatrix (state, particle.position, glm::vec3(particle.scale), particle.rotationZ);
-			quadTexturer.Draw (texture, false,MVP);
-		}
+		shader->SetUniform("isTexture", false);
+		shader->SetUniform("uColor", glm::vec4(0,1,0,1));
+
+		quadTexturer.geom->buffer.DrawInstanced (GL_TRIANGLES, particles.size());
+		
 		endDraw();
 	}
 private:
 	void prepareDraw (RenderState & state)
 	{
+		shader->On();
+		quadTexturer.geom->buffer.On();
+		gl::Bind(instancedVBO);
+
 		gl::Enable(gl::kDepthTest);
 		gl::DepthMask(false); //Need to disable depth writing, because then the particles behind it will be wrong
 		gl::Enable(gl::kBlend);
@@ -102,7 +109,7 @@ private:
 			gl::BlendFunc(gl::kSrcAlpha, gl::kOne); //Additive blending	
 		else if (type == RenderType::ALPHA_BLENDED) {
 			gl::BlendFunc(gl::kSrcAlpha, gl::kOneMinusSrcAlpha); //Alpha blend
-			std::sort (particles.begin(), particles.end(), [&state](Particle& left, Particle& right) {
+			std::sort (particles.begin(), particles.end(), [&state](Particle& left, Particle& right) {  //TODO Multithreading
 				return glm::length2(left.position - state.wEye) > glm::length2(right.position - state.wEye); 
 				//Farthest away in front of vector
 			});
@@ -111,8 +118,50 @@ private:
 
 	void endDraw ()
 	{
+		quadTexturer.geom->buffer.Off();
+		shader->Off();
 		gl::DepthMask(true);
 		gl::Disable(gl::kBlend);
+	}
+	gl::ArrayBuffer instancedVBO;
+	struct InstanceData {
+		float alpha;
+		glm::mat4 MVP;
+	};
+	void UploadVBO (RenderState &state) //TODO Multithreading
+	{
+		std::vector<InstanceData> data;
+		data.reserve(particles.size());
+		for (auto const& particle : particles)
+		{
+			data.push_back (InstanceData{particle.alpha, 
+				QuadTexturer::CreateCameraFacingQuadMatrix(state, particle.position, glm::vec3(particle.scale), particle.rotationZ) });
+		}
+
+		quadTexturer.geom->buffer.On();
+		{
+			auto bind = gl::MakeTemporaryBind (instancedVBO);
+			SetAttribPointers (data);
+
+			instancedVBO.data(data, gl::kDynamicDraw);
+		}
+		quadTexturer.geom->buffer.Off();
+	}
+	void SetAttribPointers (std::vector<InstanceData>& data)
+	{
+		gl::VertexAttrib alpha(3);
+		alpha.divisor (1);
+		alpha.enable();
+		alpha.pointer (1, gl::kFloat, false, sizeof(InstanceData), (void*)offsetof(InstanceData, alpha));
+
+		for (int i = 0 ; i < 4; i++)
+		{
+			gl::VertexAttrib mat4(4 + i);
+			mat4.enable ();
+			mat4.divisor (1);
+			size_t ptrOffset = offsetof(InstanceData, MVP) + i * sizeof(glm::vec4);
+			mat4.pointer (4, gl::kFloat, false, sizeof(InstanceData), (void*)ptrOffset);
+		}
 	}
 };
 
