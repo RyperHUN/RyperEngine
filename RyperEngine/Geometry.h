@@ -142,6 +142,14 @@ struct Geometry {
 		buffer.Draw();
 		buffer.Off();
 	}
+	void DrawInstanced (size_t amount,gl::ArrayBuffer const& attachedVBO, std::function<void()> setAttribPointers) {
+		buffer.On ();
+		gl::Bind (attachedVBO);
+		setAttribPointers ();
+		buffer.DrawInstanced (GL_TRIANGLES, amount);
+		gl::Unbind (attachedVBO);
+		buffer.Off ();
+	}
 	Geom::Box cacheBox;
 	bool isCalculatedBox = false;
 	virtual Geom::Box getLocalAABB()

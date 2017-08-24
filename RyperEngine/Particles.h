@@ -91,7 +91,8 @@ public:
 		shader->SetUniform("isTexture", false);
 		shader->SetUniform("uColor", glm::vec4(0,1,0,1));
 
-		quadTexturer.geom->buffer.DrawInstanced (GL_TRIANGLES, particles.size());
+		Geometry * geom = Geom::GeometryManager::GetGeometry<Geom::Primitive::Quad> ();
+		geom->DrawInstanced (particles.size(), instancedVBO, [this](){SetAttribPointers ();});
 		
 		endDraw();
 	}
@@ -99,8 +100,6 @@ private:
 	void prepareDraw (RenderState & state)
 	{
 		shader->On();
-		quadTexturer.geom->buffer.On();
-		gl::Bind(instancedVBO);
 
 		gl::Enable(gl::kDepthTest);
 		gl::DepthMask(false); //Need to disable depth writing, because then the particles behind it will be wrong
@@ -138,16 +137,13 @@ private:
 				QuadTexturer::CreateCameraFacingQuadMatrix(state, particle.position, glm::vec3(particle.scale), particle.rotationZ) });
 		}
 
-		quadTexturer.geom->buffer.On();
 		{
 			auto bind = gl::MakeTemporaryBind (instancedVBO);
-			SetAttribPointers (data);
 
 			instancedVBO.data(data, gl::kDynamicDraw);
 		}
-		quadTexturer.geom->buffer.Off();
 	}
-	void SetAttribPointers (std::vector<InstanceData>& data)
+	void SetAttribPointers ()
 	{
 		gl::VertexAttrib alpha(3);
 		alpha.divisor (1);

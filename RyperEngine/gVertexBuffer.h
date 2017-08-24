@@ -32,11 +32,6 @@ public:
 	void SetPatchVertices(int n);
 
 	void Draw(GLenum mode, GLint first, GLsizei count);
-	void DrawIndexed(GLenum mode, GLint first, GLsizei count, const GLvoid* indices);
-	void DrawIndexed(GLenum mode = GL_TRIANGLES)
-	{
-		glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
-	}
 
 	std::vector<glm::vec3> GetPositionData()
 	{
@@ -101,6 +96,13 @@ public:
 		int stride;
 		int usage;
 	};
+
+private:
+	void DrawIndexed(GLenum mode, GLint first, GLsizei count, const GLvoid* indices);
+	void DrawIndexed(GLenum mode = GL_TRIANGLES)
+	{
+		glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
+	}
 
 protected:
 	GLuint	m_vao;
