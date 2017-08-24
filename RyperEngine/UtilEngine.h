@@ -69,7 +69,7 @@ namespace Util
 			for(int j = 0; j < 3; j++)
 				finalModel[i][j] = view[j][i]; //Transposing;
 
-		return finalModel;
+		return view * finalModel;
 	}
 
 	//std::to_string with precision

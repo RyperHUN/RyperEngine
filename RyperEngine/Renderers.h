@@ -314,11 +314,11 @@ struct QuadTexturer
 	//TODO Add Z rotation
 	static glm::mat4 CreateCameraFacingQuadMatrix (RenderState &state, glm::vec3 wPos, glm::vec3 scale)
 	{
-		glm::mat4 model = glm::mat4(1);
-		model = Util::createVMWithoutCamRotation(state.V, model); //Quad will face the camera
-		model = glm::translate(wPos) * model * glm::scale(scale);
-		model = state.PV * model;
-		return model;
+		glm::mat4 model = glm::translate(wPos);
+		glm::mat4 VM = Util::createVMWithoutCamRotation(state.V, model); //Quad will face the camera
+		VM = VM * glm::scale(scale);
+		VM = state.P * VM;
+		return VM;
 	}
 };
 
@@ -404,7 +404,7 @@ struct FlareManager
 			glm::vec2 sunToCenter = SCREEN_CENTER - sunPosNDC;
 			//TODO Calc brightness
 			const float SunLength = glm::length(sunToCenter);
-			float brightness = 1 - (SunLength / 1.5f);
+			float brightness = 1 - (SunLength / 0.7f);
 			if (brightness > 0)
 			{
 				//Draw flares
@@ -455,12 +455,16 @@ struct SunRenderer
 		}
 		if (!query.isInUse ())
 		{
-			//gl::ColorMask (false, false, false, false); //This way we cannot see the quad
-			query.StartQuery ();
-			auto depth = gl::TemporaryEnable (gl::kDepthTest);
-			glm::mat4 PVM = QuadTexturer::CreateCameraFacingQuadMatrix(state, GetSunPos(state.wEye), glm::vec3{ 15.0f });
-			quadTexturer.Draw(2, false, PVM, true);
-			query.EndQuery ();
+			gl::ColorMask (false, false, false, false); //This way we cannot see the quad
+			gl::DepthMask(false);
+			{
+				query.StartQuery ();
+				auto depth = gl::TemporaryEnable (gl::kDepthTest);
+				glm::mat4 PVM = QuadTexturer::CreateCameraFacingQuadMatrix(state, GetSunPos(state.wEye), glm::vec3{ 15.0f });
+				quadTexturer.Draw(2, false, PVM, true);
+				query.EndQuery ();
+			}
+			gl::DepthMask (true);
 			gl::ColorMask (true, true, true, true);
 		}
 
@@ -480,7 +484,7 @@ struct SunRenderer
 	glm::vec2 GetSunPosNdc (RenderState &state)
 	{
 		glm::vec3 wPos = GetSunPos (state.wEye);
-		glm::mat4 PVM = state.PV * glm::translate(wPos);
+		glm::mat4 PVM = state.PV;
 
 		return Util::CV::Transform (PVM, wPos); //TODO Fix this offset??
 	}
