@@ -95,15 +95,6 @@ bool CMyApp::Init()
 	geom_Sphere = Sphere (1.0f);
 	geom_Sphere.Create (30,30);
 
-	// skybox kocka
-	Geom::CreateBoxGeom(buffer_Box);
-	Geom::CreateQuadGeom(buffer_Quad);
-
-	geom_Box = TriangleMesh(buffer_Box);
-//////////////////////////////
-	
-
-	geom_Quad = TriangleMesh(buffer_Quad);
 	//////////////////////////////////////////////////////////
 	// shaderek loading
 	if(!LoadShaders ())
@@ -181,7 +172,7 @@ void CMyApp::InitScene_Water ()
 	quadObjWater->pos += glm::vec3(0, 1, 0);
 	quadObjWater->scale *= 3.0;
 	quadObjWater->rotAngle = M_PI / 2.0;
-	quadObjWater->geometry = &geom_Quad;
+	quadObjWater->geometry = Geom::GeometryManager::GetGeometry<Geom::Primitive::Quad> ();
 	quadObjWater->shader = Shader::ShaderManager::GetShader<Shader::Water>();
 	quadObjWater->material = materialWater;
 	waterRenderer.SetWaterInfo(quadObjWater, &quadObjWater->pos.y);
@@ -235,11 +226,12 @@ void CMyApp::InitScene_InsideBox ()
 	lightRenderer.lights.clear();
 	lightRenderer.AddLight (light);
 
-	GameObj * OuterBox = new GameObj(shader_Simple, &geom_Box, materialNormal, glm::vec3(0), glm::vec3(50));
+	Geometry * geom_Box = Geom::GeometryManager::GetGeometry<Geom::Primitive::Box> ();
+	GameObj * OuterBox = new GameObj(shader_Simple, geom_Box, materialNormal, glm::vec3(0), glm::vec3(50));
 	for (int i = 0 ; i < 7; i++)
 	{
 		glm::vec3 pos = Util::randomVec (-50, 50);
-		GameObj * insideBox = new GameObj (shader_Simple, &geom_Box, materialNormal, pos, glm::vec3(Util::randomPoint(2,7)));
+		GameObj * insideBox = new GameObj (shader_Simple, geom_Box, materialNormal, pos, glm::vec3(Util::randomPoint(2,7)));
 		renderObjs.push_back (insideBox);
 	}
 
@@ -668,9 +660,7 @@ void CMyApp::RenderDeferred()
 				shader->SetTexture("tex_normal", 1, fbo_Deferred.GetNormalAttachment());
 				shader->SetTexture("tex_color", 2, fbo_Deferred.GetColorAttachment());
 
-				buffer_Quad.On();
-				buffer_Quad.Draw ();
-				buffer_Quad.Off();
+				Geom::GeometryManager::GetGeometry<Geom::Primitive::Box> ()->Draw ();
 			}
 			shader->Off();
 		}

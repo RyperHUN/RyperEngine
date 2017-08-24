@@ -94,16 +94,12 @@ protected:
 	SunRenderer sunRender;
 
 	// melysegi puffer kirajzolasa
-	gVertexBuffer	buffer_Box;
-	gVertexBuffer   buffer_Quad;
-	TriangleMesh    geom_Box;
-	TriangleMesh    geom_Quad;
-	Sphere          geom_Sphere;
+	Sphere				geom_Sphere;
 	HeightMapBezier		geom_Bezier;
-	TriangleMeshLoaded geom_Suzanne;
-	TriangleMeshLoaded geom_Cow;
-	AssimpModel		geom_Man;
-	AssimpModel		geom_AnimatedMan;
+	TriangleMeshLoaded  geom_Suzanne;
+	TriangleMeshLoaded  geom_Cow;
+	AssimpModel			geom_Man;
+	AssimpModel			geom_AnimatedMan;
 	HeightMapIsland       geom_IslandHeight;
 	HeightMapPerlin		  geom_PerlinHeight;
 	
