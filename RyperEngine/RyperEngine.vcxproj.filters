@@ -49,6 +49,9 @@
     <Filter Include="Shaders\Deferred">
       <UniqueIdentifier>{6ea1ebfa-d824-4fac-af37-6dc5c1f7d8ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\Particle">
+      <UniqueIdentifier>{1ff1bb3b-a7ac-43f2-b2ed-60b20a5cf2d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyApp.cpp">
@@ -188,9 +191,6 @@
     <ClInclude Include="HeightMapGenerators.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleSystem.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Ray.h">
       <Filter>Utils\Helpers\Math</Filter>
     </ClInclude>
@@ -205,6 +205,12 @@
     </ClInclude>
     <ClInclude Include="glQuery.h">
       <Filter>Utils\GL_Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Particles.h">
+      <Filter>Utils\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="FireworkParticle.h">
+      <Filter>Utils\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

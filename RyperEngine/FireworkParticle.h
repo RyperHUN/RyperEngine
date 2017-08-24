@@ -6,6 +6,13 @@
 #include "UtilEngine.h"
 #include <oglwrap\oglwrap.h>
 
+namespace Engine 
+{
+namespace Particle
+{
+namespace Fireworks
+{
+
 enum ParticleTypes
 {
 	LAUNCHER = 0
@@ -159,3 +166,7 @@ private:
 		gl::PointSize(1.0);
 	}
 };
+
+} //NS Fireworks
+} //NS Particle
+} //NS Engine

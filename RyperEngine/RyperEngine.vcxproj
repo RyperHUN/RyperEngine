@@ -121,7 +121,8 @@
     <ClInclude Include="HeightMapGenerators.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="LocationDefinitions.h" />
-    <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="Particles.h" />
+    <ClInclude Include="FireworkParticle.h" />
     <ClInclude Include="PxController.h" />
     <ClInclude Include="PxJump.h" />
     <ClInclude Include="Ray.h" />
