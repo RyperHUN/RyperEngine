@@ -220,14 +220,7 @@ struct Chunk : Ryper::NonCopyable
 	{
 		UploadInstanceData();
 
-		geom_Box->buffer.On();
-		{
-			auto bind = gl::MakeTemporaryBind (instancedVBO);
-			SetAttribPointers ();
-
-			geom_Box->buffer.DrawInstanced(GL_TRIANGLES, amountOfCubes);
-		}
-		geom_Box->buffer.Off();
+		geom_Box->DrawInstanced (amountOfCubes, instancedVBO, [this](){SetAttribPointers();});
 	}
 	
 	///TODO Instance data as attribute
@@ -362,17 +355,8 @@ private:
 			}
 		});
 
-		geom_Box->buffer.On();
-		{
-			gl::Bind(instancedVBO);
-			{
-				instancedVBO.data(instanceData, gl::kStaticDraw);
-
-				SetAttribPointers();
-			}
-			gl::Unbind(instancedVBO);
-		}
-		geom_Box->buffer.Off();
+		auto bind = gl::MakeTemporaryBind(instancedVBO);
+		instancedVBO.data(instanceData, gl::kStaticDraw);
 	}
 };
 

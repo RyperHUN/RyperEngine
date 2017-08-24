@@ -46,13 +46,12 @@ enum RenderType
 class ParticleRenderer
 {
 	Shader::QuadTexturerInstanced *shader;
-	QuadTexturer quadTexturer;
 	GLuint texture;
 	std::vector<Particle> particles;
 	const RenderType type;
 public:
-	ParticleRenderer (QuadTexturer & quadTexturer, RenderType type)
-		:quadTexturer(quadTexturer), type(type)
+	ParticleRenderer (RenderType type)
+		:type(type)
 	{
 		shader = Shader::ShaderManager::GetShader <Shader::QuadTexturerInstanced> ();
 	}
@@ -87,7 +86,7 @@ public:
 	void Draw (RenderState & state)
 	{
 		UploadVBO (state);
-		prepareDraw(state);
+		prepareDraw (state);
 		shader->SetUniform("isTexture", false);
 		shader->SetUniform("uColor", glm::vec4(0,1,0,1));
 
@@ -117,7 +116,6 @@ private:
 
 	void endDraw ()
 	{
-		quadTexturer.geom->buffer.Off();
 		shader->Off();
 		gl::DepthMask(true);
 		gl::Disable(gl::kBlend);
@@ -137,11 +135,8 @@ private:
 				QuadTexturer::CreateCameraFacingQuadMatrix(state, particle.position, glm::vec3(particle.scale), particle.rotationZ) });
 		}
 
-		{
-			auto bind = gl::MakeTemporaryBind (instancedVBO);
-
-			instancedVBO.data(data, gl::kDynamicDraw);
-		}
+		auto bind = gl::MakeTemporaryBind (instancedVBO);
+		instancedVBO.data(data, gl::kDynamicDraw);
 	}
 	void SetAttribPointers ()
 	{
