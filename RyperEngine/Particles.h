@@ -89,7 +89,8 @@ public:
 	{
 		UploadVBO (state);
 		prepareDraw (state);
-		shader->SetUniform("isTextureArray", false);
+		shader->SetTexture ("texArray", 13, texture, GL_TEXTURE_2D_ARRAY);
+		shader->SetUniform("isTextureArray", true);
 		shader->SetUniform("isTexture", false);
 		shader->SetUniform("uColor", glm::vec4(0,1,0,1));
 
@@ -127,6 +128,7 @@ private:
 	struct InstanceData {
 		float alpha;
 		glm::mat4 MVP;
+		float texId;
 	};
 	void UploadVBO (RenderState &state) //TODO Multithreading
 	{
@@ -134,8 +136,9 @@ private:
 		data.reserve(particles.size());
 		for (auto const& particle : particles)
 		{
+			float texId = (particle.elapsedTime / particle.lifeLength) / (1 / (float)maxTextureNum);
 			data.push_back (InstanceData{particle.alpha, 
-				QuadTexturer::CreateCameraFacingQuadMatrix(state, particle.position, glm::vec3(particle.scale), particle.rotationZ) });
+				QuadTexturer::CreateCameraFacingQuadMatrix(state, particle.position, glm::vec3(particle.scale), particle.rotationZ), texId });
 		}
 
 		auto bind = gl::MakeTemporaryBind (instancedVBO);
@@ -156,6 +159,10 @@ private:
 			size_t ptrOffset = offsetof(InstanceData, MVP) + i * sizeof(glm::vec4);
 			mat4.pointer (4, gl::kFloat, false, sizeof(InstanceData), (void*)ptrOffset);
 		}
+		gl::VertexAttrib texId (8);
+		texId.enable();
+		texId.divisor(1);
+		texId.pointer (1, gl::kFloat,false, sizeof(InstanceData), (void*)offsetof(InstanceData, texId));
 	}
 };
 
