@@ -48,6 +48,7 @@ class ParticleRenderer
 	Shader::QuadTexturerInstanced *shader;
 	GLuint texture;
 	std::vector<Particle> particles;
+	int maxTextureNum;
 	const RenderType type;
 public:
 	ParticleRenderer (RenderType type)
@@ -55,9 +56,10 @@ public:
 	{
 		shader = Shader::ShaderManager::GetShader <Shader::QuadTexturerInstanced> ();
 	}
-	void Init (GLuint texture)
+	void Init (GLuint texture, int maxNumberOfTextures)
 	{
 		this->texture = texture;
+		this->maxTextureNum = maxNumberOfTextures;
 		const int particleNum = 70;
 		particles.reserve (particleNum);
 		for (int i = 0 ; i < particleNum; i++)
@@ -87,6 +89,7 @@ public:
 	{
 		UploadVBO (state);
 		prepareDraw (state);
+		shader->SetUniform("isTextureArray", false);
 		shader->SetUniform("isTexture", false);
 		shader->SetUniform("uColor", glm::vec4(0,1,0,1));
 

@@ -2,8 +2,11 @@
 
 in vec2 fragTex;
 in float alpha;
+in float texId;
 
 uniform sampler2D loadedTex;
+uniform sampler2DArray texArray;
+uniform bool isTextureArray;
 uniform bool isTexture;
 uniform bool isAddedAlpha;
 uniform vec4 uColor;
@@ -12,6 +15,11 @@ out vec4 fs_out_col;
 
 void main()
 {   
+	if(isTextureArray)
+	{
+		fs_out_col = texture(texArray, vec3(fragTex,floor(texId)));
+		return;
+	}
 	if(!isTexture)
 	{
 		fs_out_col = uColor;

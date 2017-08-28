@@ -123,7 +123,7 @@ bool CMyApp::Init()
 	texArray_littleExplosion = Util::TextureArrayNumbered("tex", 15, "Pictures/particles/littleExplosion/");
 	skyboxRenderer.SetTexture(textureCube_id);
 	sunRender.Init (tex_sun);
-	particleRenderer.Init (tex_particleStar);
+	particleRenderer.Init (texArray_cosmic, 16);
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");

@@ -5,10 +5,12 @@ layout (location = 0) in vec3 vs_in_pos;
 layout (location = 2) in vec2 vs_in_tex;
 layout (location = 3) in float in_alpha;
 layout (location = 4) in mat4 MVP;
+layout (location = 8) in float in_texId;
 //TODO Texture index
 
 out vec2 fragTex;
 out float alpha;
+out float texId;
 
 void main()
 {
@@ -18,4 +20,5 @@ void main()
 	gl_Position = pos;
 	fragTex = vs_in_tex;
 	alpha = in_alpha;
+	texId = in_texId;
 }
