@@ -153,11 +153,12 @@ namespace Util
 	{
 		std::string filename(path);
 
+		const int requestecComponents = 4; //Set components/pixel to 4
 		int width, height, nrComponents;
-		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, requestecComponents);
 		if (data)
 		{
-			gl::PixelDataFormat format = GetTextureFormat(nrComponents);
+			gl::PixelDataFormat format = GetTextureFormat(requestecComponents);
 
 			return TextureData{ format, glm::ivec2{ width, height }, data };
 		}
@@ -219,17 +220,6 @@ namespace Util
 		}
 	}
 
-	static inline GLuint TextureArray(std::string name, int numberOfThem, const std::string prefix = "Pictures/blocks/", const std::string postfix = ".png")
-	{
-		std::vector<std::string> names;
-		names.reserve(numberOfThem);
-		for(int i = 0 ; i < numberOfThem; i++)
-		{
-			names.push_back(name + std::to_string(i));
-		}
-		return TextureArray(names, prefix, postfix);
-	}
-
 	static inline GLuint TextureArray(std::vector<std::string> const& textureNames, const std::string prefix = "Pictures/blocks/", const std::string postfix = ".png")
 	{
 		MAssert(textureNames.size() > 0, "Invalid argument given to TextureArray function, textureNames must be bigger than 0");
@@ -239,27 +229,38 @@ namespace Util
 		//Create the texture
 		GLuint textureID;
 		glGenTextures(1, &textureID);
-		gl::Texture2DArray texture (textureID);
-		auto bind  = gl::MakeTemporaryBind (texture);
+		gl::Texture2DArray texture(textureID);
+		auto bind = gl::MakeTemporaryBind(texture);
 
-		texture.wrapS (gl::kClampToEdge);
-		texture.wrapT (gl::kClampToEdge);
-		texture.minFilter (gl::kNearest);
-		texture.magFilter (gl::kNearest);
+		texture.wrapS(gl::kClampToEdge);
+		texture.wrapT(gl::kClampToEdge);
+		texture.minFilter(gl::kNearest);
+		texture.magFilter(gl::kNearest);
 
 		unsigned int texturewidth = dataFirst.size.x;
 		unsigned int textureheight = dataFirst.size.y;
 		// allocate memory for all layers:
-		texture.storage (1, gl::kRgba8, texturewidth, textureheight, Layers);
+		texture.storage(1, gl::kRgba8, texturewidth, textureheight, Layers);
 
 		texture.subUpload(0, 0, 0, texturewidth, textureheight, 1, dataFirst.format, gl::kUnsignedByte, dataFirst.data);
 		for (size_t i = 1; i < textureNames.size(); i++)
 		{
 			Util::TextureData data = Util::TextureDataFromFile(prefix + textureNames[i] + postfix);
-			texture.subUpload (0, 0, i, texturewidth, textureheight, 1, data.format, gl::kUnsignedByte, data.data);
+			texture.subUpload(0, 0, i, texturewidth, textureheight, 1, data.format, gl::kUnsignedByte, data.data);
 		}
 
 		return texture.expose();
+	}
+
+	static inline GLuint TextureArrayNumbered(std::string name, int numberOfThem, const std::string prefix = "Pictures/blocks/", const std::string postfix = ".png")
+	{
+		std::vector<std::string> names;
+		names.reserve(numberOfThem);
+		for(int i = 0 ; i < numberOfThem; i++)
+		{
+			names.push_back(name + std::to_string(i));
+		}
+		return TextureArray(names, prefix, postfix);
 	}
 
 	static inline GLuint TextureFromSdlSurface(SDL_Surface * surface)

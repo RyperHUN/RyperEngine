@@ -84,6 +84,10 @@ protected:
 	GLuint tex_woodenBoxSpecular;
 	GLuint tex_sun;
 	GLuint tex_particleStar;
+	GLuint texArray_particleFire;
+	GLuint texArray_cosmic;
+	GLuint texArray_smoke;
+	GLuint texArray_littleExplosion;
 
 	//TODO Camera manager
 	int cameraFocusIndex = -1; //TODO better if pointer to gameobj
