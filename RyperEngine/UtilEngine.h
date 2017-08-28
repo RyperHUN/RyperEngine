@@ -152,8 +152,6 @@ namespace Util
 	static inline TextureData TextureDataFromFile(std::string path)
 	{
 		std::string filename(path);
-		unsigned int textureID;
-		glGenTextures(1, &textureID);
 
 		int width, height, nrComponents;
 		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
@@ -219,6 +217,17 @@ namespace Util
 		{
 			std::cout << "Texture failed to load at path: " << path << std::endl;
 		}
+	}
+
+	static inline GLuint TextureArray(std::string name, int numberOfThem, const std::string prefix = "Pictures/blocks/", const std::string postfix = ".png")
+	{
+		std::vector<std::string> names;
+		names.reserve(numberOfThem);
+		for(int i = 0 ; i < numberOfThem; i++)
+		{
+			names.push_back(name + std::to_string(i));
+		}
+		return TextureArray(names, prefix, postfix);
 	}
 
 	static inline GLuint TextureArray(std::vector<std::string> const& textureNames, const std::string prefix = "Pictures/blocks/", const std::string postfix = ".png")
