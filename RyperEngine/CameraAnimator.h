@@ -43,79 +43,84 @@ struct CameraAnimator
 	}
 };
 
-//class CatmullRom {
-//	vector<glm::vec3>cps;// control points
-//	vector<float> ts; // parameter (knot) values
-//
-//	using vec4 = glm::vec4;
-//	using vec3 = glm::vec3;
-//	
-//	vec3 Hermite(vec3 p0, vec3 v0, float t0,
-//		vec3 p1, vec3 v1, float t1,
-//		float t) {
-//
-//		//Boldi fele
-//		vec3 a0 = p0;
-//		vec3 a1 = v0;
-//		vec3 a2 = ((p1 - p0) * 3.0f / (float)powf((t1 - t0), 2)) - ((v1 + v0 * 2.0f) / (float)(t1 - t0));
-//		vec3 a3 = ((p0 - p1) * 2.0f / (float)powf((t1 - t0), 3)) + ((v1 + v0) / (float)powf((t1 - t0), 2));
-//		return a3 * powf((t - t0), 3) + a2 * powf((t - t0), 2) + a1 * (t - t0) + a0;
-//	}
-//public:
-//	void AddControlPoint(glm::vec3 cp) {
-//		float ti = cps.size(); // or something better
-//		cps.push_back(cp); ts.push_back(ti);
-//	}
-//	glm::vec3 r(float t) {
-//		glm::vec3 rr(0, 0, 0);
-//		for (int i = 0; i <cps.size(); i++) 
-//			rr += cps[i] * L(i,t);
-//		return rr;
-//	}
-//};
+class CatmullRom {
+	std::vector<glm::vec3>cps;// control points
+	std::vector<float> ts; // Stores non uniform values
+	std::vector<glm::vec3> velocity; //first and last speed is special
+	float firstTime;
+
+	using vec4 = glm::vec4;
+	using vec3 = glm::vec3;
+	
+	vec3 Hermite(vec3 p0, vec3 v0, float t0, vec3 p1, vec3 v1, float t1, float t) 
+	{
+		vec3 a0 = p0;
+		vec3 a1 = v0;
+		vec3 a2 = ((p1 - p0) * 3.0f / (float)powf((t1 - t0), 2)) - ((v1 + v0 * 2.0f) / (float)(t1 - t0));
+		vec3 a3 = ((p0 - p1) * 2.0f / (float)powf((t1 - t0), 3)) + ((v1 + v0) / (float)powf((t1 - t0), 2));
+		return a3 * powf((t - t0), 3) + a2 * powf((t - t0), 2) + a1 * (t - t0) + a0;
+	}
+public:
+	void AddControlPoint(glm::vec3 cp, float timeFromStart) {
+		if(cps.size() == 0)
+			firstTime = timeFromStart;
+
+
+		cps.push_back(cp); 
+		ts.push_back(timeFromStart - firstTime);
+		if (cps.size() >= 2)
+		{
+			static const float tenzio = 0.5;
+			velocity.resize(cps.size());
+			velocity.front() = {0,0,0};
+			velocity.back() = {0,0,0}; //TODO Starting points for starting velocities
+			int maxIndex = velocity.size() -1;
+			for (int i = 1; i < maxIndex; i++) // Csak kozepsonek szamol sebességet
+			{
+				vec3 ujseb;
+				ujseb = ((cps[i] - cps[i - 1]) / (ts[i] - ts[i - 1]) + (cps[i + 1] - cps[i]) / (ts[i + 1] - ts[i])) * ((1.0f - tenzio) / 2.0f);
+				velocity[i] = ujseb;
+			}
+
+		}
+	}
+	glm::vec3 evaluate(float t) {
+		int maxIndex = ts.size() - 1;
+		for (int i = 0; i < cps.size() - 1; i++) {
+			// Ekkor vagyok 2 kontrollpont között
+			if (ts[i] <= t && t <= ts[i + 1])
+			{
+				return Hermite(cps[i], velocity[i], ts[i],
+					cps[i + 1], velocity[i + 1], ts[i + 1], t);
+			}
+		}
+		//Looping catmull
+		//if (ts[maxIndex] <= t && t <= lastts)
+		//{
+		//	return Hermite(cps[maxIndex], seb[maxIndex], ts[maxIndex],
+		//		lastcps, lastseb, lastts, t);
+		//}
+	}
+};
 
 struct SplineRenderer
 {
-	std::vector<glm::vec3> lineStripPoints;
-
-	gl::VertexArray VAO;
+	LineStrip lineStrip;
 	void UpdateLinestrip (SplinePtr spline)
 	{
 		if (spline)
 		{
-			lineStripPoints.clear();
+			std::vector<glm::vec3> points;
 			for(float t = 0.0; t <= 1.0f; t+= 0.01f)
 			{
-				lineStripPoints.push_back(spline->getPosition (t));
+				points.push_back(spline->getPosition (t));
 			}
+			lineStrip = LineStrip(points);
 		}
 	}
 	void Draw (RenderState& state)
 	{
-		gShaderProgram * shader = Shader::ShaderManager::GetShader<Shader::BoundingBox> ();
-		shader->On();
-		shader->SetUniform("PVM", state.PV);
-		shader->SetUniform("isSelected", true);
 		glLineWidth (5.0f);
-		{
-			auto bindVao = gl::MakeTemporaryBind(VAO);
-			{
-				gl::ArrayBuffer VBO;
-				auto bindVBO = gl::MakeTemporaryBind(VBO);
-				{
-					gl::VertexAttrib attrib(0);
-					attrib.pointer(3, gl::kFloat);
-					attrib.enable();
-					VBO.data(lineStripPoints, gl::kDynamicDraw);
-
-					gl::TemporaryDisable cullFace(gl::kCullFace);
-					gl::TemporaryEnable blend(gl::kBlend);
-					gl::BlendFunc(gl::kSrcAlpha, gl::kOneMinusSrcAlpha);
-
-					gl::DrawArrays(gl::kLineStrip, 0, lineStripPoints.size());
-				}
-			}
-		}
-		shader->Off();
+		lineStrip.Draw (state);
 	}
 };

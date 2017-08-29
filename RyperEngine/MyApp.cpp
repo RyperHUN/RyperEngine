@@ -126,9 +126,13 @@ bool CMyApp::Init()
 	particleFireworks.InitParticleSystem(glm::vec3({ -31.0326405,67.2910538,44.0244446 }));
 
 	lineStripRender.Create ();
-	lineStripRender.AddPoint ({0,0,0});
-	lineStripRender.AddPoint({ 0,100,0 });
-	lineStripRender.AddPoint({ 100,50,0 });
+	CatmullRom catmullSpline;
+	catmullSpline.AddControlPoint (glm::vec3(0,100,0), 0);
+	catmullSpline.AddControlPoint (glm::vec3(0,90, 50), 1);
+	catmullSpline.AddControlPoint(glm::vec3(-50, 100, 0), 4);
+	catmullSpline.AddControlPoint(glm::vec3(-100, 130, 10), 8);
+	for (float t = 0; t < 8; t+= 0.1)
+		lineStripRender.AddPoint (catmullSpline.evaluate(t));
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");

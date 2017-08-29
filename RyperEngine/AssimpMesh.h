@@ -15,7 +15,7 @@
 #include <assimp/postprocess.h>
 
 #include "gShaderProgram.h"
-using namespace std;
+using namespace std; //TODO Delete
 #include "Material.h"
 
 class Mesh {

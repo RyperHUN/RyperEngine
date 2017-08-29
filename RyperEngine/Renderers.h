@@ -539,7 +539,7 @@ public:
 		if (vertices.size() == 0)
 			return;
 		if (!isLoaded)
-			CopyPointsToGPU();
+			CopyPointsToGPU(); //TODO Different thread
 
 		shader->On();
 		shader->SetUniform("PVM", state.PV);
