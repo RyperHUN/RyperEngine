@@ -73,7 +73,7 @@ public:
 			shader->SetTexture ((name + number).c_str(), i, textures[i].id);
 		}
 
-		// draw mesh
+		// Draw mesh
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
@@ -91,7 +91,7 @@ public:
 	// initializes all the buffer objects/arrays
 	void setupMesh()
 	{
-		// create buffers/arrays
+		// Create buffers/arrays
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
@@ -183,7 +183,7 @@ public:
 			shader->SetTexture((name + number).c_str(), i, textures[i].id);
 		}
 
-		// draw mesh
+		// Draw mesh
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
@@ -201,7 +201,7 @@ private:
 	// initializes all the buffer objects/arrays
 	void setupMesh()
 	{
-		// create buffers/arrays
+		// Create buffers/arrays
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);

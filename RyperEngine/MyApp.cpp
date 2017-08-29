@@ -125,10 +125,10 @@ bool CMyApp::Init()
 	particleRenderer.AddParticleSystem (std::move(system), Engine::Particle::ALPHA_BLENDED);
 	particleFireworks.InitParticleSystem(glm::vec3({ -31.0326405,67.2910538,44.0244446 }));
 
-	lineStripRender.create ();
-	lineStripRender.addPoint ({0,0,0});
-	lineStripRender.addPoint({ 0,100,0 });
-	lineStripRender.addPoint({ 100,50,0 });
+	lineStripRender.Create ();
+	lineStripRender.AddPoint ({0,0,0});
+	lineStripRender.AddPoint({ 0,100,0 });
+	lineStripRender.AddPoint({ 100,50,0 });
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
@@ -340,7 +340,7 @@ void CMyApp::Render()
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
 		particleRenderer.Draw (state);
-		lineStripRender.draw(state);
+		lineStripRender.Draw(state);
 		//particleFireworks.Render (state);
 		sunRender.DrawLensFlareEffect (state);
 
@@ -677,7 +677,7 @@ void CMyApp::RenderDeferred()
 			shader->Off();
 		}
 		{
-			//Copy the depth values to the draw buffer
+			//Copy the depth values to the Draw buffer
 			AFrameBuffer::CopyValue (fbo_Deferred, fbo_Original, screenSize, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 

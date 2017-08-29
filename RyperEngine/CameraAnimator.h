@@ -43,66 +43,6 @@ struct CameraAnimator
 	}
 };
 
-class LineStrip {
-	GLuint vao, vbo;        // vertex array object, vertex buffer object
-							//float  vertexData[100]; // interleaved data of coordinates and colors
-							//int    nVertices;       // number of vertices
-	Shader::BoundingBox *shader;
-	std::vector<glm::vec3> vertices; // Csúcsok
-public:
-	LineStrip()
-	{
-		shader = Shader::ShaderManager::GetShader<Shader::BoundingBox>();
-		create();
-	}
-	void create()
-	{
-		glGenVertexArrays(1, &vao);
-
-		glBindVertexArray(vao);
-
-		glGenBuffers(1, &vbo); // Generate 1 vertex buffer object
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		// Enable the vertex attribute arrays
-		glEnableVertexAttribArray(0);  // attribute array 0
-									   // Map attribute array 0 to the vertex data of the interleaved vbo
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL); // attribute array, components/attribute, component type, normalize?, stride, offset
-		glBindVertexArray(0);
-	}
-
-	void addPoint(glm::vec3 point)
-	{
-		vertices.push_back(point);
-
-		copyPointsToGPU();
-	}
-	void copyPointsToGPU()
-	{
-		// copy data to the GPU
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
-		glBindVertexArray(0);
-	}
-	void clearPoints()
-	{
-		vertices.clear();
-	}
-	void draw(RenderState& state) 
-	{
-		if (vertices.size() == 0)
-			return;
-
-		shader->On();
-		shader->SetUniform("PVM", state.PV);
-		{
-			glBindVertexArray(vao);
-			glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
-		}
-		shader->Off();
-	}
-};
-
 //class CatmullRom {
 //	vector<glm::vec3>cps;// control points
 //	vector<float> ts; // parameter (knot) values
