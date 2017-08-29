@@ -270,7 +270,7 @@ void CMyApp::Update()
 	float delta_time = (SDL_GetTicks() - last_time)/1000.0f;
 	if(delta_time <= 0.0f) 
 		delta_time = 0.00001f; //Fixes init bug
-	float t = SDL_GetTicks() / 1000.0f;
+	float timeFromStart = SDL_GetTicks() / 1000.0f;
 
 	activeCamera->Update(delta_time);
 	if (cameraFocusIndex >= 0)
@@ -285,9 +285,9 @@ void CMyApp::Update()
 
 	// Update gameObj;
 	for(auto& obj : gameObjs)
-		obj->Animate (t, delta_time);
+		obj->Animate (timeFromStart, delta_time);
 	for(auto& light : lightManager.shaderLights)
-		light.light->Animate(t, delta_time);
+		light.light->Animate(timeFromStart, delta_time);
 
 	physX.stepPhysics(delta_time, false, controller); //TODO Save player ref
 
@@ -296,7 +296,7 @@ void CMyApp::Update()
 		activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
 	}
 	cameraAnimator.SetCamera (activeCamera);
-	cameraAnimator.Update (delta_time);
+	cameraAnimator.Update (delta_time, timeFromStart);
 	splineRenderer.UpdateLinestrip (cameraAnimator.spline);
 
 	cameraPos = activeCamera->GetEye();

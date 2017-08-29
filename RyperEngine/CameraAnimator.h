@@ -13,9 +13,10 @@ struct CameraAnimator
 	std::vector<glm::vec3> cameraDirections;
 	Geom::Spline::CatmullRom spline;
 
+	float timeFromStart = 0;
 	float elapsedTime = 0;
 	bool isAnimating = false;
-	void Update (float dt)
+	void Update (float dt, float timeFromStart)
 	{
 		if (isAnimating)
 		{
@@ -44,18 +45,22 @@ struct CameraAnimator
 struct SplineRenderer
 {
 	Geom::LineStrip lineStrip;
-	void UpdateLinestrip (Geom::Spline::ISpline& spline)
+	void UpdateLinestrip (Geom::Spline::ISplineUniform& spline)
 	{
-		//std::vector<glm::vec3> points;
-		//for(float t = 0.0; t <= 1.0f; t+= 0.01f)
-		//{
-		//	points.push_back(spline.Evaluate (t)); //TODO Uniform
-		//}
-		//lineStrip = Geom::LineStrip(points);
+		if (!spline.IsReady ())
+			return;
+
+		std::vector<glm::vec3> points;
+		for(float t = 0.0; t <= 1.0f; t+= 0.01f)
+		{
+			points.push_back(spline.EvaluateUniform (t)); //TODO Uniform
+		}
+		lineStrip = Geom::LineStrip(points);
 	}
 	void Draw (RenderState& state)
 	{
 		glLineWidth (5.0f);
 		lineStrip.Draw (state);
+		glLineWidth (1.0f);
 	}
 };

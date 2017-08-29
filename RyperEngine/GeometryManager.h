@@ -36,10 +36,17 @@ namespace Spline {
 	public:
 		virtual glm::vec3 Evaluate(float t) = 0;
 	};
+	class ISplineUniform
+	{
+	public:
+		virtual glm::vec3 EvaluateUniform(float t) = 0;
+		virtual bool IsReady () = 0;
+	};
 
-	class CatmullRom : public ISpline {
+	class CatmullRom : public ISpline, public ISplineUniform {
 		std::vector<glm::vec3>cps;// control points
 		std::vector<float> ts; // Stores non uniform values
+		std::vector<float> uniformTs;
 		std::vector<glm::vec3> velocity; //first and last speed is special
 		float firstTime;
 
@@ -75,11 +82,11 @@ namespace Spline {
 					ujseb = ((cps[i] - cps[i - 1]) / (ts[i] - ts[i - 1]) + (cps[i + 1] - cps[i]) / (ts[i + 1] - ts[i])) * ((1.0f - tenzio) / 2.0f);
 					velocity[i] = ujseb;
 				}
-
 			}
 		}
 		glm::vec3 Evaluate(float t) override
 		{
+			MAssert(cps.size() > 1, "There is no control points");
 			for (int i = 0; i < cps.size() - 1; i++) {
 				// Ekkor vagyok 2 kontrollpont között
 				if (ts[i] <= t && t <= ts[i + 1])
@@ -96,6 +103,16 @@ namespace Spline {
 			//	return HermiteInterpolation(cps[maxIndex], seb[maxIndex], ts[maxIndex],
 			//		lastcps, lastseb, lastts, t);
 			//}
+		}
+		//t in [0,1]
+		glm::vec3 EvaluateUniform(float t) override
+		{
+			MAssert(cps.size() > 1, "There is no control points");
+			return Evaluate (t * ts.back());
+		}
+		bool IsReady () override
+		{
+			return cps.size() >= 2;
 		}
 	};
 } //NS Splines
