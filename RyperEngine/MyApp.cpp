@@ -85,8 +85,6 @@ bool CMyApp::Init()
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 	glEnable(GL_MULTISAMPLE);
 
-	particleFireworks.InitParticleSystem (glm::vec3 ({ -31.0326405,67.2910538,44.0244446}));
-
 	geom_Sphere = Sphere (1.0f);
 	geom_Sphere.Create (30,30);
 
@@ -121,10 +119,11 @@ bool CMyApp::Init()
 	skyboxRenderer.SetTexture(textureCube_id);
 	sunRender.Init (tex_sun);
 	
-	Engine::Particle::ParticleSystem system {texArray_cosmic, 16, {true, true, true}};
-	system.SetFunctions (Engine::Particle::FullParticleUpdaterFountain, Engine::Particle::FullParticleRegeneratorFountain);
-	system.GenParticles(40);
+	Engine::Particle::ParticleSystem system { texArray_smoke, 39, {true, true, true}};
+	system.SetFunctions (Engine::Particle::ParticleUpdateSmoke, Engine::Particle::ParticleRegeneratorSmoke);
+	system.GenParticles(70);
 	particleRenderer.AddParticleSystem (std::move(system), Engine::Particle::ALPHA_BLENDED);
+	particleFireworks.InitParticleSystem(glm::vec3({ -31.0326405,67.2910538,44.0244446 }));
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
@@ -335,7 +334,7 @@ void CMyApp::Render()
 			obj->Draw (state);
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
-		//particleRenderer.Draw (state);
+		particleRenderer.Draw (state);
 		//particleFireworks.Render (state);
 		sunRender.DrawLensFlareEffect (state);
 

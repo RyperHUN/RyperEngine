@@ -170,6 +170,30 @@ static inline Particle FullParticleRegeneratorFountain()
 		Util::randomPoint(1,2),  //scale
 		0.5 }; // Alpha
 }
+static inline bool ParticleUpdateSmoke (float dt, Engine::Particle::Particle& p)
+{
+	glm::vec3 movementDt = p.velocity * dt;
+	p.position = p.position + movementDt;
+	p.elapsedTime += dt;
+	p.alpha = 1.0f - (p.elapsedTime / p.lifeLength) * 0.7;
+
+	return p.elapsedTime < p.lifeLength;
+}
+static inline Particle ParticleRegeneratorSmoke ()
+{
+	glm::vec3 initPos = glm::vec3(0, 48, 0);
+	glm::vec3 velocity = glm::vec3 (
+		Util::randomPoint (-0.1, 0.1), 
+		Util::randomPoint(0.8,1.0),
+		Util::randomPoint(-0.1,0.1));
+	velocity *= 4.0f;
+	return Engine::Particle::Particle{ initPos, velocity,
+		0.1f, //Gravity
+		Util::randomPoint(4, 7),  //Life length
+		0, //rotationZ
+		2,  //scale
+		1.0 }; // Alpha
+}
 
 class ParticleRenderer
 {
