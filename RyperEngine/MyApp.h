@@ -128,6 +128,8 @@ protected:
 	MultiFrameBuffer fbo_RenderedMSAA;
 	gFrameBuffer fbo_Deferred;
 	gl::Framebuffer fbo_Original;
+
+	LineStrip lineStripRender;
 	
 	const GLuint SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
 

@@ -125,6 +125,11 @@ bool CMyApp::Init()
 	particleRenderer.AddParticleSystem (std::move(system), Engine::Particle::ALPHA_BLENDED);
 	particleFireworks.InitParticleSystem(glm::vec3({ -31.0326405,67.2910538,44.0244446 }));
 
+	lineStripRender.create ();
+	lineStripRender.addPoint ({0,0,0});
+	lineStripRender.addPoint({ 0,100,0 });
+	lineStripRender.addPoint({ 100,50,0 });
+
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
 	m_cow_mesh   = ObjParser::parse("Model/cow.obj");
@@ -335,6 +340,7 @@ void CMyApp::Render()
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
 		particleRenderer.Draw (state);
+		lineStripRender.draw(state);
 		//particleFireworks.Render (state);
 		sunRender.DrawLensFlareEffect (state);
 
