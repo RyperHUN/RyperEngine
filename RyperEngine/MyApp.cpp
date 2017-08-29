@@ -289,6 +289,7 @@ void CMyApp::Update()
 	}
 	cameraAnimator.SetCamera (activeCamera);
 	cameraAnimator.Update (delta_time);
+	splineRenderer.UpdateLinestrip (cameraAnimator.spline);
 
 	cameraPos = activeCamera->GetEye();
 	last_time = SDL_GetTicks();
@@ -334,7 +335,7 @@ void CMyApp::Render()
 			obj->Draw (state);
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
-		particleRenderer.Draw (state);
+		//particleRenderer.Draw (state);
 		//particleFireworks.Render (state);
 		sunRender.DrawLensFlareEffect (state);
 
