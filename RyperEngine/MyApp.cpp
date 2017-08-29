@@ -483,6 +483,20 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 			activeCamera->SetEye(glm::vec3(37.5, 62.36, -104.6));
 			activeCamera->SetForwardDir(glm::vec3(-0.17, -0.9, 0.37));
 			break;
+		case SDLK_o:
+			{
+				std::ofstream savedPath ("savedCameraPath.txt");
+				boost::archive::text_oarchive ia(savedPath);
+				ia << cameraAnimator;
+			}
+			break;
+		case SDLK_p:
+		{
+			std::ifstream savedPath ("savedCameraPath.txt");
+			boost::archive::text_iarchive ia(savedPath);
+			ia >> cameraAnimator;
+			cameraAnimator.Reload();
+		}
 	}
 }
 

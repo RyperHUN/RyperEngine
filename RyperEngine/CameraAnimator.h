@@ -1,5 +1,8 @@
 #pragma once
 #include "Camera.h"
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/vector.hpp>
 //#include <spline_library\splines\uniform_cr_spline.h>
 
 struct CameraAnimator
@@ -11,8 +14,10 @@ struct CameraAnimator
 	}
 	std::vector<glm::vec3> splinePoints;
 	std::vector<glm::vec3> cameraDirections;
+	std::vector<float> times;
 	Geom::Spline::CatmullRom spline;
 
+	float firstTime = 0;
 	float timeFromStart = 0;
 	float elapsedTime = 0;
 	bool isAnimating = false;
@@ -35,14 +40,49 @@ struct CameraAnimator
 		{
 			splinePoints.push_back (camera->GetEye ());
 			spline.AddControlPoint (camera->GetEye (), timeFromStart);
+			cameraDirections.push_back (camera->GetDir ());
+			if (times.size() == 0)
+				firstTime = timeFromStart;
+			
+			times.push_back (timeFromStart - firstTime);
 			//TODO interpolate directions
 		}
 		if (key.keysym.sym == SDLK_l)
 		{
-			isAnimating = true;
+			isAnimating = !isAnimating;
 		}
 	}
+	void Reload ()
+	{
+		spline = Geom::Spline::CatmullRom {};
+		for(int i = 0 ; i < splinePoints.size(); i++)
+			spline.AddControlPoint (splinePoints[i], times[i]);
+	}
+	template<class Archive>
+	void serialize(Archive &ar, const unsigned int version)
+	{
+		ar & splinePoints;
+		ar & cameraDirections;
+		ar & times;
+	}
 };
+
+namespace boost {
+namespace serialization{
+
+	template<class Archive>
+	void serialize(Archive &ar, glm::vec3 & vec, const unsigned int version)
+	{
+		ar & vec.x;
+		ar & vec.y;
+		ar & vec.z;
+	}
+
+}// NS serialization
+}//NS boost
+
+
+
 
 struct SplineRenderer
 {
