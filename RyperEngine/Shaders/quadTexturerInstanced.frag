@@ -18,6 +18,7 @@ void main()
 	if(isTextureArray)
 	{
 		fs_out_col = texture(texArray, vec3(fragTex,floor(texId)));
+		fs_out_col.w = fs_out_col.w * alpha;
 		return;
 	}
 	if(!isTexture)

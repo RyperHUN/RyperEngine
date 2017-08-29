@@ -75,9 +75,11 @@ public:
 		velocity *= 5.0f;
 		return Particle{ initPos, velocity,
 			Util::randomPoint(0.5,1), //Gravity
-			Util::randomPoint(1, 8),  //Life length
+			3.5,
+			//Util::randomPoint(1, 8),  //Life length
 			Util::randomPoint(0,glm::pi<float>()), //rotationZ
-			Util::randomPoint(1,2) }; //scale
+			Util::randomPoint(1,2),  //scale
+			0.5 }; // Alpha
 	}
 	void Update (float dt)
 	{
