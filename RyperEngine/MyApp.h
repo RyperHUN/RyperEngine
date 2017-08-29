@@ -129,7 +129,7 @@ protected:
 	gFrameBuffer fbo_Deferred;
 	gl::Framebuffer fbo_Original;
 
-	LineStrip lineStripRender;
+	Geom::LineStrip lineStripRender;
 	
 	const GLuint SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
 

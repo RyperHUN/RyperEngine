@@ -126,7 +126,7 @@ bool CMyApp::Init()
 	particleFireworks.InitParticleSystem(glm::vec3({ -31.0326405,67.2910538,44.0244446 }));
 
 	lineStripRender.Create ();
-	CatmullRom catmullSpline;
+	Geom::Spline::CatmullRom catmullSpline;
 	catmullSpline.AddControlPoint (glm::vec3(0,100,0), 0);
 	catmullSpline.AddControlPoint (glm::vec3(0,90, 50), 1);
 	catmullSpline.AddControlPoint(glm::vec3(-50, 100, 0), 4);
