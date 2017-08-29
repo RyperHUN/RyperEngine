@@ -115,6 +115,7 @@
     <ClInclude Include="AssimpMesh.h" />
     <ClInclude Include="AssimpModel.h" />
     <ClInclude Include="Bezier.h" />
+    <ClInclude Include="CameraAnimator.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="GeometryManager.h" />
     <ClInclude Include="GLFXShaderManager.h" />

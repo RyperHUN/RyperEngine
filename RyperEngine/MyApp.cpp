@@ -8,7 +8,6 @@
 #include "UtilEngine.h"
 #include "GeometryCreator.h"
 #include "glmIncluder.h"
-#include <spline_library\splines\uniform_cr_spline.h>
 
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
@@ -30,15 +29,6 @@ CMyApp::CMyApp(void)
 	mesh_Suzanne = 0;
 	activeCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(5, 22, 24));
 	secondaryCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(70, 109, 43), glm::vec3(-0.5,-0.9, -0.5));
-
-	std::vector<glm::vec3> splinePoints{
-		glm::vec3(0, 0,0),
-		glm::vec3(5, 1, 5),
-		glm::vec3(8, 3, 0),
-		glm::vec3(6, 1, 2),
-	};
-	UniformCRSpline<glm::vec3> mySpline(splinePoints);
-	glm::vec3 interpolatedPosition = mySpline.getPosition(0.5f);
 	
 	//gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false); });
 
@@ -297,6 +287,8 @@ void CMyApp::Update()
 	{
 		activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
 	}
+	cameraAnimator.SetCamera (activeCamera);
+	cameraAnimator.Update (delta_time);
 
 	cameraPos = activeCamera->GetEye();
 	last_time = SDL_GetTicks();
@@ -424,6 +416,7 @@ void CMyApp::FrustumCulling (CameraPtr camera)
 
 void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 {
+	cameraAnimator.KeyboardDown(key);
 	controller.KeyboardDown(key);
 	activeCamera->KeyboardDown(key);
 	for(auto& obj : gameObjs)

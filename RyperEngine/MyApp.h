@@ -30,6 +30,7 @@
 #include "Controller.h"
 #include "WaterRenderer.h"
 #include "Particles.h"
+#include "CameraAnimator.h"
 
 // PhysX
 #include "PhysX.h"
@@ -94,6 +95,7 @@ protected:
 	glm::vec3 cameraPos;
 	CameraPtr activeCamera;
 	CameraPtr secondaryCamera; //TODO receive resize events also
+	CameraAnimator cameraAnimator;
 	FrustumRenderer frustumRender;
 	SunRenderer sunRender;
 
