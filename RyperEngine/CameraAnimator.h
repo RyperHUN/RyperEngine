@@ -1,6 +1,6 @@
 #pragma once
 #include "Camera.h"
-#include <spline_library\splines\uniform_cr_spline.h>
+//#include <spline_library\splines\uniform_cr_spline.h>
 
 struct CameraAnimator
 {
@@ -18,27 +18,29 @@ struct CameraAnimator
 	bool isAnimating = false;
 	void Update (float dt, float timeFromStart)
 	{
+		this->timeFromStart = timeFromStart;
 		if (isAnimating)
 		{
 			elapsedTime += dt;
 			const float SCALE_FACTOR = 0.1f;
 			elapsedTime = glm::mod(elapsedTime, 1.0f / SCALE_FACTOR);
 			float scaledTime	= elapsedTime * SCALE_FACTOR;
-			glm::vec3 pos		= spline.Evaluate (scaledTime); // TODO Uniform
+			glm::vec3 pos		= spline.EvaluateUniform (scaledTime); // TODO Uniform
 			camera->SetEye (pos);
 		}
 	}
 	virtual void KeyboardDown(SDL_KeyboardEvent& key)
 	{
-		//if (key.keysym.sym == SDLK_k)
-		//{
-		//	splinePoints.push_back (camera->GetEye ());
-		//}
-		//if (key.keysym.sym == SDLK_l)
-		//{
-		//	spline.reset (new SplineType (splinePoints));
-		//	//isAnimating = true;
-		//}
+		if (key.keysym.sym == SDLK_k)
+		{
+			splinePoints.push_back (camera->GetEye ());
+			spline.AddControlPoint (camera->GetEye (), timeFromStart);
+			//TODO interpolate directions
+		}
+		if (key.keysym.sym == SDLK_l)
+		{
+			isAnimating = true;
+		}
 	}
 };
 
