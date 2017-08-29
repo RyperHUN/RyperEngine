@@ -132,7 +132,7 @@ bool CMyApp::Init()
 	catmullSpline.AddControlPoint(glm::vec3(-50, 100, 0), 4);
 	catmullSpline.AddControlPoint(glm::vec3(-100, 130, 10), 8);
 	for (float t = 0; t < 8; t+= 0.1)
-		lineStripRender.AddPoint (catmullSpline.evaluate(t));
+		lineStripRender.AddPoint (catmullSpline.Evaluate(t));
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
