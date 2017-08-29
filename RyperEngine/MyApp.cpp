@@ -8,6 +8,7 @@
 #include "UtilEngine.h"
 #include "GeometryCreator.h"
 #include "glmIncluder.h"
+#include <spline_library\splines\uniform_cr_spline.h>
 
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
@@ -30,7 +31,14 @@ CMyApp::CMyApp(void)
 	activeCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(5, 22, 24));
 	secondaryCamera = std::make_shared<FPSCamera>(1, 500, screenSize, glm::vec3(70, 109, 43), glm::vec3(-0.5,-0.9, -0.5));
 
-	
+	std::vector<glm::vec3> splinePoints{
+		glm::vec3(0, 0,0),
+		glm::vec3(5, 1, 5),
+		glm::vec3(8, 3, 0),
+		glm::vec3(6, 1, 2),
+	};
+	UniformCRSpline<glm::vec3> mySpline(splinePoints);
+	glm::vec3 interpolatedPosition = mySpline.getPosition(0.5f);
 	
 	//gl::DebugOutput::AddErrorPrintFormatter([](gl::ErrorMessage) {assert(false); });
 
@@ -127,7 +135,6 @@ bool CMyApp::Init()
 	system.SetFunctions (Engine::Particle::FullParticleUpdaterFountain, Engine::Particle::FullParticleRegeneratorFountain);
 	system.GenParticles(40);
 	particleRenderer.AddParticleSystem (std::move(system), Engine::Particle::ALPHA_BLENDED);
-
 
 	// mesh betöltés
 	mesh_Suzanne = ObjParser::parse("Model/suzanne.obj");
