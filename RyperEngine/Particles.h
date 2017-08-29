@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FireworkParticle.h"
+#include <bitset>
 
 namespace Engine
 {
@@ -41,6 +42,62 @@ enum RenderType
 {
 	ADDITIVE, //Shiny feeling
 	ALPHA_BLENDED // Ordered
+};
+
+class ParticleSystem 
+{
+public:
+	struct Settings {
+		bool isTextured, isArrayTextured, isAlphaAdded;
+	};
+private:
+	enum SETTINGS
+	{
+		IsTextured = 0,
+		IsArrayTextured = 1,
+		IsAlphaAdded = 2,
+	};
+	std::bitset<3> settingsBits;
+	int textureArrayLayers;
+	GLuint texId;
+	std::vector<Particle> particles;
+	std::function<bool(Particle&)> updateFv;
+	std::function<Particle()>      regenerateFv;
+public:
+	ParticleSystem (GLuint texId, int textureArrayLayers,Settings settings)
+		:textureArrayLayers(textureArrayLayers), texId(texId)
+	{
+		settingsBits[SETTINGS::IsTextured] = settings.isTextured;
+		settingsBits[SETTINGS::IsArrayTextured] = settings.isArrayTextured;
+		settingsBits[SETTINGS::IsAlphaAdded] = settings.isAlphaAdded;
+	}
+	void SetFunctions (std::function<bool(Particle&)> update, std::function<Particle()> regenerate)
+	{
+		updateFv = update;
+		regenerateFv = regenerate;
+	}
+	void Update(float dt)
+	{
+		MAssert (updateFv && regenerateFv, "Update or Regenerate particle function is not set");
+
+		for (auto & particle : particles)
+		{
+			if(!updateFv (particle))
+				particle = regenerateFv ();
+		}
+	}
+	bool IsTextured ()
+	{
+		return settingsBits[SETTINGS::IsTextured];
+	}
+	bool IsArrayTextured ()
+	{
+		return settingsBits[SETTINGS::IsArrayTextured];
+	}
+	bool IsAlphaAdded ()
+	{
+		return settingsBits[SETTINGS::IsAlphaAdded];
+	}
 };
 
 class ParticleRenderer
