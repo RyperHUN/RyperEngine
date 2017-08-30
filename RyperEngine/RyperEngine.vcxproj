@@ -53,7 +53,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(IncludePath);T:\OGLPack\include;T:\PhysX-3.4\PhysX_3.4\Include;T:\PhysX-3.4\PxShared\include</IncludePath>
-    <LibraryPath>t:\OGLPack\lib\x86;T:\PhysX-3.4\PhysX_3.4\Lib\vc14win32;T:\PhysX-3.4\PxShared\lib\vc14win32;$(LibraryPath)</LibraryPath>
+    <LibraryPath>T:\OGLPack\lib\x86\boostlib32-msvc-14.0;t:\OGLPack\lib\x86;T:\PhysX-3.4\PhysX_3.4\Lib\vc14win32;T:\PhysX-3.4\PxShared\lib\vc14win32;$(LibraryPath)</LibraryPath>
     <ReferencePath>
     </ReferencePath>
     <OutDir>$(SolutionDir)\BuildResult\$(Configuration)\</OutDir>

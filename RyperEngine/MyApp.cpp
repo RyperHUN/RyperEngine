@@ -8,6 +8,7 @@
 #include "UtilEngine.h"
 #include "GeometryCreator.h"
 #include "glmIncluder.h"
+#include <Windows.h>
 
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
@@ -284,10 +285,23 @@ void CMyApp::InitGameObjects ()
 void CMyApp::Update()
 {
 	static Uint32 last_time = SDL_GetTicks();
+	static float timeFromStart = 0;
 	float delta_time = (SDL_GetTicks() - last_time)/1000.0f;
 	if(delta_time <= 0.0f) 
 		delta_time = 0.00001f; //Fixes init bug
-	float timeFromStart = SDL_GetTicks() / 1000.0f;
+	else if (delta_time < FixedFps)
+	{
+		DWORD val  = (FixedFps - delta_time) * 1000.0f;
+		Sleep(val);
+	}
+
+	if (IsFixFps)
+	{
+		delta_time = FixedFps;
+		timeFromStart += FixedFps;
+	}
+	else
+		timeFromStart = SDL_GetTicks() / 1000.0f;
 
 	activeCamera->Update(delta_time);
 	if (cameraFocusIndex >= 0)
