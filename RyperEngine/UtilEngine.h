@@ -89,6 +89,12 @@ namespace Util
 	{
 		return{ text + "(" + std::to_string(vec.x) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z) + ")" };
 	}
+	static inline std::string to_string(const int a_value, const int n = 2, char fill = '0')
+	{
+		std::ostringstream out;
+		out << std::setfill(fill)<< std::setw(n) << a_value;
+		return out.str();
+	}
 
 	//Returns [lowerBound, upperBound]
 	inline static int randomPointI(int lowerBound, int upperBound)

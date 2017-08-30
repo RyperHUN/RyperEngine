@@ -3,6 +3,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/serialization/vector.hpp>
+#include "TextureSaver.hpp"
 //#include <spline_library\splines\uniform_cr_spline.h>
 
 struct SplineRenderer
@@ -46,6 +47,7 @@ struct CameraAnimator
 	float elapsedTime = 0;
 	bool isAnimating = false;
 	bool isDrawing = false;
+	bool isDone = false;
 	void Update (float dt, float timeFromStart)
 	{
 		this->timeFromStart = timeFromStart;
@@ -53,7 +55,10 @@ struct CameraAnimator
 		{
 			elapsedTime += dt;
 			const float SCALE_FACTOR = 0.05f;
-			elapsedTime = glm::mod(elapsedTime, 1.0f / SCALE_FACTOR);
+			const float MAX_TIME = 1.0f / SCALE_FACTOR;
+			if (elapsedTime > MAX_TIME)
+				isDone = true;
+			elapsedTime = glm::mod(elapsedTime, MAX_TIME);
 			float uniformTime	= elapsedTime * SCALE_FACTOR;
 			glm::vec3 pos		= spline.EvaluateUniform (uniformTime); // TODO Uniform
 			camera->SetEye (pos);
@@ -91,7 +96,12 @@ struct CameraAnimator
 		ia << *this;
 	}
 	void TurnDraw ()		{isDrawing = !isDrawing;	}
-	void TurnAnimation ()	{isAnimating = !isAnimating;}
+	void TurnAnimation ()	
+	{
+		isAnimating = !isAnimating;
+		isDone = false;
+	}
+	bool IsDone () { return isDone; }
 	void Draw (RenderState & state)
 	{
 		if (isDrawing)

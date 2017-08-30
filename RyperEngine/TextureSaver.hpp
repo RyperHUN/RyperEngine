@@ -30,7 +30,7 @@ struct TextureSaver
 	static void SaveTextureFromArray(ByteArr pixels, glm::ivec2 screenSize, int num)
 	{
 		FlipVertical(pixels.get(), screenSize);
-		std::string name = "TemporaryFiles/screenshot" + std::to_string(num) + ".png";
+		std::string name = "TemporaryFiles/screenshot" + Util::to_string(num, 4, '0') + ".png";
 		lodepng::encode(name, pixels.get(), screenSize.x, screenSize.y, LodePNGColorType::LCT_RGB);
 	}
 	static void SaveTexture (GLuint texture, glm::ivec2 screenSize)

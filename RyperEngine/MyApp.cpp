@@ -329,6 +329,13 @@ void CMyApp::Update()
 	cameraAnimator.SetCamera (activeCamera);
 	cameraAnimator.Update (delta_time, timeFromStart);
 
+	if(IsPicSaving && IsFixFps)
+	{
+		textureSaver.SaveTextureThreaded(fbo_Rendered.GetColorAttachment(), screenSize);
+		if (cameraAnimator.IsDone ())
+			IsPicSaving = false;
+	}
+
 	cameraPos = activeCamera->GetEye();
 	last_time = SDL_GetTicks();
 }
@@ -516,6 +523,11 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 		case SDLK_s:
 			///TODO get the color attachment from the active framebuffer
 			textureSaver.SaveTextureThreaded (fbo_Rendered.GetColorAttachment (), screenSize);
+			break;
+		case SDLK_i:
+			IsFixFps = true;
+			IsPicSaving = true;
+			cameraAnimator.TurnAnimation ();
 			break;
 	}
 }
