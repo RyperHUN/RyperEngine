@@ -27,11 +27,22 @@ struct CameraAnimator
 		if (isAnimating)
 		{
 			elapsedTime += dt;
-			const float SCALE_FACTOR = 0.1f;
+			const float SCALE_FACTOR = 0.05f;
 			elapsedTime = glm::mod(elapsedTime, 1.0f / SCALE_FACTOR);
-			float scaledTime	= elapsedTime * SCALE_FACTOR;
-			glm::vec3 pos		= spline.EvaluateUniform (scaledTime); // TODO Uniform
+			float uniformTime	= elapsedTime * SCALE_FACTOR;
+			glm::vec3 pos		= spline.EvaluateUniform (uniformTime); // TODO Uniform
 			camera->SetEye (pos);
+			float scaledTime = uniformTime * times.back();
+			for (int i = 0 ; i < times.size() - 1; i++)
+			{
+				if (times[i] <= scaledTime && scaledTime <= times[i + 1])
+				{
+					float distance = times[i + 1] - times[i];
+					float mixTime = (scaledTime - times[i])/ distance;
+					//camera->SetForwardDir(glm::mix (cameraDirections[i], cameraDirections[i+1], mixTime));
+					camera->SetForwardDir(glm::mix(cameraDirections[i], cameraDirections[i+1], glm::smoothstep(times[i], times[i + 1], scaledTime)));
+				}
+			}
 		}
 	}
 	virtual void KeyboardDown(SDL_KeyboardEvent& key)

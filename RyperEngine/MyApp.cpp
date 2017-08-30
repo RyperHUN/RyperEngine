@@ -73,6 +73,7 @@ void CMyApp::InitWidgets()
 		glm::ivec3 globalIndex = Chunk::worldToGlobalindex(*cameraPosPtr);
 		return std::to_string(chunkPtr->GetHeight(globalIndex));
 	}));
+	///TODO CameraPath buttons: Save path, delete path, visualize path
 }
 
 bool CMyApp::Init()
