@@ -31,6 +31,7 @@
 #include "WaterRenderer.h"
 #include "Particles.h"
 #include "CameraAnimator.h"
+#include "TextureSaver.hpp"
 
 // PhysX
 #include "PhysX.h"
@@ -108,6 +109,8 @@ protected:
 	AssimpModel			geom_AnimatedMan;
 	HeightMapIsland       geom_IslandHeight;
 	HeightMapPerlin		  geom_PerlinHeight;
+
+	TextureSaver textureSaver;
 	
 
 	OGL_Mesh *mesh_Suzanne;

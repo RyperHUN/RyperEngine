@@ -8,7 +8,6 @@
 #include "UtilEngine.h"
 #include "GeometryCreator.h"
 #include "glmIncluder.h"
-#include "TextureSaver.hpp"
 
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
@@ -502,7 +501,7 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 			break;
 		case SDLK_s:
 			///TODO get the color attachment from the active framebuffer
-			TextureSaver::SaveTexture (fbo_Rendered.GetColorAttachment (), screenSize);
+			textureSaver.SaveTextureThreaded (fbo_Rendered.GetColorAttachment (), screenSize);
 			break;
 	}
 }
