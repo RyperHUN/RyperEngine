@@ -8,6 +8,7 @@
 #include "UtilEngine.h"
 #include "GeometryCreator.h"
 #include "glmIncluder.h"
+#include "TextureSaver.hpp"
 
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
@@ -498,6 +499,10 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 		case SDLK_2:
 			activeCamera->SetEye(glm::vec3(37.5, 62.36, -104.6));
 			activeCamera->SetForwardDir(glm::vec3(-0.17, -0.9, 0.37));
+			break;
+		case SDLK_s:
+			///TODO get the color attachment from the active framebuffer
+			TextureSaver::SaveTexture (fbo_Rendered.GetColorAttachment (), screenSize);
 			break;
 	}
 }

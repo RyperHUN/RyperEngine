@@ -21,7 +21,11 @@ namespace Util
 {
 
 namespace CV //CV == CONVERTER
-{ 
+{
+	inline int Index2Dto1D (int x, int y, const int width)
+	{
+		return x + y * width; 
+	}
 	inline bool IsNDC (glm::ivec2 ndc)
 	{
 		return (glm::abs(ndc.x) < 1.0f && glm::abs(ndc.y) < 1.0f);

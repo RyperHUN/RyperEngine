@@ -90,6 +90,9 @@
     <ClCompile Include="GeometryManager.cpp">
       <Filter>Utils\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="T:\OGLPack\include\lodepng.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Light.h">
@@ -219,6 +222,9 @@
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="CameraAnimator.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureSaver.hpp">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
   </ItemGroup>

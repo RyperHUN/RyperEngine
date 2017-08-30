@@ -109,6 +109,7 @@
     <ClCompile Include="MyApp.cpp" />
     <ClCompile Include="ObjParser_OGL3.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="T:\OGLPack\include\lodepng.cpp" />
     <ClCompile Include="T:\OGLPack\include\noise\noiseutils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -140,6 +141,7 @@
     <ClInclude Include="GeometryCreator.h" />
     <ClInclude Include="glFrameBuffer.h" />
     <ClInclude Include="glmIncluder.h" />
+    <ClInclude Include="TextureSaver.hpp" />
     <ClInclude Include="UtilConverters.h" />
     <ClInclude Include="gShaderProgram.h" />
     <ClInclude Include="gVertexBuffer.h" />
