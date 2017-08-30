@@ -19,19 +19,28 @@ struct TextureSaver
 		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels.get());
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+		FlipVertical(pixels.get(), screenSize);
 		std::string name = "TemporaryFiles/screenshot" + std::to_string(num++) + ".png";
 		lodepng::encode(name, pixels.get(), screenSize.x, screenSize.y,LodePNGColorType::LCT_RGB);
 	}
-	//static ByteArr FlipVertical (BYTE *ptr, glm::ivec2 size)
-	//{
-	//	size.x = size.x * 3;
-	//	ByteArr flippedImage(new BYTE(size.x * size.y * 3));
-	//	for (int x = 0; x < size.x; x++) {
-	//		for (int y = 0; y < size.y / 2; y++) {
-	//			int temp = ptr[Util::CV::Index2Dto1D(x, y, size.x)];
-	//			ptr[Util::CV::Index2Dto1D(x,y,size.x)] = ptr[Util::CV::Index2Dto1D(x, size.y - y, size.x)];
-	//			ptr[Util::CV::Index2Dto1D(x,size.y - y,size.x)] = temp;
-	//		}
-	//	}
-	//}
+	static void FlipVertical (BYTE *ptr, glm::ivec2 size)
+	{
+		int height = size.y;
+		int width = size.x;
+		int bytesPerPixel = 3;
+		for (int y = 0; y < height / 2; y++)
+		{
+			const int swapY = height - y - 1;
+			for (int x = 0; x < width; x++)
+			{
+				const int offset = bytesPerPixel* (x + y * width);
+				const int swapOffset = bytesPerPixel* (x + swapY * width);
+
+				// Swap R, G and B of the 2 pixels
+				std::swap(ptr[offset + 0], ptr[swapOffset + 0]);
+				std::swap(ptr[offset + 1], ptr[swapOffset + 1]);
+				std::swap(ptr[offset + 2], ptr[swapOffset + 2]);
+			}
+		}
+	}
 };
