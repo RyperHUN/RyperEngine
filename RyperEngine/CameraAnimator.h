@@ -45,6 +45,7 @@ struct CameraAnimator
 	float timeFromStart = 0;
 	float elapsedTime = 0;
 	bool isAnimating = false;
+	bool isDrawing = false;
 	void Update (float dt, float timeFromStart)
 	{
 		this->timeFromStart = timeFromStart;
@@ -71,21 +72,17 @@ struct CameraAnimator
 	}
 	virtual void KeyboardDown(SDL_KeyboardEvent& key)
 	{
-		if (key.keysym.sym == SDLK_k)
-		{
-			splinePoints.push_back (camera->GetEye ());
-			spline.AddControlPoint (camera->GetEye (), timeFromStart);
-			cameraDirections.push_back (camera->GetDir ());
-			if (times.size() == 0)
-				firstTime = timeFromStart;
-			
-			times.push_back (timeFromStart - firstTime);
-			splineRenderer.UpdateLinestrip(spline);
-		}
-		if (key.keysym.sym == SDLK_l)
-		{
-			isAnimating = !isAnimating;
-		}
+	}
+	void AddPoint ()
+	{
+		splinePoints.push_back(camera->GetEye());
+		spline.AddControlPoint(camera->GetEye(), timeFromStart);
+		cameraDirections.push_back(camera->GetDir());
+		if (times.size() == 0)
+			firstTime = timeFromStart;
+
+		times.push_back(timeFromStart - firstTime);
+		splineRenderer.UpdateLinestrip(spline);
 	}
 	void SaveToFile ()
 	{
@@ -93,9 +90,12 @@ struct CameraAnimator
 		boost::archive::text_oarchive ia(savedPath);
 		ia << *this;
 	}
+	void TurnDraw ()		{isDrawing = !isDrawing;	}
+	void TurnAnimation ()	{isAnimating = !isAnimating;}
 	void Draw (RenderState & state)
 	{
-		splineRenderer.Draw (state);
+		if (isDrawing)
+			splineRenderer.Draw (state);
 	}
 	void Reset ()
 	{

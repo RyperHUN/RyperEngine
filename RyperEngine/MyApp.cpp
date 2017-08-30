@@ -74,7 +74,21 @@ void CMyApp::InitWidgets()
 		glm::ivec3 globalIndex = Chunk::worldToGlobalindex(*cameraPosPtr);
 		return std::to_string(chunkPtr->GetHeight(globalIndex));
 	}));
-
+	container.AddWidget(std::make_shared<ButtonA>(glm::ivec2(0), glm::ivec2(100, 20), "Save cam path", [cameraAnimator = &cameraAnimator]{
+		cameraAnimator->SaveToFile ();
+	}));
+	container.AddWidget(std::make_shared<ButtonA>(glm::ivec2(0), glm::ivec2(100, 20), "Add new point", [cameraAnimator = &cameraAnimator] {
+		cameraAnimator->AddPoint ();
+	}));
+	container.AddWidget(std::make_shared<ButtonA>(glm::ivec2(0), glm::ivec2(100, 20), "Reset cam path", [cameraAnimator = &cameraAnimator] {
+		cameraAnimator->Reset();
+	}));
+	container.AddWidget(std::make_shared<ButtonA>(glm::ivec2(0), glm::ivec2(100, 20), "Show cam path", [cameraAnimator = &cameraAnimator] {
+		cameraAnimator->TurnDraw();
+	}));
+	container.AddWidget(std::make_shared<ButtonA>(glm::ivec2(0), glm::ivec2(100, 20), "Animate camera", [cameraAnimator = &cameraAnimator] {
+		cameraAnimator->TurnAnimation();
+	}));
 	///TODO CameraPath buttons: Save path, delete path, visualize path
 }
 

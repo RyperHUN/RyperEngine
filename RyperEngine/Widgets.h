@@ -63,7 +63,7 @@ struct ButtonA : public Widget
 		:Widget(pos, size), text(text), callback(fv)
 	{}
 
-	bool isClicked;
+	bool isClicked = false;
 	virtual void MouseDown(SDL_MouseButtonEvent& mouse) override
 	{
 		if (mouse.button == SDL_BUTTON_LEFT && isInsideMouse (mouse.x, mouse.y))
