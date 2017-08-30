@@ -5,8 +5,32 @@
 #include <boost/serialization/vector.hpp>
 //#include <spline_library\splines\uniform_cr_spline.h>
 
+struct SplineRenderer
+{
+	Geom::LineStrip lineStrip;
+	void UpdateLinestrip(Geom::Spline::ISplineUniform& spline)
+	{
+		if (!spline.IsReady())
+			return;
+
+		std::vector<glm::vec3> points;
+		for (float t = 0.0; t <= 1.0f; t += 0.01f)
+		{
+			points.push_back(spline.EvaluateUniform(t)); //TODO Uniform
+		}
+		lineStrip = Geom::LineStrip(points);
+	}
+	void Draw(RenderState& state)
+	{
+		glLineWidth(3.0f);
+		lineStrip.Draw(state);
+		glLineWidth(1.0f);
+	}
+};
+
 struct CameraAnimator
 {
+	SplineRenderer splineRenderer;
 	CameraPtr camera;
 	void SetCamera (CameraPtr camera)
 	{
@@ -56,18 +80,38 @@ struct CameraAnimator
 				firstTime = timeFromStart;
 			
 			times.push_back (timeFromStart - firstTime);
-			//TODO interpolate directions
+			splineRenderer.UpdateLinestrip(spline);
 		}
 		if (key.keysym.sym == SDLK_l)
 		{
 			isAnimating = !isAnimating;
 		}
 	}
-	void Reload ()
+	void SaveToFile ()
 	{
-		spline = Geom::Spline::CatmullRom {};
-		for(int i = 0 ; i < splinePoints.size(); i++)
-			spline.AddControlPoint (splinePoints[i], times[i]);
+		std::ofstream savedPath("savedCameraPath.txt");
+		boost::archive::text_oarchive ia(savedPath);
+		ia << *this;
+	}
+	void Draw (RenderState & state)
+	{
+		splineRenderer.Draw (state);
+	}
+	void Reset ()
+	{
+		*this = CameraAnimator {};
+	}
+	static CameraAnimator LoadFromFile ()
+	{
+		CameraAnimator animator;
+		std::ifstream savedPath("savedCameraPath.txt");
+		if (!savedPath.is_open())
+			return animator;
+
+		boost::archive::text_iarchive ia(savedPath);
+		ia >> animator;
+		animator.Reload();
+		return animator;
 	}
 	template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
@@ -75,6 +119,14 @@ struct CameraAnimator
 		ar & splinePoints;
 		ar & cameraDirections;
 		ar & times;
+	}
+private:
+	void Reload()
+	{
+		spline = Geom::Spline::CatmullRom{};
+		for (int i = 0; i < splinePoints.size(); i++)
+			spline.AddControlPoint(splinePoints[i], times[i]);
+		splineRenderer.UpdateLinestrip(spline);
 	}
 };
 
@@ -91,29 +143,3 @@ namespace serialization{
 
 }// NS serialization
 }//NS boost
-
-
-
-
-struct SplineRenderer
-{
-	Geom::LineStrip lineStrip;
-	void UpdateLinestrip (Geom::Spline::ISplineUniform& spline)
-	{
-		if (!spline.IsReady ())
-			return;
-
-		std::vector<glm::vec3> points;
-		for(float t = 0.0; t <= 1.0f; t+= 0.01f)
-		{
-			points.push_back(spline.EvaluateUniform (t)); //TODO Uniform
-		}
-		lineStrip = Geom::LineStrip(points);
-	}
-	void Draw (RenderState& state)
-	{
-		glLineWidth (5.0f);
-		lineStrip.Draw (state);
-		glLineWidth (1.0f);
-	}
-};

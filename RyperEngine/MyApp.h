@@ -96,7 +96,6 @@ protected:
 	CameraPtr activeCamera;
 	CameraPtr secondaryCamera; //TODO receive resize events also
 	CameraAnimator cameraAnimator;
-	SplineRenderer splineRenderer;
 	FrustumRenderer frustumRender;
 	SunRenderer sunRender;
 

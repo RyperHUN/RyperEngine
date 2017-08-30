@@ -21,7 +21,8 @@ CMyApp::CMyApp(void)
 	waterRenderer (quadTexturer,screenSize),
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
 	fbo_Original (0),
-	sunRender (quadTexturer, dirLight)
+	sunRender (quadTexturer, dirLight),
+	cameraAnimator (CameraAnimator::LoadFromFile ())
 {
 	shader_Simple = Shader::ShaderManager::GetShader<Shader::Simple>();
 	srand(2);
@@ -73,6 +74,7 @@ void CMyApp::InitWidgets()
 		glm::ivec3 globalIndex = Chunk::worldToGlobalindex(*cameraPosPtr);
 		return std::to_string(chunkPtr->GetHeight(globalIndex));
 	}));
+
 	///TODO CameraPath buttons: Save path, delete path, visualize path
 }
 
@@ -298,7 +300,6 @@ void CMyApp::Update()
 	}
 	cameraAnimator.SetCamera (activeCamera);
 	cameraAnimator.Update (delta_time, timeFromStart);
-	splineRenderer.UpdateLinestrip (cameraAnimator.spline);
 
 	cameraPos = activeCamera->GetEye();
 	last_time = SDL_GetTicks();
@@ -346,7 +347,7 @@ void CMyApp::Render()
 			waterRenderer.Draw(state);
 		particleRenderer.Draw (state);
 		lineStripRender.Draw(state);
-		splineRenderer.Draw (state);
+		cameraAnimator.Draw (state);
 		//particleFireworks.Render (state);
 		sunRender.DrawLensFlareEffect (state);
 
@@ -484,20 +485,6 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 			activeCamera->SetEye(glm::vec3(37.5, 62.36, -104.6));
 			activeCamera->SetForwardDir(glm::vec3(-0.17, -0.9, 0.37));
 			break;
-		case SDLK_o:
-			{
-				std::ofstream savedPath ("savedCameraPath.txt");
-				boost::archive::text_oarchive ia(savedPath);
-				ia << cameraAnimator;
-			}
-			break;
-		case SDLK_p:
-		{
-			std::ifstream savedPath ("savedCameraPath.txt");
-			boost::archive::text_iarchive ia(savedPath);
-			ia >> cameraAnimator;
-			cameraAnimator.Reload();
-		}
 	}
 }
 
