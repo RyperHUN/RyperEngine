@@ -11,7 +11,7 @@ struct IEventHandler {};
 
 struct IBlockChanged : IEventHandler
 {
-	virtual void BlockChangedHandler (BlockData&) = 0;
+	virtual void BlockChangedHandler (BlockData&, glm::vec3) = 0;
 };
 
 }

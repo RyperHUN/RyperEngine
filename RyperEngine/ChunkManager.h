@@ -156,30 +156,20 @@ struct Chunk : Ryper::NonCopyable
 private:
 	BlockData blockData[size * 2 + 1][size * 2 + 1][size * 2 + 1];
 	bool isMarkedForChange = false;
-public:
-	glm::ivec3 wBottomLeftCenterPos;
-	glm::ivec3 chunkIndex;
 	Geom::Primitive::Box* geom_Box;
 	Shader::Instanced * shader; //Can be removed, and box geom also!!
 	int amountOfCubes = 0;
 	gl::ArrayBuffer instancedVBO;
-
-	struct D3Index
+	glm::ivec3 chunkIndex;
+	glm::ivec3 wBottomLeftCenterPos;
+public:
+	glm::ivec3	 GetWorldPos()			{ return wBottomLeftCenterPos;							}
+	static float GetChunkExtent()		{ return Chunk::GetCubeSize() * Chunk::wHalfExtent * 2; }
+	glm::ivec3	 GetChunkindex() const	{ return chunkIndex;									}
+	static glm::ivec3 GetGlobalIndex(glm::ivec3 chunkIndex, glm::ivec3 localIndex)
 	{
-		int x,y,z;
-		static D3Index convertIto3DIndex (int i)
-		{
-			const int size = Chunk::GetCubeSize();
-			int z = i % size;
-			int y = (i / size) % size;
-			int x = i / (size * size);
-			return D3Index{x,y,z};
-		}
-		operator glm::ivec3 () const
-		{
-			return glm::ivec3{x, y, z};
-		}
-	};	
+		return chunkIndex * (int)Chunk::GetCubeSize() + localIndex;
+	}
 
 	Chunk(glm::ivec3 wBottomLeftCenterPos,glm::ivec3 chunkIndex, std::vector<size_t> heights)
 		:shader(shader), wBottomLeftCenterPos(wBottomLeftCenterPos), chunkIndex (chunkIndex)
@@ -217,13 +207,6 @@ public:
 		return blockData[index.x][index.y][index.z];
 	}
 
-	void ChunkModified (BlockData & changed)
-	{
-		CreateVBO();
-		if (blockChangedEvent != nullptr)
-			blockChangedEvent->BlockChangedHandler (changed);
-	}
-
 	bool GetBoxForBlock (int i, Geom::Box & result)
 	{
 		auto index = D3Index::convertIto3DIndex (i);
@@ -237,7 +220,8 @@ public:
 	//Shader must be binded before drawing
 	void Draw(RenderState state, GLuint texId)
 	{
-		UploadInstanceData();
+		if (isMarkedForChange)
+			ChunkModified ();
 
 		geom_Box->DrawInstanced (amountOfCubes, instancedVBO, [this](){SetAttribPointers();});
 	}
@@ -317,18 +301,6 @@ public:
 		
 		return result;
 	}
-	static float GetChunkExtent()
-	{
-		return Chunk::GetCubeSize() * Chunk::wHalfExtent * 2;
-	}
-	glm::ivec3 GetChunkindex () const
-	{
-		return chunkIndex;
-	}
-	static glm::ivec3 GetGlobalIndex(glm::ivec3 chunkIndex, glm::ivec3 localIndex)
-	{
-		return chunkIndex * (int)Chunk::GetCubeSize() + localIndex;
-	}
 	Geom::Box getBox ()
 	{
 		const float wExtent		= wHalfExtent * 2.0f;
@@ -343,6 +315,20 @@ public:
 		return Geom::Box {min, max};
 	}
 private:
+	void ChunkModified()
+	{
+		UploadInstanceData();
+		CreateVBO();
+		TraverseChunks ([this](int i , int j, int k){
+			if (blockChangedEvent != nullptr)
+			{
+				BlockData & block = blockData[i][j][k];
+				glm::vec3 wBlockPos = BlockData::GetWorldPos(GetWorldPos(), {i,j,k}, Chunk::wHalfExtent * 2);
+				blockChangedEvent->BlockChangedHandler(block, wBlockPos);
+			}
+		});
+		isMarkedForChange = false;
+	}
 	struct InstanceData {
 		glm::vec3 pos;
 		glm::ivec4 texId;
@@ -377,6 +363,23 @@ private:
 		auto bind = gl::MakeTemporaryBind(instancedVBO);
 		instancedVBO.data(instanceData, gl::kStaticDraw);
 	}
+public:
+	struct D3Index
+	{
+		int x, y, z;
+		static D3Index convertIto3DIndex(int i)
+		{
+			const int size = Chunk::GetCubeSize();
+			int z = i % size;
+			int y = (i / size) % size;
+			int x = i / (size * size);
+			return D3Index{ x,y,z };
+		}
+		operator glm::ivec3() const
+		{
+			return glm::ivec3{ x, y, z };
+		}
+	};
 };
 
 static Util::IslandGenerator islandGen (10);
@@ -497,9 +500,7 @@ struct ChunkManager : public IRenderable
 	{
 		int height = GetHeight(glm::ivec3(0,0,0));
 		glm::vec3 globalIndex = glm::ivec3(0, height + 1, 0);
-		BlockData& data = AddBlock(globalIndex, BlockType::TREE_BODY);
-		for(Chunk* chunk : chunks)
-			chunk->ChunkModified (data);
+		AddBlock(globalIndex, BlockType::TREE_BODY);
 	}
 	BlockData& FindBlock (glm::ivec3 globalIndex)
 	{

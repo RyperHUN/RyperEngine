@@ -153,12 +153,12 @@ public:
 				for (int j = 0; j < cubeSize; j++)
 				{
 					BlockData& data = chunk.GetBlockData({i,j,k});
-					AddBLock (data, {i,j,k}, chunk.wBottomLeftCenterPos);
+					AddBLock (data, BlockData::GetWorldPos(chunk.GetWorldPos (), {i,j,k}, Chunk::wHalfExtent * 2.0f));
 				}
 			}
 		}
 	}
-	virtual void BlockChangedHandler(BlockData& data) override
+	virtual void BlockChangedHandler(BlockData& data, glm::vec3 wBlockPos) override
 	{
 		if (data.physxPtr != nullptr && !data.isExist)
 		{
@@ -168,7 +168,7 @@ public:
 		}
 		else if (data.physxPtr == nullptr && data.isExist)
 		{
-			//TODO We need localIndex and chunk pos
+			AddBLock (data, wBlockPos);
 		}
 	}
 	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel, AnimatedCharacter * player)
@@ -214,14 +214,11 @@ public:
 		mController.mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
 	}
 private:
-	void AddBLock (BlockData& data, glm::ivec3 localIndex, glm::vec3 wChunkPos)
-	{
-		const float HalfExtent = Chunk::wHalfExtent;
-		
+	void AddBLock (BlockData& data,glm::vec3 wBlockPos)
+	{	
 		if (data.isExist)
 		{
-			glm::vec3 wPos = BlockData::GetWorldPos(wChunkPos, localIndex, HalfExtent * 2);
-			physx::PxTransform localTm(physx::PxVec3(wPos.x, wPos.y, wPos.z)); ///TODO need world pos of chunks
+			physx::PxTransform localTm(Util::glmVec3ToPhysXVec3(wBlockPos)); ///TODO need world pos of chunks
 																			   //physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
 			physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
 			physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
