@@ -212,7 +212,7 @@ struct BoundingBoxRenderer
 			if (savedIndex >= 0)
 			{
 				auto index = Chunk::D3Index::convertIto3DIndex(savedIndex);
-				BlockData & block = chunk.chunkInfo[index.x][index.y][index.z];
+				BlockData & block = chunk.GetBlockData (index);
 				block.isExist = false;
 				chunk.ChunkModified (block);
 				return; //found the block

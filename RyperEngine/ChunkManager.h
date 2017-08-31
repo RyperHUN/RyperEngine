@@ -153,7 +153,10 @@ struct Chunk : Ryper::NonCopyable
 								  // --x(--) the 2 lines are the size
 	static Event::IBlockChanged * blockChangedEvent;
 
-	BlockData chunkInfo[size * 2 + 1][size * 2 + 1][size * 2 + 1];
+private:
+	BlockData blockData[size * 2 + 1][size * 2 + 1][size * 2 + 1];
+	bool isMarkedForChange = false;
+public:
 	glm::ivec3 wBottomLeftCenterPos;
 	glm::ivec3 chunkIndex;
 	Geom::Primitive::Box* geom_Box;
@@ -172,6 +175,10 @@ struct Chunk : Ryper::NonCopyable
 			int x = i / (size * size);
 			return D3Index{x,y,z};
 		}
+		operator glm::ivec3 () const
+		{
+			return glm::ivec3{x, y, z};
+		}
 	};	
 
 	Chunk(glm::ivec3 wBottomLeftCenterPos,glm::ivec3 chunkIndex, std::vector<size_t> heights)
@@ -188,7 +195,7 @@ struct Chunk : Ryper::NonCopyable
 				MAssert (*heightIter <= cubeSize, "Height is too big to fit into chunk");
 				for(int i = 0 ; i < *heightIter; i++)
 				{
-					BlockData &data = chunkInfo[x][i][z];
+					BlockData &data = blockData[x][i][z];
 					data.isExist = 1;
 					data.type = BlockType::GRASS;
 				}
@@ -196,6 +203,18 @@ struct Chunk : Ryper::NonCopyable
 			}
 		}
 		CreateVBO();
+	}
+
+	BlockData& GetBlockData (glm::ivec3 index)
+	{
+		MAssert (index.x < GetCubeSize () && index.y < GetCubeSize() && index.z < GetCubeSize(), "Invalid index given");
+		isMarkedForChange = true;
+		return blockData[index.x][index.y][index.z];
+	}
+	BlockData const& GetBlockDataConst (glm::ivec3 index) const
+	{
+		MAssert(index.x < GetCubeSize() && index.y < GetCubeSize() && index.z < GetCubeSize(), "Invalid index given");
+		return blockData[index.x][index.y][index.z];
 	}
 
 	void ChunkModified (BlockData & changed)
@@ -209,7 +228,7 @@ struct Chunk : Ryper::NonCopyable
 	{
 		auto index = D3Index::convertIto3DIndex (i);
 		
-		if (!chunkInfo[index.x][index.y][index.z].isExist)
+		if (!blockData[index.x][index.y][index.z].isExist)
 			return false;
 
 		result = BlockData::GetWorldBox(wBottomLeftCenterPos, glm::ivec3(index.x, index.y, index.z), wHalfExtent * 2);
@@ -230,7 +249,7 @@ struct Chunk : Ryper::NonCopyable
 		TraverseChunks ([&numberOfExistingCubes, this](int i, int j, int k)
 		{
 			int index = 0;
-			BlockData const& data = chunkInfo[i][j][k];
+			BlockData const& data = blockData[i][j][k];
 			if (data.isExist)
 			{
 				index++;
@@ -347,7 +366,7 @@ private:
 		instanceData.reserve(amountOfCubes); //TODO Amount of cubes must be set before this
 		TraverseChunks([this, &instanceData](int i, int j, int k)
 		{
-			BlockData & block = chunkInfo[i][j][k];
+			BlockData & block = blockData[i][j][k];
 			if (block.isExist)
 			{
 				glm::vec3 wPos = BlockData::GetWorldPos(wBottomLeftCenterPos, glm::ivec3(i, j, k), wHalfExtent * 2);
@@ -451,7 +470,8 @@ struct ChunkManager : public IRenderable
 			int height = 0;
 			for(int i = 0; i < Chunk::GetCubeSize (); i++)
 			{
-				if(iter->second->chunkInfo[localIndex.x][i][localIndex.z].isExist)
+				BlockData const& data = iter->second->GetBlockDataConst({ localIndex.x, i, localIndex.z });
+				if(data.isExist)
 					indexOfMaxHeight = Chunk::GetGlobalIndex (iter->second->GetChunkindex (), glm::ivec3(localIndex.x, i, localIndex.z)).y;
 				else
 					break;
@@ -492,7 +512,7 @@ struct ChunkManager : public IRenderable
 			if (iter->second->GetChunkindex() == chunkIndex)
 			{
 				found = iter;
-				return found->second->chunkInfo[localIndex.x][localIndex.y][localIndex.z];
+				return found->second->GetBlockData (localIndex);
 			}
 		}
 

@@ -29,6 +29,8 @@ class PhysX : public Event::IBlockChanged
 	physx::PxCooking*				mCooking = NULL;
 	physx::PxControllerManager*     mControllerManager = NULL;
 
+	physx::PxShape*					mBlockShape = nullptr;
+
 	PX::FPSController				mController;
 	const float OPTIMAL_FIXED_TIME = 1.0f / 60.0f;
 public:
@@ -72,6 +74,9 @@ public:
 		physx::PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, physx::PxPlane(0, 1, 0, 0), *gMaterial);
 		gScene->addActor(*groundPlane);
 
+		const float HalfExtent = Chunk::wHalfExtent;
+		mBlockShape = gPhysics->createShape(physx::PxBoxGeometry(HalfExtent, HalfExtent, HalfExtent), *gMaterial);
+
 		//for (physx::PxU32 i = 0; i<5; i++)
 			//createStack(physx::PxTransform(physx::PxVec3(0, 0, 10)), 10, 2.0f);
 
@@ -111,6 +116,7 @@ public:
 		PX_UNUSED(interactive);
 		mCooking->release();
 		mControllerManager->release();
+		mBlockShape->release ();
 
 		gScene->release();
 		gDispatcher->release();
@@ -139,8 +145,6 @@ public:
 	}
 	void createChunk(Chunk & chunk)
 	{
-		const float HalfExtent = chunk.wHalfExtent;
-		physx::PxShape* shape = gPhysics->createShape(physx::PxBoxGeometry(HalfExtent, HalfExtent, HalfExtent), *gMaterial);
 		const size_t cubeSize = chunk.GetCubeSize ();
 		for (int k = 0; k < cubeSize; k++)
 		{
@@ -148,33 +152,23 @@ public:
 			{
 				for (int j = 0; j < cubeSize; j++)
 				{
-					physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
-					BlockData & data = chunk.chunkInfo[i][j][k];
-					if(data.isExist)
-					{
-						glm::vec3 wPos = BlockData::GetWorldPos (chunk.wBottomLeftCenterPos, glm::ivec3(i,j,k), HalfExtent * 2);
-						physx::PxTransform localTm(physx::PxVec3(wPos.x, wPos.y, wPos.z)); ///TODO need world pos of chunks
-						//physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
-						physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
-						data.physxPtr = body;
-						body->attachShape(*shape);
-						body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
-						//physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
-						gScene->addActor(*body);
-					}
+					BlockData& data = chunk.GetBlockData({i,j,k});
+					AddBLock (data, {i,j,k}, chunk.wBottomLeftCenterPos);
 				}
 			}
 		}
-
-		shape->release();
 	}
 	virtual void BlockChangedHandler(BlockData& data) override
 	{
-		if (data.physxPtr != nullptr)
+		if (data.physxPtr != nullptr && !data.isExist)
 		{
 			physx::PxRigidStatic* body = (physx::PxRigidStatic*)data.physxPtr;
 			gScene->removeActor (*body);
 			data.physxPtr = nullptr;
+		}
+		else if (data.physxPtr == nullptr && data.isExist)
+		{
+			//TODO We need localIndex and chunk pos
 		}
 	}
 	void createCharacter (glm::vec3 pos,glm::quat rot, AssimpModel * assimpModel, AnimatedCharacter * player)
@@ -220,6 +214,24 @@ public:
 		mController.mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
 	}
 private:
+	void AddBLock (BlockData& data, glm::ivec3 localIndex, glm::vec3 wChunkPos)
+	{
+		const float HalfExtent = Chunk::wHalfExtent;
+		
+		if (data.isExist)
+		{
+			glm::vec3 wPos = BlockData::GetWorldPos(wChunkPos, localIndex, HalfExtent * 2);
+			physx::PxTransform localTm(physx::PxVec3(wPos.x, wPos.y, wPos.z)); ///TODO need world pos of chunks
+																			   //physx::PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
+			physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
+			physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
+			data.physxPtr = body; //This is why we use non const getter
+			body->attachShape(*mBlockShape);
+			body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
+			//physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+			gScene->addActor(*body);
+		}
+	}
 	bool FixedTimeStep (float deltaTime)
 	{
 		sumTime += deltaTime;
