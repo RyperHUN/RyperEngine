@@ -143,21 +143,21 @@ public:
 		}
 		shape->release();
 	}
-	void createChunk(Chunk & chunk)
-	{
-		const size_t cubeSize = chunk.GetCubeSize ();
-		for (int k = 0; k < cubeSize; k++)
-		{
-			for (int i = 0; i < cubeSize; i++) //row
-			{
-				for (int j = 0; j < cubeSize; j++)
-				{
-					BlockData& data = chunk.GetBlockData({i,j,k});
-					AddBLock (data, BlockData::GetWorldPos(chunk.GetWorldPos (), {i,j,k}, Chunk::wHalfExtent * 2.0f));
-				}
-			}
-		}
-	}
+	//void createChunk(Chunk & chunk)
+	//{
+	//	const size_t cubeSize = chunk.GetCubeSize ();
+	//	for (int k = 0; k < cubeSize; k++)
+	//	{
+	//		for (int i = 0; i < cubeSize; i++) //row
+	//		{
+	//			for (int j = 0; j < cubeSize; j++)
+	//			{
+	//				BlockData& data = chunk.GetBlockData({i,j,k});
+	//				AddBLock (data, BlockData::GetWorldPos(chunk.GetWorldPos (), {i,j,k}, Chunk::wHalfExtent * 2.0f));
+	//			}
+	//		}
+	//	}
+	//}
 	virtual void BlockChangedHandler(BlockData& data, glm::vec3 wBlockPos) override
 	{
 		if (data.physxPtr != nullptr && !data.isExist)

@@ -230,9 +230,6 @@ void CMyApp::InitScene_Minecraft ()
 	std::swap(activeCamera, secondaryCamera);
 
 	chunkManager.Init(textureArray_blocks);
-	MAssert(chunkManager.chunks.size() > 0, "Assuming there is atleast 1 chunk");
-	for (auto& chunk : chunkManager.chunks)
-		physX.createChunk(*chunk);
 	//physX.createCharacter(cowboyObj->pos, cowboyObj->quaternion, (AssimpModel*)cowboyObj->geometry, cowboyObj);
 	physX.createFPSCharacter(playerCam->GetPos (), playerCam->GetForward ());
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");

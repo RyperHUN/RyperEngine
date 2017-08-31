@@ -192,7 +192,8 @@ public:
 				heightIter++;
 			}
 		}
-		CreateVBO();
+		isMarkedForChange = true; //Deferred loading
+		//if not deferred call ChunkModified();
 	}
 
 	BlockData& GetBlockData (glm::ivec3 index)
@@ -224,23 +225,6 @@ public:
 			ChunkModified ();
 
 		geom_Box->DrawInstanced (amountOfCubes, instancedVBO, [this](){SetAttribPointers();});
-	}
-	
-	///TODO Instance data as attribute
-	void UploadInstanceData ()
-	{
-		int numberOfExistingCubes = 0;
-		TraverseChunks ([&numberOfExistingCubes, this](int i, int j, int k)
-		{
-			int index = 0;
-			BlockData const& data = blockData[i][j][k];
-			if (data.isExist)
-			{
-				index++;
-				numberOfExistingCubes++;
-			}
-		});
-		amountOfCubes = numberOfExistingCubes;
 	}
 
 	void TraverseChunks (std::function<void(int,int,int)> fv)
@@ -317,7 +301,7 @@ public:
 private:
 	void ChunkModified()
 	{
-		UploadInstanceData();
+		amountOfCubes = CountExistingCubes();
 		CreateVBO();
 		TraverseChunks ([this](int i , int j, int k){
 			if (blockChangedEvent != nullptr)
@@ -349,7 +333,7 @@ private:
 	void CreateVBO()
 	{
 		std::vector<InstanceData> instanceData;
-		instanceData.reserve(amountOfCubes); //TODO Amount of cubes must be set before this
+		instanceData.reserve(amountOfCubes);
 		TraverseChunks([this, &instanceData](int i, int j, int k)
 		{
 			BlockData & block = blockData[i][j][k];
@@ -362,6 +346,21 @@ private:
 
 		auto bind = gl::MakeTemporaryBind(instancedVBO);
 		instancedVBO.data(instanceData, gl::kStaticDraw);
+	}
+	int CountExistingCubes()
+	{
+		int numberOfExistingCubes = 0;
+		TraverseChunks([&numberOfExistingCubes, this](int i, int j, int k)
+		{
+			int index = 0;
+			BlockData const& data = blockData[i][j][k];
+			if (data.isExist)
+			{
+				index++;
+				numberOfExistingCubes++;
+			}
+		});
+		return numberOfExistingCubes;
 	}
 public:
 	struct D3Index
