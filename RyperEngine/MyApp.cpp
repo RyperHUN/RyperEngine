@@ -283,45 +283,49 @@ void CMyApp::Update()
 {
 	static Uint32 last_time = SDL_GetTicks();
 	static float timeFromStart = 0;
-	float delta_time = (SDL_GetTicks() - last_time)/1000.0f;
-	if(delta_time <= 0.0f) 
+	float delta_time = (SDL_GetTicks() - last_time) / 1000.0f;
+	if (delta_time <= 0.0f)
 		delta_time = 0.00001f; //Fixes init bug
-	else if (delta_time < FixedFps)
-	{
-		DWORD val  = (FixedFps - delta_time) * 1000.0f;
-		Sleep(val);
-	}
-
 	if (IsFixFps)
 	{
-		delta_time = FixedFps;
-		timeFromStart += FixedFps;
+		if (delta_time < FixedFps)
+		{
+			DWORD val = (FixedFps - delta_time) * 1000.0f;
+			Sleep(val);
+		}
+
+		if (IsFixFps)
+		{
+			delta_time = FixedFps;
+			timeFromStart += FixedFps;
+		}
 	}
 	else
 		timeFromStart = SDL_GetTicks() / 1000.0f;
 
 	activeCamera->Update(delta_time);
+	secondaryCamera->Update(delta_time);
 	if (cameraFocusIndex >= 0)
 		activeCamera->SetSelected(gameObjs[cameraFocusIndex]->pos);
-	spotLight.direction = activeCamera->GetDir ();
-	spotLight.position  = activeCamera->GetEye ();
+	spotLight.direction = activeCamera->GetDir();
+	spotLight.position = activeCamera->GetEye();
 
-	if(IsWaterRendering)
+	if (IsWaterRendering)
 		waterRenderer.Update(delta_time);
-	particleFireworks.Update (delta_time);
-	particleRenderer.Update (delta_time);
+	particleFireworks.Update(delta_time);
+	particleRenderer.Update(delta_time);
 
 	// Update gameObj;
-	for(auto& obj : gameObjs)
-		obj->Animate (timeFromStart, delta_time);
-	for(auto& light : lightManager.shaderLights)
+	for (auto& obj : gameObjs)
+		obj->Animate(timeFromStart, delta_time);
+	for (auto& light : lightManager.shaderLights)
 		light.light->Animate(timeFromStart, delta_time);
 
 	physX.stepPhysics(delta_time, false, controller); //TODO Save player ref
 
 	if (gameObjs.size() > 0 && dynamic_cast<AnimatedCharacter*>(gameObjs.front()) != nullptr)
 	{
-		activeCamera->AddYawFromSelected (((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
+		activeCamera->AddYawFromSelected(((AnimatedCharacter*)gameObjs.front())->yaw); //TODO Save player ref
 	}
 	cameraAnimator.SetCamera (activeCamera);
 	cameraAnimator.Update (delta_time, timeFromStart);
