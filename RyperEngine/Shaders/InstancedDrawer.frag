@@ -149,7 +149,7 @@ void main()
 	float lightValue = ShadowCalculation (FS.fragPosLightSpace4);
 	vec3 kaColor = ka * default_color.xyz;
 	vec3 kdColor = vec3(0);
-	//kdColor += lightValue * calcDirLight (uDirlight,normal, viewDir, FS.texCoord) * default_color.xyz;
+	kdColor += lightValue * calcDirLight (uDirlight,normal, viewDir, FS.texCoord) * default_color.xyz;
 	for(int i = 0 ; i < uPointLightNum; i++)
 		kdColor += calcPointLight (uPointlights[i], normal, viewDir, FS.wFragPos, FS.texCoord) * default_color.xyz;
 	fs_out_col = vec4(kaColor + kdColor, 1);

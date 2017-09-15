@@ -40,8 +40,8 @@ namespace Util
 		{
 			forward  = glm::normalize(forward);
 			globalUp = glm::normalize(globalUp);
-			glm::vec3 right = glm::cross(forward,globalUp);
-			glm::vec3 up = glm::cross(right, forward);
+			glm::vec3 right = glm::normalize(glm::cross(forward,globalUp));
+			glm::vec3 up = glm::normalize(glm::cross(right, forward));
 			return BasisVectors {forward, up, right};
 		}
 		static glm::mat4 createTBNMatrix (glm::vec3 forward, glm::vec3 globalUp = glm::vec3(0, 1, 0))

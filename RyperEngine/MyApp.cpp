@@ -432,6 +432,7 @@ void CMyApp::RenderExtra(RenderState & state)
 	}
 	if (IsShadowMapTextureDebug)
 	{
+		auto depthTest = gl::TemporaryDisable(gl::kDepthTest);
 		quadTexturer.Draw(state.shadowMap, false, QuadTexturer::POS::TOP_RIGHT, 0.8);
 	}
 }
