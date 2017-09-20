@@ -27,7 +27,7 @@ struct Ray
 		//float cZ = ReadDepthValueNdc (pX, pY);
 
 		glm::vec4 clipping(clip.x, clip.y, 0, 1.0);
-		glm::mat4 PVInv = glm::inverse(camera->GetViewMatrix()) * glm::inverse(camera->GetProj()); //RayDirMatrix can be added here
+		glm::mat4 PVInv = glm::inverse(camera->GetProj() * camera->GetViewMatrix()); //RayDirMatrix can be added here
 		glm::vec3 world = Util::CV::Transform(PVInv, clipping);
 
 		Ray clickRay(camera->GetEye(), world - camera->GetEye());
