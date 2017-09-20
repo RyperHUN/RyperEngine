@@ -8,13 +8,15 @@ struct Ray
 	glm::vec3 origin;
 	glm::vec3 direction;
 	glm::vec3 dir_inv;
-	static Ray createRay(glm::vec3 o, glm::vec3 d)
+	Ray (glm::vec3 eye, glm::vec3 direction)
 	{
-		Ray ray;
-		ray.origin = o;
-		ray.direction = glm::normalize(d);
-		ray.dir_inv = (1.0f / d);
-		return ray;
+		origin = eye;
+		direction = glm::normalize(direction);
+		dir_inv = (1.0f / direction);
+	}
+	static Ray createRay(glm::vec3 eye, glm::vec3 direction)
+	{
+		return Ray(eye, direction);;
 	}
 	static float intersection(Geom::Box &b, Ray const& r) {
 		float t1 = (b.min[0] - r.origin[0])*r.dir_inv[0];

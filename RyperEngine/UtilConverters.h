@@ -52,6 +52,13 @@ namespace CV //CV == CONVERTER
 		glm::vec3 result (result4.x / result4.w, result4.y / result4.w, result4.z / result4.w);
 		return result;
 	}
+	//Applies perspective division by default
+	inline glm::vec3 Transform(glm::mat4 mat, glm::vec4 vec)
+	{
+		glm::vec4 result4 = mat * vec;
+		glm::vec3 result(result4.x / result4.w, result4.y / result4.w, result4.z / result4.w);
+		return result;
+	}
 	
 	//@param[in] uv Texture coordinates, (0,0) in Top Left corner
 	inline glm::vec2 UVToNdc (glm::vec2 const& uv)

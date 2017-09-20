@@ -137,9 +137,8 @@ struct BoundingBoxRenderer
 			}
 		}
 	}
-	int FindObject(glm::vec3 eye, glm::vec3 world)
+	int FindObject(Ray ray)
 	{
-		Ray ray = Ray::createRay(eye, world - eye);
 		float smallest = -1.0f;
 		int savedIndex = -1;
 		for (int i = 0; i < gameObjs.size(); i++)
@@ -160,10 +159,9 @@ struct BoundingBoxRenderer
 		return savedIndex;
 	}
 	std::map<float,size_t> chunkIndices;
-	void FindChunk (glm::vec3 eye, glm::vec3 world, ChunkManager &manager)
+	void FindChunk (Ray ray, ChunkManager &manager)
 	{
 		chunkIndices.clear();
-		Ray ray = Ray::createRay(eye, world - eye);
 		float smallest = -1.0f;
 		int savedIndex = -1;
 		for (int i = 0; i < manager.chunks.size(); i++)

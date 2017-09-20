@@ -9,6 +9,7 @@
 #include "GeometryCreator.h"
 #include "glmIncluder.h"
 #include <Windows.h>
+#include "Ray.h"
 
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
@@ -562,14 +563,15 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 
 		glm::vec4 clipping(clip.x, clip.y, 0, 1.0);
 		glm::mat4 PVInv =  glm::inverse(activeCamera->GetViewMatrix()) * glm::inverse(activeCamera->GetProj()); //RayDirMatrix can be added here
-		glm::vec4 world4 = PVInv * clipping;
-		glm::vec3 world = glm::vec3(world4) / world4.w;
+		glm::vec3 world = Util::CV::Transform(PVInv, clipping);
 
-		int index = boundingBoxRenderer.FindObject(activeCamera->GetEye(), world);
+		Ray clickRay(activeCamera->GetEye(), world);
+
+		int index = boundingBoxRenderer.FindObject(clickRay);
 		if(index >= 0)
 			activeCamera->SetSelected (gameObjs[index]->pos); //TODo better solution, what if the selected moves?
 
-		boundingBoxRenderer.FindChunk (activeCamera->GetEye(), world, chunkManager);
+		boundingBoxRenderer.FindChunk (clickRay, chunkManager);
 
 		cameraFocusIndex = index;
 	}
