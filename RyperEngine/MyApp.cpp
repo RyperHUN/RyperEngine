@@ -554,18 +554,8 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 		container.MouseDown (mouse);
 	if (mouse.button == SDL_BUTTON_RIGHT) //right Click
 	{
-		int pX = mouse.x; //Pixel X
-		int pY = mouse.y;
-		glm::vec2 clip = Util::pixelToNdc (glm::ivec2(pX,pY), screenSize);
-
-		///Reading from Depth buffer, not the fastest
-		//float cZ = ReadDepthValueNdc (pX, pY);
-
-		glm::vec4 clipping(clip.x, clip.y, 0, 1.0);
-		glm::mat4 PVInv =  glm::inverse(activeCamera->GetViewMatrix()) * glm::inverse(activeCamera->GetProj()); //RayDirMatrix can be added here
-		glm::vec3 world = Util::CV::Transform(PVInv, clipping);
-
-		Ray clickRay(activeCamera->GetEye(), world);
+		glm::ivec2 pixel(mouse.x, mouse.y);
+		Ray clickRay = Ray::createRayFromPixel(pixel,screenSize, activeCamera);
 
 		int index = boundingBoxRenderer.FindObject(clickRay);
 		if(index >= 0)

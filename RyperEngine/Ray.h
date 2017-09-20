@@ -2,6 +2,7 @@
 
 #include "glmIncluder.h"
 #include "Geometry.h"
+#include "Camera.h"
 
 struct Ray
 {
@@ -17,6 +18,20 @@ struct Ray
 	static Ray createRay(glm::vec3 eye, glm::vec3 direction)
 	{
 		return Ray(eye, direction);;
+	}
+	static Ray createRayFromPixel (glm::ivec2 pixel, glm::ivec2 screenSize, CameraPtr camera)
+	{
+		glm::vec2 clip = Util::pixelToNdc(pixel, screenSize);
+
+		///Reading from Depth buffer, not the fastest
+		//float cZ = ReadDepthValueNdc (pX, pY);
+
+		glm::vec4 clipping(clip.x, clip.y, 0, 1.0);
+		glm::mat4 PVInv = glm::inverse(camera->GetViewMatrix()) * glm::inverse(camera->GetProj()); //RayDirMatrix can be added here
+		glm::vec3 world = Util::CV::Transform(PVInv, clipping);
+
+		Ray clickRay(camera->GetEye(), world - camera->GetEye());
+		return clickRay;
 	}
 	static float intersection(Geom::Box &b, Ray const& r) {
 		float t1 = (b.min[0] - r.origin[0])*r.dir_inv[0];
