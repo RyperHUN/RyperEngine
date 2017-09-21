@@ -64,30 +64,3 @@ struct Ray
 		return -1.0f;
 	}
 };
-
-class RayStorage
-{
-	std::vector<Ray> rays;
-	int index = 0;
-public:
-	const int maxRays;
-	RayStorage (int maxRays)
-		:maxRays(maxRays)
-	{
-		rays.reserve (maxRays);
-	}
-	void push(Ray ray)
-	{
-		if (maxRays != rays.size())
-			rays.push_back(ray);
-		else
-		{
-			rays[index++] = ray;
-			index = index % maxRays;
-		}
-	}
-	const std::vector<Ray>& GetRays () const
-	{
-		return rays;
-	}
-};

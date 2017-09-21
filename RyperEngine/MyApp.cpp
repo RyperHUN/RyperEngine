@@ -23,8 +23,7 @@ CMyApp::CMyApp(void)
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
 	fbo_Original (0),
 	sunRender (quadTexturer, dirLight),
-	cameraAnimator (CameraAnimator::LoadFromFile ()),
-	rayStorage(5)
+	cameraAnimator (CameraAnimator::LoadFromFile ())
 {
 	shader_Simple = Shader::ShaderManager::GetShader<Shader::Simple>();
 	srand(2);

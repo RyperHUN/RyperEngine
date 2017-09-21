@@ -34,6 +34,7 @@
 #include "TextureSaver.hpp"
 
 #include "Ray.h"
+#include "Containers.h"
 
 // PhysX
 #include "PhysX.h"
@@ -114,7 +115,7 @@ protected:
 
 	TextureSaver textureSaver;
 	
-	RayStorage rayStorage;
+	CircularVector<Ray, 5> rayStorage;
 
 	OGL_Mesh *mesh_Suzanne;
 	OGL_Mesh *m_cow_mesh;

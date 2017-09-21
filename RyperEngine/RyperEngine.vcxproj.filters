@@ -227,6 +227,9 @@
     <ClInclude Include="TextureSaver.hpp">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Containers.h">
+      <Filter>Utils\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
