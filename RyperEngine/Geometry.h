@@ -40,6 +40,14 @@ struct AnimatedVertexData {
 };
 
 namespace Geom{
+	struct Segment 
+	{
+		glm::vec3 wBegin, wEnd;
+		Segment(glm::vec3 wBegin, glm::vec3 wEnd)
+			:wBegin(wBegin), wEnd(wEnd)
+		{
+		}
+	};
 	struct Box
 	{
 		glm::vec3 max;

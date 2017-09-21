@@ -9,7 +9,6 @@
 #include "GeometryCreator.h"
 #include "glmIncluder.h"
 #include <Windows.h>
-#include "Ray.h"
 
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
@@ -24,7 +23,8 @@ CMyApp::CMyApp(void)
 	geom_PerlinHeight (Vec2(-3,3), Vec2(3,-3)),
 	fbo_Original (0),
 	sunRender (quadTexturer, dirLight),
-	cameraAnimator (CameraAnimator::LoadFromFile ())
+	cameraAnimator (CameraAnimator::LoadFromFile ()),
+	rayStorage(5)
 {
 	shader_Simple = Shader::ShaderManager::GetShader<Shader::Simple>();
 	srand(2);
@@ -436,6 +436,12 @@ void CMyApp::RenderExtra(RenderState & state)
 		auto depthTest = gl::TemporaryDisable(gl::kDepthTest);
 		quadTexturer.Draw(state.shadowMap, false, QuadTexturer::POS::TOP_RIGHT, 0.8);
 	}
+	for(const Ray& ray : rayStorage.GetRays ())
+	{
+		Geom::Segment segment{ray.origin, ray.origin + ray.direction * 400.0f};
+		segmentRenderer.Draw (state, segment);
+	}
+	
 }
 
 void CMyApp::PrepareRendering(RenderState & state)
@@ -556,6 +562,7 @@ void CMyApp::MouseDown(SDL_MouseButtonEvent& mouse)
 	{
 		glm::ivec2 pixel(mouse.x, mouse.y);
 		Ray clickRay = Ray::createRayFromPixel(pixel,screenSize, activeCamera);
+		rayStorage.push (clickRay);
 
 		int index = boundingBoxRenderer.FindObject(clickRay);
 		if(index >= 0)

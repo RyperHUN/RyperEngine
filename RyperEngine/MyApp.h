@@ -33,6 +33,8 @@
 #include "CameraAnimator.h"
 #include "TextureSaver.hpp"
 
+#include "Ray.h"
+
 // PhysX
 #include "PhysX.h"
 
@@ -112,6 +114,7 @@ protected:
 
 	TextureSaver textureSaver;
 	
+	RayStorage rayStorage;
 
 	OGL_Mesh *mesh_Suzanne;
 	OGL_Mesh *m_cow_mesh;
@@ -155,6 +158,7 @@ protected:
 	TextRenderer textRenderer;
 	SkyboxRenderer skyboxRenderer;
 	WaterRenderer waterRenderer;
+	SegmentRenderer segmentRenderer;
 
 	Engine::Particle::Fireworks::ParticleSystem particleFireworks;
 	Engine::Particle::ParticleRenderer particleRenderer;

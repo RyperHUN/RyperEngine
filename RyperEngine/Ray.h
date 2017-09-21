@@ -1,7 +1,6 @@
 #pragma once
 
 #include "glmIncluder.h"
-#include "Geometry.h"
 #include "Camera.h"
 
 struct Ray
@@ -9,15 +8,16 @@ struct Ray
 	glm::vec3 origin;
 	glm::vec3 direction;
 	glm::vec3 dir_inv;
+	Ray () {}
 	Ray (glm::vec3 eye, glm::vec3 direction)
 	{
-		origin = eye;
-		direction = glm::normalize(direction);
-		dir_inv = (1.0f / direction);
+		this->origin = eye;
+		this->direction = glm::normalize(direction);
+		this->dir_inv = (1.0f / direction);
 	}
 	static Ray createRay(glm::vec3 eye, glm::vec3 direction)
 	{
-		return Ray(eye, direction);;
+		return Ray(eye, direction);
 	}
 	static Ray createRayFromPixel (glm::ivec2 pixel, glm::ivec2 screenSize, CameraPtr camera)
 	{
@@ -62,5 +62,32 @@ struct Ray
 			return 0.0000001; //Ray is inside box;
 		}
 		return -1.0f;
+	}
+};
+
+class RayStorage
+{
+	std::vector<Ray> rays;
+	int index = 0;
+public:
+	const int maxRays;
+	RayStorage (int maxRays)
+		:maxRays(maxRays)
+	{
+		rays.reserve (maxRays);
+	}
+	void push(Ray ray)
+	{
+		if (maxRays != rays.size())
+			rays.push_back(ray);
+		else
+		{
+			rays[index++] = ray;
+			index = index % maxRays;
+		}
+	}
+	const std::vector<Ray>& GetRays () const
+	{
+		return rays;
 	}
 };

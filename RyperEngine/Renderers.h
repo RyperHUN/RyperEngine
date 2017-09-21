@@ -488,3 +488,36 @@ struct SunRenderer
 		return Util::CV::Transform (PVM, wPos); //TODO Fix this offset??
 	}
 };
+
+struct SegmentRenderer 
+{
+	Shader::BoundingBox *shader;
+	SegmentRenderer()
+	{
+		shader = Shader::ShaderManager::GetShader<Shader::BoundingBox>();
+	}
+	void Draw (RenderState const& state, Geom::Segment segment)
+	{
+		shader->On();
+		{
+			shader->SetUniform("PVM", state.PV);
+			gl::VertexArray VAO;
+			auto bindVao = gl::MakeTemporaryBind(VAO);
+			{
+				gl::ArrayBuffer VBO;
+				auto bindVBO = gl::MakeTemporaryBind(VBO);
+				{
+					std::vector<glm::vec3> line = {segment.wBegin, segment.wEnd};
+
+					gl::VertexAttrib attrib(0);
+					attrib.pointer(3, gl::kFloat);
+					attrib.enable();
+					VBO.data(line, gl::kDynamicDraw);
+
+					gl::DrawArrays(gl::PrimitiveType::kLines, 0, line.size() * 3);
+				}
+			}
+		}
+		shader->Off();
+	}
+};
