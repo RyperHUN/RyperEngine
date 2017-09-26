@@ -28,6 +28,7 @@ struct Material
 	{}
 	virtual void uploadToGpu (gShaderProgram &shader)
 	{
+		shader.SetUniform("color", kd);
 		std::string prefix = "uMaterial.";
 		shader.SetUniform ((prefix + "ka").c_str(), ka);
 		shader.SetUniform ((prefix + "kd").c_str(), kd);
