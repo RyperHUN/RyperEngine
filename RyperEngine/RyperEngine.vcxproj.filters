@@ -230,6 +230,9 @@
     <ClInclude Include="Containers.h">
       <Filter>Utils\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="PxCollisionManager.h">
+      <Filter>PhysX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

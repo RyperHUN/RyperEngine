@@ -8,6 +8,7 @@
 #include "GameObjects.h"
 
 #include "PxController.h"
+#include "PxCollisionManager.h"
 #include "Events.h"
 
 #define PVD_HOST "127.0.0.1"
@@ -32,6 +33,7 @@ class PhysX : public Event::IBlockChanged
 	physx::PxShape*					mBlockShape = nullptr;
 
 	PX::FPSController				mController;
+	PX::CollisionManager			mCollisionManager;
 	const float OPTIMAL_FIXED_TIME = 1.0f / 60.0f;
 public:
 	void initPhysics(bool interactive)
@@ -59,7 +61,9 @@ public:
 		sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 		gDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 		sceneDesc.cpuDispatcher = gDispatcher;
-		sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+		//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+		sceneDesc.filterShader = PX::CollisionManager::SampleFilterShader;
+		sceneDesc.simulationEventCallback = (physx::PxSimulationEventCallback*)(&mCollisionManager);
 		gScene = gPhysics->createScene(sceneDesc);
 
 		physx::PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
@@ -86,6 +90,7 @@ public:
 		gScene->setFlag(physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS, true);
 
 		mControllerManager = PxCreateControllerManager(*gScene);
+		
 	}
 	float sumTime = 0;
 	void stepPhysics(float deltaTime, bool interactive, Engine::Controller & controller)
@@ -192,6 +197,20 @@ public:
 
 		mController.mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
 	}
+	void addPickup (glm::vec3 pos)
+	{
+		physx::PxShape* shape = gPhysics->createShape(physx::PxSphereGeometry(3.0f), *gMaterial);
+		physx::PxTransform localTm(Util::glmVec3ToPhysXVec3(pos));
+
+		physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
+		physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
+		
+		body->attachShape(*shape);
+		body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
+		
+		gScene->addActor(*body);
+		mCollisionManager.SetPickup(body);
+	}
 	void createFPSCharacter(glm::vec3& pos, glm::vec3& forwardVec)
 	{
 		mController.playerPos   = &pos;
@@ -212,6 +231,7 @@ public:
 		desc.reportCallback = NULL; // Meg lehet adni neki osztalyt
 
 		mController.mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
+		mCollisionManager.SetPlayer(mController.mController->getActor());
 	}
 private:
 	void AddBLock (BlockData& data,glm::vec3 wBlockPos)
