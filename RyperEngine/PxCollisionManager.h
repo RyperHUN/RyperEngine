@@ -8,8 +8,9 @@ namespace PX
 
 class CollisionManager : physx::PxSimulationEventCallback
 {
-	physx::PxRigidDynamic* mPlayer = nullptr;
-	physx::PxRigidStatic* mPickup = nullptr;
+	physx::PxRigidDynamic*	mPlayer = nullptr;
+	physx::PxRigidStatic*	mPickup = nullptr;
+	physx::PxScene*			mScene	= nullptr;
 public:
 	struct FilterGroup
 	{
@@ -31,6 +32,7 @@ public:
 		mPickup = pickup;
 		setupFiltering(pickup, FilterGroup::ePICKUP, FilterGroup::ePLAYER);
 	}
+	void SetScene(physx::PxScene *scene) {mScene = scene;}
 	virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override
 	{
 		//for (physx::PxU32 i = 0; i < nbPairs; i++)
@@ -62,6 +64,7 @@ public:
 			if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 				continue;
 
+			//TODO Check some kind of type safetiness
 			if ((pairs[i].otherActor == mPlayer) && (pairs[i].triggerActor == mPickup))
 			{
 				std::cout << "pickup" << std::endl;

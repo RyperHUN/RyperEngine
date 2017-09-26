@@ -90,7 +90,7 @@ public:
 		gScene->setFlag(physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS, true);
 
 		mControllerManager = PxCreateControllerManager(*gScene);
-		
+		mCollisionManager.SetScene(gScene);
 	}
 	float sumTime = 0;
 	void stepPhysics(float deltaTime, bool interactive, Engine::Controller & controller)

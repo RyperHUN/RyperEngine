@@ -241,7 +241,8 @@ void CMyApp::InitScene_Minecraft ()
 	float radius = 3.0f;
 	Sphere* geomSphere = new Sphere{radius};
 	geomSphere->Create (10, 10);
-	renderObjs.push_back(new GameObj (shader_Simple,  geomSphere, materialMan, pickupWPos));
+	gShaderProgram * shader = Shader::ShaderManager::GetShader<Shader::LightRender>();
+	renderObjs.push_back(new GameObj (shader,  geomSphere, materialMan, pickupWPos));
 	
 	renderObjs.push_back (&chunkManager);
 	renderObjs.push_back (cowboyObj);
