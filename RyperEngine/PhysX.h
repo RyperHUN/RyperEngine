@@ -197,14 +197,16 @@ public:
 
 		mController.mController = static_cast<physx::PxCapsuleController*>(mControllerManager->createController(desc));
 	}
-	void addPickup (glm::vec3 pos)
+	void addPickup (glm::vec3 pos, float radius)
 	{
-		physx::PxShape* shape = gPhysics->createShape(physx::PxSphereGeometry(3.0f), *gMaterial);
+		physx::PxShape* shape = gPhysics->createShape(physx::PxSphereGeometry(radius), *gMaterial, true);
+		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+		shape->setFlag (physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 		physx::PxTransform localTm(Util::glmVec3ToPhysXVec3(pos));
 
 		physx::PxTransform t = physx::PxTransform(physx::PxVec3(0, 0, 0));
 		physx::PxRigidStatic* body = gPhysics->createRigidStatic(t.transform(localTm));
-		
+
 		body->attachShape(*shape);
 		body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
 		

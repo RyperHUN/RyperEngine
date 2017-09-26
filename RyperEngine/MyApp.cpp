@@ -235,6 +235,13 @@ void CMyApp::InitScene_Minecraft ()
 	physX.createFPSCharacter(playerCam->GetPos (), playerCam->GetForward ());
 	MAssert(gameObjs.size() > 0, "For camera follow we need atleast 1 gameobject in the array");
 	cameraFocusIndex = 0;
+
+	glm::vec3 pickupWPos(4, 43, -28);
+	physX.addPickup (pickupWPos, 3);
+	float radius = 3.0f;
+	Sphere* geomSphere = new Sphere{radius};
+	geomSphere->Create (10, 10);
+	renderObjs.push_back(new GameObj (shader_Simple,  geomSphere, materialMan, pickupWPos));
 	
 	renderObjs.push_back (&chunkManager);
 	renderObjs.push_back (cowboyObj);

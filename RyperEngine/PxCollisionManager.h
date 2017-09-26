@@ -8,8 +8,8 @@ namespace PX
 
 class CollisionManager : physx::PxSimulationEventCallback
 {
-	physx::PxActor* mPlayer = nullptr;
-	physx::PxActor* mPickup = nullptr;
+	physx::PxRigidDynamic* mPlayer = nullptr;
+	physx::PxRigidStatic* mPickup = nullptr;
 public:
 	struct FilterGroup
 	{
@@ -21,13 +21,15 @@ public:
 	};
 
 	CollisionManager () {}
-	void SetPlayer (physx::PxActor* player)
+	void SetPlayer (physx::PxRigidDynamic* player)
 	{
 		mPlayer = player;
+		setupFiltering(player, FilterGroup::ePLAYER, FilterGroup::ePICKUP);
 	}
-	void SetPickup(physx::PxActor* pickup)
+	void SetPickup(physx::PxRigidStatic* pickup)
 	{
 		mPickup = pickup;
+		setupFiltering(pickup, FilterGroup::ePICKUP, FilterGroup::ePLAYER);
 	}
 	virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override
 	{
@@ -60,13 +62,12 @@ public:
 			if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 				continue;
 
-			//if ((pairs[i].otherActor == mSubmarineActor) && (pairs[i].triggerActor == gTreasureActor))
-			//{
-			//	gTreasureFound = true;
-			//}
+			if ((pairs[i].otherActor == mPlayer) && (pairs[i].triggerActor == mPickup))
+			{
+				std::cout << "pickup" << std::endl;
+			}
 		}
 	}
-
 	static void setupFiltering(physx::PxRigidActor* actor, physx::PxU32 filterGroup, physx::PxU32 filterMask)
 	{
 		physx::PxFilterData filterData;
