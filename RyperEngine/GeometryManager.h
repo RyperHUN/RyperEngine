@@ -244,4 +244,14 @@ public:
 	}
 };
 
+class GeometryCreator
+{
+	HeightMapBezier*		geom_Bezier;
+	TriangleMeshLoaded*		geom_Suzanne;
+	TriangleMeshLoaded*		geom_Cow;
+	//AssimpModel*			geom_Man;
+	HeightMapIsland*		geom_IslandHeight;
+	HeightMapPerlin*		geom_PerlinHeight;
+};
+
 } //NS Geom

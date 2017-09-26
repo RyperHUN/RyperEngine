@@ -13,9 +13,7 @@
 CMyApp::CMyApp(void)
 	:/*geom_Man{ "Model/nanosuit_reflection/nanosuit.obj" }*/\
 	geom_Man { "Model/model.dae" },
-	geom_AnimatedMan{"Model/model.dae"},
 	boundingBoxRenderer (gameObjs),
-	checkbox(glm::ivec2(50, 50), glm::ivec2(20, 20), "MSAA", &IsMSAAOn, textRenderer),
 	textRenderer (quadTexturer),
 	container (glm::ivec2(50, 50)),
 	skyboxRenderer (-1),
@@ -102,9 +100,6 @@ bool CMyApp::Init()
 	glEnable(GL_CULL_FACE);		// kapcsoljuk be a hatrafele nezo lapok eldobasat
 	glEnable(GL_DEPTH_TEST);	// mélységi teszt bekapcsolása (takarás)
 	glEnable(GL_MULTISAMPLE);
-
-	geom_Sphere = Sphere (1.0f);
-	geom_Sphere.Create (30,30);
 
 	//////////////////////////////////////////////////////////
 	// shaderek loading
@@ -678,9 +673,11 @@ void CMyApp::InitDeferred()
 	renderObjs.clear();
 
 	renderObjs.push_back(&skyboxRenderer);
+	Sphere* geom_Sphere = new Sphere(1.0f);
+	geom_Sphere->Create (10,10); //TODO Add geom sphere from geometry manager
 	for(int i = 0 ; i < 30; i++)
 	{
-		GameObj *gameObj  = new GameObj{&shader_DeferredGeometry, &geom_Sphere, MaterialCreator::GetRandomMaterial (), Util::randomVec(-10, 10), Util::randomVec(0.5,3)};
+		GameObj *gameObj  = new GameObj{&shader_DeferredGeometry, geom_Sphere, MaterialCreator::GetRandomMaterial (), Util::randomVec(-10, 10), Util::randomVec(0.5,3)};
 		renderObjs.push_back (gameObj);
 	}
 }

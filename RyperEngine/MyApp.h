@@ -104,12 +104,10 @@ protected:
 	SunRenderer sunRender;
 
 	// melysegi puffer kirajzolasa
-	Sphere				geom_Sphere;
 	HeightMapBezier		geom_Bezier;
 	TriangleMeshLoaded  geom_Suzanne;
 	TriangleMeshLoaded  geom_Cow;
 	AssimpModel			geom_Man;
-	AssimpModel			geom_AnimatedMan;
 	HeightMapIsland       geom_IslandHeight;
 	HeightMapPerlin		  geom_PerlinHeight;
 
@@ -165,7 +163,6 @@ protected:
 	Engine::Particle::ParticleRenderer particleRenderer;
 
 	//Widgets
-	Checkbox checkbox;
 	Container container;
 
 	PhysX physX;
