@@ -137,6 +137,7 @@ bool CMyApp::Init()
 	skyboxRenderer.SetTexture(textureCube_id);
 	sunRender.Init (tex_sun);
 	
+	//TODO Particle system add support for non texture array
 	Engine::Particle::ParticleSystem system { texArray_smoke, 39, {true, true, true}};
 	system.SetFunctions (Engine::Particle::ParticleUpdateSmoke, Engine::Particle::ParticleRegeneratorSmoke);
 	system.GenParticles(70);
@@ -382,7 +383,7 @@ void CMyApp::Render()
 		if (IsWaterRendering)
 			waterRenderer.Draw(state);
 		particleRenderer.Draw (state);
-		lineStripRender.Draw(state);
+		//lineStripRender.Draw(state);
 		cameraAnimator.Draw (state);
 		//particleFireworks.Render (state);
 		sunRender.DrawLensFlareEffect (state);
@@ -435,12 +436,11 @@ void CMyApp::RenderExtra(RenderState & state)
 		auto depthTest = gl::TemporaryDisable(gl::kDepthTest);
 		quadTexturer.Draw(state.shadowMap, false, QuadTexturer::POS::TOP_RIGHT, 0.8);
 	}
-	for(const Ray& ray : rayStorage.GetRays ())
+	for(const Ray& ray : rayStorage.GetVec ())
 	{
 		Geom::Segment segment{ray.origin, ray.origin + ray.direction * 400.0f};
 		segmentRenderer.Draw (state, segment);
 	}
-	
 }
 
 void CMyApp::PrepareRendering(RenderState & state)

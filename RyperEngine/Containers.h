@@ -22,7 +22,7 @@ public:
 			index = index % maxCapacity;
 		}
 	}
-	const std::vector<T>& GetRays() const
+	const std::vector<T>& GetVec() const
 	{
 		return rays;
 	}

@@ -489,6 +489,7 @@ struct SunRenderer
 	}
 };
 
+//TODO Instanced or save VBOs
 struct SegmentRenderer 
 {
 	Shader::BoundingBox *shader;
