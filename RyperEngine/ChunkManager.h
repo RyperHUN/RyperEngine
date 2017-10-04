@@ -414,7 +414,7 @@ struct ChunkManager : public IRenderable
 		for(int layer = 0; layer < maxLayer; layer++)
 		{	
 			
-			int interval = 2;
+			int interval = 10;
 			for (int x = -interval; x <= interval; x++)
 			{
 				for (int z = -interval; z <= interval; z++)

@@ -128,6 +128,7 @@ protected:
 	bool IsWidgetRendering = false;
 	bool IsShadowMapTextureDebug = false;
 	bool IsFixFps = false; //Time is fixed if less than 60 fps, then it runs badly
+	bool IsShowRaytracingLines = false;
 	float FixedFps = 1.0f / 60.0f;
 	bool IsPicSaving = false;
 	glFrameBuffer fbo_Rendered;

@@ -62,6 +62,7 @@ void CMyApp::InitWidgets()
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Light render", &IsLightRendering, textRenderer));
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Frustum render", &IsFrustumRendering, textRenderer));
 	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Shadowmap texture render", &IsShadowMapTextureDebug, textRenderer));
+	container.AddWidget(std::make_shared<Checkbox>(glm::ivec2(0), glm::ivec2(20, 20), "Show ray tracing", &IsShowRaytracingLines, textRenderer));
 	container.AddWidget(std::make_shared<TextWidget>(glm::ivec2(0), glm::ivec2(20, 20), textRenderer, [cameraPosPtr = &cameraPos]() {
 		return	Util::to_string(*cameraPosPtr, "Pos");
 	}));
@@ -439,10 +440,13 @@ void CMyApp::RenderExtra(RenderState & state)
 		auto depthTest = gl::TemporaryDisable(gl::kDepthTest);
 		quadTexturer.Draw(state.shadowMap, false, QuadTexturer::POS::TOP_RIGHT, 0.8);
 	}
-	for(const Ray& ray : rayStorage.GetVec ())
+	if (IsShowRaytracingLines)
 	{
-		Geom::Segment segment{ray.origin, ray.origin + ray.direction * 400.0f};
-		segmentRenderer.Draw (state, segment);
+		for(const Ray& ray : rayStorage.GetVec ())
+		{
+			Geom::Segment segment{ray.origin, ray.origin + ray.direction * 400.0f};
+			segmentRenderer.Draw (state, segment);
+		}
 	}
 }
 

@@ -54,7 +54,7 @@ struct CameraAnimator
 		if (isAnimating)
 		{
 			elapsedTime += dt;
-			const float SCALE_FACTOR = 0.05f;
+			const float SCALE_FACTOR = 0.025f;
 			const float MAX_TIME = 1.0f / SCALE_FACTOR;
 			if (elapsedTime > MAX_TIME)
 				isDone = true;
