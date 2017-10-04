@@ -134,11 +134,17 @@ bool CMyApp::Init()
 	sunRender.Init (tex_sun);
 	
 	//TODO Particle system add support for non texture array
-	Engine::Particle::ParticleSystem system { texArray_smoke, 39, {true, true, true}};
-	system.SetFunctions (Engine::Particle::ParticleUpdateSmoke, Engine::Particle::ParticleRegeneratorSmoke);
-	system.GenParticles(70);
-	particleRenderer.AddParticleSystem (std::move(system), Engine::Particle::ALPHA_BLENDED);
-	particleFireworks.InitParticleSystem(glm::vec3({ -31.0326405,67.2910538,44.0244446 }));
+	Engine::Particle::ParticleSystem smokeParticleSystem { texArray_smoke, 39, {true, true, true}};
+	smokeParticleSystem.SetFunctions (Engine::Particle::ParticleUpdateSmoke, Engine::Particle::ParticleRegeneratorSmoke);
+	smokeParticleSystem.GenParticles(70);
+
+	Engine::Particle::ParticleSystem fireParticleSystem{ texArray_particleFire, 16, { true, true, true } };
+	fireParticleSystem.SetFunctions(Engine::Particle::ParticleUpdateSmoke, Engine::Particle::ParticleRegenFire);
+	fireParticleSystem.GenParticles(100);
+
+	//particleRenderer.AddParticleSystem (std::move(smokeParticleSystem), Engine::Particle::ALPHA_BLENDED);
+	particleRenderer.AddParticleSystem(std::move(fireParticleSystem), Engine::Particle::ADDITIVE);
+	particleFireworks.InitParticleSystem(glm::vec3({ -41.0326405,78.2910538,-65.0244446 }));
 
 	lineStripRender.Create ();
 	Geom::Spline::CatmullRom catmullSpline;
@@ -389,7 +395,7 @@ void CMyApp::Render()
 		particleRenderer.Draw (state);
 		//lineStripRender.Draw(state);
 		cameraAnimator.Draw (state);
-		//particleFireworks.Render (state);
+		particleFireworks.Render (state);
 		sunRender.DrawLensFlareEffect (state);
 
 		RenderExtra(state);
