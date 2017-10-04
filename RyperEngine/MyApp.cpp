@@ -126,7 +126,7 @@ bool CMyApp::Init()
 	textureArray_blocks		= Util::TextureArray(BlockTextureMapper::GetTextureNamesInOrder());
 	//textureArray_blocks   = Util::TextureArray ({"dirt", "grass_side", "grass_top_colored", "grass_path_side", "ice", "lapis_ore", "trapdoor", "glass_red"});
 	tex_randomPerlin		= Util::GenRandomPerlinTexture ();
-	texArray_particleFire	= Util::TextureArrayNumbered("tex", 64, "Pictures/particles/fire/");
+	texArray_particleFire	= Util::TextureArrayNumbered("tex", 16, "Pictures/particles/fireGood/");
 	texArray_cosmic			= Util::TextureArrayNumbered("tex", 16, "Pictures/particles/cosmic/");
 	texArray_smoke			= Util::TextureArrayNumbered("tex", 39, "Pictures/particles/smoke/");
 	texArray_littleExplosion = Util::TextureArrayNumbered("tex", 15, "Pictures/particles/littleExplosion/");
