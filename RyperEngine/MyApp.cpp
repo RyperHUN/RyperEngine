@@ -142,7 +142,7 @@ bool CMyApp::Init()
 	fireParticleSystem.SetFunctions(Engine::Particle::ParticleUpdateSmoke, Engine::Particle::ParticleRegenFire);
 	fireParticleSystem.GenParticles(100);
 
-	//particleRenderer.AddParticleSystem (std::move(smokeParticleSystem), Engine::Particle::ALPHA_BLENDED);
+	particleRenderer.AddParticleSystem (std::move(smokeParticleSystem), Engine::Particle::ALPHA_BLENDED);
 	particleRenderer.AddParticleSystem(std::move(fireParticleSystem), Engine::Particle::ADDITIVE);
 	particleFireworks.InitParticleSystem(glm::vec3({ -41.0326405,78.2910538,-65.0244446 }));
 
@@ -538,8 +538,8 @@ void CMyApp::KeyboardDown(SDL_KeyboardEvent& key)
 			activeCamera->SetForwardDir (glm::vec3(0, 0, -1));
 			break;
 		case SDLK_2:
-			activeCamera->SetEye(glm::vec3(37.5, 62.36, -104.6));
-			activeCamera->SetForwardDir(glm::vec3(-0.17, -0.9, 0.37));
+			activeCamera->SetEye(glm::vec3(61, 26, -19));
+			activeCamera->SetForwardDir(glm::vec3(1, -0.2, 0));
 			break;
 		case SDLK_s:
 			///TODO get the color attachment from the active framebuffer

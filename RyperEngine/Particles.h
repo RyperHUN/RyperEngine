@@ -197,15 +197,16 @@ static inline Particle ParticleRegeneratorSmoke ()
 
 static inline Particle ParticleRegenFire()
 {
-	float diameterAroundCenter = 3.0f;
+	float diameterAroundCenter = 8.0f;
 	float diameterAroundCenterHalf = diameterAroundCenter / 2.0f;
-	glm::vec3 offset (Util::randomVec());
-	offset = offset / glm::vec3(3,10,3) * diameterAroundCenter - glm::vec3(diameterAroundCenterHalf);
+	glm::vec3 offset (Util::randomVec(0,1));
+	offset = offset * diameterAroundCenter - glm::vec3(diameterAroundCenterHalf);
+	offset = offset / glm::vec3(3,10,3);
 
-	glm::vec3 initPos = glm::vec3(0, 48, 0) + offset;
+	glm::vec3 initPos = glm::vec3(78, 21, -19) + offset;
 
-	glm::vec3 velocity (Util::randomVec());
-	velocity = velocity * glm::vec3(0.01,0.1, 0.02) * 4.0f;
+	glm::vec3 velocity (Util::randomVec(0,1));
+	velocity = velocity * glm::vec3(0.01,0.1, 0.02) * 5.0f;
 	if (offset.x > 0) {
 		velocity.x *= -1;
 	}
@@ -217,7 +218,7 @@ static inline Particle ParticleRegenFire()
 		0.0f, //Gravity
 		Util::randomPoint(0, 8),  //Life length
 		0, //rotationZ
-		2,  //scale
+		1,  //scale
 		1.0 }; // Alpha
 }
 
