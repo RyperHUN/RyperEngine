@@ -258,6 +258,18 @@ struct ParamSurface : public Geometry {
 	}
 };
 
+struct QuadTessellated : public ParamSurface {
+	virtual VertexData GenVertexData(float u, float v)
+	{
+		VertexData data;
+		glm::vec2 ndc = Util::CV::UVToNdc(glm::vec2(u, v));
+		data.position = glm::vec3(ndc, 0);
+		data.normal = glm::vec3(0,0,1);
+		data.uv = glm::vec2(u,v);
+		return data;
+	}
+};
+
 struct HeightMapPerlin : public ParamSurface
 {
 private:
